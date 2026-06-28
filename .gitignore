@@ -1,0 +1,27 @@
+# byte-compiled / caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+
+# env
+.venv/
+venv/
+
+# figures are regenerable artifacts; keep the .md write-ups, ignore large raw outputs
+# (Fig A png/pdf ARE committed as deliverables — see figs/, not ignored)
+
+# os
+.DS_Store
+
+# IDE / local tooling state
+.idea/
+.claude/
+.remember/
+
+# data caches (precomputed FEP pulls)
+data/cache/

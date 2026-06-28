@@ -1,0 +1,141 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\newtheorem{assumption}{Assumption}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand{\dFh}{\widehat{\Delta F}}
+\newcommand{\dF}{\Delta F}
+\newcommand{\Oh}{O(3)}
+\newcommand{\SOh}{SO(3)}
+\setlength{\parskip}{4pt}
+\title{\vspace{-2em}The BAR Information Bottleneck\\[2pt]
+\large Self-calibration (sandwich variance), $O(1)$ differentiation,\\ a Fisher--resistance correspondence, and a chirality completeness theorem}
+\author{\normalsize working notes --- proofs for Paper 1 (v2, corrected)}
+\date{}
+\begin{document}
+\maketitle
+\vspace{-2.5em}
+
+\paragraph{Setup.} Two thermodynamic states $A,B$ (units $k_BT{=}1$). Forward works $\{W^f_i\}_{i=1}^{n_f}\sim P_f$, reverse works $\{W^r_j\}_{j=1}^{n_r}\sim P_r$. Unified coordinates $x_i=W^f_i$ (forward), $x_j=-W^r_j$ (reverse). By Crooks $P_f(x)/P_r(x)=e^{x-\dF}$, so the classes differ by a logistic tilt of intercept $\dF$. With $M=\ln(n_f/n_r)$, $\sigma(z)=(1+e^{-z})^{-1}$, $p(x;d)=\sigma(x-d+M)$, the Bennett estimator $\dFh$ is the MLE of the intercept (slope fixed at $1$) under the \emph{stratified two-sample} design (fixed $n_f,n_r$).
+
+\begin{lemma}[Score, curvature, and overlap]\label{lem:fisher}
+\[
+S(d)=\sum_{j\in r}p(x_j)-\sum_{i\in f}(1-p(x_i)),\qquad
+\partial_d S=-\!\sum_{\text{all}}p(1-p)=:-I(d).
+\]
+$I(d)>0$ (each $p(1-p)\in(0,\tfrac14]$), so $\ell$ is strictly concave and the root $\dFh$ is unique. $I$ is the \emph{curvature} of the objective (the ``overlap'': large iff many $p\approx\tfrac12$). It plays the role of the bread in the sandwich variance and the scale of the backward pass; it is \emph{not} in general the inverse variance (see Theorem~\ref{thm:calib}).
+\end{lemma}
+\begin{proof}
+Stationarity is the Bennett equation; $\partial_d^2\ell=-\sum p(1-p)$ via $\sigma'=\sigma(1-\sigma)$ and $\partial_d(x-d+M)=-1$.
+\end{proof}
+
+\begin{theorem}[$O(1)$ differentiable backward; information-share gradient]\label{thm:backward}
+With $\dFh(\theta)$ defined by $S(\dFh,\theta)=0$ and $\partial_d S=-I\neq0$, the implicit function theorem gives
+$d\dFh/d\theta=\tfrac1I\,\partial_\theta S$. For $\theta=\mu^f$ ($x_i=\mu^f+\xi_i$) and $\theta=\mu^r$ ($x_j=-(\mu^r+\eta_j)$),
+\[
+\frac{d\dFh}{d\mu^f}=\frac{I^f}{I},\qquad \frac{d\dFh}{d\mu^r}=-\frac{I^r}{I},\qquad
+\Big|\tfrac{d\dFh}{d\mu^f}\Big|+\Big|\tfrac{d\dFh}{d\mu^r}\Big|=1 .
+\]
+The backward pass is one division by the curvature $I$. (Unaffected by the variance correction below: it depends only on the deterministic second derivative.)
+\end{theorem}
+\begin{proof}
+$\partial_{\mu^f}\!\big[-(1-p(x_i))\big]=p(1-p)$ gives $\partial_{\mu^f}S=I^f$; $\partial_{\mu^r}x_j=-1$ gives $\partial_{\mu^r}S=-I^r$. Shares sum to one since $I^f+I^r=I$.
+\end{proof}
+\begin{remark}[envelope variant]
+If the loss is the BAR log-likelihood itself, $\partial_d\ell=0$ at the root kills the implicit term (envelope theorem); the IFT gradient is needed only when $\dFh$ feeds a downstream loss.
+\end{remark}
+\begin{remark}[numerical check]
+On $x^f=\{0,1\}$, $x^r=\{-0.5\}$, $M=0$: $\dFh=-0.59571$, $I^f/I=0.596825$ matches the IFT gradient to machine precision; $\partial_dS=-I$ to machine precision (Wolfram Language).
+\end{remark}
+
+\begin{assumption}\label{ass:spec}
+(A1) Correct specification: predicted $P_f,P_r$ equal the truth.\quad (A2) Standard M-estimation regularity.
+\end{assumption}
+
+\begin{theorem}[Self-calibration via the \emph{sandwich} variance]\label{thm:calib}
+Under Assumption~\ref{ass:spec}, $\dFh$ is an M-estimator with asymptotic variance
+\[
+\Var(\dFh)=A^{-1}BA^{-1}=\frac{B}{I^2},\qquad
+A=-\mathbb E[S']=I,\qquad
+B=\Var\!\big(S(\dF)\big)=n_f\Var_f[p]+n_r\Var_r[p].
+\]
+The information equality $A=B$ (which would give $\Var=1/I$) holds for prospective logistic regression but \emph{fails} under the stratified two-sample design of BAR; the naive $1/I$ over-estimates the variance. The sandwich $B/I^2$ is the correct, computable-from-samples uncertainty (it coincides with the Bennett 1976 / Shirts--Chodera estimator), so calibration remains free --- via the sandwich. It reduces to $1/I$ only in the information-equality (good-overlap) limit.
+\end{theorem}
+\begin{proof}
+$\dFh$ solves $S=0$; the one-step expansion $\dFh-\dF=S(\dF)/I(\tilde d)$ and the delta method give $\Var(\dFh)=\Var(S)/I^2$ to leading order, with $\Var(S)=B$ by independence of the two samples and $\Var[1-p]=\Var[p]$.
+\end{proof}
+\begin{remark}[numerical check]
+Correctly specified Gaussian model, $n_f=n_r=20$, $2000$ replicates: empirical $\mathrm{SD}(\dFh)=0.160$; mean sandwich se $=0.159$ (ratio $0.994$); mean naive $1/\sqrt I=0.354$ (ratio $2.21$). The sandwich is essentially exact at this $N$; the naive formula is off by $2.2\times$ in se (Wolfram Language).
+\end{remark}
+
+\begin{proposition}[Finite-sample reliability and coverage]\label{prop:finite}
+Let $\widehat V=\widehat B/\widehat I^{\,2}$ be the plug-in sandwich. With probability $\ge1-\delta$,
+$|\dFh-\dF|=O\!\big(\sqrt{\log(1/\delta)/N}\big)$ and $|\widehat V/V-1|=O\!\big(\sqrt{\log(1/\delta)/N}\big)$,
+using Hoeffding on the bounded score/info/variance summands and the self-Lipschitz bound $|I'(d)|\le I(d)$ (since $|1-2p|\le1$). The studentized statistic obeys
+\[
+\Big|\,\mathbb P\big((\dFh-\dF)/\sqrt{\widehat V}\le z\big)-\Phi(z)\,\Big|\;\le\;\frac{0.56}{\sqrt B}=O(1/\sqrt N),
+\]
+by Berry--Esseen, using $\mathbb E|X-\mu|^3\le\Var$ for $X\in[0,1]$ so the standardized third moment is $\le 1/\sqrt{\Var S}=1/\sqrt B$.
+\end{proposition}
+\begin{remark}[honest scope]
+This is the sampling variance under correct physics. Force-field misspecification adds a bias the frozen layer cannot self-correct (handled by a learned $\Delta$-residual head with its own epistemic $\sigma$); network error about $(\mu,\sigma)$ is epistemic (ensemble). Total Belief variance $=B/I^2+\sigma^2_{\mathrm{ens}}+\sigma^2_\Delta$.
+\end{remark}
+
+\begin{theorem}[Fisher--resistance correspondence; gauge-invariant acquisition]\label{thm:fr}
+Relative measurements $y_e=(\varphi_j-\varphi_i)+\varepsilon_e$, $\varepsilon_e\sim\mathcal N(0,V_e)$ with $V_e=B_e/I_e^2$ the per-edge sandwich variance. The Gaussian posterior precision of $\varphi$ is the weighted Laplacian
+\[
+L=\sum_{e=(i,j)} w_e\,(e_i-e_j)(e_i-e_j)^\top,\qquad w_e=\frac1{V_e}=\frac{I_e^2}{B_e},
+\]
+i.e.\ the edge conductances are the \emph{inverse sandwich variances} (equal to the overlaps $I_e$ only at the information-equality limit). Then:
+\begin{enumerate}[label=(\roman*),leftmargin=2.2em,itemsep=1pt]
+\item $\Var(\varphi_b-\varphi_a)=(e_b-e_a)^\top L^{+}(e_b-e_a)=\Omega_{ab}$ (effective resistance).
+\item A single edge has $\Omega=V_e$, recovering the BAR sandwich variance.
+\item Adding a measurement along $c$ with precision $g$ updates the contrast variance in $O(1)$, $\Omega'=\Omega/(1+g\Omega)$ (Sherman--Morrison); KG equals the decision-weighted $\Omega$-reduction.
+\item $\ker L=\mathrm{span}\{\text{component indicators}\}\supseteq\mathrm{span}\{\mathbf1\}$; contrasts in $\ker L$ have infinite variance and zero reduction, so $\mathrm{KG}=0$. The acquisition is automatically gauge-invariant.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+The negative log-posterior is $\tfrac12\sum_e w_e(y_e-(\varphi_j-\varphi_i))^2$ up to the gauge; its Hessian is $L$, posterior covariance $L^{+}$ on the range, giving (i)--(ii). (iii) is Sherman--Morrison on $c^\top(\cdot)^{+}c$. For (iv), all relative measurements are invariant under per-component shifts, so those directions lie in $\ker L$.
+\end{proof}
+\begin{remark}[numerical check]
+Triangle with conductances $(1,0.5,2)$: $\Omega_{12}=0.714286$ equals the series--parallel value; $\ker L=\mathrm{span}\{\mathbf1\}$; adding edge $(1,2)$ with $g=0.7$ gives exact $\Omega'=0.476190$, matching $\Omega/(1+g\Omega)$ to machine precision (Wolfram Language).
+\end{remark}
+
+\begin{corollary}[the unified objects, corrected]
+The overlap $I_e$ governs \{curvature, backward-pass scale (Thm.~\ref{thm:backward})\}. The precision $I_e^2/B_e$ governs \{calibration (Thm.~\ref{thm:calib}), Laplacian weight (Thm.~\ref{thm:fr})\}. These coincide (a single object, $V=1/I$) only at the information-equality limit. In OOD / low-overlap regimes $B_e$ and $I_e$ diverge most, so the naive $1/I$ is worst exactly where precision matters; the sandwich is essential there.
+\end{corollary}
+
+\section*{Chirality completeness}
+
+\paragraph{Setup.} A configuration is a point cloud $\{(p_i,z_i)\}$ in $\mathbb R^3$. $\SOh$ are proper rotations ($\det R=+1$); $\Oh$ adds reflections ($\det R=-1$). The enantiomer of $M$ is $M'=\sigma M$ for a reflection $\sigma$. $M$ is chiral iff $M'$ is not a proper-rigid-motion image of $M$.
+
+\begin{lemma}[$\Oh$-invariant readouts collapse enantiomers]\label{lem:collapse}
+If $f$ is $\Oh$-invariant then $f(M')=f(\sigma M)=f(M)$. Any function of pairwise distances $\|p_i-p_j\|$ (which are $\Oh$-invariant) is constant on the pair $\{M,M'\}$; hence a distance-only network is provably enantiomer-blind.
+\end{lemma}
+
+\begin{theorem}[A parity-odd pseudoscalar separates enantiomers]\label{thm:chiral}
+Let $\chi(M)=\det[\,p_2-p_1,\,p_3-p_1,\,p_4-p_1\,]$. For any linear $A$, $\chi(A\!\cdot\!M)=\det(A)\,\chi(M)$. Hence $\chi$ is $\SOh$-invariant ($\det R=+1$) and parity-odd: $\chi(M')=-\chi(M)$. For chiral $M$ (non-coplanar points) $\chi(M)\neq0$, so $\chi(M')=-\chi(M)\neq\chi(M)$ and $\chi$ distinguishes the enantiomers.
+\end{theorem}
+\begin{proof}
+$\det[A v_1,Av_2,Av_3]=\det(A)\det[v_1,v_2,v_3]$ with $v_k=p_{k+1}-p_1$; $\det(\sigma)=-1$.
+\end{proof}
+
+\begin{corollary}[completeness: one lost bit]
+For generic (chiral, full-rank) configurations, the pair $\big(\{\|p_i-p_j\|\},\ \sgn\chi\big)$ is a complete $\SOh$-invariant. Pairwise distances determine the configuration up to $\Oh$, i.e.\ up to $\{M,\sigma M\}$; $\sgn\chi$ takes opposite signs on the two and selects the enantiomer. Thus $\Oh$-invariance loses exactly the chirality bit, and a pseudoscalar restores it.
+\end{corollary}
+
+\begin{remark}[implementation]
+The pseudoscalar is the parity-odd $\ell{=}0$ irrep (\texttt{0o}), realized as the triple product $v_1\!\cdot\!(v_2\times v_3)=\det[v_1,v_2,v_3]$ --- an odd contraction of vector features. A readout must contain a \texttt{0o} channel; a parity-even readout lies in the kernel and is blind. Note that $\|v\|$ and $v_i\!\cdot\!v_j$ are $\Oh$-invariant (even), so vector features pooled into norms/dot-products remain enantiomer-blind: the \emph{odd} triple product is required.
+\end{remark}
+
+\end{document}

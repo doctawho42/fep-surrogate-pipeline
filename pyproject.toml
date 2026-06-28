@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fep-surrogate-pipeline"
+version = "0.0.1"
+description = "Self-calibrating differentiable BAR-bottleneck surrogate for relative binding free energy."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+# Phase-0/1 dependencies only (build lazily — no trunk/heads/solver/AL stack yet).
+# Pins are the exact versions verified in docs/ANALYSIS.md §6.
+dependencies = [
+    "numpy==2.5.0",
+    "scipy==1.18.0",
+    "pymbar==4.0.3",
+    "networkx==3.6.1",
+    "matplotlib==3.11.0",
+    "torch==2.12.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "ruff==0.15.20",
+    "mypy==2.1.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# src layout: make `import bar` work without an editable install.
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    # pymbar prints a benign timeseries/JAX notice; keep the suite quiet.
+    "ignore::UserWarning",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py311"
+# Standalone end-to-end proof reproduction (run via `make verify`); kept verbatim.
+extend-exclude = ["tests/verify_proofs.py"]
+
+[tool.ruff.lint]
+# Sensible, non-pedantic set: pyflakes, pycodestyle, isort, bugbear, comprehensions, pyupgrade.
+select = ["E", "F", "I", "B", "C4", "UP", "W"]
+ignore = ["E741"]  # ambiguous var names (I, B, A) are the literal math symbols here
+
+[tool.mypy]
+python_version = "3.12"          # numpy 2.5 stubs use 3.12 `type` statements
+mypy_path = "src"
+files = ["src"]                 # type-check the library; tests stay loose
+ignore_missing_imports = true   # pymbar/networkx ship partial/no stubs
+warn_unused_ignores = true
+disallow_untyped_defs = false   # research code; tighten incrementally
