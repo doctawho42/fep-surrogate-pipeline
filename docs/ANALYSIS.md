@@ -190,6 +190,18 @@ while `sgn χ` flips. O(3) readouts are provably blind; `0o` separates.
 `I_e²/B_e`), which is internally consistent — the *same* `B_e/I_e²` is the per-edge
 variance in both. #5/#6 (chirality) are orthogonal to the BAR machinery. No conflicts.
 
+### Fig A finding — direction of the `1/I` error (corrects a Corollary wording)
+Confirmed three ways (controlled MC, population `I/B`, real benzene edges): `1/I`
+over-estimates the BAR variance **most at HIGH overlap** (`I/B` up to ~17× as `p→½`)
+and converges to correct at low overlap. This matches the Theorem-2 remark and
+CLAUDE.md ("2.2× at high overlap, shrinking toward low overlap"), but the proofs
+sheet **Corollary** says the opposite ("low-overlap regimes… naive worst") — its
+directional wording is backwards (the math is fine). Implication (a *strengthening*):
+the sandwich correction matters most for the well-overlapped, reliable edges an
+active learner exploits; `1/I` would distrust the best edges (≤13× on real data) and
+mis-weight the Laplacian. See `docs/results_figA.md`. **Not a kill** — the central
+Fig A claim (sandwich calibrated; `1/I` a non-constant factor) holds robustly.
+
 ### Named weak points (carry into the risk ladder)
 1. **Sandwich is aleatoric-only.** It is the sampling variance *under correct
    physics* (A1). It says nothing about OOD epistemic error — that is the *ensemble's*
@@ -265,14 +277,21 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
 - [x] Read CLAUDE.md, paper1_plan.md, bar_proofs.tex; reconstruct design + theorems.
 - [x] Re-derive & verify all four theorems numerically (26/26).
 - [x] Cross-check sandwich vs pymbar; resolve which uncertainty method = sandwich.
-- [ ] Repo skeleton: `src/bar/`, `tests/`, `figs/`, pyproject (pinned), pytest, ruff,
-      mypy, justfile, CI workflow.
-- [ ] BAR layer: root-find + sandwich (match pymbar-MBAR) + overlap.
-- [ ] O(1) autograd.Function with custom backward (information-share gradient).
-- [ ] Graph util: Laplacian / effective resistance / Sherman–Morrison / kerL.
-- [ ] Port verification into `tests/` as theorem-numbered unit tests; CI green.
-- [ ] Source public FEP+ congeneric edges (Wang/Schrödinger or OpenFE) for Fig A.
-- [ ] Produce Fig A + `docs/results_figA.md`; commit. **GATE.**
+- [x] Repo skeleton: `src/bar/`, `tests/`, `figs/`, pyproject (pinned), pytest, ruff,
+      mypy, Makefile, CI workflow.
+- [x] BAR layer: root-find + sandwich + mbar/bennett (= pymbar to machine precision) + overlap.
+- [x] O(1) autograd.Function with custom backward (information-share gradient; gradcheck).
+- [x] Graph util: Laplacian / effective resistance / Sherman–Morrison / kerL.
+- [x] Port verification into `tests/` as theorem-numbered unit tests; `make check` green (26).
+- [x] Source public FEP edges (benzene solvation, alchemtest) for Fig A real panel.
+- [x] Produce Fig A + `docs/results_figA.md`; commit. **GATE → PASS.**
+
+### Next (Fig E + Fig A strengthening)
+- [ ] **Fig E (chirality):** minimal equivariant readout w/ toggleable `0o` triple-product
+      channel; enantiomer-pair test set; even readout collapses, `0o` separates.
+- [ ] *(optional strengthen Fig A)* add a real **binding** edge panel:
+      `alchemtest.amber.load_bace_example` (BACE1 RBFE) and/or OpenFE
+      IndustryBenchmarks2024 Zenodo `u_ln.txt` archives (3 repeats → true-replicate se).
 
 ---
 
