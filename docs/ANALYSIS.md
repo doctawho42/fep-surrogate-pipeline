@@ -297,7 +297,10 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
       *ranking* (its value is *calibration*, Fig A — unbiased GLS mean for any weights).
       Kill NOT triggered (conjunction; calibration passed); risk-ladder §8 fallback
       intact. Definitive test (integrated qKG + real networks + full baselines)
-      **deferred pending decision**. See `docs/results_figC.md`.
+      **deferred pending decision**. See `docs/results_figC.md`. (Efficiency fallback ACCEPTED.)
+- [x] **Fig D (gauge identifiability):** `figs/make_figD.py` (reuses `active.py`).
+      Gauge (all-ones) KG = 1e-21 (exact 0, Thm 3(iv)); gauge-aware vs gauge-unaware
+      regret@budget 0.010 vs 0.268 — gauge-awareness saves budget. PASS. See `docs/results_figD.md`.
 - [ ] *(optional strengthen Fig A)* real **binding** edge panel:
       `alchemtest.amber.load_bace_example` (BACE1 RBFE) and/or OpenFE
       IndustryBenchmarks2024 Zenodo `u_ln.txt` archives (3 repeats → true-replicate se).

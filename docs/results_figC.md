@@ -70,7 +70,21 @@ baselines (random, EI/UCB/qEI, GP-qKG, MFBind, ensemble+conformal). That is a la
 build and is **deferred pending a decision** — it should be authorised explicitly given
 it tests a leg that the minimal proxy already finds weak.
 
-## Recommendation
-Lean the paper on the **demonstrated** strengths (calibration + theory + chirality);
-treat AL efficiency as an open question requiring the full qKG + real-data Fig C before
-any efficiency claim is made. Do not claim Fig C as a win on this evidence.
+## Follow-up probe (cost metric) — same verdict
+Hypothesis: under a **cost** budget (not call count) the sandwich should win, because it
+correctly values high-overlap edges as cheap-and-informative while naive over-states
+their variance (~13× here) and avoids them. Result (30 seeds, info-per-cost KG, vary
+only the weights): **cost-to-top-k median — sandwich 81.1, naive 84.8 (1.05×), random
+180.0.** So the KG acquisition beats random **2.22×** (standard AL value), but the
+**sandwich-vs-naive weighting is again ≈ null (1.05×)** — consistent across the calls,
+A-optimal, and cost metrics. The weighting effect is genuinely second-order for the
+point estimate (unbiased GLS mean for any positive weights); its decisive value is
+calibration (Fig A).
+
+## Recommendation — ACCEPTED FALLBACK (risk-ladder §8)
+The efficiency leg is treated as **null in the controlled setting** (probe confirmed).
+Lean the paper on the **demonstrated** strengths — calibration (Fig A), theory
+(Theorems 1+3), chirality (Fig E), and gauge-identifiability (Fig D). The KG/Fisher-
+resistance machinery (`active.py`) is retained as correct infrastructure and reused by
+Fig D. A definitive efficiency claim would require the full integrated qKG + real
+networks + full baselines, deferred. **Do not claim Fig C as an efficiency win.**
