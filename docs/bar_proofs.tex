@@ -112,7 +112,7 @@ Triangle with conductances $(1,0.5,2)$: $\Omega_{12}=0.714286$ equals the series
 \end{remark}
 
 \begin{corollary}[the unified objects, corrected]
-The overlap $I_e$ governs \{curvature, backward-pass scale (Thm.~\ref{thm:backward})\}. The precision $I_e^2/B_e$ governs \{calibration (Thm.~\ref{thm:calib}), Laplacian weight (Thm.~\ref{thm:fr})\}. These coincide (a single object, $V=1/I$) only at the information-equality limit. In OOD / low-overlap regimes $B_e$ and $I_e$ diverge most, so the naive $1/I$ is worst exactly where precision matters; the sandwich is essential there.
+The overlap $I_e$ governs \{curvature, backward-pass scale (Thm.~\ref{thm:backward})\}. The precision $I_e^2/B_e$ governs \{calibration (Thm.~\ref{thm:calib}), Laplacian weight (Thm.~\ref{thm:fr})\}. These coincide (a single object, $V=1/I$) only at the information-equality limit. They diverge \emph{most in the high-overlap regime} ($I/B$ grows large as $p\to\tfrac12$; numerically $I/B\approx17$ at $0.5\sigma$ separation), so the naive $1/I$ over-estimates the variance most for the well-overlapped, low-variance edges, converging to the sandwich only as overlap $\to0$. The sandwich is therefore essential precisely on the \emph{reliable}, well-overlapped edges an active learner exploits --- naive $1/I$ would systematically distrust the best edges (up to ${\sim}13\times$ inflation on real FEP edges). \emph{(Direction corrected; verified three ways: controlled MC, population $I/B$, real FEP edges --- see \texttt{docs/results\_figA.md}.)}
 \end{corollary}
 
 \section*{Chirality completeness}
