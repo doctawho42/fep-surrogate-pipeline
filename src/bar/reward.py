@@ -59,3 +59,17 @@ def regret(truth: ArrayLike, selected: ArrayLike) -> float:
     best = float(np.sort(t)[::-1][:k].mean())
     got = float(t[sel].mean())
     return best - got
+
+
+def regret_difference_ci(regret_a: ArrayLike, regret_b: ArrayLike, alpha: float = 0.05,
+                         n_boot: int = 2000, seed: int = 0) -> tuple[float, float, float]:
+    """Bootstrap CI on the paired regret difference ``a - b`` across seeds. Returns
+    ``(mean_diff, lo, hi)``. For the gate (a=calibrated, b=raw), calibrated beats raw
+    iff ``hi < 0`` (its regret is strictly lower)."""
+    a = np.asarray(regret_a, dtype=float)
+    b = np.asarray(regret_b, dtype=float)
+    d = a - b
+    rng = np.random.default_rng(seed)
+    boots = np.array([d[rng.integers(0, d.size, d.size)].mean() for _ in range(n_boot)])
+    lo, hi = np.percentile(boots, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+    return float(d.mean()), float(lo), float(hi)

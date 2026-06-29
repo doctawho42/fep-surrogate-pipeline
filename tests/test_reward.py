@@ -6,6 +6,7 @@ from bar.reward import (
     edge_reward,
     realized_hitrate,
     regret,
+    regret_difference_ci,
     risk_adjusted_reward,
     select_topk,
 )
@@ -79,3 +80,19 @@ def test_sigma_zero_makes_calibrated_selection_equal_raw():
     raw = values
     cal = np.array([risk_adjusted_reward(v, 0.0, kappa=3.0) for v in values])
     assert list(select_topk(raw, 2)) == list(select_topk(cal, 2))
+
+
+def test_regret_difference_ci_detects_calibrated_win():
+    # calibrated regret consistently below raw ⇒ upper CI bound < 0
+    cal = np.full(8, 0.10)
+    raw = np.full(8, 0.40)
+    mean_diff, lo, hi = regret_difference_ci(cal, raw)
+    assert mean_diff < 0
+    assert hi < 0  # KILL verdict: calibrated strictly better
+
+
+def test_regret_difference_ci_null_when_equal():
+    same = np.array([0.2, 0.25, 0.18, 0.22, 0.2, 0.21, 0.19, 0.23])
+    mean_diff, lo, hi = regret_difference_ci(same, same)
+    assert mean_diff == 0.0
+    assert lo <= 0.0 <= hi
