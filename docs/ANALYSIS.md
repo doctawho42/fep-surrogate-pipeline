@@ -286,10 +286,13 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
 - [x] Source public FEP edges (benzene solvation, alchemtest) for Fig A real panel.
 - [x] Produce Fig A + `docs/results_figA.md`; commit. **GATE → PASS.**
 
-### Next (Fig E + Fig A strengthening)
-- [ ] **Fig E (chirality):** minimal equivariant readout w/ toggleable `0o` triple-product
-      channel; enantiomer-pair test set; even readout collapses, `0o` separates.
-- [ ] *(optional strengthen Fig A)* add a real **binding** edge panel:
+### Next
+- [x] **Fig E (chirality):** `src/bar/chiral.py` (9 tests) + `figs/make_figE.py`.
+      Even readout collapse = 0.0e+00 (exact); `0o` cuts enantiomer ΔΔG MAE 11.7×
+      (1.667→0.142). Kill criterion not triggered. See `docs/results_figE.md`.
+- [ ] **Fig C (active learning):** BAR-bottleneck head on a frozen trunk + gauge-aware
+      cost-aware KG over the FEP-edge graph; baselines; FEP-calls-to-top-k. (Uses `graph.py`.)
+- [ ] *(optional strengthen Fig A)* real **binding** edge panel:
       `alchemtest.amber.load_bace_example` (BACE1 RBFE) and/or OpenFE
       IndustryBenchmarks2024 Zenodo `u_ln.txt` archives (3 repeats → true-replicate se).
 
