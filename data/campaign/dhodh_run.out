@@ -1,0 +1,8 @@
+docking 29 new (cage forms + DHODH inhibitors)...
+
+DHODH known inhibitors (n=25): median -11.5, best -13.3, worst -9.0 kcal/mol
+CAGE vs DHODH brequinar-tunnel:
+  acetate R,R    -8.9 kcal  ->  0th percentile of known inhibitors
+  acetate S,S    -8.1 kcal  ->  0th percentile of known inhibitors
+  deacetyl R,R   -10.1 kcal  ->  4th percentile of known inhibitors
+  deacetyl S,S   -8.3 kcal  ->  0th percentile of known inhibitors
