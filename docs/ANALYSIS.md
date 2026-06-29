@@ -301,6 +301,10 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
 - [x] **Fig D (gauge identifiability):** `figs/make_figD.py` (reuses `active.py`).
       Gauge (all-ones) KG = 1e-21 (exact 0, Thm 3(iv)); gauge-aware vs gauge-unaware
       regret@budget 0.010 vs 0.268 — gauge-awareness saves budget. PASS. See `docs/results_figD.md`.
+- [x] **Fig B (OOD decomposition):** `figs/make_figB.py`. Decomposed per-edge
+      uncertainty (sandwich+ensemble+Δ) vs split-conformal at equal ~0.90 marginal
+      coverage: ours 2.2× sharper (3.76 vs 8.38), conditional max-bin-err 0.293 vs 0.734.
+      Falsifier refuted; far-OOD all degrade (honest). PASS. See `docs/results_figB.md`.
 - [ ] *(optional strengthen Fig A)* real **binding** edge panel:
       `alchemtest.amber.load_bace_example` (BACE1 RBFE) and/or OpenFE
       IndustryBenchmarks2024 Zenodo `u_ln.txt` archives (3 repeats → true-replicate se).
