@@ -81,7 +81,8 @@ def prepare_target(pdb_id: str, work_dir: str) -> dict:
 
 
 def dock(receptor_pdbqt: str, ligand_sdf: str, ref_ligand_pdb: str,
-         exhaustiveness: int = 8, box_pad: float = 6.0, seed: int = 1) -> float:
+         exhaustiveness: int = 8, box_pad: float = 6.0, seed: int = 1,
+         timeout_s: int = 60) -> float:
     """Best smina affinity (kcal/mol) of the ligand in the autoboxed pocket; +inf on
     failure. Lower = better."""
     try:
@@ -90,7 +91,7 @@ def dock(receptor_pdbqt: str, ligand_sdf: str, ref_ligand_pdb: str,
              "--autobox_ligand", ref_ligand_pdb, "--autobox_add", str(box_pad),
              "--exhaustiveness", str(exhaustiveness), "--num_modes", "1",
              "--seed", str(seed), "--cpu", "1", "-o", "/dev/null"],
-            check=True, capture_output=True, text=True, timeout=300)
+            check=True, capture_output=True, text=True, timeout=timeout_s)
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
         return float("inf")
     best = float("inf")

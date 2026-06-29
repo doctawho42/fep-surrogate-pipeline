@@ -28,3 +28,7 @@ data/cache/
 
 # downloaded receptor structures (regenerable)
 data/pockets/
+
+# figH: regenerable ligand SDFs + run log (keep dock_scores.csv + actives_*.csv)
+data/figH/lig/
+data/figH/run.out

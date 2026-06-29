@@ -31,15 +31,22 @@ beyond). Without calibration + retrospective validation the method will "find" t
 obvious-but-promiscuous pharmacophore and fool us. Calibration here is **protection
 against a false lead on an orphan scaffold** — exactly why the machine exists.
 
-## 2. The falsifiable gate (decides one paper vs two)
+## 2. The falsifiable gate (decides one paper vs two) — **RESULT: FAIL → two papers**
 > **Does retrospective, target-disjoint, structure-based target-ID beat the baselines
 > (the ligand-only Fig F shape baseline, and a docking-score-only ranker)?**
 
-- **Beats →** one paper: method (Figs A–G) + cage-as-motivation + a validated
-  structure-based target-ID figure + deployment case study. Stronger, more compelling.
-- **Does not →** two papers: ship the methods+theory spine (current Figs A–G) now; the
-  cage campaign becomes Paper 2, maturing with data. **Do not rescue the merge if the
-  second arm does not stand.**
+**Run (Fig H, `make figH`, `docs/results_figH.md`): NO.** Structure (raw docking) top-1
+recovery **0.16** vs ligand-shape **0.95** (random 0.10); AUROC 0.62 vs 0.99. Per-pocket
+z-normalisation made it worse (0.08). Diagnosis: raw docking scores are not comparable
+across pockets (it just picks the greasiest pocket — AChE wins everyone's ligands), and
+the ChEMBL benchmark cannot reach the orphan regime (median ligand→train similarity 0.64).
+
+- **Beats →** one paper. *(not taken)*
+- **Does not → two papers** *(TAKEN):* ship the methods+theory spine (Figs A–G +
+  `paper_draft.tex`) as **Paper 1 now**; the cage target-finding becomes **Paper 2**,
+  maturing with real structure prediction (Boltz-ABFE/cofolding, target-disjoint
+  calibration, a pocket library, orphan validation). **The merge is not rescued** — per
+  the advisor's instruction. The NIOCH cage screen stays a separate report (pending assays).
 
 ## 3. Three architectural questions — proposed answers (RATIFY before building)
 

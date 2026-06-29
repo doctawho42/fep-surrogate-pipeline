@@ -1,0 +1,238 @@
+- generic [ref=e2]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - link "SwissDock" [ref=e5] [cursor=pointer]:
+        - /url: //www.swissdock.ch/
+      - link "Docking of small molecules into protein active sites" [ref=e6] [cursor=pointer]:
+        - /url: //www.swissdock.ch/
+        - img [ref=e7]
+    - generic [ref=e9]:
+      - link "SwissParam" [ref=e10] [cursor=pointer]:
+        - /url: //swissparam.ch
+      - link "Generate CHARMM/GROMACS topology and parameters for small organic molecules" [ref=e11] [cursor=pointer]:
+        - /url: //swissparam.ch
+        - img [ref=e12]
+    - generic [ref=e14]:
+      - link "SwissSidechain" [ref=e15] [cursor=pointer]:
+        - /url: //www.swisssidechain.ch/
+      - link "Structural and molecular mechanics database of non-natural amino-acid sidechains" [ref=e16] [cursor=pointer]:
+        - /url: //www.swisssidechain.ch/
+        - img [ref=e17]
+    - generic [ref=e19]:
+      - link "SwissBioisostere" [ref=e20] [cursor=pointer]:
+        - /url: //www.swissbioisostere.ch/
+      - link "Database of molecular replacements and their impact on bioactivity" [ref=e21] [cursor=pointer]:
+        - /url: //www.swissbioisostere.ch/
+        - img [ref=e22]
+    - generic [ref=e24]:
+      - link "SwissTargetPrediction" [ref=e25] [cursor=pointer]:
+        - /url: //www.swisstargetprediction.ch/
+      - link "Target prediction for bioactive small molecules" [ref=e26] [cursor=pointer]:
+        - /url: //www.swisstargetprediction.ch/
+        - img [ref=e27]
+    - generic [ref=e29]:
+      - link "SwissADME" [ref=e30] [cursor=pointer]:
+        - /url: //www.swissadme.ch/
+      - link "Calculate molecular parameters in relation with pharmacokinetics and dynamics properties" [ref=e31] [cursor=pointer]:
+        - /url: //www.swissadme.ch/
+        - img [ref=e32]
+    - generic [ref=e34]:
+      - link "SwissSimilarity" [ref=e35] [cursor=pointer]:
+        - /url: //www.swisssimilarity.ch/
+      - link "Perform ligand-based screening" [ref=e36] [cursor=pointer]:
+        - /url: //www.swisssimilarity.ch/
+        - img [ref=e37]
+  - separator [ref=e38]
+  - generic [ref=e39]:
+    - generic [ref=e40]:
+      - link [ref=e41] [cursor=pointer]:
+        - /url: https://www.molecular-modelling.ch/swiss-drug-design.html
+      - generic [ref=e43]:
+        - list:
+          - listitem [ref=e44]:
+            - link "Contact" [ref=e45] [cursor=pointer]:
+              - /url: /contact.php
+          - listitem [ref=e46]:
+            - link "Download" [ref=e47] [cursor=pointer]:
+              - /url: /download.php
+          - listitem [ref=e48]:
+            - link "Citing" [ref=e49] [cursor=pointer]:
+              - /url: /citing.php
+          - listitem [ref=e50]:
+            - link "Help" [ref=e51] [cursor=pointer]:
+              - /url: /help.php
+          - listitem [ref=e52]:
+            - link "FAQ" [ref=e53] [cursor=pointer]:
+              - /url: /faq.php
+          - listitem [ref=e54]:
+            - link "About" [ref=e55] [cursor=pointer]:
+              - /url: /about.php
+          - listitem [ref=e56]:
+            - link "Home" [ref=e57] [cursor=pointer]:
+              - /url: /index.php
+    - generic [ref=e58]:
+      - separator [ref=e59]
+      - generic [ref=e60]:
+        - generic [ref=e61]: "Important information: Due to the discontinuation of ChemAxon support for academic websites, SwissTargetPrediction has been modified on May 15 to no longer rely on their software. We do our best to ensure that this transition takes place with minimal disruption and inconvenience for our users. We thank you for your understanding."
+        - generic:
+          - generic [ref=e63]:
+            - generic [ref=e64]:
+              - generic [ref=e65]: Select a species
+              - radio [checked] [ref=e67]
+              - text: Homo sapiens
+              - radio [ref=e68]
+              - text: Mus musculus
+              - radio [ref=e69]
+              - text: Rattus norvegicus
+            - generic [ref=e71]: Paste a SMILES in this box, or draw a molecule
+            - generic [ref=e72]:
+              - textbox [ref=e73]
+              - combobox [ref=e76]:
+                - option "Examples:" [selected]
+                - option "Coniine"
+                - option "Triclosan"
+                - option "Rimonabant"
+              - button "Clear" [ref=e78]
+              - paragraph [ref=e80]:
+                - button "Predict targets" [disabled] [ref=e81]
+              - paragraph [ref=e82]:
+                - emphasis [ref=e84]: (Provide a SMILES before submitting)
+          - img [ref=e87]
+          - iframe [active] [ref=e90]:
+            - generic [ref=f1e5]:
+              - img [ref=f1e9]
+              - generic [ref=f1e22]:
+                - generic [ref=f1e23]:
+                  - button "Clear Canvas (⌘+Del)" [ref=f1e24] [cursor=pointer]:
+                    - img [ref=f1e25]
+                  - button "Open... (⌘+O)" [ref=f1e28] [cursor=pointer]:
+                    - img [ref=f1e29]
+                  - generic [ref=f1e31]:
+                    - button "Copy (⌘+C)" [disabled] [ref=f1e32]:
+                      - img [ref=f1e33]
+                    - button [ref=f1e35]:
+                      - img [ref=f1e36]
+                  - button "Paste (⌘+V)" [ref=f1e38] [cursor=pointer]:
+                    - img [ref=f1e39]
+                  - button "Cut (⌘+X)" [disabled] [ref=f1e41]:
+                    - img [ref=f1e42]
+                  - separator [ref=f1e44]
+                  - button "Undo (⌘+Z)" [disabled] [ref=f1e45]:
+                    - img [ref=f1e46]
+                  - button "Redo (⌘+Shift+Z)" [disabled] [ref=f1e48]:
+                    - img [ref=f1e49]
+                  - separator [ref=f1e51]
+                  - button "Add/Remove explicit hydrogens" [disabled] [ref=f1e53]:
+                    - img [ref=f1e54]
+                - generic [ref=f1e59]:
+                  - generic "Switch to Macromolecule mode" [ref=f1e60]:
+                    - button [ref=f1e61] [cursor=pointer]:
+                      - img [ref=f1e62]
+                      - img [ref=f1e69]
+                  - separator [ref=f1e71]
+                  - generic [ref=f1e72]:
+                    - button "Settings" [ref=f1e73] [cursor=pointer]:
+                      - img [ref=f1e74]
+                    - button "Help (?)" [ref=f1e76] [cursor=pointer]:
+                      - img [ref=f1e77]
+                    - button "About" [ref=f1e79] [cursor=pointer]:
+                      - img [ref=f1e80]
+                  - separator [ref=f1e84]
+                  - button "100%" [ref=f1e86] [cursor=pointer]:
+                    - generic [ref=f1e87]: 100%
+                    - img [ref=f1e88]
+              - generic [ref=f1e91]:
+                - generic [ref=f1e93]:
+                  - button "Hand tool (⌘+Option+H)" [ref=f1e94] [cursor=pointer]:
+                    - img [ref=f1e95]
+                  - generic [ref=f1e97]:
+                    - button "Rectangle Selection (Shift+Tab)" [ref=f1e98] [cursor=pointer]:
+                      - img [ref=f1e99]
+                    - img [ref=f1e101]
+                  - button "Erase (Del)" [ref=f1e103] [cursor=pointer]:
+                    - img [ref=f1e104]
+                - generic [ref=f1e106]:
+                  - generic [ref=f1e107]:
+                    - button "Single Bond (1)" [ref=f1e108] [cursor=pointer]:
+                      - img [ref=f1e109]
+                    - img [ref=f1e111]
+                  - button "Chain" [ref=f1e113] [cursor=pointer]:
+                    - img [ref=f1e114]
+                  - button "Stereochemistry (Option+E)" [disabled] [ref=f1e116]:
+                    - img [ref=f1e117]
+                  - button "Charge Plus (+)" [ref=f1e119] [cursor=pointer]:
+                    - img [ref=f1e120]
+                  - button "Charge Minus (-)" [ref=f1e122] [cursor=pointer]:
+                    - img [ref=f1e123]
+                - generic [ref=f1e126]:
+                  - button "S-Group (⌘+G)" [ref=f1e127] [cursor=pointer]:
+                    - img [ref=f1e128]
+                  - generic [ref=f1e130]:
+                    - button "R-Group Label Tool (⌘+R)" [ref=f1e131] [cursor=pointer]:
+                      - img [ref=f1e132]
+                    - img [ref=f1e134]
+                  - button "Create a monomer (⌘+M)" [disabled] [ref=f1e136]:
+                    - img [ref=f1e137]
+                - button "Add Image" [ref=f1e141] [cursor=pointer]:
+                  - img [ref=f1e142]
+              - generic [ref=f1e145]:
+                - button "Benzene (T)" [ref=f1e146] [cursor=pointer]:
+                  - img [ref=f1e147]
+                - button "Cyclopentadiene (T)" [ref=f1e150] [cursor=pointer]:
+                  - img [ref=f1e151]
+                - button "Cyclohexane (T)" [ref=f1e154] [cursor=pointer]:
+                  - img [ref=f1e155]
+                - button "Cyclopentane (T)" [ref=f1e157] [cursor=pointer]:
+                  - img [ref=f1e158]
+                - button "Cyclopropane (T)" [ref=f1e160] [cursor=pointer]:
+                  - img [ref=f1e161]
+                - button "Cyclobutane (T)" [ref=f1e163] [cursor=pointer]:
+                  - img [ref=f1e164]
+                - button "Cycloheptane (T)" [ref=f1e166] [cursor=pointer]:
+                  - img [ref=f1e167]
+                - button "Cyclooctane (T)" [ref=f1e169] [cursor=pointer]:
+                  - img [ref=f1e170]
+                - button "Structure Library (Shift+T)" [disabled] [ref=f1e172]:
+                  - img [ref=f1e173]
+              - generic [ref=f1e176]:
+                - generic [ref=f1e178]:
+                  - button "H" [ref=f1e180] [cursor=pointer]
+                  - generic [ref=f1e181]:
+                    - button "C" [ref=f1e182] [cursor=pointer]
+                    - button "N" [ref=f1e183] [cursor=pointer]
+                    - button "O" [ref=f1e184] [cursor=pointer]
+                    - button "S" [ref=f1e185] [cursor=pointer]
+                  - separator [ref=f1e186]
+                  - generic [ref=f1e187]:
+                    - button "P" [ref=f1e188] [cursor=pointer]
+                    - button "F" [ref=f1e189] [cursor=pointer]
+                    - button "Cl" [ref=f1e190] [cursor=pointer]
+                    - button "Br" [ref=f1e191] [cursor=pointer]
+                    - button "I" [ref=f1e192] [cursor=pointer]
+                  - button "Periodic Table" [ref=f1e193] [cursor=pointer]:
+                    - img [ref=f1e194]
+                - generic [ref=f1e198]:
+                  - button "Any atom" [ref=f1e199] [cursor=pointer]:
+                    - img [ref=f1e200]
+                  - button "Extended Table" [ref=f1e204] [cursor=pointer]:
+                    - img [ref=f1e205]
+              - textbox [active]
+  - generic [ref=e92]:
+    - link [ref=e93] [cursor=pointer]:
+      - /url: https://www.sib.swiss
+      - img [ref=e94]
+    - text: This Web tool is operated by the
+    - link "Molecular Modelling Group" [ref=e95] [cursor=pointer]:
+      - /url: https://www.molecular-modelling.ch
+    - text: of the
+    - link "University of Lausanne" [ref=e96] [cursor=pointer]:
+      - /url: https://www.unil.ch
+    - text: and the
+    - link "SIB Swiss Institute of Bioinformatics" [ref=e97] [cursor=pointer]:
+      - /url: https://www.sib.swiss
+    - text: "|"
+    - link "Terms of use" [ref=e98] [cursor=pointer]:
+      - /url: "\nhttp://www.swisstargetprediction.ch/termsofuse.php"
+    - text: "|"
+    - link "SIB privacy policy" [ref=e99] [cursor=pointer]:
+      - /url: https://www.sib.swiss/privacy-policy
