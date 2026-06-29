@@ -39,3 +39,7 @@ data/figH/run.out
 # campaign: regenerable ligand SDFs + log (keep scores.csv)
 data/campaign/lig/
 data/campaign/run.out
+
+# reversedock: regenerable ligand SDFs + log (keep scores.csv + actives)
+data/reversedock/lig/
+data/reversedock/run.out
