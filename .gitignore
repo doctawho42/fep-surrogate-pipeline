@@ -35,3 +35,7 @@ data/figH/run.out
 
 # browser-automation session artifacts
 .playwright-mcp/
+
+# campaign: regenerable ligand SDFs + log (keep scores.csv)
+data/campaign/lig/
+data/campaign/run.out
