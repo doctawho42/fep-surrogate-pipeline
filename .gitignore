@@ -25,3 +25,6 @@ venv/
 
 # data caches (precomputed FEP pulls)
 data/cache/
+
+# downloaded receptor structures (regenerable)
+data/pockets/

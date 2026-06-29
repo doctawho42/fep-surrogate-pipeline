@@ -20,7 +20,7 @@ lint:
 	$(PY) -m ruff check src tests
 
 type:
-	$(PY) -m mypy src
+	$(PY) -m mypy src/bar
 
 check: lint type test
 
@@ -47,5 +47,8 @@ figF:
 
 figG:
 	$(PY) figs/make_figG.py
+
+figH:  # the target-finding gate (structure vs ligand); docking, cached to data/figH
+	PYTHONPATH=src $(PY) figs/make_figH.py
 
 all: check figA figE figC figD figB figF figG
