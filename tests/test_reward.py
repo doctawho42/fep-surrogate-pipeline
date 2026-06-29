@@ -2,7 +2,13 @@ from __future__ import annotations
 
 import numpy as np
 
-from bar.reward import edge_reward, risk_adjusted_reward
+from bar.reward import (
+    edge_reward,
+    realized_hitrate,
+    regret,
+    risk_adjusted_reward,
+    select_topk,
+)
 
 
 def test_sigma_zero_collapses_to_raw_value():
@@ -45,3 +51,31 @@ def test_sigma_se_overrides_sandwich():
     # negative override is clamped to 0 -> equals the kappa=0 (no-penalty) reward
     clamped = edge_reward(xf, xr, kappa=1.0, sigma_se=-5.0)
     assert abs(clamped - edge_reward(xf, xr, kappa=0.0)) < 1e-12
+
+
+def test_select_topk_picks_highest_rewards_in_order():
+    rewards = [0.1, 0.9, 0.3, 0.7]
+    sel = select_topk(rewards, 2)
+    assert list(sel) == [1, 3]
+
+
+def test_hitrate_is_fraction_above_threshold():
+    truth = np.array([0.0, 1.0, 2.0, 3.0])
+    assert realized_hitrate(truth, [2, 3], threshold=1.5) == 1.0
+    assert realized_hitrate(truth, [0, 1], threshold=1.5) == 0.0
+    assert realized_hitrate(truth, [1, 2], threshold=1.5) == 0.5
+    assert realized_hitrate(truth, [], threshold=1.5) == 0.0
+
+
+def test_regret_zero_for_true_topk_and_positive_otherwise():
+    truth = np.array([5.0, 1.0, 4.0, 2.0])
+    assert regret(truth, [0, 2]) == 0.0           # true top-2 = {5,4}
+    assert regret(truth, [1, 3]) > 0.0            # worst-2 selected
+
+
+def test_sigma_zero_makes_calibrated_selection_equal_raw():
+    # with σ=0 the calibrated reward == raw value ⇒ identical selection
+    values = np.array([0.2, 0.5, 0.1, 0.9])
+    raw = values
+    cal = np.array([risk_adjusted_reward(v, 0.0, kappa=3.0) for v in values])
+    assert list(select_topk(raw, 2)) == list(select_topk(cal, 2))

@@ -8,7 +8,7 @@ docs/superpowers/specs/2026-06-30-target-contour-design.md.
 from __future__ import annotations
 
 import numpy as np
-from numpy.typing import ArrayLike
+from numpy.typing import ArrayLike, NDArray
 
 from bar.estimator import bar_estimate
 
@@ -31,3 +31,31 @@ def edge_reward(x_f: ArrayLike, x_r: ArrayLike, kappa: float = 1.0,
     else:
         sigma = float(max(sigma_se, 0.0))
     return risk_adjusted_reward(-r.delta_f, sigma, kappa)
+
+
+def select_topk(rewards: ArrayLike, k: int) -> NDArray:
+    """Indices of the top-``k`` by reward (descending; ties broken by index)."""
+    r = np.asarray(rewards, dtype=float)
+    return np.argsort(-r, kind="stable")[:k]
+
+
+def realized_hitrate(truth: ArrayLike, selected: ArrayLike, threshold: float) -> float:
+    """Fraction of the ``selected`` whose true value is >= ``threshold`` (0 if none)."""
+    t = np.asarray(truth, dtype=float)
+    sel = np.asarray(selected, dtype=int)
+    if sel.size == 0:
+        return 0.0
+    return float(np.mean(t[sel] >= threshold))
+
+
+def regret(truth: ArrayLike, selected: ArrayLike) -> float:
+    """Simple regret = mean(true top-k) - mean(true value of selected k). >= 0; 0 iff
+    the selected set is a true top-k set."""
+    t = np.asarray(truth, dtype=float)
+    sel = np.asarray(selected, dtype=int)
+    k = sel.size
+    if k == 0:
+        return 0.0
+    best = float(np.sort(t)[::-1][:k].mean())
+    got = float(t[sel].mean())
+    return best - got
