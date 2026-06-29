@@ -27,11 +27,13 @@ dev = [
     "ruff==0.15.20",
     "mypy==2.1.0",
 ]
-# Fig A real-edge panel: real alchemical FEP data (benzene solvation) + parsers.
+# Figure data deps: real alchemical FEP (Fig A) + cheminformatics/ML (Fig F).
 fig = [
     "alchemtest==1.0.0",
     "alchemlyb==2.5.0",
     "pandas==3.0.4",
+    "rdkit==2026.3.3",
+    "scikit-learn==1.9.0",
 ]
 
 [tool.setuptools.packages.find]

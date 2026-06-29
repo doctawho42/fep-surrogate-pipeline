@@ -2,7 +2,7 @@
 # Uses the project conda env `fluor_screening` by default; override with `PY=...`.
 PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
 
-.PHONY: help test lint type check verify figA figE figC figD figB all
+.PHONY: help test lint type check verify figA figE figC figD figB figF all
 
 help:
 	@echo "make test    - run the pytest suite (theorem invariants)"
@@ -42,4 +42,7 @@ figD:
 figB:
 	$(PY) figs/make_figB.py
 
-all: check figA figE figC figD figB
+figF:
+	$(PY) figs/make_figF.py
+
+all: check figA figE figC figD figB figF

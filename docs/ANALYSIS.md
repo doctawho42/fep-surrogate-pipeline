@@ -305,6 +305,12 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
       uncertainty (sandwich+ensemble+Δ) vs split-conformal at equal ~0.90 marginal
       coverage: ours 2.2× sharper (3.76 vs 8.38), conditional max-bin-err 0.293 vs 0.734.
       Falsifier refuted; far-OOD all degrade (honest). PASS. See `docs/results_figB.md`.
+- [x] **Fig F (target-ID, STRETCH → case study):** `figs/make_figF.py`. Real ChEMBL
+      reverse screening, 2 regimes (8 diverse + 8 within-family aminergic GPCRs),
+      scaffold-disjoint. Recovery 0.84–0.97 vs random 0.12; P(binds) ECE 0.008; but
+      fingerprint model ≈ shape baseline in both regimes (falsifier holds) — ligand
+      similarity is the signal, beating it needs structure/physics. Motivating negative;
+      risk-ladder §8 case study. See `docs/results_figF.md`.
 - [ ] *(optional strengthen Fig A)* real **binding** edge panel:
       `alchemtest.amber.load_bace_example` (BACE1 RBFE) and/or OpenFE
       IndustryBenchmarks2024 Zenodo `u_ln.txt` archives (3 repeats → true-replicate se).
