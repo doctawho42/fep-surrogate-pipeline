@@ -81,10 +81,26 @@ A-optimal, and cost metrics. The weighting effect is genuinely second-order for 
 point estimate (unbiased GLS mean for any positive weights); its decisive value is
 calibration (Fig A).
 
-## Recommendation — ACCEPTED FALLBACK (risk-ladder §8)
-The efficiency leg is treated as **null in the controlled setting** (probe confirmed).
-Lean the paper on the **demonstrated** strengths — calibration (Fig A), theory
-(Theorems 1+3), chirality (Fig E), and gauge-identifiability (Fig D). The KG/Fisher-
-resistance machinery (`active.py`) is retained as correct infrastructure and reused by
-Fig D. A definitive efficiency claim would require the full integrated qKG + real
-networks + full baselines, deferred. **Do not claim Fig C as an efficiency win.**
+## The GLS argument is a CEILING — do not chase the qKG rematch
+The unbiasedness is a property of the **estimator** (GLS / Gauss–Markov), not the
+acquisition. So the sandwich-vs-naive weighting stays second-order for *ranking* even
+under an integrated qKG: qKG would fix finding #1 (better exploration than the myopic
+proxy) and likely reproduce "KG beats random ~2×", but the **weight choice remains
+second-order for the point estimate** because that is an estimator property. Expected
+value of the full qKG + real-networks + full-baseline rematch for the *weights* claim is
+therefore low; it is the "expand-infrastructure" trap and is **deferred unless a reviewer
+demands it.**
+
+## AL narrative pivot — Fig D + calibrated stopping (the honest Fig A → loop bridge)
+The sandwich's value in the loop is **not** through edge weights (GLS says so) but through:
+1. **Gauge-aware routing** — Fig D, done: KG = 0 on gauge/redundant directions, budget
+   concentrates on decision-relevant effective-resistance drops (a clean, mechanistic win).
+2. **Calibrated stopping** — correct per-edge uncertainty ⇒ you know *when the top-k is
+   resolved* and can stop; a miscalibrated (overconfident) posterior stops too early with
+   the wrong set. This is calibration (Fig A) paying off in the loop, and it does *not*
+   rely on the dead weights-efficiency claim. (Concrete stopping demo: optional next step.)
+
+So the paper's AL story = **Fig D + calibrated stopping**, with Fig C as an honest,
+GLS-explained negative — itself an insight, not a hole. **Do not claim Fig C as an
+efficiency win.** Risk-ladder §8 fallback accepted; floor (calibration + theory +
+chirality + gauge-ID) intact.
