@@ -290,8 +290,14 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
 - [x] **Fig E (chirality):** `src/bar/chiral.py` (9 tests) + `figs/make_figE.py`.
       Even readout collapse = 0.0e+00 (exact); `0o` cuts enantiomer ΔΔG MAE 11.7×
       (1.667→0.142). Kill criterion not triggered. See `docs/results_figE.md`.
-- [ ] **Fig C (active learning):** BAR-bottleneck head on a frozen trunk + gauge-aware
-      cost-aware KG over the FEP-edge graph; baselines; FEP-calls-to-top-k. (Uses `graph.py`.)
+- [~] **Fig C (active learning) — minimal-first done; efficiency NOT demonstrated.**
+      `src/bar/active.py` (gauge-aware cost-aware Sherman-Morrison KG, 6 tests) +
+      `figs/make_figC.py`. Honest finding: decision-focused KG < A-optimal (boundary
+      focus starves the global estimate); sandwich-vs-naive weighting ≈ null for
+      *ranking* (its value is *calibration*, Fig A — unbiased GLS mean for any weights).
+      Kill NOT triggered (conjunction; calibration passed); risk-ladder §8 fallback
+      intact. Definitive test (integrated qKG + real networks + full baselines)
+      **deferred pending decision**. See `docs/results_figC.md`.
 - [ ] *(optional strengthen Fig A)* real **binding** edge panel:
       `alchemtest.amber.load_bace_example` (BACE1 RBFE) and/or OpenFE
       IndustryBenchmarks2024 Zenodo `u_ln.txt` archives (3 repeats → true-replicate se).
