@@ -23,8 +23,11 @@ def risk_adjusted_reward(value: float, sigma: float, kappa: float = 1.0) -> floa
 def edge_reward(x_f: ArrayLike, x_r: ArrayLike, kappa: float = 1.0,
                 sigma_se: float | None = None) -> float:
     """Risk-adjusted reward for a BAR edge. value = ``-delta_f`` (more negative
-    ΔΔG = stronger binder = higher reward); ``sigma`` = sandwich se unless an
-    overriding standard error ``sigma_se`` (e.g. a learned-variance head) is given."""
+    ΔΔG = stronger binder = higher reward); sigma = sqrt(max(var_sandwich,0)) unless
+    an overriding standard error ``sigma_se`` (clamped to >= 0) is given."""
     r = bar_estimate(x_f, x_r)
-    sigma = float(np.sqrt(max(r.var_sandwich, 0.0))) if sigma_se is None else float(sigma_se)
+    if sigma_se is None:
+        sigma = float(np.sqrt(max(r.var_sandwich, 0.0)))
+    else:
+        sigma = float(max(sigma_se, 0.0))
     return risk_adjusted_reward(-r.delta_f, sigma, kappa)
