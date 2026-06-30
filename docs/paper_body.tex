@@ -176,9 +176,16 @@ RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); t
 reference reuses the same work samples (an internal consistency check). The genuine
 independent-replicate validation is Figure~\ref{fig:Arep}: across $1145$ real binding edges from
 the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} (3 independent replicates
-each), the reported MBAR/sandwich se is calibrated-to-conservative against the across-replicate
-truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; conservative on $72\%$ of edges and $28$
-of $34$ targets), i.e.\ it does not \emph{systematically} under-state real
+each), the reported MBAR se (equal to the sandwich $B/I^2$ to leading order, established in
+Fig~\ref{fig:A}A) is calibrated-to-conservative against the across-replicate
+truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; $1.25\times$ after correcting the
+$n{=}3$ small-sample SD bias, $\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$; conservative on $72\%$
+of edges and $28$ of $34$ targets).
+The three replicates are independent stochastic repeats of the sampling process from identical
+starting coordinates (OpenFE \texttt{protocol\_repeats}~\citep{baumann2025industrybenchmarks});
+the across-replicate SD therefore reflects sampling/convergence noise alone and is a
+\emph{lower bound} on full reproducibility (it excludes pose and system-preparation variance).
+The reported se does not \emph{systematically} under-state real
 reproducibility---the opposite of the learned head's ${\approx}7\times$ overconfidence at realistic budget (${\approx}5\times$ even at large budget).
 
 \begin{figure}[t]\centering
@@ -199,12 +206,17 @@ $[2.78,12.01]$; cf.\ the controlled-panel se range $1.08$--$2.65\times$ in panel
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_replicate_validation.pdf}
 \caption{\textbf{Independent-replicate validation on real binding edges.} Reported
-MBAR/sandwich se vs the across-replicate empirical SD over $1145$ OpenFE
+MBAR se (equal to the sandwich $B/I^2$ to leading order; Fig~\ref{fig:A}A) vs the
+across-replicate empirical SD over $1145$ OpenFE
 IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3 independent replicates
-each). (A) Points sit above the $y{=}x$ line: the reported se is conservative
-(reported/replicate-SD $1.41$, CI $[1.26,1.62]$). (B) Per-target pooled ratio: conservative on
-$28$ of $34$ targets, with one protonation-variant outlier overconfident. The reported bar is
-not \emph{systematically} overconfident---the opposite of the learned head.}
+each; seed/velocity-only repeats from identical starting coordinates via OpenFE
+\texttt{protocol\_repeats}, so the SD reflects sampling noise, a lower bound on full
+reproducibility). (A) Points sit above the $y{=}x$ line: the reported se is conservative
+(reported/replicate-SD $1.41$, CI $[1.26,1.62]$; $1.25\times$ after the $n{=}3$
+small-sample SD bias correction, $\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$). (B) Per-target
+pooled ratio: conservative on $28$ of $34$ targets, with one protonation-variant outlier
+overconfident. The reported bar is not \emph{systematically} overconfident---the opposite
+of the learned head.}
 \label{fig:Arep}
 \end{figure}
 
@@ -318,6 +330,13 @@ split-conformal recalibration to the same overconfident $\sigma$ recovers the tr
 $[-0.077,0.007]$; both indistinguishable from ours). The honest reading is that trustworthy
 decisions require \emph{some} proper calibration, which the physics $\sigma$ supplies at no
 calibration-set cost for the aleatoric term and, uniquely, as a differentiable graph weight.
+Note also that even a \emph{conservative} bar carries a decision cost: a systematic
+${\sim}1.25$--$1.41\times$ se inflation is itself a (safe-direction) miscalibration that, via
+the LCB rule $\mu-\kappa\sigma\ge\tau$, biases toward late stopping and under-commit. It errs
+safe against sampling noise; and because the independent-replicate SD is itself a lower bound
+on full reproducibility (Section~\ref{sec:bar}, Figure~\ref{fig:Arep}), the inflation may be
+closer to neutral against the true run-to-run spread once pose and system-preparation variance
+are included.
 
 \paragraph{Sharpness: not sharper on real out-of-distribution residuals.} A natural hope is
 that a decomposed, adaptive $\sigma$ yields tighter intervals than a flat conformal band at
@@ -432,8 +451,14 @@ ensemble plus a scalar aleatoric floor (there is no learned force-field-correcti
 three-way decomposition of the synthetic illustration is not reproduced on real data). The
 binding-edge se is validated against the three independent replicates of the OpenFE
 IndustryBenchmarks2024 (Figure~\ref{fig:Arep}): in aggregate it is conservative by
-$\sim$$1.4\times$, though calibration is heterogeneous per system ($28$ of $34$ targets
-conservative; one protonation-variant outlier overconfident). The
+$\sim$$1.4\times$ (raw ratio), or $\sim$$1.25\times$ after correcting the $n{=}3$
+small-sample SD bias ($\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$), though calibration is
+heterogeneous per system ($28$ of $34$ targets conservative; one protonation-variant outlier
+overconfident). The three replicates are seed/velocity-only repeats from identical starting
+coordinates (OpenFE \texttt{protocol\_repeats}), so the across-replicate SD reflects
+sampling/convergence noise and is a lower bound on full reproducibility (excluding pose and
+system-preparation variance); the $\sim$$1.25$--$1.41\times$ conservatism may therefore be
+closer to neutral against real reproducibility. The
 gauge-acquisition and stopping experiments are controlled simulations. The generation audit is a
 single $\sigma$-varying target; the conclusion that $\sigma$ tracks novelty rather than quality
 should be tested across more chemotypes. Finally, a structure-based (docking) reverse-screen we
