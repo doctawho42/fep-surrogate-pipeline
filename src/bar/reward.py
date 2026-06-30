@@ -117,3 +117,27 @@ def commit_correctness_curve(muhat: ArrayLike, sigma: ArrayLike, mu_true: ArrayL
         committed = score >= tau
         out[float(lev)] = float(np.mean(mt[committed] >= tau)) if committed.sum() > 0 else 1.0
     return out
+
+
+def commit_precision_at_volume(muhat: ArrayLike, sigma: ArrayLike, mu_true: ArrayLike,
+                               tau: float, ns: Sequence[int]) -> dict[int, float]:
+    """Decision quality at MATCHED commit volume. Rank candidates by the standardized safety
+    margin ``s = (muhat - tau)/sigma`` (monotone in the LCB: committing the top-``n`` by ``s``
+    is exactly the LCB-threshold rule admitting ``n`` candidates). For each ``n`` in ``ns``,
+    commit the top-``n`` and return precision = fraction of committed whose true value
+    ``mu_true >= tau``. Because ``n`` is held equal across methods, a method cannot win by
+    abstaining (committing fewer edges) — this removes the abstention artifact of the
+    per-confidence curve. A constant ``sigma`` reduces this to ranking by ``muhat`` (the raw
+    baseline)."""
+    mh = np.asarray(muhat, dtype=float)
+    sg = np.maximum(np.asarray(sigma, dtype=float), 1e-9)
+    mt = np.asarray(mu_true, dtype=float)
+    score = (mh - tau) / sg
+    order = np.argsort(-score, kind="stable")
+    out: dict[int, float] = {}
+    for n in ns:
+        nn = int(min(n, mt.size))
+        if nn <= 0:
+            continue
+        out[nn] = float(np.mean(mt[order[:nn]] >= tau))
+    return out

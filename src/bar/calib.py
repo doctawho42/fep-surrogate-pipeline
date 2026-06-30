@@ -70,3 +70,52 @@ def conformal_q(residuals: NDArray, sigma: NDArray, alpha: float) -> float:
 def coverage(y: NDArray, mu: NDArray, sigma: NDArray, q: float) -> float:
     """Fraction of points within mu +/- q*sigma."""
     return float(np.mean(np.abs(np.asarray(y) - np.asarray(mu)) <= q * np.asarray(sigma)))
+
+
+# --- Recalibration baselines (referee foils) ------------------------------------------
+# Each fits on a held-out calibration fold and returns a *new sigma for the SAME mean*.
+# They are the standard, cheap recalibrators a practitioner would apply to ANY uncertainty
+# head (incl. an overconfident MVE), so the honest question is whether the physics-derived
+# decomposed sigma beats a properly-recalibrated learned sigma, not just a raw one.
+
+def temperature_scale(residuals: NDArray, sigma_cal: NDArray) -> float:
+    """Single multiplicative factor T (variance-temperature) minimizing Gaussian NLL on the
+    cal fold: closed form T = sqrt(mean((res/sigma)^2)). Recalibrated sigma_test = T*sigma_test."""
+    r = np.asarray(residuals, dtype=float)
+    s = np.maximum(np.asarray(sigma_cal, dtype=float), 1e-9)
+    return float(np.sqrt(np.mean((r / s) ** 2)))
+
+
+def platt_scale(residuals: NDArray, sigma_cal: NDArray) -> tuple[float, float]:
+    """Affine-in-log-sigma recalibration: fit log(sigma') = a*log(sigma)+b by Gaussian NLL.
+    Returns (a, b); apply as sigma' = exp(b) * sigma**a. Generalizes temperature (a=1)."""
+    from scipy.optimize import minimize  # local import; scipy is a core dep
+
+    r = np.asarray(residuals, dtype=float)
+    ls = np.log(np.maximum(np.asarray(sigma_cal, dtype=float), 1e-9))
+    r2 = r ** 2
+
+    def nll(theta: NDArray) -> float:
+        a, b = float(theta[0]), float(theta[1])
+        logv = 2.0 * (a * ls + b)  # log(sigma'^2)
+        return float(np.mean(0.5 * logv + 0.5 * r2 / np.exp(logv)))
+
+    res = minimize(nll, x0=np.array([1.0, 0.0]), method="Nelder-Mead")
+    a, b = float(res.x[0]), float(res.x[1])
+    return a, b
+
+
+def isotonic_sigma(residuals: NDArray, sigma_cal: NDArray):
+    """Monotone (isotonic) map from base sigma to empirical error magnitude, fit on the cal
+    fold. Returns a callable sigma_test -> recalibrated sigma. Non-parametric analogue of
+    temperature/Platt (lets the sigma->error relation bend), using sklearn (already a dep)."""
+    from sklearn.isotonic import IsotonicRegression
+
+    s = np.asarray(sigma_cal, dtype=float)
+    r = np.abs(np.asarray(residuals, dtype=float))
+    iso = IsotonicRegression(out_of_bounds="clip", y_min=1e-6).fit(s, r)
+
+    def apply(sigma_test: NDArray) -> NDArray:
+        return np.maximum(iso.predict(np.asarray(sigma_test, dtype=float)), 1e-6)
+
+    return apply

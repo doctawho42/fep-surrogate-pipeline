@@ -60,6 +60,12 @@ figJ:  # target-contour Increment 2a: amortized reward commit-on-OOD gate
 figK:  # target-contour Increment 3a: calibrated-generation GFlowNet gate (honest negative)
 	PYTHONPATH=src $(PY) figs/make_figK.py
 
+figBreal:  # honest audit: Fig B on REAL OOD FEP residuals (not sharper; fair Mondrian foil)
+	PYTHONPATH=src $(PY) figs/make_figB_real.py
+
+graphical:  # graphical abstract (vector schematic, every label exact)
+	$(PY) figs/make_graphical_abstract.py
+
 all: check figA figE figC figD figB figF figG
 
 nioch:  # NIOCH cage screen report (operational deliverable, not a paper claim)

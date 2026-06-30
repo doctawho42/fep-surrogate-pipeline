@@ -1,50 +1,41 @@
-# Fig J — amortized calibrated reward (Increment 2a): PASS
+# Fig J — amortized calibrated commit on OOD: honest re-audit
 
-Spec: `docs/superpowers/specs/2026-06-30-trunk-amortized-reward-design.md`. Does the Fig I
-commit-to-synthesis trust survive AMORTIZATION to unseen molecules? A deep-ensemble trunk
-maps congeneric edges -> (ΔΔĜ, σ_total = conformal·sqrt(epistemic²+aleatoric²)
-(aleatoric ≈ 0.4 kcal/mol benchmark label noise)). Trained on
-the public OpenFF protein-ligand-benchmark — **labels are EXPERIMENTAL ΔΔG** (from the
-benchmark's measured affinities, not converged FEP). Tested on GENUINELY scaffold-disjoint
-(OOD) edges (an edge is OOD if EITHER endpoint's Murcko scaffold is held out). `make figJ`.
+Trunk maps congeneric edges -> (ΔΔĜ, σ_total = conformal·√(epistemic²+aleatoric²)) on the
+public OpenFF protein-ligand benchmark (EXPERIMENTAL ΔΔG labels); tested on both-endpoint
+scaffold-disjoint (OOD) edges, 8 seeds. `make figJ`. Two honest questions the
+earlier draft skipped: (A) decision quality at MATCHED commit volume (no abstention escape),
+(B) calibration vs proper RECALIBRATION baselines (not just a raw overconfident MVE).
 
-## PRIMARY gate — commit-trustworthiness on OOD: PASS
-Actual commit-correctness per claimed confidence, WITH the commit count n (read these
-together — a high `actual` at n≈0 is abstention, not correctness):
+## PANEL A — matched commit volume (the abstention-proof gate)
+Rank candidates by the standardized margin (μ̂−τ)/σ and commit the top-n; compare commit
+precision at the SAME n. Precision at commit-fraction 25% (random base rate 0.50):
+trunk-σ 0.674 · raw-μ̂ 0.680 · MVE-σ 0.504.
+trunk−raw -0.006, CI [-0.016, +0.007] -> **TIE: σ-ranking does NOT beat raw-μ̂ ranking at matched volume**.
+This is the honest Gauss-Markov-style ceiling: at equal commit volume the *choice* of σ does
+not reliably change WHICH molecules clear the bar — calibration is not a better-ranking tool.
 
-| claimed 1−α | trunk actual | n_trunk | MVE actual | n_mve |
-|--:|--:|--:|--:|--:|
-| 0.50 | 0.597 | 81.8 | 0.516 | 112.6 |
-| 0.60 | 0.674 | 29.6 | 0.519 | 110.4 |
-| 0.70 | 0.568 | 6.4 | 0.515 | 107.4 |
-| 0.80 | 1.000 | 0.6 | 0.511 | 106.2 |
-| 0.90 | 1.000 | 0.0 | 0.510 | 105.2 |
-| 0.95 | 1.000 | 0.0 | 0.511 | 105.0 |
+## PANEL B — calibration, σ isolated on the SAME (trunk) mean
+All four use the trunk's ensemble mean; only σ differs, so this measures σ calibration
+alone. Actual commit-correctness per claimed 1−α (0.50, 0.60, 0.70, 0.80, 0.90, 0.95):
+- decomposed conformal σ (ours): 0.61 · 0.69 · 0.67 · 1.00 · 1.00 · 1.00
+- epistemic-only σ (overconfident): 0.61 · 0.62 · 0.64 · 0.66 · 0.68 · 0.67
+- + temperature recalibration: 0.61 · 0.68 · 0.73 · 0.85 · 0.90 · 1.00
+- + split-conformal recalibration: 0.61 · 0.71 · 0.86 · 0.96 · 1.00 · 1.00
 
-Honest reading:
-- Where the trunk COMMITS: at 1−α = 0.50–0.60 (n ≈ 82/30) it is calibrated/conservative
-  (actual ≥ claimed); at 0.70 the commit bucket is small (n ≈ 6) and mildly overconfident
-  (0.57 vs 0.70). The trustworthiness claim rests on the 0.50–0.60 volume and the
-  abstain-vs-MVE contrast, not on every bucket being perfectly calibrated.
-- At higher required confidence (0.80–0.95) the trunk ABSTAINS (n ≤ 1, effectively abstains) — appropriately
-  conservative on hard OOD; the 1.000 there is the no-commit value, not correctness.
-- The overconfident MVE foil OVER-COMMITS at every level and is only ~base-rate correct
-  (claim 0.95, deliver ~0.51): its σ is too small to ever abstain.
+Mean shortfall (claimed−actual): ours -0.085, overconfident +0.097, temperature -0.052, conformal -0.114.
+overconfident−ours +0.182 CI[+0.132,+0.225] (the raw epistemic-only σ over-claims); temperature−ours +0.034 CI[-0.018,+0.081]; conformal−ours -0.029 CI[-0.077,+0.007].
 
-Mean shortfall (claimed−actual): trunk -0.065, MVE +0.228; MVE−trunk diff +0.293, CI [+0.247, +0.334] -> **PASS**. The calibrated decomposed σ makes the amortized reward SAFE on OOD — it
-commits when confident and abstains when not, while a free learned-σ (MVE) head commits
-duds. The Fig I commit trust survives amortization: calibration is for decisions, and it
-transfers to unseen molecules.
+Honest reading: the overconfident epistemic-only σ over-claims, and standard recalibration (temperature / split-conformal) of the SAME mean RECOVERS the trustworthiness — so the decomposed physics σ is NOT uniquely calibrated; its advantage is that it needs no calibration set for the aleatoric term (Fig A) and is differentiable into the acquisition graph.
 
 ## SECONDARY — 0o chirality contract: PASS
-Even (ECFP useChirality=False) edge feature collapses for an enantiomer pair; the 0o channel
-separation median |Δ| = 0.31. Chirality rides on the 0o channel only (inv. #5/#6).
+Even (ECFP useChirality=False) edge feature collapses for an enantiomer pair; 0o separation
+median |Δ| = 0.31 (chirality rides on the 0o channel only).
 
 ## Honest scope
-Genuine both-endpoint scaffold-disjoint OOD. Labels are experimental ΔΔG (target = relative
-affinity, not computed FEP). High-confidence rows are abstention (n≈0), so the demonstration
-rests on the real 0.50–0.70 commits + the abstain-vs-commit-duds contrast, not high-confidence
-commit volume.
+Genuine both-endpoint scaffold-disjoint OOD; experimental ΔΔG labels (not computed FEP). The
+matched-volume panel removes the earlier draft's abstention artifact (high-confidence cells
+were n≈0). Net: calibration buys TRUST (knowing when a commit is safe), not a better commit
+RANKING — consistent with the contour's decision-not-ranking finding.
 
 ## Verdict
-Primary **PASS**; chirality **PASS**. Amortized calibrated reward is sound + chirality-complete -> Increment 2b (richer trunk) / Increment 3 (GFlowNet).
+calibration trustworthy; matched-volume ranking TIE.
