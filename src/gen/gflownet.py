@@ -34,8 +34,12 @@ class TabularTB:
             if len(acts) == 1:
                 state = acts[0][1]           # deterministic: forward logp = 0
                 continue
-            _, logp = self._logp(state)      # _logp recomputes acts internally; fine
-            i = int(torch.multinomial(torch.exp(logp.detach()), 1, generator=gen).item())
+            ids = [self.idx[(state, ch)] for ch, _ in acts]
+            # use softmax directly (numerically stable; avoids exp(log_softmax) NaN at
+            # large logit magnitudes after many training steps)
+            probs = torch.softmax(self.logit[ids].detach(), dim=0)
+            logp = torch.log_softmax(self.logit[ids], dim=0)
+            i = int(torch.multinomial(probs, 1, generator=gen).item())
             logpf = logpf + logp[i]
             state = acts[i][1]
         return state, logpf
