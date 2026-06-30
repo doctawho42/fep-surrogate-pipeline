@@ -88,6 +88,8 @@ def linear_readout_reward(coords: ArrayLike, weights: ArrayLike,
     Thm 4). ``weights`` must match the readout length (6 even, or 7 with ``0o``)."""
     feats = chiral_readout(coords, include_0o=include_0o)
     w = np.asarray(weights, dtype=float)
+    if w.ndim != 1:
+        raise ValueError(f"weights must be 1-D, got shape {w.shape}")
     if w.shape[0] != feats.shape[0]:
         raise ValueError(f"weights length {w.shape[0]} != readout length {feats.shape[0]}")
     return float(w @ feats)

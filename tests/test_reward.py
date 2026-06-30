@@ -136,3 +136,12 @@ def test_reward_separates_enantiomers_with_0o():
     rM = linear_readout_reward(coords, w, include_0o=True)
     rP = linear_readout_reward(mirror, w, include_0o=True)
     assert abs(rM - rP) > 1e-6  # 0o channel restores the chirality bit
+
+
+def test_reward_rejects_wrong_weight_length():
+    rng = np.random.default_rng(2)
+    coords = rng.normal(size=(4, 3))
+    with pytest.raises(ValueError):  # readout len 7 (with 0o) != 5
+        linear_readout_reward(coords, np.ones(5), include_0o=True)
+    with pytest.raises(ValueError):  # 2-D weights rejected by the ndim guard
+        linear_readout_reward(coords, np.ones((1, 7)), include_0o=True)
