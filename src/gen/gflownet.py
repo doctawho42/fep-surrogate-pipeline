@@ -28,7 +28,7 @@ class TabularTB:
         return acts, torch.log_softmax(self.logit[ids], dim=0)
 
     def _rollout(self, gen: torch.Generator) -> tuple[str, torch.Tensor]:
-        state, logpf = "", torch.zeros(1)
+        state, logpf = "", torch.zeros(())
         while not self.trie.is_terminal(state):
             acts, logp = self._logp(state)
             i = int(torch.multinomial(torch.exp(logp.detach()), 1, generator=gen).item())
@@ -42,11 +42,11 @@ class TabularTB:
         opt = torch.optim.Adam([self.logit, self.logZ], lr=lr)
         for _ in range(steps):
             opt.zero_grad()
-            loss = torch.zeros(1)
+            loss = torch.zeros(())
             for _ in range(batch):
                 term, logpf = self._rollout(gen)
-                lr_term = log_reward[self.trie.terminal_smiles[term]]
-                loss = loss + (self.logZ + logpf - lr_term) ** 2
+                log_rew = log_reward[self.trie.terminal_smiles[term]]
+                loss = loss + (self.logZ + logpf - log_rew) ** 2
             (loss / batch).backward()
             opt.step()
         return self
