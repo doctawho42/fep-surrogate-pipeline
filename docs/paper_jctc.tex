@@ -1,0 +1,39 @@
+% JCTC (ACS, J. Chem. Theory Comput.) submission build.
+% Shared body: paper_body.tex (class-agnostic). Generic/arXiv build: paper_draft.tex.
+% Compile: latexmk -pdf paper_jctc.tex   (uses achemso.cls + achemso.bst)
+\documentclass[journal=jctcce,manuscript=article]{achemso}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\graphicspath{{../figs/}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\DeclareMathOperator{\Var}{Var}
+\newcommand{\dF}{\Delta F}
+\newcommand{\dFh}{\widehat{\Delta F}}
+\newcommand{\ddG}{\Delta\Delta G}
+
+\author{First Author}
+\affiliation{Affiliation to be completed}
+\email{author@institution.edu}
+\title{Read the Uncertainty off the Physics: A Differentiable BAR Bottleneck for Relative
+Binding Free Energy, and an Honest Audit of Where Calibration Helps}
+\abbreviations{RBFE,BAR,MBAR,FEP}
+\keywords{relative binding free energy, Bennett acceptance ratio, uncertainty quantification,
+calibration, active learning}
+
+\begin{document}
+
+\begin{tocentry}
+\includegraphics[width=\linewidth]{graphical_abstract.pdf}
+\end{tocentry}
+
+\input{paper_body}
+
+\bibliography{refs}
+\end{document}

@@ -66,6 +66,12 @@ figBreal:  # honest audit: Fig B on REAL OOD FEP residuals (not sharper; fair Mo
 graphical:  # graphical abstract (vector schematic, every label exact)
 	$(PY) figs/make_graphical_abstract.py
 
+paper:  # generic / arXiv build (article class); shared body in docs/paper_body.tex
+	cd docs && latexmk -pdf -interaction=nonstopmode paper_draft.tex
+
+jctc:  # JCTC (ACS) submission build (achemso class); same shared body
+	cd docs && latexmk -pdf -interaction=nonstopmode paper_jctc.tex
+
 all: check figA figE figC figD figB figF figG
 
 nioch:  # NIOCH cage screen report (operational deliverable, not a paper claim)
