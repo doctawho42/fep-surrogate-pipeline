@@ -1,3 +1,5 @@
+"""Invariants for the calibrated-reward module (`bar.reward`): risk-adjusted LCB,
+selection utilities, the bootstrap KILL statistic, and the 0o chirality contract."""
 from __future__ import annotations
 
 import numpy as np
