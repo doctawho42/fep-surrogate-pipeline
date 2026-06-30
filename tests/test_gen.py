@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import math
+from collections import Counter
+
 import numpy as np
 
 from gen.env import END, LeafRewards, LigandTrie, precompute_leaf_rewards, target_ligands
+from gen.gflownet import TabularTB
 
 
 def test_trie_reaches_exactly_the_input_ligands():
@@ -49,3 +53,23 @@ def test_precompute_leaf_rewards_fills_all_arms():
     assert all(s >= 0 for s in lr.sigma_mve.values())
     # the trunk's sigma_total varies across ligands (some OOD) — not a constant
     assert np.std(list(lr.sigma_total.values())) > 1e-6
+
+
+def test_tb_samples_proportional_to_reward():
+    # toy trie with known rewards: the trained sampler must match the Boltzmann distribution
+    trie = LigandTrie(["AA", "AB", "BA"])
+    log_reward = {"AA": math.log(1.0), "AB": math.log(3.0), "BA": math.log(2.0)}
+    tb = TabularTB(trie, seed=0).train(log_reward, steps=1500, lr=0.1, batch=16, seed=0)
+    c = Counter(tb.sample_terminals(3000, seed=1))
+    freq = {k: c[k] / 3000 for k in log_reward}
+    target = {"AA": 1 / 6, "AB": 3 / 6, "BA": 2 / 6}  # ∝ reward
+    for k in target:
+        assert abs(freq[k] - target[k]) < 0.06
+
+
+def test_tb_sampler_is_diverse_not_collapsed():
+    trie = LigandTrie(["AA", "AB", "BA", "BB"])
+    log_reward = dict.fromkeys(["AA", "AB", "BA", "BB"], 0.0)  # uniform reward
+    tb = TabularTB(trie, seed=0).train(log_reward, steps=800, lr=0.1, batch=16, seed=0)
+    c = Counter(tb.sample_terminals(2000, seed=2))
+    assert len(c) == 4  # covers all modes, no collapse
