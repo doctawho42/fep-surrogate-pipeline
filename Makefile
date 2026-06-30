@@ -63,6 +63,9 @@ figK:  # target-contour Increment 3a: calibrated-generation GFlowNet gate (hones
 figBreal:  # honest audit: Fig B on REAL OOD FEP residuals (not sharper; fair Mondrian foil)
 	PYTHONPATH=src $(PY) figs/make_figB_real.py
 
+figArep:  # independent-replicate validation of the reported se (OpenFE IndustryBenchmarks2024)
+	PYTHONPATH=src $(PY) figs/make_figA_replicates.py
+
 graphical:  # graphical abstract (vector schematic, every label exact)
 	$(PY) figs/make_graphical_abstract.py
 

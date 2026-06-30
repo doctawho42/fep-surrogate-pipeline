@@ -20,8 +20,9 @@ uncertainty tracks chemical novelty, not low quality. What calibration \emph{doe
 trust: an overconfident $\sigma$ silently corrupts stop/commit decisions, while any properly
 calibrated $\sigma$---including the physics one, at no calibration-set cost for the aleatoric
 term---makes them reliable. We scope these claims to the regimes tested (a single decomposed $\sigma$, one public
-benchmark, controlled simulations; the real-binding calibration is an internal bootstrap check
-pending independent-replicate validation), and we state what would overturn them: where the
+benchmark, controlled simulations; the real-binding aleatoric calibration is validated against independent
+replicates---$1145$ edges, conservative by $\sim$$1.4\times$ and never systematically
+overconfident), and we state what would overturn them: where the
 uncertainty tracks \emph{quality} rather than chemical novelty---diverse-library lead
 optimization rather than congeneric de-novo design---a calibrated reward should help generation,
 exactly as the measured $\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$ predicts. We prove four
@@ -165,9 +166,14 @@ and for free. Here the learned head is $5$--$12\times$ overconfident (reported s
 $0.08$--$0.18\times$ the truth, regime-dependent). Bare $1/I$ is shown only as the
 information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
 baseline anyone reports. Figure~\ref{fig:A}B checks calibration on real protein--ligand BACE1
-RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); we note this
-bootstrap reference reuses the same work samples and is therefore an internal consistency check,
-not an independent-replicate validation (a limitation, not a headline).
+RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); this bootstrap
+reference reuses the same work samples (an internal consistency check). The genuine
+independent-replicate validation is Figure~\ref{fig:Arep}: across $1145$ real binding edges from
+the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} (3 independent replicates
+each), the reported MBAR/sandwich se is calibrated-to-conservative against the across-replicate
+truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; conservative on $72\%$ of edges and $28$
+of $34$ targets), i.e.\ it does not \emph{systematically} under-state real
+reproducibility---the opposite of the learned head's $5$--$12\times$ overconfidence.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
@@ -178,6 +184,18 @@ variance from one label); $1/I$ is the info-equality plug-in. (B) Real FEP edges
 binding (filled) and benzene solvation---sandwich tracks bootstrap truth (an internal check)
 while $1/I$ is off $2$--$12\times$.}
 \label{fig:A}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figA_replicate_validation.pdf}
+\caption{\textbf{Independent-replicate validation on real binding edges.} Reported
+MBAR/sandwich se vs the across-replicate empirical SD over $1145$ OpenFE
+IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3 independent replicates
+each). (A) Points sit above the $y{=}x$ line: the reported se is conservative
+(reported/replicate-SD $1.41$, CI $[1.26,1.62]$). (B) Per-target pooled ratio: conservative on
+$28$ of $34$ targets, with one protonation-variant outlier overconfident. The reported bar is
+not \emph{systematically} overconfident---the opposite of the learned head.}
+\label{fig:Arep}
 \end{figure}
 
 \section{From a variance to a graph: gauge-aware acquisition}\label{sec:gauge}
@@ -402,8 +420,10 @@ The sandwich is aleatoric-only and conditional on correctly sampled ensembles; s
 force-field bias is outside it, and the out-of-distribution behavior we audit rests on an
 ensemble plus a scalar aleatoric floor (there is no learned force-field-correction head, so the
 three-way decomposition of the synthetic illustration is not reproduced on real data). The
-binding-edge calibration (Figure~\ref{fig:A}B) uses a bootstrap of the same works rather than
-independent replicates; an OpenFE-style three-replicate validation is the natural next step. The
+binding-edge se is validated against the three independent replicates of the OpenFE
+IndustryBenchmarks2024 (Figure~\ref{fig:Arep}): in aggregate it is conservative by
+$\sim$$1.4\times$, though calibration is heterogeneous per system ($28$ of $34$ targets
+conservative; one protonation-variant outlier overconfident). The
 gauge-acquisition and stopping experiments are controlled simulations. The generation audit is a
 single $\sigma$-varying target; the conclusion that $\sigma$ tracks novelty rather than quality
 should be tested across more chemotypes. Finally, a structure-based (docking) reverse-screen we
@@ -424,5 +444,6 @@ uncertainty would track quality rather than novelty, that verdict should be revi
 
 \paragraph{Reproducibility.} Every figure regenerates from one command; all theorem constants
 are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF protein--ligand
-benchmark, ChEMBL). Recalibration baselines use temperature scaling~\citep{guo2017calibration}
+benchmark, the OpenFE IndustryBenchmarks2024 replicate set~\citep{baumann2025industrybenchmarks},
+ChEMBL). Recalibration baselines use temperature scaling~\citep{guo2017calibration}
 and isotonic regression~\citep{zadrozny2002isotonic}.
