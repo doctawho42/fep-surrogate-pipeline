@@ -2,7 +2,7 @@
 # Uses the project conda env `fluor_screening` by default; override with `PY=...`.
 PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
 
-.PHONY: help test lint type check verify figA figE figC figD figB figF figG figH figI nioch reversedock all
+.PHONY: help test lint type check verify figA figE figC figD figB figF figG figH figI figJ nioch reversedock all
 
 help:
 	@echo "make test    - run the pytest suite (theorem invariants)"
@@ -53,6 +53,9 @@ figH:  # the target-finding gate (structure vs ligand); docking, cached to data/
 
 figI:  # target-contour Increment 1: calibrated commit-to-synthesis gate + 0o chirality
 	PYTHONPATH=src $(PY) figs/make_figI.py
+
+figJ:  # target-contour Increment 2a: amortized reward commit-on-OOD gate
+	PYTHONPATH=src $(PY) figs/make_figJ.py
 
 all: check figA figE figC figD figB figF figG
 
