@@ -7,6 +7,8 @@ docs/superpowers/specs/2026-06-30-target-contour-design.md.
 """
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
@@ -95,3 +97,23 @@ def linear_readout_reward(coords: ArrayLike, weights: ArrayLike,
     if w.shape[0] != feats.shape[0]:
         raise ValueError(f"weights length {w.shape[0]} != readout length {feats.shape[0]}")
     return float(w @ feats)
+
+
+def commit_correctness_curve(muhat: ArrayLike, sigma: ArrayLike, mu_true: ArrayLike,
+                             tau: float, levels: Sequence[float]) -> dict[float, float]:
+    """Commit-to-synthesis correctness per claimed confidence. Commit candidate j iff its
+    lower-confidence bound risk_adjusted_reward(muhat_j, sigma_j, z_(1-alpha)) >= tau; return,
+    per level (1-alpha), the fraction of committed candidates whose true value mu_true >= tau
+    (1.0 if none committed). Calibrated sigma -> actual >= claimed; overconfident -> actual <
+    claimed."""
+    from scipy.stats import norm
+    mh = np.asarray(muhat, dtype=float)
+    sg = np.asarray(sigma, dtype=float)
+    mt = np.asarray(mu_true, dtype=float)
+    out: dict[float, float] = {}
+    for lev in levels:
+        z = float(norm.ppf(lev))
+        score = mh - z * sg  # == risk_adjusted_reward(mh, sg, z), vectorised
+        committed = score >= tau
+        out[float(lev)] = float(np.mean(mt[committed] >= tau)) if committed.sum() > 0 else 1.0
+    return out

@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 
 from bar.reward import (
+    commit_correctness_curve,
     edge_reward,
     linear_readout_reward,
     realized_hitrate,
@@ -147,3 +148,25 @@ def test_reward_rejects_wrong_weight_length():
         linear_readout_reward(coords, np.ones(5), include_0o=True)
     with pytest.raises(ValueError):  # 2-D weights rejected by the ndim guard
         linear_readout_reward(coords, np.ones((1, 7)), include_0o=True)
+
+
+def test_commit_correctness_curve_perfect_sigma_is_trustworthy():
+    # zero-noise estimates (sigma~0): commit exactly the true winners -> correctness 1.0
+    rng = np.random.default_rng(0)
+    mu_true = rng.uniform(0, 4, 500)
+    muhat = mu_true.copy()
+    sigma = np.full(500, 1e-9)
+    tau = float(np.quantile(mu_true, 0.75))
+    curve = commit_correctness_curve(muhat, sigma, mu_true, tau, [0.5, 0.9])
+    assert curve[0.9] == 1.0 and curve[0.5] == 1.0
+
+
+def test_commit_correctness_curve_overconfident_underdelivers():
+    # biased-noisy estimates with a too-small sigma -> commits some true non-winners
+    rng = np.random.default_rng(1)
+    mu_true = rng.uniform(0, 4, 2000)
+    muhat = mu_true + rng.normal(0, 1.0, 2000)  # real error sd = 1.0
+    tau = float(np.quantile(mu_true, 0.75))
+    honest = commit_correctness_curve(muhat, np.full(2000, 1.0), mu_true, tau, [0.9])
+    overconf = commit_correctness_curve(muhat, np.full(2000, 0.15), mu_true, tau, [0.9])
+    assert overconf[0.9] < honest[0.9]  # claiming 0.9 with too-small sigma under-delivers
