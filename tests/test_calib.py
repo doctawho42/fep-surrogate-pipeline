@@ -13,6 +13,7 @@ def test_ensemble_predicts_and_spreads():
     mu, sd = ensemble_predict(nets, X)
     assert mu.shape == (200,) and sd.shape == (200,)
     assert np.all(sd >= 0)
+    assert sd.mean() > 1e-3  # members actually disagree (real epistemic spread)
     # in-sample fit is decent
     assert np.corrcoef(mu, y)[0, 1] > 0.9
 

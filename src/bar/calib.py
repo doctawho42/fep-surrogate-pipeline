@@ -23,7 +23,7 @@ def train_ensemble(X: NDArray, y: NDArray, n_members: int = 8, epochs: int = 300
     """Bootstrap deep ensemble of small MLPs (epistemic uncertainty = member spread)."""
     Xa = np.asarray(X, dtype=np.float32)
     ya = np.asarray(y, dtype=np.float32)
-    mu, sd = Xa.mean(0), Xa.std(0) + 1e-6
+    x_mean, x_std = Xa.mean(0), Xa.std(0) + 1e-6
     nets: list[tuple[torch.nn.Module, NDArray, NDArray]] = []
     for m in range(n_members):
         seed = seed0 + m
@@ -31,7 +31,7 @@ def train_ensemble(X: NDArray, y: NDArray, n_members: int = 8, epochs: int = 300
         opt = torch.optim.Adam(net.parameters(), lr=5e-3, weight_decay=1e-4)
         rng = np.random.default_rng(seed)
         idx = rng.integers(0, len(Xa), len(Xa))  # bootstrap resample
-        xt = torch.tensor((Xa[idx] - mu) / sd)
+        xt = torch.tensor((Xa[idx] - x_mean) / x_std)
         yt = torch.tensor(ya[idx, None])
         lossf = torch.nn.MSELoss()
         for _ in range(epochs):
@@ -39,7 +39,7 @@ def train_ensemble(X: NDArray, y: NDArray, n_members: int = 8, epochs: int = 300
             loss = lossf(net(xt), yt)
             loss.backward()
             opt.step()
-        nets.append((net, mu, sd))
+        nets.append((net, x_mean, x_std))
     return nets
 
 
@@ -48,9 +48,9 @@ def ensemble_predict(
 ) -> tuple[NDArray, NDArray]:
     """Return (mean, std) over ensemble members for inputs X."""
     Xa = np.asarray(X, dtype=np.float32)
-    preds = []
-    for net, mu, sd in nets:
-        xt = torch.tensor((Xa - mu) / sd)
+    preds: list[NDArray] = []
+    for net, x_mean, x_std in nets:
+        xt = torch.tensor((Xa - x_mean) / x_std)
         with torch.no_grad():
             preds.append(net(xt).numpy().ravel())
     P = np.stack(preds)
