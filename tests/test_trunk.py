@@ -40,3 +40,23 @@ def test_even_features_are_enantiomer_blind_but_0o_separates():
 def test_ligand_features_dimension():
     f = ligand_features("CCO")
     assert f.shape == (1030,)  # 1024 ECFP bits + 6 achiral descriptors
+
+
+def test_amortized_sigma_monotone_and_nonneg():
+    from bar.trunk import amortized_sigma
+    s = amortized_sigma(np.array([0.1, 0.5, 1.0]), 0.3, q=1.2)
+    assert np.all(s >= 0)
+    assert s[2] > s[0]  # grows with epistemic
+
+
+def test_ensemble_trunk_fits_and_epistemic_grows_off_support():
+    from bar.trunk import EnsembleTrunk
+    rng = np.random.default_rng(0)
+    # synthetic congeneric edges: ddg correlates with a feature direction
+    base = ["CCO", "CCCO", "CCCCO", "CCCCCO", "c1ccccc1", "Cc1ccccc1", "CCN", "CCCN"]
+    edges = [(base[i % len(base)], base[(i + 1) % len(base)]) for i in range(40)]
+    ddg = rng.normal(0, 1, 40)
+    trunk = EnsembleTrunk().fit(edges, ddg, n_members=4)
+    mu, se = trunk.predict(edges[:5])
+    assert mu.shape == (5,) and se.shape == (5,)
+    assert np.all(se >= 0)

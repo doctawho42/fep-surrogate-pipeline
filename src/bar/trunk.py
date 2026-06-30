@@ -11,6 +11,7 @@ from numpy.typing import NDArray
 from rdkit import Chem
 from rdkit.Chem import AllChem, Crippen, Descriptors, rdMolDescriptors
 
+from bar.calib import ensemble_predict, train_ensemble
 from bar.chiral import signed_volume
 
 _DESC = [Descriptors.MolWt, Crippen.MolLogP, rdMolDescriptors.CalcTPSA,
@@ -65,3 +66,30 @@ def featurize_edge(smiles_a: str, smiles_b: str, include_0o: bool = True) -> NDA
     if include_0o:
         edge = np.append(edge, chir_pseudoscalar(smiles_b) - chir_pseudoscalar(smiles_a))
     return edge
+
+
+class EnsembleTrunk:
+    """Deep-ensemble amortized predictor over edge Delta-features -> (DDG_hat, sigma_epistemic)."""
+
+    def __init__(self) -> None:
+        self._nets: list = []
+        self._include_0o = True
+
+    def fit(self, edges_smiles: list[tuple[str, str]], ddg: NDArray, include_0o: bool = True,
+            n_members: int = 8) -> EnsembleTrunk:
+        self._include_0o = include_0o
+        X = np.stack([featurize_edge(a, b, include_0o) for a, b in edges_smiles])
+        self._nets = train_ensemble(X, np.asarray(ddg, dtype=float), n_members=n_members)
+        return self
+
+    def predict(self, edges_smiles: list[tuple[str, str]]) -> tuple[NDArray, NDArray]:
+        X = np.stack([featurize_edge(a, b, self._include_0o) for a, b in edges_smiles])
+        return ensemble_predict(self._nets, X)
+
+
+def amortized_sigma(sigma_epistemic: NDArray, sigma_aleatoric: float | NDArray,
+                    q: float) -> NDArray:
+    """Conformal-scaled total sigma for the commit LCB: q * sqrt(sigma_epi^2 + sigma_ale^2)."""
+    se = np.asarray(sigma_epistemic, dtype=float)
+    sa = np.asarray(sigma_aleatoric, dtype=float)
+    return q * np.sqrt(se ** 2 + sa ** 2)
