@@ -50,9 +50,15 @@ are selected or which molecules are committed to synthesis; and steering a gener
 calibrated reward does not help---on a $\sigma$-varying target it actively hurts, because the
 uncertainty tracks chemical novelty, not low quality. What calibration \emph{does} buy is
 trust: an overconfident $\sigma$ silently corrupts stop/commit decisions, while any properly
-calibrated $\sigma$---including the physics one, obtained at no calibration-set cost---makes
-those decisions reliable. We prove four results and verify every constant numerically;
-calibration is a decision instrument, not a performance multiplier.
+calibrated $\sigma$---including the physics one, at no calibration-set cost---makes them
+reliable. We scope these claims to the regimes tested (a single decomposed $\sigma$, one public
+benchmark, controlled simulations; the real-binding calibration is an internal bootstrap check
+pending independent-replicate validation), and we state what would overturn them: where the
+uncertainty tracks \emph{quality} rather than chemical novelty---diverse-library lead
+optimization rather than congeneric de-novo design---a calibrated reward should help generation,
+exactly as the measured $\mathrm{corr}(\sigma,\text{affinity})=+0.42$ predicts. We prove four
+results and verify every constant numerically; in these regimes, calibration acts as a decision
+instrument rather than a performance multiplier.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -81,6 +87,12 @@ physics already contains. The free-energy estimator at the end of every FEP edge
 Acceptance Ratio (BAR)~\citep{bennett1976bar}---is an $M$-estimator whose finite-sampling
 variance has a known closed form. Our central design choice is to make that estimator the
 bottleneck of the surrogate and to read its variance off analytically rather than learn it.
+This is one instance of a single principle that runs through the paper---\emph{compute what the
+physics or geometry already determines, and learn only what they do not}: the sampling variance
+is read off the BAR estimator, the chirality bit off a geometric pseudoscalar, and the
+identifiable directions off the measurement graph. We then audit, honestly, whether such a
+computed-for-free uncertainty actually improves downstream learning---and find that its value is
+trust in a decision, not a boost in sharpness, ranking, or generation.
 
 \paragraph{What is, and is not, new.} It is well understood in the free-energy community that
 the naive inverse-Fisher-information $1/I$ over-states the BAR variance, and the field-standard
@@ -176,9 +188,11 @@ $\approx1$).
 Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with
 MBAR and Monte-Carlo truth across the range (reported/true se $\approx1$), with no Monte-Carlo.
 A learned mean--variance head trained by Gaussian NLL on a realistic budget of $\sim$200 edges
-with \emph{one} noisy $\ddG$ label each is structurally unable to identify a per-edge sampling
-variance from a single realization, and is $5$--$12\times$ overconfident (reported se
-$0.08$--$0.18\times$ the truth, regime-dependent). Bare $1/I$ is shown only as the
+with \emph{one} noisy $\ddG$ label each cannot identify a per-edge sampling variance from a
+single realization---at best, given the right inputs (e.g.\ overlap features) and enough data, a
+learned head \emph{approximates} the closed form that the bottleneck computes exactly, per edge,
+and for free---and here it is $5$--$12\times$ overconfident (reported se $0.08$--$0.18\times$ the
+truth, regime-dependent). Bare $1/I$ is shown only as the
 information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
 baseline anyone reports. Figure~\ref{fig:A}B checks calibration on real protein--ligand BACE1
 RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); we note this
@@ -236,8 +250,11 @@ $(\{\|p_i{-}p_j\|\},\,\mathrm{sgn}\,\chi)$ is a complete $SO(3)$ invariant. Thus
 $\texttt{0o}$ triple-product channel is a \emph{sufficient} minimal addition that restores the
 chirality bit.
 \end{theorem}
-This makes precise a fact familiar from the equivariant-network literature (the role of odd
-irreps). Figure~\ref{fig:E} realizes it: an even readout gives bit-identical outputs on every
+Consistent with the paper's principle, the chirality bit is \emph{read off} the geometry (a
+pseudoscalar), not learned; this makes precise a fact familiar from the equivariant-network
+literature (the role of odd irreps), stated here as an architectural-completeness requirement on
+the trunk that feeds the bottleneck rather than as a central result. Figure~\ref{fig:E} realizes
+it: an even readout gives bit-identical outputs on every
 enantiomer pair (collapse $=0$ to machine precision), so its best possible chiral $\ddG$
 prediction is zero; adding the $\texttt{0o}$ channel cuts enantiomer $\ddG$ MAE $11.7\times$
 ($1.67\to0.14$ kcal/mol).
@@ -254,8 +271,9 @@ prediction is zero; adding the $\texttt{0o}$ channel cuts enantiomer $\ddG$ MAE 
 The free, differentiable $\sigma$ is attractive; the operative question is whether it improves
 downstream machine learning. We test it on four tasks---interval sharpness, edge ranking,
 commit-to-synthesis selection, and target-directed generation---on the public OpenFF
-protein--ligand benchmark~\citep{hahn2022plbench} (experimental $\ddG$ labels; both-endpoint
-scaffold-disjoint out-of-distribution splits) and in controlled simulations. The amortized
+protein--ligand benchmark~\citep{hahn2022plbench}, which aggregates the FEP+ and Merck data
+sets~\citep{wang2015fep,schindler2020merck} (experimental $\ddG$ labels; both-endpoint
+scaffold-disjoint out-of-distribution splits), and in controlled simulations. The amortized
 $\sigma$ we test is a deep-ensemble trunk's decomposed
 $\sigma_{\text{total}}=q\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$ (epistemic ensemble
 spread, a benchmark aleatoric floor, conformally scaled by $q$).
@@ -333,7 +351,13 @@ $\mathrm{corr}(\sigma_{\text{total}},\text{true affinity})=+0.42$---the high-$\s
 the chemically novel \emph{strong} binders, so the LCB penalty $-\kappa\sigma$ demotes the true
 winners. Calibration would help generation only if $\sigma$ flagged \emph{low-quality}
 candidates; on congeneric chemistry it flags \emph{novelty} instead. This is the steelman target
-for calibration-in-generation, and it fails.
+for calibration-in-generation, and it fails. More usefully, it yields a transferable diagnostic
+for calibrated active generation: a lower-confidence-bound reward helps only when $\sigma$ flags
+\emph{low quality}; whenever $\sigma$ instead flags \emph{novelty}---the common case on
+congeneric or lead-like series---the bound penalizes exactly the candidates worth making, and an
+uncalibrated reward is the safer default. A regime where $\sigma$ tracks quality (e.g.\ diverse
+libraries with genuine actives and decoys) is where calibrated generation should pay, and is the
+natural next test.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.7\textwidth]{figK_calibrated_generation.pdf}
@@ -366,8 +390,12 @@ $\sigma$ does not sharpen intervals on real data, does not re-rank what to compu
 and does not steer a generator toward better molecules; an \emph{overconfident} $\sigma$,
 however, silently corrupts the stop/commit decision. Calibration is therefore a
 \emph{trust/decision instrument}, not a performance multiplier---and the physics bottleneck
-delivers that calibration for free and differentiably, which is exactly what the acquisition
-graph (Section~\ref{sec:gauge}) needs.
+delivers that calibration for free and differentiably. The differentiable graph weight earns its
+place through \emph{structure}, not magnitude: it makes the gauge directions exactly
+unidentifiable (knowledge gradient $=0$) and supplies the trust calculation, even though---by the
+same Gauss--Markov argument that makes weighting second-order---the numerical \emph{value} of the
+weight does not improve ranking. The value of reading the variance off the physics is therefore a
+calibrated decision and an identifiable acquisition, not a sharper or better-ranked one.
 
 \section{Limitations}
 The sandwich is aleatoric-only and conditional on correctly sampled ensembles; systematic
@@ -385,12 +413,14 @@ structure-directed regime is left to future work rather than claimed here.
 \section{Conclusion}
 A differentiable BAR estimator at a surrogate's bottleneck makes the aleatoric uncertainty a
 computed, differentiable, non-negative closed form rather than a learned guess, usable as a
-Fisher--resistance graph weight and paired with an exact chirality requirement. Tested honestly,
-this free calibration does not improve downstream sharpness, ranking, or generation; what it
-buys---and what an overconfident learned $\sigma$ destroys---is trustworthy stop/commit
-decisions. Four theorems and a suite of falsifiable figures, including several pre-registered
-negatives, delimit exactly what the construction does and does not buy: calibration is a decision
-instrument, not a performance multiplier.
+Fisher--resistance graph weight (whose value is structural---gauge-identifiability and
+trust---rather than a better-ranking magnitude) and paired with an exact chirality requirement.
+Tested honestly, this free calibration does not improve downstream sharpness, ranking, or
+generation; what it buys---and what an overconfident learned $\sigma$ destroys---is trustworthy
+stop/commit decisions. Four theorems and a suite of falsifiable figures, including several
+pre-registered negatives, delimit what the construction does and does not buy: in the regimes we
+tested, calibration is a decision instrument rather than a performance multiplier; where the
+uncertainty would track quality rather than novelty, that verdict should be revisited.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command; all theorem constants
 are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF protein--ligand
