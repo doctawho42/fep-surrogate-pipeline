@@ -77,3 +77,30 @@ def lbd_sequences() -> dict[str, str]:
 
 def anchor_smiles() -> dict[str, str]:
     return dict(_ANCHOR_SMILES)
+
+
+def build_manifest() -> dict:
+    """The 20-complex matrix: each target x {its anchor + the 4 cage forms}."""
+    targets, anchors, cage = lbd_sequences(), anchor_smiles(), cage_smiles()
+    complexes = []
+    for tgt in ("GR", "AR", "ER", "DHODH"):
+        complexes.append({"name": f"cage-{tgt}-anchor", "target": tgt,
+                          "ligand_label": "anchor", "ligand_smiles": anchors[tgt],
+                          "is_anchor": True})
+        for form, smi in cage.items():
+            complexes.append({"name": f"cage-{tgt}-{form}", "target": tgt,
+                              "ligand_label": form, "ligand_smiles": smi,
+                              "is_anchor": False})
+    return {"targets": targets, "anchors": anchors, "cage": cage, "complexes": complexes}
+
+
+def main() -> None:
+    import json
+    m = build_manifest()
+    out = CAGE / "boltz_inputs.json"
+    out.write_text(json.dumps(m, indent=2))
+    print(f"wrote {out} ({len(m['complexes'])} complexes)")
+
+
+if __name__ == "__main__":
+    main()

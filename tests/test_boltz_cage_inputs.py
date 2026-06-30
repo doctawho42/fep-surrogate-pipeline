@@ -44,3 +44,13 @@ def test_lbd_sequences_plausible():
     for k, s in seqs.items():
         assert 150 <= len(s) <= 400, f"{k} LBD length {len(s)} implausible"
         assert set(s) <= set("ACDEFGHIKLMNPQRSTVWY"), f"{k} non-AA chars"
+
+
+def test_manifest_has_20_complexes():
+    from collections import Counter
+    m = bci.build_manifest()
+    assert len(m["complexes"]) == 20  # 4 targets x (1 anchor + 4 cage forms)
+    per = Counter(c["target"] for c in m["complexes"])
+    assert all(v == 5 for v in per.values()) and set(per) == {"GR", "AR", "ER", "DHODH"}
+    assert len([c for c in m["complexes"] if c["is_anchor"]]) == 4
+    assert len({c["name"] for c in m["complexes"]}) == 20  # unique run_names
