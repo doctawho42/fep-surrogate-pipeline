@@ -65,9 +65,12 @@ def regret_difference_ci(regret_a: ArrayLike, regret_b: ArrayLike, alpha: float 
                          n_boot: int = 2000, seed: int = 0) -> tuple[float, float, float]:
     """Bootstrap CI on the paired regret difference ``a - b`` across seeds. Returns
     ``(mean_diff, lo, hi)``. For the gate (a=calibrated, b=raw), calibrated beats raw
-    iff ``hi < 0`` (its regret is strictly lower)."""
+    iff ``hi < 0`` (its regret is strictly lower). A NEGATIVE ``mean_diff``/``hi``
+    means ``a`` has LOWER regret than ``b`` (i.e. a is better)."""
     a = np.asarray(regret_a, dtype=float)
     b = np.asarray(regret_b, dtype=float)
+    if a.shape != b.shape:
+        raise ValueError(f"regret arrays must match shape: {a.shape} != {b.shape}")
     d = a - b
     rng = np.random.default_rng(seed)
     boots = np.array([d[rng.integers(0, d.size, d.size)].mean() for _ in range(n_boot)])

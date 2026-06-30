@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from bar.reward import (
     edge_reward,
@@ -96,3 +97,17 @@ def test_regret_difference_ci_null_when_equal():
     mean_diff, lo, hi = regret_difference_ci(same, same)
     assert mean_diff == 0.0
     assert lo <= 0.0 <= hi
+
+
+def test_regret_difference_ci_deterministic():
+    rng = np.random.default_rng(42)
+    a = rng.random(20)
+    b = a + 0.05  # b consistently worse -> a wins, with real bootstrap spread
+    r1 = regret_difference_ci(a, b, seed=7)
+    r2 = regret_difference_ci(a, b, seed=7)
+    assert r1 == r2  # same seed -> identical CI (deterministic)
+
+
+def test_regret_difference_ci_rejects_mismatched_lengths():
+    with pytest.raises(ValueError):
+        regret_difference_ci(np.zeros(5), np.zeros(4))
