@@ -23,10 +23,10 @@ together — a high `actual` at n≈0 is abstention, not correctness):
 Honest reading:
 - Where the trunk COMMITS (1−α = 0.50–0.70; n ≈ 82/30/6) its commits are calibrated and
   trustworthy.
-- At higher required confidence (0.80–0.95) the trunk ABSTAINS (n≈0) — appropriately
+- At higher required confidence (0.80–0.95) the trunk ABSTAINS (n ≤ 1, effectively abstains) — appropriately
   conservative on hard OOD; the 1.000 there is the no-commit value, not correctness.
 - The overconfident MVE foil OVER-COMMITS at every level and is only ~base-rate correct
-  (claim 0.95, deliver ~0.24): its σ is too small to ever abstain.
+  (claim 0.95, deliver ~0.51): its σ is too small to ever abstain.
 
 Mean shortfall (claimed−actual): trunk -0.065, MVE +0.228; MVE−trunk diff +0.293, CI [+0.247, +0.334] -> **PASS**. The calibrated decomposed σ makes the amortized reward SAFE on OOD — it
 commits when confident and abstains when not, while a free learned-σ (MVE) head commits
