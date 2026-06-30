@@ -18,11 +18,11 @@ sandwich**. So Fig A makes three honest points instead:
 2. **The right foil is a learned-variance head, and it remains strongly overconfident — even when fed the overlap
    scalar I (the reviewer's "fair foil").** An MVE / heteroscedastic NN trained by
    Gaussian NLL on a *realistic* budget of ~200 edges, now receiving work-summary moments
-   **and** the overlap scalar `I` (6-dim feature, reviewer M2a), is **~7× overconfident**
-   (reported se ≈ 0.15× of the truth; range 0.09–0.20× across the overlap sweep). A
-   **large-budget oracle** (4000 training edges, same features) reaches 0.20× — also
-   ~5× overconfident. One noisy ΔΔĜ label per edge cannot teach the per-edge sampling
-   variance regardless of budget; the BAR bottleneck **computes** it exactly, untrained,
+   **and** the overlap scalar `I` (6-dim feature, reviewer M2a), is overconfident by
+   **0.09–0.20× true se across the overlap sweep (regime-dependent; central ~7×, se ≈ 0.15×)**.
+   A **large-budget oracle** (4000 training edges, same features) reaches 0.20× — also
+   ~5× overconfident (regime-dependent). One noisy ΔΔĜ label per edge cannot teach the per-edge
+   sampling variance regardless of budget; the BAR bottleneck **computes** it exactly, untrained,
    at zero label cost. The honest frame is "learnable-with-data vs exact-and-free."
 3. **`1/I` is shown only as the textbook value it corrects** — the information-equality
    plug-in, off by a *varying* factor — **not** as a baseline anyone reports.
@@ -32,8 +32,9 @@ sandwich**. So Fig A makes three honest points instead:
   and propagates into the surrogate **and** the Fisher–resistance Laplacian weights
   `w_e = I_e²/B_e` (Thm 3, invariant #4). pymbar returns a number; it is not a
   backprop-able graph weight. This is the new object.
-- **Robustness.** `B/I² ≥ 0` always; pymbar's `1/I − nrat` goes **negative → nan** at
-  extreme poor overlap. The sandwich form degrades gracefully.
+- **Robustness.** `B/I² ≥ 0` always; pymbar's `1/I − nrat` can go **negative → nan** in a
+  rare edge case (very high overlap / tiny n, when `1/I < 1/n_f + 1/n_r`); the sandwich form
+  is ≥ 0 by construction and degrades gracefully.
 - **Calibrated aleatoric for free.** vs the learned-variance head above.
 
 ## Result: PASS

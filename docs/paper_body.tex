@@ -146,24 +146,29 @@ drawn from the correct alchemical ensembles. It says nothing about systematic fo
 which is outside $B/I^2$ (we attach a separate epistemic/correction term in
 Section~\ref{sec:audit}). The value of Theorem~\ref{thm:sand} for us is that this term is a
 differentiable closed form (Theorem~\ref{thm:back}) and is non-negative by construction, where
-the plug-in MBAR expression can return a negative value at near-zero overlap.
+the plug-in MBAR expression can return a negative value in a rare edge case --- very high overlap with tiny samples, where the plug-in $1/I$ undershoots the $1/n_f+1/n_r$ correction --- whereas $B/I^2\ge0$ always.
 \end{remark}
 
 The information equality $A=B$ (which would give $1/I$) holds for a single-sample MLE but fails
 for BAR's two-sample design; we verify the gradients to machine precision and the variance to
-within $1\%$ against $2000$-replicate Monte-Carlo and \texttt{pymbar} in the good-overlap
+within $1\%$ against $3000$-replicate Monte-Carlo and \texttt{pymbar} in the good-overlap
 regime (at extreme low overlap, $n{=}20$, the bias-corrected plug-in runs $\sim$10\% below
 MBAR, both $\approx1$).
 
 \paragraph{Figure~\ref{fig:A}: the readout is correct; the learned foil cannot be.}
 Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with
 MBAR and Monte-Carlo truth across the range (reported/true se $\approx1$), with no Monte-Carlo.
-A learned MVE head trained by Gaussian NLL on a realistic budget of $\sim$200 edges
-with \emph{one} noisy $\ddG$ label each cannot identify a per-edge sampling variance from a
-single realization; at best, given the right inputs (e.g.\ overlap features) and enough data,
-such a head \emph{approximates} the closed form that the bottleneck computes exactly, per edge,
-and for free. Here the learned head is $5$--$12\times$ overconfident (reported standard error
-$0.08$--$0.18\times$ the truth, regime-dependent). Bare $1/I$ is shown only as the
+We tested a \emph{fair} learned MVE head trained by Gaussian NLL, now fed work-summary
+moments \emph{and} the overlap scalar $I$ (6-dim feature; reviewer M2a) at a realistic budget of
+$\sim$200 edges and also at a large-budget oracle of 4000 training edges --- twenty times larger.
+The fair foil is still ${\approx}7\times$ overconfident at realistic budget (reported se
+${\approx}0.15\times$ the truth; range $0.09$--$0.20\times$ across the overlap sweep), and
+${\approx}5\times$ overconfident even at the large-budget oracle (se ${\approx}0.20\times$).
+A richly-fed head approaches the closed form only with a very large budget; one noisy
+$\ddG$ label per edge is fundamentally insufficient to teach a per-edge sampling variance,
+regardless of feature richness or budget.  The bottleneck \emph{computes} it exactly, per edge,
+differentiably, and at zero label cost. The honest frame is
+``learnable-with-data vs.\ exact-and-free''. Bare $1/I$ is shown only as the
 information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
 baseline anyone reports. Figure~\ref{fig:A}B checks calibration on real protein--ligand BACE1
 RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); this bootstrap
@@ -173,16 +178,20 @@ the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} (3 indep
 each), the reported MBAR/sandwich se is calibrated-to-conservative against the across-replicate
 truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; conservative on $72\%$ of edges and $28$
 of $34$ targets), i.e.\ it does not \emph{systematically} under-state real
-reproducibility---the opposite of the learned head's $5$--$12\times$ overconfidence.
+reproducibility---the opposite of the learned head's ${\approx}7\times$ overconfidence at realistic budget (${\approx}5\times$ even at large budget).
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
 \caption{\textbf{The bottleneck reads calibrated aleatoric variance.}
 (A) Controlled Monte-Carlo sweep: sandwich $B/I^2$ coincides with \texttt{pymbar}-MBAR and
-truth; a learned-variance head is $5$--$12\times$ overconfident (it cannot learn a per-edge
-variance from one label); $1/I$ is the info-equality plug-in. (B) Real FEP edges---BACE1 RBFE
+truth; a fair learned-variance head (fed work moments + overlap $I$; reviewer M2a) is
+${\approx}7\times$ overconfident at realistic budget (se ${\approx}0.15\times$ truth,
+range $0.09$--$0.20\times$); a richly-fed head approaches the closed form only with a large
+budget (${\approx}5\times$ overconfident at 4000-edge oracle, se ${\approx}0.20\times$);
+$1/I$ is the info-equality plug-in. (B) Real FEP edges---BACE1 RBFE
 binding (filled) and benzene solvation---sandwich tracks bootstrap truth (an internal check)
-while $1/I$ is off $2$--$12\times$.}
+while $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ (BACE1 $6.07$
+$[2.78,12.01]$; cf.\ the controlled-panel se range $1.08$--$2.65\times$ in panel~A).}
 \label{fig:A}
 \end{figure}
 
