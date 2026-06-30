@@ -72,8 +72,8 @@ def target_ligands(
         g.add_edge(a, b, ddg=d)
     if g.number_of_nodes() == 0:
         raise ValueError(f"no edges for target {target}")
-    ref = max(g.nodes, key=lambda n: g.degree(n))
     ug = g.to_undirected()
+    ref = max(ug.nodes, key=lambda n: ug.degree(n))
     true: dict[str, float] = {ref: 0.0}
     for node in nx.node_connected_component(ug, ref):
         if node == ref:
