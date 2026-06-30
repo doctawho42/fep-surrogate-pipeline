@@ -64,7 +64,7 @@ ignore = ["E741"]  # ambiguous var names (I, B, A) are the literal math symbols 
 [tool.mypy]
 python_version = "3.12"          # numpy 2.5 stubs use 3.12 `type` statements
 mypy_path = "src"
-files = ["src/bar"]             # type-check the load-bearing math
+files = ["src/bar", "src/gen"]  # type-check the load-bearing math and generation DAG
 exclude = ['src/screen/']       # external-tool orchestration; heavy untyped deps (rdkit stub bug)
 ignore_missing_imports = true   # pymbar/networkx ship partial/no stubs
 warn_unused_ignores = true

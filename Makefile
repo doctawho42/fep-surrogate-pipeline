@@ -20,7 +20,7 @@ lint:
 	$(PY) -m ruff check src tests
 
 type:
-	$(PY) -m mypy src/bar
+	$(PY) -m mypy src/bar src/gen
 
 check: lint type test
 
