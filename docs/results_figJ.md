@@ -2,7 +2,8 @@
 
 Spec: `docs/superpowers/specs/2026-06-30-trunk-amortized-reward-design.md`. Does the Fig I
 commit-to-synthesis trust survive AMORTIZATION to unseen molecules? A deep-ensemble trunk
-maps congeneric edges -> (ΔΔĜ, σ_total = conformal·sqrt(epistemic²+aleatoric²)). Trained on
+maps congeneric edges -> (ΔΔĜ, σ_total = conformal·sqrt(epistemic²+aleatoric²)
+(aleatoric ≈ 0.4 kcal/mol benchmark label noise)). Trained on
 the public OpenFF protein-ligand-benchmark — **labels are EXPERIMENTAL ΔΔG** (from the
 benchmark's measured affinities, not converged FEP). Tested on GENUINELY scaffold-disjoint
 (OOD) edges (an edge is OOD if EITHER endpoint's Murcko scaffold is held out). `make figJ`.
@@ -21,8 +22,10 @@ together — a high `actual` at n≈0 is abstention, not correctness):
 | 0.95 | 1.000 | 0.0 | 0.511 | 105.0 |
 
 Honest reading:
-- Where the trunk COMMITS (1−α = 0.50–0.70; n ≈ 82/30/6) its commits are calibrated and
-  trustworthy.
+- Where the trunk COMMITS: at 1−α = 0.50–0.60 (n ≈ 82/30) it is calibrated/conservative
+  (actual ≥ claimed); at 0.70 the commit bucket is small (n ≈ 6) and mildly overconfident
+  (0.57 vs 0.70). The trustworthiness claim rests on the 0.50–0.60 volume and the
+  abstain-vs-MVE contrast, not on every bucket being perfectly calibrated.
 - At higher required confidence (0.80–0.95) the trunk ABSTAINS (n ≤ 1, effectively abstains) — appropriately
   conservative on hard OOD; the 1.000 there is the no-commit value, not correctness.
 - The overconfident MVE foil OVER-COMMITS at every level and is only ~base-rate correct
