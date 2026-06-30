@@ -6,6 +6,7 @@ Run: PYTHONPATH=scripts python scripts/boltz_cage_inputs.py  (or `make boltzinpu
 from __future__ import annotations
 
 import pathlib
+import urllib.request
 
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -43,3 +44,36 @@ def cage_smiles() -> dict[str, str]:
     ss = _sdf_smiles(CAGE / "cage_enantiomer.sdf")  # S,S mirror
     return {"RR_OAc": rr, "SS_OAc": ss,
             "RR_OH": deacetylate(rr), "SS_OH": deacetylate(ss)}
+
+
+# UniProt accession + 1-based LBD / catalytic-domain ranges (confirm vs UniProt features).
+_LBD = {"GR": ("P04150", 521, 777), "AR": ("P10275", 669, 919),
+        "ER": ("P03372", 305, 550), "DHODH": ("Q02127", 78, 395)}
+
+# Per-target anchor (GR/AR/ER agonists; DHODH inhibitor), as curated isomeric SMILES from
+# ChEMBL (PubChem is unreachable from this environment). Source ChEMBL IDs are recorded so the
+# provenance is explicit and the values are verifiable; each is RDKit-parse-checked in tests.
+_ANCHOR_SMILES = {
+    # dexamethasone, GR agonist (CHEMBL384467)
+    "GR": "C[C@@H]1C[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]2(C)[C@@]1(O)C(=O)CO",
+    # 5alpha-dihydrotestosterone / stanolone, AR agonist (CHEMBL27769)
+    "AR": "C[C@]12CCC(=O)C[C@@H]1CC[C@@H]1[C@@H]2CC[C@]2(C)[C@@H](O)CC[C@@H]12",
+    # 17beta-estradiol, ER agonist (CHEMBL135)
+    "ER": "C[C@]12CC[C@@H]3c4ccc(O)cc4CC[C@H]3[C@@H]1CC[C@@H]2O",
+    # brequinar, DHODH inhibitor (CHEMBL38434)
+    "DHODH": "Cc1c(-c2ccc(-c3ccccc3F)cc2)nc2ccc(F)cc2c1C(=O)O",
+}
+
+
+def _uniprot_fasta(acc: str) -> str:
+    url = f"https://rest.uniprot.org/uniprotkb/{acc}.fasta"
+    raw = urllib.request.urlopen(url, timeout=30).read().decode()
+    return "".join(line for line in raw.splitlines() if not line.startswith(">"))
+
+
+def lbd_sequences() -> dict[str, str]:
+    return {k: _uniprot_fasta(acc)[lo - 1:hi] for k, (acc, lo, hi) in _LBD.items()}
+
+
+def anchor_smiles() -> dict[str, str]:
+    return dict(_ANCHOR_SMILES)

@@ -29,3 +29,18 @@ def test_deacetyl_loses_one_acetyl():
 def test_enantiomers_are_mirror_not_identical():
     s = bci.cage_smiles()
     assert s["RR_OAc"] != s["SS_OAc"]
+
+
+def test_anchors_resolve_and_valid():
+    a = bci.anchor_smiles()
+    assert set(a) == {"GR", "AR", "ER", "DHODH"}
+    for k, smi in a.items():
+        assert Chem.MolFromSmiles(smi) is not None, f"{k} anchor invalid"
+
+
+def test_lbd_sequences_plausible():
+    seqs = bci.lbd_sequences()
+    assert set(seqs) == {"GR", "AR", "ER", "DHODH"}
+    for k, s in seqs.items():
+        assert 150 <= len(s) <= 400, f"{k} LBD length {len(s)} implausible"
+        assert set(s) <= set("ACDEFGHIKLMNPQRSTVWY"), f"{k} non-AA chars"
