@@ -15,7 +15,7 @@ sandwich**. So Fig A makes three honest points instead:
 
 1. **Correctness.** The sandwich `B/I²` **coincides** with pymbar's MBAR uncertainty and
    with the Monte-Carlo truth across every overlap regime — reproduced **with no MC**.
-2. **The right foil is a learned-variance head, and it fails — even when fed the overlap
+2. **The right foil is a learned-variance head, and it remains strongly overconfident — even when fed the overlap
    scalar I (the reviewer's "fair foil").** An MVE / heteroscedastic NN trained by
    Gaussian NLL on a *realistic* budget of ~200 edges, now receiving work-summary moments
    **and** the overlap scalar `I` (6-dim feature, reviewer M2a), is **~7× overconfident**
