@@ -66,6 +66,12 @@ figBreal:  # honest audit: Fig B on REAL OOD FEP residuals (not sharper; fair Mo
 figArep:  # independent-replicate validation of the reported se (OpenFE IndustryBenchmarks2024)
 	PYTHONPATH=src $(PY) figs/make_figA_replicates.py
 
+boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
+	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
+
+boltzcage:  # analyze downloaded Boltz cage screen runs -> calibrated results doc + figure
+	PYTHONPATH=figs $(PY) figs/make_boltz_cage.py
+
 graphical:  # graphical abstract (vector schematic, every label exact)
 	$(PY) figs/make_graphical_abstract.py
 
