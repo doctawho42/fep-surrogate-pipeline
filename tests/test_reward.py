@@ -5,6 +5,7 @@ import pytest
 
 from bar.reward import (
     edge_reward,
+    linear_readout_reward,
     realized_hitrate,
     regret,
     regret_difference_ci,
@@ -111,3 +112,27 @@ def test_regret_difference_ci_deterministic():
 def test_regret_difference_ci_rejects_mismatched_lengths():
     with pytest.raises(ValueError):
         regret_difference_ci(np.zeros(5), np.zeros(4))
+
+
+_MIRROR = np.array([-1.0, 1.0, 1.0])  # reflect x: enantiomer of a 4-point cloud
+
+
+def test_reward_chirality_blind_without_0o():
+    rng = np.random.default_rng(1)
+    coords = rng.normal(size=(4, 3))
+    mirror = coords * _MIRROR
+    w_even = rng.normal(size=6)  # 6 even (pairwise-distance) features for 4 points
+    rM = linear_readout_reward(coords, w_even, include_0o=False)
+    rP = linear_readout_reward(mirror, w_even, include_0o=False)
+    assert abs(rM - rP) < 1e-12  # provably identical (Thm 4)
+
+
+def test_reward_separates_enantiomers_with_0o():
+    rng = np.random.default_rng(1)
+    coords = rng.normal(size=(4, 3))
+    mirror = coords * _MIRROR
+    w = rng.normal(size=7)
+    w[6] = 1.0  # nonzero weight on the 0o pseudoscalar channel
+    rM = linear_readout_reward(coords, w, include_0o=True)
+    rP = linear_readout_reward(mirror, w, include_0o=True)
+    assert abs(rM - rP) > 1e-6  # 0o channel restores the chirality bit

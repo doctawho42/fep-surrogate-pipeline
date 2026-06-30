@@ -10,6 +10,7 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
 
+from bar.chiral import chiral_readout
 from bar.estimator import bar_estimate
 
 
@@ -76,3 +77,17 @@ def regret_difference_ci(regret_a: ArrayLike, regret_b: ArrayLike, alpha: float 
     boots = np.array([d[rng.integers(0, d.size, d.size)].mean() for _ in range(n_boot)])
     lo, hi = np.percentile(boots, [100 * alpha / 2, 100 * (1 - alpha / 2)])
     return float(d.mean()), float(lo), float(hi)
+
+
+def linear_readout_reward(coords: ArrayLike, weights: ArrayLike,
+                          include_0o: bool = True) -> float:
+    """Reward = ``weights · chiral_readout(coords, include_0o)``. The representation
+    contract for the future amortised reward: WITH the parity-odd ``0o`` channel the
+    reward separates enantiomers (mirror images); WITHOUT it the readout is
+    O(3)-invariant and the reward is identical for an enantiomer pair (chirality-blind,
+    Thm 4). ``weights`` must match the readout length (6 even, or 7 with ``0o``)."""
+    feats = chiral_readout(coords, include_0o=include_0o)
+    w = np.asarray(weights, dtype=float)
+    if w.shape[0] != feats.shape[0]:
+        raise ValueError(f"weights length {w.shape[0]} != readout length {feats.shape[0]}")
+    return float(w @ feats)
