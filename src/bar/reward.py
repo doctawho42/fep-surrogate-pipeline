@@ -67,7 +67,9 @@ def regret_difference_ci(regret_a: ArrayLike, regret_b: ArrayLike, alpha: float 
     """Bootstrap CI on the paired regret difference ``a - b`` across seeds. Returns
     ``(mean_diff, lo, hi)``. For the gate (a=calibrated, b=raw), calibrated beats raw
     iff ``hi < 0`` (its regret is strictly lower). A NEGATIVE ``mean_diff``/``hi``
-    means ``a`` has LOWER regret than ``b`` (i.e. a is better)."""
+    means ``a`` has LOWER regret than ``b`` (i.e. a is better). Generic paired-bootstrap
+    CI on per-seed difference a-b; callers may pass any paired metric (regret: lower
+    better -> winner iff hi<0; precision/coverage: higher better -> winner iff lo>0)."""
     a = np.asarray(regret_a, dtype=float)
     b = np.asarray(regret_b, dtype=float)
     if a.shape != b.shape:
