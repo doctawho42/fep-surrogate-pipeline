@@ -68,7 +68,7 @@ def to_dg(meas: dict) -> float | None:
             "pm": 1e-12, "picomolar": 1e-12,
         }
         # Normalize: remove spaces, special chars
-        unit_key = unit.replace(" ", "").replace("/", "").replace("l", "").lower()
+        unit_key = unit.replace(" ", "").replace("/", "").lower()
         # Try direct lookup, else fallback to uM (most common in this dataset)
         scale = scale_map.get(unit_key)
         if scale is None:
@@ -130,8 +130,8 @@ def parse_edges_from_network(edges_yml: pathlib.Path) -> list[tuple[str, str]]:
     return pairs
 
 
-def parse_target(data_dir: pathlib.Path) -> list[tuple[str, str, float]]:
-    """Return rows (smiles_a, smiles_b, ddg) for a single target.
+def parse_target(data_dir: pathlib.Path) -> tuple[list[tuple[str, str, float]], pathlib.Path | None]:
+    """Return (rows, best_file) where rows are (smiles_a, smiles_b, ddg) for a single target.
 
     Searches for ligands.yml in 00_data/ and picks the largest edges network
     from 03_edges/ to maximize edge coverage.
@@ -174,10 +174,7 @@ def parse_target(data_dir: pathlib.Path) -> list[tuple[str, str, float]]:
             rows.append((smi[a], smi[b], dg[b] - dg[a]))
         else:
             skipped += 1
-    if skipped:
-        # Normal: some ligands may lack measurement data
-        pass
-    return rows
+    return rows, best_file
 
 
 def main() -> None:
@@ -202,7 +199,7 @@ def main() -> None:
             continue
 
         try:
-            rows = parse_target(target_dir)
+            rows, best_file = parse_target(target_dir)
         except Exception as exc:
             print(f"  skip {target}: {exc}")
             continue
@@ -218,7 +215,10 @@ def main() -> None:
             w.writerows(rows)
 
         combined += [(target, r[0], r[1], r[2]) for r in rows]
-        print(f"  {target}: {len(rows)} edges -> {out_csv.name}")
+        if best_file:
+            print(f"  {target}: using {best_file.name} ({len(rows)} edges)")
+        else:
+            print(f"  {target}: {len(rows)} edges -> {out_csv.name}")
 
     with open(OUT / "all_edges.csv", "w", newline="") as f:
         w = csv.writer(f)
