@@ -77,6 +77,39 @@ class BeliefGraph:
         return new
 
 
+def bootstrap_ratio_ci(
+    ratios,
+    n_boot: int = 2000,
+    seed: int = 0,
+    alpha: float = 0.05,
+) -> tuple[float, float]:
+    """Percentile bootstrap CI for the mean of a per-seed ratio array.
+
+    Parameters
+    ----------
+    ratios:
+        1-D array of per-seed ratios (e.g. ``ours_calls / naive_calls``).
+    n_boot:
+        Number of bootstrap resamples.
+    seed:
+        RNG seed for reproducibility.
+    alpha:
+        Two-sided miscoverage level; default 0.05 gives a 95% CI.
+
+    Returns
+    -------
+    (lo, hi):
+        Lower and upper percentile-bootstrap bounds.
+    """
+    ratios = np.asarray(ratios, dtype=float)
+    rng = np.random.default_rng(seed)
+    means = np.array(
+        [ratios[rng.integers(0, ratios.size, ratios.size)].mean() for _ in range(n_boot)]
+    )
+    lo, hi = np.percentile(means, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+    return float(lo), float(hi)
+
+
 def kg_scores(belief, candidates, cand_precision, costs, contrasts, weights) -> NDArray:
     """Decision-weighted, cost-aware KG score for each candidate edge:
     ``sum_d weight_d * variance_reduction_d(c) / cost_c``. Vectorised: one covariance

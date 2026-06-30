@@ -70,6 +70,22 @@ baselines (random, EI/UCB/qEI, GP-qKG, MFBind, ensemble+conformal). That is a la
 build and is **deferred pending a decision** — it should be authorised explicitly given
 it tests a leg that the minimal proxy already finds weak.
 
+## Bootstrap CI for edge-weighting ratio (reviewer S5.7)
+
+The audit table row "Edge weighting (active learning)" required a 95% bootstrap CI for
+the calls-to-top-k ratio (ours vs naive-KG). Computed from the existing 24-seed
+controlled simulation (`figs/make_figC.py`, `budget=60`, `seeds=24`, `TOL=0.10`):
+
+- **Ratio definition:** per-seed paired ratio `ours_calls / naive_calls`; then mean ± 95%
+  percentile bootstrap CI across 24 seeds (`n_boot=2000`, `seed=0`).
+- **Measured:** mean ratio **R = 0.981**, 95% CI **[0.933, 1.030]**.
+- **Interpretation:** CI brackets 1.0 → no gain from sandwich weighting (honest null, consistent
+  with the GLS unbiasedness argument: any positive weights yield unbiased contrast estimates
+  so weight choice is second-order for ranking).
+- **Note on the earlier "≤1.05×" bound:** that figure came from a separate 30-seed cost-budget
+  probe (sandwich cost-to-top-k 81.1 vs naive 84.8). The call-count CI above is the primary
+  number in the audit table; the cost-probe bound is consistent (both ≈ null).
+
 ## Follow-up probe (cost metric) — same verdict
 Hypothesis: under a **cost** budget (not call count) the sandwich should win, because it
 correctly values high-overlap edges as cheap-and-informative while naive over-states
