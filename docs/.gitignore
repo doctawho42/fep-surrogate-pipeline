@@ -1,0 +1,10 @@
+# LaTeX build artifacts (paper_draft.pdf is tracked intentionally; aux files are not)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc

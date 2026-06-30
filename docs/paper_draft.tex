@@ -1,8 +1,11 @@
 \documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage[numbers,sort&compress]{natbib}
 \usepackage[hidelinks]{hyperref}
 \usepackage{xcolor}
 \usepackage{enumitem}
@@ -47,10 +50,13 @@ conditional coverage where split-conformal and CQR do not, at $2\times$ the shar
 (iii) a parity-odd readout channel is necessary and sufficient to resolve enantiomers,
 cutting chiral $\ddG$ error $11.7\times$; (iv) gauge-aware acquisition provably assigns
 zero value to redundant directions and saves budget; and (v) calibration pays off in
-active learning as \emph{trustworthy stopping}. We additionally report two honest
-negatives---the sandwich weighting is second-order for ranking (a Gauss--Markov
-consequence) and ligand-only reverse screening is similarity-bound---that sharpen rather
-than inflate the contribution.
+the decision loop---as a \emph{trustworthy stop}, and as a \emph{trustworthy
+commit-to-synthesis} that survives amortization to scaffold-disjoint molecules. We
+additionally report three honest negatives---the sandwich weighting is second-order for
+ranking, ligand-only reverse screening is similarity-bound, and a calibrated reward does not
+reshape a generator's output distribution---all three the \emph{same} Gauss--Markov ceiling,
+which sharpens rather than inflates the contribution by localizing exactly where calibration
+is \emph{not} the bottleneck.
 \end{abstract}
 
 \section{Introduction}
@@ -62,16 +68,19 @@ active learning, network design, and stop/go decisions all consume a per-edge er
 and a miscalibrated bar silently corrupts every downstream decision.
 
 The dominant ML recipe estimates uncertainty by \emph{learning} it---a mean-variance
-(MVE) head, a deep ensemble, or a conformal wrapper. We argue this throws away
+(MVE) head~\citep{nix1994mve}, a deep ensemble~\citep{lakshminarayanan2017ensembles}, or a
+conformal wrapper~\citep{angelopoulos2021conformal}. We argue this throws away
 information that the physics already contains. The free-energy estimator at the end of
-every FEP edge---the Bennett Acceptance Ratio (BAR)---is an $M$-estimator whose aleatoric
+every FEP edge---the Bennett Acceptance Ratio (BAR)~\citep{bennett1976bar}---is an
+$M$-estimator whose aleatoric
 (finite-sampling) variance has a known closed form. Our central design choice is to make
 that estimator \emph{the bottleneck of the surrogate} and to read its variance off
 analytically rather than learn it.
 
 \paragraph{What is, and is not, new.} It is folklore in the free-energy community that
 the naive inverse-Fisher-information $1/I$ over-states the BAR variance; the field-standard
-tool \texttt{pymbar} already reports the corrected MBAR uncertainty, which we show equals
+tool \texttt{pymbar} already reports the corrected MBAR uncertainty~\citep{shirts2008mbar},
+which we show equals
 the sandwich $B/I^2$ to leading order. We therefore do \emph{not} claim to fix FEP
 variance. Our contributions are: (1) the sandwich variance as a \emph{differentiable
 closed form} with an $O(1)$ backward, so it propagates into the surrogate and into the
@@ -83,6 +92,46 @@ into a graph Laplacian and yields a gauge-aware, cost-aware acquisition; and (4)
 chirality-completeness theorem identifying the one readout channel an equivariant trunk
 must contain. We pair each claim with a falsifiable figure, and we report the experiments
 where the method does \emph{not} beat a simple baseline.
+
+\section{Related work}
+\paragraph{Free-energy estimators.} BAR~\citep{bennett1976bar} and its multistate
+generalization MBAR~\citep{shirts2008mbar} are the standard estimators for alchemical free
+energies; FEP+~\citep{wang2015fep} brought them to prospective potency prediction, and
+large retrospective assessments~\citep{schindler2020merck} and community
+best-practice guides~\citep{mey2020alchem} document both their accuracy and their per-edge
+uncertainty (the MBAR error bar that \texttt{pymbar} reports and that we match numerically).
+Our contribution is not a new estimator but the observation that this uncertainty is a
+\emph{differentiable closed form}---the sandwich variance of $M$-estimation under
+misspecification~\citep{white1982sandwich}---that can be read off the bottleneck and
+back-propagated, which a black-box estimator value cannot provide.
+
+\paragraph{Learned uncertainty.} The prevailing alternative is to \emph{learn} predictive
+uncertainty: a mean--variance head trained by Gaussian NLL~\citep{nix1994mve}, a deep
+ensemble for the epistemic term~\citep{lakshminarayanan2017ensembles}, the
+aleatoric/epistemic decomposition~\citep{kendall2017uncertainties}, or a distribution-free
+conformal wrapper~\citep{angelopoulos2021conformal}, including quantile-adaptive variants
+such as CQR~\citep{romano2019cqr}. We show that for the aleatoric (finite-sampling) term a
+learned head is sharply overconfident at realistic FEP label budgets, whereas the physics
+already contains the term in closed form; we retain the ensemble and a conformal correction
+only for the epistemic and force-field-correction ($\Delta$) pieces.
+
+\paragraph{Equivariant trunks and chirality.} $E(3)$-equivariant
+networks~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} are the de-facto trunks
+for 3D molecular property prediction. We add a representation-theoretic constraint on the
+readout: any $O(3)$-invariant readout is enantiomer-blind, and a parity-odd ($\texttt{0o}$)
+pseudoscalar channel is necessary and sufficient to resolve chirality---a requirement the
+trunk's irrep budget must satisfy.
+
+\paragraph{Active learning and generation.} Acquisition by the knowledge
+gradient~\citep{frazier2008kg} and its modern Monte-Carlo
+implementations~\citep{balandat2020botorch,gardner2018gpytorch} drive edge selection, while
+GFlowNets~\citep{bengio2021gflownet,malkin2022tb} sample candidates in proportion to reward.
+We connect the per-edge sandwich variances to a Fisher--resistance graph Laplacian (whose
+contrast variance is the resistance distance~\citep{klein1993resistance}) for gauge-aware
+acquisition, and we show---across ranking, selection, and generation---that calibration is
+second-order for these distributional objectives (a Gauss--Markov ceiling) while remaining
+first-order for the stop/commit \emph{decision}. Amortization is evaluated on the public
+OpenFF protein--ligand benchmark~\citep{hahn2022plbench}.
 
 \section{The BAR information bottleneck}\label{sec:bar}
 \paragraph{Setup.} For a single alchemical edge, forward and reverse works
@@ -103,7 +152,7 @@ Under correct specification, $\dFh$ is an $M$-estimator with asymptotic variance
 $\Var(\dFh)=A^{-1}BA^{-1}=B/I^2$, where $A=I$ and $B=n_f\Var_f[p]+n_r\Var_r[p]$. The
 information equality $A=B$ (which would give $1/I$) fails under BAR's stratified
 two-sample design; the sandwich $B/I^2$ is the correct, sample-computable uncertainty and
-coincides with the Bennett/Shirts--Chodera (MBAR) estimator.
+coincides with the Bennett/Shirts--Chodera (MBAR) estimator~\citep{bennett1976bar,shirts2008mbar}.
 \end{theorem}
 
 \begin{remark}[positioning]
@@ -143,13 +192,14 @@ $1/I$ is off by $2$--$12\times$.}
 \label{fig:A}
 \end{figure}
 
-\section{Decomposed uncertainty and out-of-distribution calibration}
+\section{Decomposed uncertainty and out-of-distribution calibration}\label{sec:decomp}
 The sandwich is the aleatoric term only. The total belief variance is
 $B/I^2+\sigma^2_{\text{ens}}+\sigma^2_\Delta$: a deep-ensemble epistemic term and a learned
 force-field-correction ($\Delta$) term. Figure~\ref{fig:B} stress-tests this decomposition
 against conformal prediction on test edges sorted by trunk-space domain distance. At equal
 $\sim$$90\%$ \emph{marginal} coverage, the per-edge decomposed interval is $2.0$--$2.2\times$
-sharper than split-conformal and CQR, and far better \emph{conditionally} calibrated
+sharper than split-conformal and CQR~\citep{romano2019cqr}, and far better
+\emph{conditionally} calibrated
 (max per-bin coverage error $0.29$ vs.\ $0.71$/$0.73$). CQR adapts to aleatoric
 heteroscedasticity but its flat conformal adjustment cannot grow with the epistemic$+\Delta$
 out-of-distribution blow-up, so it fails conditionally too. Far out-of-distribution all
@@ -166,7 +216,8 @@ and the flat conformal band; ours is $2\times$ sharper at equal marginal coverag
 \end{figure}
 
 \section{Chirality completeness}
-An equivariant trunk feeds the bottleneck. Which readout channels does it need?
+An equivariant trunk~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} feeds the
+bottleneck. Which readout channels does it need?
 \begin{theorem}[Chirality completeness]\label{thm:chiral}
 Any $O(3)$-invariant readout (a function of pairwise distances, norms, or dot products) is
 constant on an enantiomer pair $\{M,\sigma M\}$ and is therefore enantiomer-blind. The
@@ -201,7 +252,8 @@ gauge/redundant directions: the acquisition is automatically gauge-invariant.
 \end{theorem}
 The edge weights are the \emph{inverse sandwich variances}---the differentiable readout of
 Section~\ref{sec:bar} entering the decision layer, which a black-box uncertainty cannot
-provide. Figure~\ref{fig:D} shows the knowledge gradient on the all-ones gauge contrast is
+provide. Figure~\ref{fig:D} shows the knowledge gradient~\citep{frazier2008kg} on the
+all-ones gauge contrast is
 $10^{-21}$ (exact zero), and a gauge-\emph{unaware} acquisition wastes budget resolving a
 decision-irrelevant cross-cluster offset, reaching the within-target top-$k$ at regret
 $0.27$ where the gauge-aware one reaches $0.01$.
@@ -214,20 +266,23 @@ gauge-awareness wastes budget on redundant cross-cluster bridges.}
 \label{fig:D}
 \end{figure}
 
-\paragraph{Where calibration pays off in the loop.} A natural hope is that
-sandwich-weighted edges yield fewer FEP calls to the top-$k$. We report that they do
-\emph{not} (Figure~\ref{fig:C}, supplementary): in a connected measurement graph the GLS
-contrast mean is unbiased for \emph{any} positive weights (Gauss--Markov), so the weight
-choice is second-order for \emph{ranking}---a ceiling that an integrated knowledge-gradient
-would not lift, because it is a property of the estimator, not the acquisition. We state
-this transparently. The calibration instead pays off through the \emph{stopping decision}.
-Figure~\ref{fig:G} runs two learners with the \emph{same} correct posterior mean but
-different assumed uncertainty: the calibrated learner's claimed confidence tracks the
-actual top-$k$ correctness ($|\Delta|=0.022$) and stops at $30$ calls $82\%$ correct; an
-overconfident learner using the learned head's variance ($0.15\times$, from
+\section{Where calibration pays off: the decision, not the ranking}\label{sec:decide}
+A natural hope is that sandwich-weighted edges yield fewer FEP calls to the top-$k$. They do
+\emph{not} (Figure~\ref{fig:C}): in a connected measurement graph the GLS contrast mean is
+unbiased for \emph{any} positive weights (Gauss--Markov), so the weight choice is
+second-order for \emph{ranking}---a ceiling an integrated knowledge-gradient would not lift,
+because it is a property of the estimator, not the acquisition. Calibration instead pays off
+wherever a \emph{decision} reads the error bar directly. We show this along the design loop in
+three places: a stop decision, a commit-to-synthesis decision, and that same commit amortized
+to molecules with no FEP edge.
+
+\paragraph{Trustworthy stopping.} Figure~\ref{fig:G} runs two learners with the \emph{same}
+correct posterior mean but different assumed uncertainty. The calibrated learner's claimed
+confidence tracks the actual top-$k$ correctness ($|\Delta|=0.022$) and stops at $30$ calls
+$82\%$ correct; an overconfident learner using the learned head's variance ($0.15\times$,
 Figure~\ref{fig:A}) stops twice as early at only $60\%$ correct. Calibration buys a
-trustworthy stop; this, with gauge-aware routing (Figure~\ref{fig:D}), is the active-%
-learning story.
+trustworthy stop; this, with gauge-aware routing (Figure~\ref{fig:D}), is the
+active-learning story.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figG_calibrated_stopping.pdf}
@@ -237,8 +292,58 @@ overconfident learner stops $2\times$ earlier but is much more often wrong.}
 \label{fig:G}
 \end{figure}
 
+\paragraph{Trustworthy commit-to-synthesis.} The same logic governs the design loop, where
+the decision is \emph{commit this candidate to synthesis}. We score a candidate by the
+calibrated lower-confidence bound on its reward, $\mathrm{LCB}=\mu-\kappa\sigma$ (reward
+$=-\ddG$ relative to a reference, higher is better; $\kappa=z_{1-\alpha}$), and commit iff
+$\mathrm{LCB}\ge\tau$. Figure~\ref{fig:I} ports the stopping test to this commit: with the
+calibrated $\sigma$ the realized fraction of correct commits \emph{tracks and exceeds} the
+claimed confidence ($0.87\!\to\!0.98$ as the claim rises $0.5\!\to\!0.95$), whereas the
+overconfident head plateaus near the base rate ($\approx0.88$ at every claim). The
+trustworthiness gap is $+0.048$, bootstrap CI $[0.037,0.060]$. As with stopping, using the
+same bound for \emph{selection} is null (the Gauss--Markov ceiling again): calibration is for
+the decision, not the ranking. The reward representation carries the parity-odd channel of
+Theorem~\ref{thm:chiral} (enantiomer separation $|\Delta|=4.05$ vs.\ $0$ for an even
+readout), so commits are made \emph{per enantiomer}.
+
+\paragraph{Amortization to unseen molecules.} The Figure~\ref{fig:I} commit reads the
+per-edge sandwich directly; a usable design loop must \emph{amortize} the reward to molecules
+with no FEP edge. We train a deep-ensemble trunk mapping a congeneric edge to
+$(\widehat{\ddG},\,\sigma_{\text{total}})$ with the decomposed
+$\sigma_{\text{total}}=q\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$ of
+Section~\ref{sec:decomp} (conformally scaled by $q$; aleatoric floor at the $\sim$$0.4$
+kcal/mol benchmark label noise), on the public OpenFF protein--ligand benchmark~\citep{hahn2022plbench}, and test on
+\emph{both-endpoint scaffold-disjoint} (OOD) edges. Figure~\ref{fig:J}: where the amortized
+reward commits ($1{-}\alpha=0.5$--$0.6$, $n\approx30$--$82$ edges) it is
+calibrated-to-conservative; at higher required confidence it \emph{abstains} ($n\le1$) rather
+than commit duds. A free learned-$\sigma$ (MVE) head instead over-commits at every level and
+is only base-rate correct (claim $0.95$, deliver $\approx0.51$). The mean shortfall (claimed
+$-$ actual) is $-0.065$ (trunk) vs.\ $+0.228$ (MVE); difference $+0.293$, CI $[0.247,0.334]$.
+The commit trust survives amortization to molecules the surrogate never saw---a calibrated
+decision transfers, a learned-$\sigma$ one does not.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figI_calibrated_reward.pdf}
+\caption{\textbf{Calibrated commit-to-synthesis is trustworthy.} Realized fraction of correct
+commits vs.\ claimed confidence: the calibrated lower bound tracks/exceeds its claim
+(trustworthy), while the overconfident head plateaus near the base rate (over-claims).
+Trustworthiness gap $+0.048$, bootstrap CI $[0.037,0.060]$.}
+\label{fig:I}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figJ_amortized_reward.pdf}
+\caption{\textbf{The commit trust survives amortization to OOD molecules.} On both-endpoint
+scaffold-disjoint edges, the decomposed-$\sigma$ trunk commits when confident and abstains
+when not; the learned-$\sigma$ (MVE) head over-commits duds at every confidence level
+(claim $0.95$, deliver $\approx0.51$). Shortfall difference $+0.293$, CI $[0.247,0.334]$.}
+\label{fig:J}
+\end{figure}
+
 \section{Honest negatives}
-Two pre-registered falsifiers were not refuted, and we report them as results.
+Three pre-registered falsifiers were not refuted, and we report them as results---all three
+are the \emph{same} Gauss--Markov ceiling seen from a different angle, which is why they
+delimit rather than dent the contribution.
 \textbf{(i) Weighting is second-order for ranking} (Figure~\ref{fig:C}): across calls-,
 A-optimal-, and cost-to-top-$k$ metrics, sandwich vs.\ naive weights differ by
 $\le$$1.05\times$; the acquisition \emph{policy} beats random ($2.2\times$) but the
@@ -248,16 +353,35 @@ target identification across both diverse and within-family (aminergic GPCR) tar
 a fingerprint model recovers the hidden target as well as---but no better than---a
 Tanimoto baseline (top-1 $0.84$--$0.97$ vs.\ $0.86$--$0.96$), though $P(\text{binds})$ is
 well calibrated (ECE $0.008$). Beating similarity needs orthogonal 3D/pocket information,
-which motivates---rather than undermines---the structure-aware surrogate. Neither negative
-triggers the central kill criterion, which is a conjunction over calibration and
-efficiency; calibration is established.
+which motivates---rather than undermines---the structure-aware surrogate. \textbf{(iii) A
+calibrated reward does not reshape generation} (Figure~\ref{fig:K}): a minimal
+trajectory-balance GFlowNet~\citep{bengio2021gflownet,malkin2022tb} over an \emph{evaluable}
+ligand space (the measured congeneric
+series of a held-out target; trunk trained target-disjoint) draws terminals in proportion to
+reward. Swapping the raw predicted reward for the calibrated LCB does not improve the true
+hit-rate of the generated distribution ($0.332$ vs.\ $0.336$; cal$-$raw bootstrap CI
+$[-0.026,+0.017]$, straddling zero), though it still beats the overconfident MVE reward
+($0.273$). The cause is again Gauss--Markov: when the trunk $\sigma$ is near-uniform across
+the candidate space the value spread dominates the LCB, leaving the ordering---and hence the
+sampling distribution---unchanged. Calibration reshapes generation only where $\sigma$ varies
+enough to re-rank candidates (the OOD regime of Figure~\ref{fig:J}); a $\sigma$-uniform
+target is null. None of the three negatives triggers the central kill criterion, which is a
+conjunction over calibration and efficiency; calibration is established, and each negative
+localizes exactly where it is \emph{not} the bottleneck.
 
 \section{Limitations}
 The sandwich is aleatoric-only and conditional on correct physics; out-of-distribution
 coverage relies on the ensemble and $\Delta$-head (Figure~\ref{fig:B} is a test, not a
 guarantee, and far-OOD coverage degrades). The active-learning and stopping experiments are
 controlled simulations; the binding-edge calibration uses bootstrap rather than
-independent-replicate truth.
+independent-replicate truth. The generation negative (Figure~\ref{fig:K}) is on a single
+$\sigma$-uniform target; whether calibration reshapes generation on a $\sigma$-varying
+(genuinely OOD) target is untested. Finally, a structure-based (docking) reverse-screen---the
+natural next step toward the orphan-target regime---did not beat the ligand baseline on this
+public benchmark (raw docking rewards the greasiest pocket, and the benchmark lacks orphan
+targets), so it is deferred to future work rather than claimed here. The chirality and gauge
+results are exact and architecture-level; we do not claim an efficiency win from edge
+weighting.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.78\textwidth]{figC_active_learning.pdf}
@@ -275,18 +399,34 @@ mean is unbiased for any positive weights).}
 diverse and within-family target sets. (B) $P(\text{binds})$ is well calibrated
 (ECE $0.008$). Beating similarity needs orthogonal structure/physics.}
 \label{fig:F}
-\end{figure} The chirality and gauge results are exact and
-architecture-level. We do not claim an efficiency win from edge weighting.
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.78\textwidth]{figK_calibrated_generation.pdf}
+\caption{\textbf{Honest negative: a calibrated reward does not reshape generation.}
+True hit-rate of a trajectory-balance GFlowNet's output distribution under three rewards on
+an evaluable held-out target: the calibrated LCB ties the raw predicted reward
+($0.332$ vs.\ $0.336$, cal$-$raw CI $[-0.026,+0.017]$) while both beat the overconfident MVE
+reward ($0.273$). With a near-uniform trunk $\sigma$ the value spread dominates the ordering
+(the Gauss--Markov ceiling); calibration moves generation only when $\sigma$ re-ranks.}
+\label{fig:K}
+\end{figure}
 
 \section{Conclusion}
 Putting a differentiable BAR estimator at the surrogate's bottleneck makes its aleatoric
 uncertainty a computed, calibrated, differentiable closed form rather than a learned
 guess. This readout is MBAR-correct, robust, and---because it is differentiable into a
-Fisher--resistance Laplacian---usable for gauge-aware acquisition and trustworthy stopping.
-Four theorems and a suite of falsifiable figures, including two honest negatives, delimit
-exactly what the construction does and does not buy.
+Fisher--resistance Laplacian---usable for gauge-aware acquisition and trustworthy decisions:
+a stop, and a commit-to-synthesis that amortizes to unseen molecules. Four theorems and a
+suite of falsifiable figures, including three honest negatives---one Gauss--Markov ceiling
+seen in ranking, selection, and generation---delimit exactly what the construction does and
+does not buy.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command; all theorem
-constants are unit tests; real data are public (alchemtest BACE1/benzene, ChEMBL).
+constants are unit tests; real data are public (alchemtest BACE1/benzene, ChEMBL, the OpenFF
+protein--ligand benchmark).
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
 
 \end{document}
