@@ -79,14 +79,37 @@ calibrated the same way (percentile among each target's known binders). Full tab
 - **Method-validation read:** calibration separated artefact-100% from genuine signal
   and reproduced the DHODH rejection independently — the screen behaves as designed.
 
+## Boltz-2 cross-check (orthogonal structure model) → steroid hypothesis CHALLENGED
+The docking hypothesis was tested with a stronger, orthogonal method: a Boltz-2 (AlphaFold3-class
+co-folding + binding) small-molecule screen of {known agonist + the 4 cage forms} in each
+receptor's **agonist-seeded pocket**, read RELATIVE to that agonist (full table + figure:
+`docs/results_boltz_cage.md`, `figs/boltz_cage_crosscheck.{pdf,png}`; `make boltzcage`).
+**Boltz does NOT corroborate the steroid hypothesis:**
+- The known agonists score high (binding_confidence GR/AR/ER = **0.98 / 0.94 / 0.98**) — pockets
+  and model recognise true steroid binders — but the cage's best form sits **far below** each:
+  gaps **GR −0.52, AR −0.40, ER −0.70**. The cage is not a steroid-pocket binder at the agonist
+  level; the docking GR-percentile signal looks like the "rigid lipophilic cage fits a roomy
+  pocket" artefact the gate warned about.
+- **The AChE greasy-pocket artefact is REJECTED by Boltz** (cage 0.21–0.27 vs donepezil 0.58):
+  Boltz discriminates where raw docking falsely scored AChE 100% — evidence its negative read on
+  the steroid pockets is credible.
+- **The two methods disagree** (docking: GR≳AR moderate steroid; Boltz: cage far below all
+  agonists, weak residual preference **AR>GR**, opposite ranking) → the in-silico steroid signal
+  is **not robust across methods**. DHODH is an inconclusive control (brequinar itself scores
+  low 0.33).
+- Honest caveat: Boltz is not independently validated for this exact molecule, but its positive
+  controls pass and it rejects the known docking artefact, so its disagreement carries weight.
+
 ## Recommended experiments (VoI-ordered, pending assays)
-1. **Nuclear-receptor reporter panel — prioritise GR ≳ AR > ER-α — on both enantiomers**:
-   the single most mechanistically-grounded, cheapest decisive test. GR is the only NR
-   reproducible across both screens, so lead with it; it directly probes the only
-   coherent in-silico class signal and a clean negative *bounds* the orphan claim.
-   Include the **deacetyl (active) form** alongside the acetate.
-2. **Test the data-rich moderate hits first**, not the thin greasy-pocket 100%s: the
-   percentiles backed by the most reference docks are the trustworthy hypotheses.
+1. **Broad biochemical / phenotypic profiling is now the primary un-blinder** (thermal-shift /
+   SPR against-panel, or Cell Painting / chemoproteomics). After the Boltz cross-check the steroid
+   hypothesis is **method-dependent** (docking moderate, Boltz negative) and in-silico is
+   exhausted; the orphan, promiscuous scaffold argues for breadth before depth.
+2. **The nuclear-receptor reporter panel is now a cheap *bound*, not the lead.** If run, test
+   **GR** (docking's one cross-screen-reproducible hit) and **AR** (Boltz's weak residual
+   preference) on **both enantiomers** and **both forms** (acetate as-given + deacetyl active; on
+   GR/AR the acetate scored slightly higher in Boltz). A clean negative *bounds* the orphan claim,
+   but the two in-silico methods no longer agree that it will be positive.
 3. A **broad biochemical/binding panel** (e.g. a kinase/against-panel + a
    thermal-shift / SPR screen) or **phenotypic profiling (Cell Painting /
    chemoproteomics)** is the real un-blinder — the orphan scaffold + promiscuity flag
