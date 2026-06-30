@@ -5,6 +5,7 @@ Run: PYTHONPATH=scripts python scripts/boltz_cage_inputs.py  (or `make boltzinpu
 """
 from __future__ import annotations
 
+import json
 import pathlib
 import urllib.request
 
@@ -46,9 +47,12 @@ def cage_smiles() -> dict[str, str]:
             "RR_OH": deacetylate(rr), "SS_OH": deacetylate(ss)}
 
 
+# Target order for the panel (AChE = greasy-pocket control; docking falsely scored it 100%).
+_TARGETS = ("GR", "AR", "ER", "DHODH", "AChE")
 # UniProt accession + 1-based LBD / catalytic-domain ranges (confirm vs UniProt features).
 _LBD = {"GR": ("P04150", 521, 777), "AR": ("P10275", 669, 919),
-        "ER": ("P03372", 305, 550), "DHODH": ("Q02127", 78, 395)}
+        "ER": ("P03372", 305, 550), "DHODH": ("Q02127", 78, 395),
+        "AChE": ("P22303", 32, 574)}
 
 # Per-target anchor (GR/AR/ER agonists; DHODH inhibitor), as curated isomeric SMILES from
 # ChEMBL (PubChem is unreachable from this environment). Source ChEMBL IDs are recorded so the
@@ -62,6 +66,8 @@ _ANCHOR_SMILES = {
     "ER": "C[C@]12CC[C@@H]3c4ccc(O)cc4CC[C@H]3[C@@H]1CC[C@@H]2O",
     # brequinar, DHODH inhibitor (CHEMBL38434)
     "DHODH": "Cc1c(-c2ccc(-c3ccccc3F)cc2)nc2ccc(F)cc2c1C(=O)O",
+    # donepezil, AChE inhibitor (CHEMBL502)
+    "AChE": "COc1cc2c(cc1OC)C(=O)C(CC1CCN(Cc3ccccc3)CC1)C2",
 }
 
 
@@ -83,7 +89,7 @@ def build_manifest() -> dict:
     """The 20-complex matrix: each target x {its anchor + the 4 cage forms}."""
     targets, anchors, cage = lbd_sequences(), anchor_smiles(), cage_smiles()
     complexes = []
-    for tgt in ("GR", "AR", "ER", "DHODH"):
+    for tgt in _TARGETS:
         complexes.append({"name": f"cage-{tgt}-anchor", "target": tgt,
                           "ligand_label": "anchor", "ligand_smiles": anchors[tgt],
                           "is_anchor": True})
@@ -94,12 +100,40 @@ def build_manifest() -> dict:
     return {"targets": targets, "anchors": anchors, "cage": cage, "complexes": complexes}
 
 
+def screen_payload(target: str, m: dict) -> dict:
+    """One small-molecule-screen payload: the {anchor + 4 cage forms} library docked into
+    `target`, with the agonist seeding pocket detection. Filters disabled so no library
+    molecule is dropped before scoring (we need the cage scored)."""
+    anchor = m["anchors"][target]
+    molecules = [{"smiles": anchor, "id": "anchor"}]
+    molecules += [{"smiles": smi, "id": form} for form, smi in m["cage"].items()]
+    return {
+        "molecules": molecules,
+        "target": {
+            "entities": [{"type": "protein", "chain_ids": ["A"], "value": m["targets"][target]}],
+            "reference_ligands": [anchor],
+        },
+        "molecule_filters": {"boltz_smarts_catalog_filter_level": "disabled"},
+    }
+
+
+def write_screen_payloads(m: dict) -> list[pathlib.Path]:
+    out_dir = CAGE / "boltz_screen_payloads"
+    out_dir.mkdir(exist_ok=True)
+    paths = []
+    for tgt in _TARGETS:
+        p = out_dir / f"cage-screen-{tgt}.json"
+        p.write_text(json.dumps(screen_payload(tgt, m), indent=2))
+        paths.append(p)
+    return paths
+
+
 def main() -> None:
-    import json
     m = build_manifest()
     out = CAGE / "boltz_inputs.json"
     out.write_text(json.dumps(m, indent=2))
-    print(f"wrote {out} ({len(m['complexes'])} complexes)")
+    paths = write_screen_payloads(m)
+    print(f"wrote {out} ({len(m['complexes'])} complexes) + {len(paths)} screen payloads")
 
 
 if __name__ == "__main__":

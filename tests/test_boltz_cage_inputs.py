@@ -31,26 +31,29 @@ def test_enantiomers_are_mirror_not_identical():
     assert s["RR_OAc"] != s["SS_OAc"]
 
 
+_TARGETS = {"GR", "AR", "ER", "DHODH", "AChE"}
+
+
 def test_anchors_resolve_and_valid():
     a = bci.anchor_smiles()
-    assert set(a) == {"GR", "AR", "ER", "DHODH"}
+    assert set(a) == _TARGETS
     for k, smi in a.items():
         assert Chem.MolFromSmiles(smi) is not None, f"{k} anchor invalid"
 
 
 def test_lbd_sequences_plausible():
     seqs = bci.lbd_sequences()
-    assert set(seqs) == {"GR", "AR", "ER", "DHODH"}
+    assert set(seqs) == _TARGETS
     for k, s in seqs.items():
-        assert 150 <= len(s) <= 400, f"{k} LBD length {len(s)} implausible"
+        assert 150 <= len(s) <= 600, f"{k} domain length {len(s)} implausible"
         assert set(s) <= set("ACDEFGHIKLMNPQRSTVWY"), f"{k} non-AA chars"
 
 
-def test_manifest_has_20_complexes():
+def test_manifest_has_25_complexes():
     from collections import Counter
     m = bci.build_manifest()
-    assert len(m["complexes"]) == 20  # 4 targets x (1 anchor + 4 cage forms)
+    assert len(m["complexes"]) == 25  # 5 targets x (1 anchor + 4 cage forms)
     per = Counter(c["target"] for c in m["complexes"])
-    assert all(v == 5 for v in per.values()) and set(per) == {"GR", "AR", "ER", "DHODH"}
-    assert len([c for c in m["complexes"] if c["is_anchor"]]) == 4
-    assert len({c["name"] for c in m["complexes"]}) == 20  # unique run_names
+    assert all(v == 5 for v in per.values()) and set(per) == _TARGETS
+    assert len([c for c in m["complexes"] if c["is_anchor"]]) == 5
+    assert len({c["name"] for c in m["complexes"]}) == 25  # unique run_names

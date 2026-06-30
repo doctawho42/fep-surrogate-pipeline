@@ -1,0 +1,41 @@
+{
+  "molecules": [
+    {
+      "smiles": "C[C@@H]1C[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]2(C)[C@@]1(O)C(=O)CO",
+      "id": "anchor"
+    },
+    {
+      "smiles": "CC(=O)O[C@]12C[C@H](c3ccccc3C1(F)F)c1c([nH]c(=O)[nH]c1=O)O2",
+      "id": "RR_OAc"
+    },
+    {
+      "smiles": "CC(=O)O[C@@]12C[C@@H](c3ccccc3C1(F)F)c1c([nH]c(=O)[nH]c1=O)O2",
+      "id": "SS_OAc"
+    },
+    {
+      "smiles": "O=c1[nH]c2c(c(=O)[nH]1)[C@@H]1C[C@](O)(O2)C(F)(F)c2ccccc21",
+      "id": "RR_OH"
+    },
+    {
+      "smiles": "O=c1[nH]c2c(c(=O)[nH]1)[C@H]1C[C@@](O)(O2)C(F)(F)c2ccccc21",
+      "id": "SS_OH"
+    }
+  ],
+  "target": {
+    "entities": [
+      {
+        "type": "protein",
+        "chain_ids": [
+          "A"
+        ],
+        "value": "VPATLPQLTPTLVSLLEVIEPEVLYAGYDSSVPDSTWRIMTTLNMLGGRQVIAAVKWAKAIPGFRNLHLDDQMTLLQYSWMFLMAFALGWRSYRQSSANLLCFAPDLIINEQRMTLPCMYDQCKHMLYVSSELHRLQVSYEEYLCMKTLLLLSSVPKDGLKSQELFDEIRMTYIKELGKAIVKREGNSSQNWQRFYQLTKLLDSMHEVVENLLNYCFQTFLDKTMSIEFPEMLAEIITNQIPKYSNGNIKKLLFHQK"
+      }
+    ],
+    "reference_ligands": [
+      "C[C@@H]1C[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]2(C)[C@@]1(O)C(=O)CO"
+    ]
+  },
+  "molecule_filters": {
+    "boltz_smarts_catalog_filter_level": "disabled"
+  }
+}
