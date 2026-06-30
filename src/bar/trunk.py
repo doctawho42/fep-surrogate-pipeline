@@ -6,6 +6,8 @@ Spec: docs/superpowers/specs/2026-06-30-trunk-amortized-reward-design.md.
 """
 from __future__ import annotations
 
+from functools import cache
+
 import numpy as np
 from numpy.typing import NDArray
 from rdkit import Chem
@@ -19,6 +21,7 @@ _DESC = [Descriptors.MolWt, Crippen.MolLogP, rdMolDescriptors.CalcTPSA,
          rdMolDescriptors.CalcNumRotatableBonds]
 
 
+@cache
 def chir_pseudoscalar(smiles: str, seed: int = 1) -> float:
     """Parity-odd molecule descriptor: sum of signed volumes over assigned stereocentres of a
     3D embedding. Enantiomer (all centres inverted) -> negation; achiral -> 0."""
@@ -46,6 +49,7 @@ def chir_pseudoscalar(smiles: str, seed: int = 1) -> float:
     return float(total)
 
 
+@cache
 def ligand_features(smiles: str) -> NDArray:
     """ECFP4 (useChirality=False, 1024 bits) + achiral descriptors. Enantiomer-blind."""
     mol = Chem.MolFromSmiles(smiles)
