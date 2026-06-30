@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from bar.trunk import chir_pseudoscalar, featurize_edge, ligand_features  # noqa: F401
+from bar.trunk import chir_pseudoscalar, featurize_edge, ligand_features
 
 # (R)- and (S)-bromochlorofluoromethane: a minimal chiral enantiomer pair
 _R = "[C@H](F)(Cl)Br"
@@ -35,3 +35,8 @@ def test_even_features_are_enantiomer_blind_but_0o_separates():
     e_0o_R = featurize_edge(_ACHIRAL, _R, include_0o=True)
     e_0o_S = featurize_edge(_ACHIRAL, _S, include_0o=True)
     assert not np.array_equal(e_0o_R, e_0o_S)        # 0o channel separates
+
+
+def test_ligand_features_dimension():
+    f = ligand_features("CCO")
+    assert f.shape == (1030,)  # 1024 ECFP bits + 6 achiral descriptors

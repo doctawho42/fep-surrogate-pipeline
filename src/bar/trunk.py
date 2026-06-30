@@ -21,7 +21,10 @@ _DESC = [Descriptors.MolWt, Crippen.MolLogP, rdMolDescriptors.CalcTPSA,
 def chir_pseudoscalar(smiles: str, seed: int = 1) -> float:
     """Parity-odd molecule descriptor: sum of signed volumes over assigned stereocentres of a
     3D embedding. Enantiomer (all centres inverted) -> negation; achiral -> 0."""
-    mol = Chem.AddHs(Chem.MolFromSmiles(smiles))
+    m0 = Chem.MolFromSmiles(smiles)
+    if m0 is None:
+        raise ValueError(f"bad SMILES: {smiles}")
+    mol = Chem.AddHs(m0)
     centres = Chem.FindMolChiralCenters(mol, includeUnassigned=False, useLegacyImplementation=False)
     if not centres:
         return 0.0
@@ -32,6 +35,7 @@ def chir_pseudoscalar(smiles: str, seed: int = 1) -> float:
     conf = mol.GetConformer()
     total = 0.0
     for idx, _label in centres:
+        # [:4] captures all 4 neighbours of a stereocentre (incl. H after AddHs)
         nbrs = [a.GetIdx() for a in mol.GetAtomWithIdx(idx).GetNeighbors()][:4]
         if len(nbrs) < 4:
             continue
