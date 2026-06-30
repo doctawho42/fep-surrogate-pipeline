@@ -69,3 +69,11 @@ exclude = ['src/screen/']       # external-tool orchestration; heavy untyped dep
 ignore_missing_imports = true   # pymbar/networkx ship partial/no stubs
 warn_unused_ignores = true
 disallow_untyped_defs = false   # research code; tighten incrementally
+
+# rdkit-stubs ships a syntactically-broken stub (rdchem.pyi:347); src/bar/trunk.py imports
+# rdkit, so skip analyzing rdkit (its symbols become Any) — the load-bearing math stays typed.
+[[tool.mypy.overrides]]
+module = ["rdkit.*"]
+follow_imports = "skip"
+follow_imports_for_stubs = true
+ignore_missing_imports = true
