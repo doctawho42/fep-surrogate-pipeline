@@ -30,7 +30,11 @@ class TabularTB:
     def _rollout(self, gen: torch.Generator) -> tuple[str, torch.Tensor]:
         state, logpf = "", torch.zeros(())
         while not self.trie.is_terminal(state):
-            acts, logp = self._logp(state)
+            acts = self.trie.actions(state)
+            if len(acts) == 1:
+                state = acts[0][1]           # deterministic: forward logp = 0
+                continue
+            _, logp = self._logp(state)      # _logp recomputes acts internally; fine
             i = int(torch.multinomial(torch.exp(logp.detach()), 1, generator=gen).item())
             logpf = logpf + logp[i]
             state = acts[i][1]
