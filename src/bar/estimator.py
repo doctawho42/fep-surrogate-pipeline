@@ -98,7 +98,15 @@ def _sample_var(p: NDArray) -> float:
 def sandwich_variance(
     x_f: ArrayLike, x_r: ArrayLike, M: float | None = None, d: float | None = None
 ) -> float:
-    """Theorem 2 sandwich Var = B / I^2, B = n_f Var_f[p] + n_r Var_r[p]."""
+    """Theorem 2 sandwich Var = B / I^2, B = n_f Var_f[p] + n_r Var_r[p].
+
+    Assumes independent samples: ``B`` uses the raw array sizes ``n_f`` and ``n_r``,
+    so callers must pass works that have already been decorrelated to the statistical
+    inefficiency ``g`` (e.g. via ``pymbar.timeseries.subsample_correlated_data``).
+    If the input arrays still contain autocorrelated MD samples, the effective sample
+    sizes are smaller than the raw sizes, and ``B/I^2`` will be biased
+    (under-estimated variance).
+    """
     xf, xr, M = _prep(x_f, x_r, M)
     d = _solve_if_needed(xf, xr, M, d)
     pf = expit(xf - d + M)

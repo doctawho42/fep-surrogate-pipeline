@@ -64,14 +64,23 @@ Sandwich ≈ MBAR ≈ 1 (coincide, the correctness proof). Max |Δ|(sandwich −
 `1/I` traces a *non-constant* 1.08→2.65 factor — the info-equality plug-in, off worst at
 high overlap (see the corrected Corollary in `bar_proofs.tex`).
 
-**Panel B — real FEP edges.** Adjacent-λ BAR edges with autocorrelation-aware bootstrap
-truth (decorrelated by the statistical inefficiency):
+**Panel B — real FEP edges.** Adjacent-λ BAR edges; both the sandwich inputs and the
+bootstrap truth are subsampled to the statistical inefficiency `g`
+(`pymbar.timeseries.statistical_inefficiency` + `subsample_correlated_data`) before `B`
+is computed — i.e. effective (decorrelated) `n` throughout:
 - **Binding — BACE1 RBFE (alchemtest AMBER, complex legs), 19 edges:** sandwich/boot
   **1.00** [0.96, 1.07]; naive `1/I`/boot **6.07** [2.78, 12.01].
 - Solvation — benzene hydration, 19 edges: sandwich/boot 1.01 [0.95, 1.05]; naive 4.05.
 
 The sandwich is calibrated on real **protein-ligand binding** edges (the relevant
 context), not just solvation.
+
+**g-robustness:** A robustness check of the panel-B sandwich ratio under coarser/finer
+`g`-subsampling (analogous to the overlap-filter robustness check above) was not run in this
+revision because no cached work arrays are stored and re-parsing the AMBER trajectories is
+non-trivial. It is flagged as future work: the sensitivity of the sandwich ratio to the
+specific `g` estimate from `pymbar.timeseries.statistical_inefficiency` should be quantified
+(expected to be small, since both sandwich inputs and bootstrap truth use the same `g`).
 
 ## Honest scope
 - The MBAR coincidence is exact in expectation; at extreme low overlap (n=20) the

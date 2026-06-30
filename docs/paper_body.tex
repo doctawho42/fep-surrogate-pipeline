@@ -154,6 +154,7 @@ for BAR's two-sample design; we verify the gradients to machine precision and th
 within $1\%$ against $3000$-replicate Monte-Carlo and \texttt{pymbar} in the good-overlap
 regime (at extreme low overlap, $n{=}20$, the bias-corrected plug-in runs $\sim$10\% below
 MBAR, both $\approx1$).
+The sandwich is derived for independent samples; on real FEP works both the sandwich inputs and the bootstrap truth are subsampled to the statistical inefficiency $g$~\citep{shirts2008mbar} before $B$ is formed, so the reported panel-B ratios use effective $n$.
 
 \paragraph{Figure~\ref{fig:A}: the readout is correct; the learned foil cannot be.}
 Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with
