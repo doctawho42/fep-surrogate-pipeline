@@ -1,0 +1,29 @@
+\section*{Supporting Information}
+\paragraph{Synthetic decomposition (illustration).} A controlled 1-D problem where the
+generative structure is known shows the decomposed interval is $2\times$ sharper than flat
+conformal at equal coverage with better conditional calibration; this is an illustration of the
+mechanism, not evidence on real data (Figure~\ref{fig:Breal} is the real test).
+
+\paragraph{Edge weighting (Figure~\ref{fig:C}).} The acquisition policy beats random
+($2.2\times$), but sandwich-vs-naive edge \emph{weighting} barely moves calls-to-top-$k$
+($\le$$1.05\times$)---the Gauss--Markov ceiling.
+
+\paragraph{Ligand-only target identification (Figure~\ref{fig:F}).} On real ChEMBL reverse
+screening, a fingerprint model ties---but does not beat---a Tanimoto baseline (top-1
+$0.84$--$0.97$ vs $0.86$--$0.96$), though $P(\text{binds})$ is well calibrated (ECE $0.008$).
+Beating similarity needs orthogonal 3D/pocket information.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.7\textwidth]{figC_active_learning.pdf}
+\caption{\textbf{Supplement: edge weighting is second-order for ranking.} The policy beats
+random; the sandwich-vs-naive weighting does not move calls-to-top-$k$ (Gauss--Markov).}
+\label{fig:C}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figF_target_id.pdf}
+\caption{\textbf{Supplement: ligand-only reverse screening is similarity-bound.} (A) A
+fingerprint model ties a Tanimoto baseline on hidden-target recovery. (B) $P(\text{binds})$ is
+well calibrated (ECE $0.008$).}
+\label{fig:F}
+\end{figure}
