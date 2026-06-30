@@ -118,8 +118,8 @@ OpenFF protein--ligand benchmark~\citep{hahn2022plbench}.
 \section{The BAR information bottleneck}\label{sec:bar}
 \paragraph{Setup.} For a single alchemical edge, forward and reverse works
 $\{W^f_i\}_{i=1}^{n_f}$, $\{W^r_j\}_{j=1}^{n_r}$ define unified coordinates $x_i=W^f_i$,
-$x_j=-W^r_j$. With $M=\ln(n_f/n_r)$ and $p(x;d)=\sigma(x-d+M)$ (here $\sigma(\cdot)$ is the logistic
-function, distinct from the uncertainty $\sigma$ used from Section~\ref{sec:audit} on), the
+$x_j=-W^r_j$. With $M=\ln(n_f/n_r)$ and $p(x;d)=s(x-d+M)$ (here $s(\cdot)$ is the logistic
+function, distinct from the uncertainty $\sigma$), the
 BAR estimate $\dFh$ is the
 root of the score $S(d)=\sum_{j\in r}p(x_j)-\sum_{i\in f}(1-p(x_i))$, and
 $\partial_d S=-\sum p(1-p)=:-I(d)$, the curvature/overlap.
@@ -221,7 +221,7 @@ automatically gauge-invariant.
 \end{theorem}
 The edge weights are the inverse sandwich variances---the differentiable readout of
 Section~\ref{sec:bar} entering the decision layer, which a black-box uncertainty number cannot
-provide. Figure~\ref{fig:D} shows the knowledge gradient on the all-ones gauge contrast is
+provide. The gauge-zero property is structural: $\ker L=\mathrm{span}\{\mathbf 1\}$ for \emph{any} positive conductances, so KG$=0$ on gauge directions does not depend on the weight \emph{value}; and by Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). The sandwich's contribution here is its differentiable closed form entering training and the trust calculation, not its magnitude. The Laplacian-precision and resistance-distance machinery is classical GLS-on-graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the \emph{sandwich} precision $I_e^2/B_e$ as the conductance (not raw overlap) and the automatic gauge-invariance of the acquisition---we make the correspondence precise, we do not claim new graph theory. Figure~\ref{fig:D} shows the knowledge gradient on the all-ones gauge contrast is
 $10^{-21}$ (exact zero, an identifiability statement that transfers structurally to multi-target
 networks), and that a gauge-\emph{unaware} acquisition wastes budget resolving a
 decision-irrelevant cross-cluster offset, reaching the within-target top-$k$ at regret $0.27$
@@ -246,7 +246,7 @@ $\chi(M)=\det[\mathbf r_2{-}\mathbf r_1,\mathbf r_3{-}\mathbf r_1,\mathbf r_4{-}
 (the $\texttt{0o}$ triple product of four readout points $\mathbf r_i$) satisfies
 $\chi(AM)=\det(A)\chi(M)$ for $A\in O(3)$, so it is $SO(3)$-invariant and flips sign under
 reflection; $(\{\|\mathbf r_i{-}\mathbf r_j\|\},\,\mathrm{sgn}\,\chi)$ is a complete $SO(3)$
-invariant. Thus a single
+invariant (complete for distinguishing the enantiomer pair $\{M,\sigma M\}$ once the full distance set fixes the cloud up to $O(3)$; fully characterizing the chirality of a many-atom molecule needs a consistent set of pseudoscalars). Thus a single
 $\texttt{0o}$ triple-product channel is a \emph{sufficient} minimal addition that restores the
 chirality bit.
 \end{theorem}
