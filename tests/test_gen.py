@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from gen.env import END, LigandTrie
+import numpy as np
+
+from gen.env import END, LeafRewards, LigandTrie, precompute_leaf_rewards, target_ligands
 
 
 def test_trie_reaches_exactly_the_input_ligands():
@@ -24,3 +26,26 @@ def test_no_smiles_is_a_prefix_terminal_of_another():
     assert not trie.is_terminal("CCO")        # not a terminal (no END yet)
     assert trie.is_terminal("CCO" + END)
     assert trie.is_terminal("CCOC" + END)
+
+
+# jnk1 is not present in data/fep_edges/all_edges.csv; p38 is the chosen substitute
+# (29 nodes, 29-node largest connected component — well above the >=8 threshold).
+_TARGET = "p38"
+
+
+def test_target_ligands_recovers_ddg_graph():
+    ref, true = target_ligands(_TARGET)
+    assert ref in true and abs(true[ref]) < 1e-9   # reference has ΔΔG 0 vs itself
+    assert len(true) >= 8                           # a real congeneric series
+    assert all(np.isfinite(v) for v in true.values())
+
+
+def test_precompute_leaf_rewards_fills_all_arms():
+    ref, lr = precompute_leaf_rewards(_TARGET, seed=0, n_members=4)
+    assert isinstance(lr, LeafRewards)
+    ligs = set(lr.true_ddg)
+    assert ligs == set(lr.mu) == set(lr.sigma_total) == set(lr.sigma_mve)
+    assert all(s >= 0 for s in lr.sigma_total.values())
+    assert all(s >= 0 for s in lr.sigma_mve.values())
+    # the trunk's sigma_total varies across ligands (some OOD) — not a constant
+    assert np.std(list(lr.sigma_total.values())) > 1e-6
