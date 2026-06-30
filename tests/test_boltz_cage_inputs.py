@@ -2,10 +2,9 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "scripts"))
+import boltz_cage_inputs as bci  # noqa: E402
 from rdkit import Chem  # noqa: E402
 from rdkit.Chem import Descriptors  # noqa: E402
-
-import boltz_cage_inputs as bci  # noqa: E402
 
 
 def test_cage_four_forms_valid_and_small():
