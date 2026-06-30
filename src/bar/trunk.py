@@ -90,6 +90,8 @@ class EnsembleTrunk:
 def amortized_sigma(sigma_epistemic: NDArray, sigma_aleatoric: float | NDArray,
                     q: float) -> NDArray:
     """Conformal-scaled total sigma for the commit LCB: q * sqrt(sigma_epi^2 + sigma_ale^2)."""
+    if q < 0:
+        raise ValueError(f"conformal scale q must be >= 0, got {q}")
     se = np.asarray(sigma_epistemic, dtype=float)
     sa = np.asarray(sigma_aleatoric, dtype=float)
     return q * np.sqrt(se ** 2 + sa ** 2)

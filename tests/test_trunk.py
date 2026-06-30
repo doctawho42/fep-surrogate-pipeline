@@ -2,8 +2,15 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
-from bar.trunk import chir_pseudoscalar, featurize_edge, ligand_features
+from bar.trunk import (
+    EnsembleTrunk,
+    amortized_sigma,
+    chir_pseudoscalar,
+    featurize_edge,
+    ligand_features,
+)
 
 # (R)- and (S)-bromochlorofluoromethane: a minimal chiral enantiomer pair
 _R = "[C@H](F)(Cl)Br"
@@ -43,14 +50,12 @@ def test_ligand_features_dimension():
 
 
 def test_amortized_sigma_monotone_and_nonneg():
-    from bar.trunk import amortized_sigma
     s = amortized_sigma(np.array([0.1, 0.5, 1.0]), 0.3, q=1.2)
     assert np.all(s >= 0)
     assert s[2] > s[0]  # grows with epistemic
 
 
-def test_ensemble_trunk_fits_and_epistemic_grows_off_support():
-    from bar.trunk import EnsembleTrunk
+def test_ensemble_trunk_fits_and_predicts():
     rng = np.random.default_rng(0)
     # synthetic congeneric edges: ddg correlates with a feature direction
     base = ["CCO", "CCCO", "CCCCO", "CCCCCO", "c1ccccc1", "Cc1ccccc1", "CCN", "CCCN"]
@@ -60,3 +65,8 @@ def test_ensemble_trunk_fits_and_epistemic_grows_off_support():
     mu, se = trunk.predict(edges[:5])
     assert mu.shape == (5,) and se.shape == (5,)
     assert np.all(se >= 0)
+
+
+def test_amortized_sigma_rejects_negative_q():
+    with pytest.raises(ValueError):
+        amortized_sigma(np.array([0.5]), 0.3, q=-1.0)
