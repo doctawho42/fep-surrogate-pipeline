@@ -124,7 +124,7 @@ specific `g` estimate from `pymbar.timeseries.statistical_inefficiency` should b
 - OpenFE IndustryBenchmarks2024 (3 repeats → true-replicate se) is the next data step.
 
 ## Gate
-`make check` green (41 tests + 3 new test_figA_foil tests) **and** Fig A regenerable by
+`make check` green (95 tests, incl. `test_figA_foil` + `test_figA_pooling`) **and** Fig A regenerable by
 one command (`make figA`). Sandwich = MBAR = truth (correct); fair foil (M2a) still
 ~7× overconfident at realistic budget, ~5× at large budget — honest "learnable-with-data
 vs exact-and-free" framing; calibrated on real binding edges → **proceed**.
