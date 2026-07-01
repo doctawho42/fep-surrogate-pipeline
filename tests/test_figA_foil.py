@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 torch = pytest.importorskip("torch")
-from figs.make_figA import _train_mve, controlled_panel, _gauss_edge  # noqa: E402
+from figs.make_figA import _gauss_edge, _train_mve, controlled_panel  # noqa: E402
 
 
 def test_foil_consumes_overlap_feature():
