@@ -66,6 +66,12 @@ figBreal:  # honest audit: Fig B on REAL OOD FEP residuals (not sharper; fair Mo
 figArep:  # independent-replicate validation of the reported se (OpenFE IndustryBenchmarks2024)
 	PYTHONPATH=src $(PY) figs/make_figA_replicates.py
 
+figL:  # IMPACT: calibrated cycle-closure QC (separates systematic from sampling; FPR = f(calibration))
+	PYTHONPATH=src $(PY) figs/make_figL.py
+
+figLval:  # IMPACT validation: flags are causal (repair test) + reproduce out-of-sample (held-out replicates)
+	PYTHONPATH=src $(PY) figs/make_figL_validation.py
+
 boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
 	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
 
