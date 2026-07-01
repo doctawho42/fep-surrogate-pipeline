@@ -1,33 +1,25 @@
 \begin{abstract}
-The aleatoric (finite-sampling) uncertainty of a relative binding free energy (RBFE)
-estimate need not be learned: it can be read off the physics in closed, differentiable form.
-Placing a differentiable Bennett Acceptance Ratio (BAR) estimator at a surrogate's bottleneck
-yields the per-edge \emph{sandwich} variance $B/I^2$ with an $O(1)$ backward pass; the readout
-reproduces \texttt{pymbar}'s MBAR uncertainty and Monte-Carlo truth across the overlap regimes
-tested with no Monte-Carlo, whereas a learned-variance head cannot identify a per-edge variance
-from one label per edge and is $5$--$12\times$ overconfident. Because it is a closed form, the
-variance is differentiable into a Fisher--resistance graph Laplacian (whose acquisition is
-provably zero on gauge-redundant directions) and exposes the one parity-odd readout channel an
-equivariant trunk needs to resolve enantiomers ($11.7\times$ lower chiral $\ddG$ error). We
-then ask, and answer honestly, a question most ML-for-FEP papers skip: does this free,
-calibrated uncertainty actually improve downstream machine learning? Across the public OpenFF
-protein--ligand benchmark and controlled simulations, we find that it largely does not. On
-real out-of-distribution residuals the decomposed interval is \emph{not} sharper than a flat
-conformal band; at matched decision budget the choice of $\sigma$ does not improve which edges
-are selected or which molecules are committed to synthesis; and steering a generator by a
-calibrated reward does not help---on a $\sigma$-varying target it actively hurts, because the
-uncertainty tracks chemical novelty, not low quality. What calibration \emph{does} buy is
-trust: an overconfident $\sigma$ silently corrupts stop/commit decisions, while any properly
-calibrated $\sigma$---including the physics one, at no calibration-set cost for the aleatoric
-term---makes them reliable. We scope these claims to the regimes tested (a single decomposed $\sigma$, one public
-benchmark, controlled simulations; the real-binding aleatoric calibration is validated against independent
-replicates---$1145$ edges, conservative by $\sim$$1.4\times$ and never systematically
-overconfident), and we state what would overturn them: where the
-uncertainty tracks \emph{quality} rather than chemical novelty---diverse-library lead
-optimization rather than congeneric de-novo design---a calibrated reward should help generation,
-exactly as the measured $\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$ predicts. We prove four
-results and verify every constant numerically; in these regimes, calibration acts as a decision
-instrument rather than a performance multiplier.
+We introduce a reusable primitive: the Bennett Acceptance Ratio (BAR) \emph{sandwich}
+variance $B/I^2$ as a closed, non-negative, $O(1)$-differentiable aleatoric-variance layer. At
+a surrogate's bottleneck it reads the per-edge finite-sampling uncertainty of a relative binding
+free energy (RBFE) estimate off the physics and propagates it into surrogate training and into
+Fisher--resistance acquisition-graph weights, where \texttt{pymbar} returns a number, not a
+back-propagatable graph weight. The same closed form exposes a parity-odd (\texttt{0o}) readout
+channel that resolves enantiomers ($11.7\times$ lower chiral $\ddG$ error). Across a public
+OpenFF protein--ligand benchmark and controlled simulations this free uncertainty largely does
+\emph{not} improve downstream ML: no sharper than conformal on out-of-distribution residuals, no
+change to which edges are selected or which molecules are committed, and no help to a
+reward-driven generator. A fair learned-variance foil---fed the work moments \emph{and} the
+overlap scalar $I$---stays $\sim$$7\times$ overconfident, as one noisy $\widehat{\ddG}$ label per
+edge cannot identify a per-edge variance. What it buys is \emph{trust}: an overconfident $\sigma$
+silently corrupts stop/commit decisions, while any properly calibrated $\sigma$---the physics one
+included, free for the aleatoric term---makes them reliable. On $1145$ real binding edges the MBAR form (equal to the
+sandwich to leading order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected) and
+never systematically overconfident. We establish four results---two new (the differentiable
+closed-form sandwich and its $O(1)$ backward) and two that make precise or connect known results
+(the Fisher--resistance correspondence and chirality completeness)---and verify every constant
+numerically: an honest map of where a free, differentiable primitive helps---a decision
+instrument, not a performance multiplier.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -66,14 +58,17 @@ trust in a decision, not a boost in sharpness, ranking, or generation.
 \paragraph{What is, and is not, new.} It is well understood in the free-energy community that
 the naive inverse-Fisher-information $1/I$ over-states the BAR variance, and the field-standard
 tool \texttt{pymbar} already reports the corrected MBAR uncertainty~\citep{shirts2008mbar}; we
-do \emph{not} claim to fix FEP variance. Our contributions are four. (1) The BAR sandwich
-variance as a \emph{differentiable closed form} with an $O(1)$ backward, so it propagates into
-a surrogate and into an acquisition graph---\texttt{pymbar} returns a number, not a
-back-propagatable graph weight. (2) A Fisher--resistance correspondence that turns the per-edge
-variances into a graph Laplacian and yields a gauge-aware, cost-aware acquisition. (3) A
-chirality-completeness statement identifying the one readout channel an equivariant trunk must
-contain. (4) Crucially, an \emph{honest audit} of whether this free, calibrated uncertainty
-improves downstream learning. We report---on real benchmark data and controlled
+do \emph{not} claim to fix FEP variance. We establish four results---two new (the
+differentiable closed-form sandwich and its $O(1)$ backward) and two that make precise or
+connect known results (the Fisher--resistance correspondence and the chirality-completeness
+requirement). (1, new) The BAR sandwich variance as a \emph{differentiable
+closed form} with an $O(1)$ backward, so it propagates into a surrogate and into an acquisition
+graph---\texttt{pymbar} returns a number, not a back-propagatable graph weight. (2,
+make-precise) A Fisher--resistance correspondence that turns the per-edge variances into a graph
+Laplacian and yields a gauge-aware, cost-aware acquisition. (3, make-precise) A
+chirality-completeness statement identifying a parity-odd readout channel an equivariant trunk
+must contain. (4) Crucially, an \emph{honest applicability map} of where this free, calibrated
+uncertainty helps downstream learning---and where it does not. We report---on real benchmark data and controlled
 simulations---that it mostly does not: it is no sharper than flat conformal on real
 out-of-distribution residuals, does not improve ranking or commit selection at matched budget,
 and does not improve (and on a $\sigma$-varying target hurts) a generator. Calibration buys
