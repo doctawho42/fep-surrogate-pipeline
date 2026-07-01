@@ -57,8 +57,36 @@ overlap `I` (reviewer M2a); oracle = same features, 4000 training edges.
 **Headline numbers (M2a, honest fair-foil result):**
 - Fair-foil mean (realistic budget, fed moments + overlap I): **0.15× true se** (~7× overconfident, range 0.09–0.20× across overlap sweep).
 - Oracle mean (large budget, 4000 training edges, same features): **0.20× true se** (~5× overconfident).
-- Even with 20× more training data AND the overlap feature, the learned head remains ~5× overconfident. One noisy ΔΔĜ label per edge cannot teach the per-edge sampling variance regardless of budget. The physics computes it exactly, per-edge, differentiably, at zero label cost.
-- Honest frame: **"learnable-with-data vs exact-and-free"** — not "the learned head fails." It can improve substantially with data, but never matches the closed form for free.
+- Even with 20× more training data AND the overlap feature, the learned head remains ~5× overconfident at this training budget/objective. The conditional sampling variance IS identifiable from single ΔΔĜ labels (see the pooling check below) — the residual overconfidence is a Gaussian-NLL optimization artifact, not an information-theoretic floor. The physics computes it exactly, per-edge, differentiably, at zero label cost and with no training artifact to fight.
+- Honest frame: **"learnable-with-data vs exact-and-free"** — not "the learned head fails" and not "one label per edge can never work." It can improve substantially with data, and a differently-trained/pooled estimator *can* recover the target se — but no learned head matches the closed form for free, and the standard per-edge Gaussian-NLL MVE head does not get there at realistic budgets.
+
+**Identifiability check (reviewer round-2 §3): is `se(overlap)` recoverable from single labels?**
+The `_gauss_edge` model has true ΔF = 0 for every separation `s`, so within a narrow overlap
+bin the residual SD of *single-label* ΔF̂ across edges is the pure sampling SD — no confound
+from a varying true mean. `pooled_se_recovery(n_edges)` (`figs/make_figA.py`) pools edges into
+12 overlap-quantile bins, computes the pooled within-bin residual SD of the single-label ΔF̂,
+and compares it to the mean sandwich se in that bin (mean relative error across bins). Run via
+`python figs/make_figA.py` (deterministic, seed 7):
+
+```
+[identifiability] pooled se(overlap) recovery from single labels: N=200:20.1%, N=4000:5.8%, N=40000:3.8%
+```
+
+Pooling single-label edges by overlap recovers the sandwich `se(overlap)` to **N=200: ~20%,
+N=4000: ~5.8%, N=40000: ~3.8%** relative error — the error **shrinks monotonically with edge
+budget**, i.e. the conditional sampling variance **IS identifiable** from one ΔF̂ label per edge.
+This directly falsifies the round-2-flagged claim that per-edge sampling variance is
+unlearnable "regardless of budget" or "fundamentally insufficient" from single labels: a
+nonparametric pooling-by-overlap estimator recovers it cleanly, and the recovery error is
+driven by finite-sample binning noise, not an identifiability barrier. The learned MVE head's
+residual ~5–7× overconfidence (above) is therefore best read as a **Gaussian-NLL objective/
+optimization artifact** — heteroscedastic NLL regression is known to be poorly calibrated and
+prone to underestimating variance in the underfit/limited-capacity regime (Seitzer et al.,
+"On the Pitfalls of Heteroscedastic Uncertainty Estimation with Probabilistic Neural Networks,"
+2022) — **not** evidence that the target is unlearnable in principle. The BAR bottleneck's
+advantage is that it sidesteps this objective-artifact failure mode entirely by computing the
+sandwich in closed form, untrained, at zero label cost — not that the quantity is otherwise
+unlearnable.
 
 Sandwich ≈ MBAR ≈ 1 (coincide, the correctness proof). Max |Δ|(sandwich − MBAR) = 0.096.
 `1/I` traces a *non-constant* 1.08→2.65 factor — the info-equality plug-in, off worst at
@@ -98,5 +126,8 @@ vs exact-and-free" framing; calibrated on real binding edges → **proceed**.
 
 **JCTC M2a status:** ADDRESSED. Fair foil now receives work moments + overlap `I` (6-dim
 feature). Large-budget oracle added. The measured numbers are honest: the physics wins
-not because the foil is impoverished, but because one label/edge is fundamentally
-insufficient to learn per-edge sampling variance — even at 4000-edge budget.
+not because the target is unidentifiable from one label/edge (the pooling-by-overlap check
+above shows it IS identifiable, recovering to ~4–6% error by N=4000–40000) but because the
+standard per-edge Gaussian-NLL MVE objective is a poor estimator of it at realistic and even
+large training budgets (Seitzer 2022) — the BAR bottleneck avoids that objective-artifact
+failure mode entirely by computing the sandwich in closed form, untrained, for free.
