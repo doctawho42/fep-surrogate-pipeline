@@ -14,14 +14,17 @@ null is informative — it confirms the QC's stated scope against real experimen
 The real OpenFE eg5 RBFE network, solved by our GLS pipeline, agrees with **real ChEMBL KIF11
 experimental affinity**:
 
-| metric | value |
-|---|---|
-| MUE | **0.79 kcal/mol** |
-| RMSE | 0.93 kcal/mol |
-| Kendall τ | +0.37 |
-| Pearson R | +0.65 |
-| n ligands | 28 |
-| cycle-closure reduced χ² | **0.64 (clean)** |
+| metric | value | 95% bootstrap CI (n=28) |
+|---|---|---|
+| MUE | **0.79 kcal/mol** | [0.59, 0.97] |
+| RMSE | 0.93 kcal/mol | [0.71, 1.11] |
+| Kendall τ | +0.37 | [+0.11, +0.60] |
+| Pearson R | +0.65 | [+0.30, +0.83] |
+| n ligands | 28 | — |
+| cycle-closure reduced χ² | **0.64 (clean)** | — |
+
+(CIs = percentile bootstrap over ligands, gauge re-aligned per resample; τ and R exclude 0, so the
+rank/linear agreement is significant despite the small n.)
 
 This is the first time the QC/network is validated against **experiment** (everything else was
 internal consistency or replicate reproducibility), and the numbers are literature-credible for

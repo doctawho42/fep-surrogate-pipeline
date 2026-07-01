@@ -523,8 +523,9 @@ held-out runs (sampling noise $\to0$).}
 
 \paragraph{Grounding against experiment, and the honest limit.} On \texttt{eg5}, whose ligands
 carry ChEMBL identifiers, the network $\ddG$ (from the same GLS fit) agrees with real KIF11
-experimental affinity~\citep{zdrazil2024chembl} at MUE $0.79$ kcal/mol (Pearson $R=0.65$,
-$n=28$), and its clean cycle-closure reduced $\chi^2=0.64$ is consistent---a QC-clean system is
+experimental affinity~\citep{zdrazil2024chembl} at MUE $0.79$ kcal/mol ($95\%$ bootstrap CI
+$[0.59,0.97]$; Pearson $R=0.65$ $[0.30,0.83]$, $n=28$), and its clean cycle-closure reduced
+$\chi^2=0.64$ is consistent---a QC-clean system is
 indeed accurate. Acting on the QC does \emph{not} improve accuracy here (internal $|z|$ vs
 error-against-experiment: $r=+0.13$), exactly as the scope predicts: on a clean system the
 residual error against experiment is dominated by node-consistent force-field bias, which cycle
