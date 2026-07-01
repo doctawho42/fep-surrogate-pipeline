@@ -19,7 +19,7 @@ conservative in aggregate but heterogeneous per system.
 On real protein–ligand binding edges the sandwich/MBAR uncertainty is **calibrated-to-conservative
 in aggregate** against independent-replicate truth: pooled, it OVER-predicts run-to-run
 reproducibility by ~1.4× and is not \emph{systematically} overconfident — the dangerous
-failure mode. This is the opposite of the learned MVE head (5–12× *over*confident everywhere,
+failure mode. This is the opposite of the learned MVE head (≈7× *over*confident at realistic budget / ≈5× at large budget,
 Fig A) and refutes the worry that the sampling sandwich would systematically under-state real
 reproducibility. It is not uniformly conservative (6/34 targets dip below 1,
 one markedly), so per-system calibration varies; but the aggregate and the vast majority of

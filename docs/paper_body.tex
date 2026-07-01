@@ -358,8 +358,8 @@ Mondrian-by-target conformal and only marginally better than a flat band (not si
 
 \paragraph{Ranking and selection: the choice of $\sigma$ is second-order at matched budget.}
 For edge ranking in active learning, sandwich versus naive edge weights differ by
-$\le$$1.05\times$ across calls-, A-optimal-, and cost-to-top-$k$ metrics
-(Figure~\ref{fig:C}, supplement): in a connected measurement graph the generalized-least-squares
+$0.98\times$ $[0.93,1.03]$ on the primary calls-to-top-$k$ metric (24-seed bootstrap CI;
+Figure~\ref{fig:C}, supplement): in a connected measurement graph the generalized-least-squares
 (GLS) contrast mean is unbiased for \emph{any} positive weights (Gauss--Markov), so the weight
 choice is second-order
 for ranking. The same holds for commit selection: at matched commit \emph{volume}
@@ -465,7 +465,7 @@ Fisher--resistance graph weight (whose value is structural---gauge-identifiabili
 trust---rather than a better-ranking magnitude) and paired with an exact chirality requirement.
 Tested honestly, this free calibration does not improve downstream sharpness, ranking, or
 reward re-ranking over a measured congeneric set (single target \texttt{eg5}); what it buys---and what an overconfident learned $\sigma$ destroys---is trustworthy
-stop/commit decisions. Four theorems and a suite of falsifiable figures, including several
+stop/commit decisions. Four results---two new (the differentiable closed-form sandwich and its $O(1)$ backward), two that make precise or connect known results (the Fisher--resistance correspondence and the chirality-completeness requirement)---and a suite of falsifiable figures, including several
 pre-declared, falsifiable negatives, delimit what the construction does and does not buy: in the regimes we
 tested, calibration is a decision instrument rather than a performance multiplier; where the
 uncertainty would track quality rather than novelty, that verdict should be revisited.
