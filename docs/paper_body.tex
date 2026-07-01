@@ -2,22 +2,23 @@
 We introduce a reusable primitive: the Bennett Acceptance Ratio (BAR) \emph{sandwich}
 variance $B/I^2$ as a closed, non-negative, $O(1)$-differentiable aleatoric-variance layer. At
 a surrogate's bottleneck it reads the per-edge finite-sampling uncertainty of a relative binding
-free energy (RBFE) estimate off the physics and propagates it into surrogate training and into
-Fisher--resistance acquisition-graph weights, where \texttt{pymbar} returns a number, not a
-back-propagatable graph weight. The same closed form exposes a parity-odd (\texttt{0o}) readout
-channel that resolves enantiomers ($11.7\times$ lower chiral $\ddG$ error). Across a public
-OpenFF protein--ligand benchmark and controlled simulations this free uncertainty largely does
+free energy (RBFE) off the physics, propagating it into surrogate training and
+Fisher--resistance acquisition-graph weights (\texttt{pymbar} returns a number, not a
+back-propagatable graph weight). The same closed form exposes a parity-odd (\texttt{0o}) readout
+channel that resolves enantiomers ($11.7\times$ lower chiral $\ddG$ error). Across public
+benchmarks and controlled simulations this free uncertainty does
 \emph{not} improve downstream ML: no sharper than conformal on out-of-distribution residuals, no
-change to which edges are selected or which molecules are committed, and no help to reward re-ranking over a measured congeneric set (single target \texttt{eg5}). A fair learned-variance foil---fed the work moments \emph{and} the
-overlap scalar $I$---stays $\sim$$7\times$ overconfident, as one noisy $\widehat{\ddG}$ label per
+change to edge selection or commit, and no help to reward re-ranking on a measured congeneric
+set (\texttt{eg5}). A fair learned-variance foil---fed work moments \emph{and} the
+overlap scalar $I$---stays $\sim$$7\times$ overconfident: one noisy $\widehat{\ddG}$ label per
 edge cannot identify a per-edge variance. What it buys is \emph{trust}: an overconfident $\sigma$
 silently corrupts stop/commit decisions, while any properly calibrated $\sigma$---the physics one
-included, free for the aleatoric term---makes them reliable. On $1145$ real binding edges the MBAR form (equal to the
-sandwich to leading order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected) and
-never systematically overconfident. We establish four results---two new (the differentiable
-closed-form sandwich and its $O(1)$ backward) and two that make precise or connect known results
-(the Fisher--resistance correspondence and chirality completeness)---and verify every constant
-numerically: an honest map of where a free, differentiable primitive helps---a decision
+included, free for the aleatoric term---makes them reliable. On $1145$ real binding edges
+the MBAR form (equal to the sandwich to leading order) is conservative by $1.41\times$
+($1.25\times$ bias-corrected), never systematically overconfident. We establish four
+results---two new (the differentiable closed-form sandwich and its $O(1)$ backward) and two that
+make precise or connect known results (the Fisher--resistance correspondence and chirality
+completeness): an honest map of where a free, differentiable primitive helps---a decision
 instrument, not a performance multiplier.
 \end{abstract}
 
@@ -113,7 +114,7 @@ OpenFF protein--ligand benchmark~\citep{hahn2022plbench}.
 \paragraph{Setup.} For a single alchemical edge, forward and reverse works
 $\{W^f_i\}_{i=1}^{n_f}$, $\{W^r_j\}_{j=1}^{n_r}$ define unified coordinates $x_i=W^f_i$,
 $x_j=-W^r_j$. With $M=\ln(n_f/n_r)$ and $p(x;d)=s(x-d+M)$ (here $s(\cdot)$ is the logistic
-function, distinct from the uncertainty $\sigma$), the
+function, distinct from the uncertainty $\sigma$ used later), the
 BAR estimate $\dFh$ is the
 root of the score $S(d)=\sum_{j\in r}p(x_j)-\sum_{i\in f}(1-p(x_i))$, and
 $\partial_d S=-\sum p(1-p)=:-I(d)$, the curvature/overlap.
@@ -140,7 +141,9 @@ drawn from the correct alchemical ensembles. It says nothing about systematic fo
 which is outside $B/I^2$ (we attach a separate epistemic/correction term in
 Section~\ref{sec:audit}). The value of Theorem~\ref{thm:sand} for us is that this term is a
 differentiable closed form (Theorem~\ref{thm:back}) and is non-negative by construction, where
-the plug-in MBAR expression can return a negative value in a rare edge case --- very high overlap with tiny samples, where the plug-in $1/I$ undershoots the $1/n_f+1/n_r$ correction --- whereas $B/I^2\ge0$ always.
+the plug-in MBAR expression can return a negative value in a rare edge case ---
+very high overlap with tiny samples, where the plug-in $1/I$ undershoots the
+$1/n_f+1/n_r$ correction --- whereas $B/I^2\ge0$ always.
 \end{remark}
 
 The information equality $A=B$ (which would give $1/I$) holds for a single-sample MLE but fails
@@ -180,7 +183,8 @@ starting coordinates (OpenFE \texttt{protocol\_repeats}~\citep{baumann2025indust
 the across-replicate SD therefore reflects sampling/convergence noise alone and is a
 \emph{lower bound} on full reproducibility (it excludes pose and system-preparation variance).
 The reported se does not \emph{systematically} under-state real
-reproducibility---the opposite of the learned head's ${\approx}7\times$ overconfidence at realistic budget (${\approx}5\times$ even at large budget).
+reproducibility---the opposite of the learned head's ${\approx}7\times$ overconfidence
+at realistic budget (${\approx}5\times$ even at large budget).
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
@@ -204,7 +208,7 @@ MBAR se (equal to the sandwich $B/I^2$ to leading order; Fig~\ref{fig:A}A) vs th
 across-replicate empirical SD over $1145$ OpenFE
 IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3 independent replicates
 each; seed/velocity-only repeats from identical starting coordinates via OpenFE
-\texttt{protocol\_repeats}, so the SD reflects sampling noise, a lower bound on full
+\texttt{protocol\_repeats}~\citep{baumann2025industrybenchmarks}, so the SD reflects sampling noise, a lower bound on full
 reproducibility). (A) Points sit above the $y{=}x$ line: the reported se is conservative
 (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; $1.25\times$ after the $n{=}3$
 small-sample SD bias correction, $\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$). (B) Per-target
