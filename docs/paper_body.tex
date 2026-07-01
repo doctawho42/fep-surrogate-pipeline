@@ -8,8 +8,7 @@ back-propagatable graph weight. The same closed form exposes a parity-odd (\text
 channel that resolves enantiomers ($11.7\times$ lower chiral $\ddG$ error). Across a public
 OpenFF protein--ligand benchmark and controlled simulations this free uncertainty largely does
 \emph{not} improve downstream ML: no sharper than conformal on out-of-distribution residuals, no
-change to which edges are selected or which molecules are committed, and no help to a
-reward-driven generator. A fair learned-variance foil---fed the work moments \emph{and} the
+change to which edges are selected or which molecules are committed, and no help to reward re-ranking over a measured congeneric set (single target \texttt{eg5}). A fair learned-variance foil---fed the work moments \emph{and} the
 overlap scalar $I$---stays $\sim$$7\times$ overconfident, as one noisy $\widehat{\ddG}$ label per
 edge cannot identify a per-edge variance. What it buys is \emph{trust}: an overconfident $\sigma$
 silently corrupts stop/commit decisions, while any properly calibrated $\sigma$---the physics one
@@ -31,7 +30,7 @@ downstream uses: a Fisher--resistance Laplacian for gauge-aware acquisition
 (Theorem~\ref{thm:fr}), a parity-odd readout channel for chirality (Theorem~\ref{thm:chiral}), and a
 risk-aware decision (stop/commit). The honest audit (right) maps where this free calibration
 helps---\emph{trust} in the stop/commit decision---and where it does not: sharpness, ranking,
-and generation.}
+and reward re-ranking (evaluable congeneric set, \texttt{eg5}).}
 \label{fig:overview}
 \end{figure}
 
@@ -53,7 +52,7 @@ physics or geometry already determines, and learn only what they do not}: the sa
 is read off the BAR estimator, the chirality bit off a geometric pseudoscalar, and the
 identifiable directions off the measurement graph. We then audit, honestly, whether such a
 computed-for-free uncertainty actually improves downstream learning---and find that its value is
-trust in a decision, not a boost in sharpness, ranking, or generation.
+trust in a decision, not a boost in sharpness, ranking, or reward re-ranking over a measured congeneric set.
 
 \paragraph{What is, and is not, new.} It is well understood in the free-energy community that
 the naive inverse-Fisher-information $1/I$ over-states the BAR variance, and the field-standard
@@ -71,7 +70,7 @@ must contain. (4) Crucially, an \emph{honest applicability map} of where this fr
 uncertainty helps downstream learning---and where it does not. We report---on real benchmark data and controlled
 simulations---that it mostly does not: it is no sharper than flat conformal on real
 out-of-distribution residuals, does not improve ranking or commit selection at matched budget,
-and does not improve (and on a $\sigma$-varying target hurts) a generator. Calibration buys
+and does not improve (and on a $\sigma$-varying target hurts) reward re-ranking over a measured congeneric set (single target \texttt{eg5}). Calibration buys
 \emph{trust} in stop/commit decisions, not performance. We pair every claim with a falsifiable
 figure and report the experiments where the method does not beat a simple baseline.
 
@@ -102,12 +101,12 @@ networks~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} are the de-fac
 break achirality is standard in that literature; we make the architectural requirement precise
 and verify it.
 
-\paragraph{Acquisition and generation.} Acquisition by the knowledge gradient~\citep{frazier2008kg}
+\paragraph{Acquisition and reward re-ranking.} Acquisition by the knowledge gradient~\citep{frazier2008kg}
 and its Monte-Carlo implementations~\citep{balandat2020botorch,gardner2018gpytorch} drive edge
 selection, while GFlowNets~\citep{bengio2021gflownet,malkin2022tb} sample candidates in
 proportion to reward. We connect the per-edge sandwich variances to a Fisher--resistance graph
 Laplacian (whose contrast variance is the resistance distance~\citep{klein1993resistance}) for
-gauge-aware acquisition, and audit calibration's effect on selection and generation on the
+gauge-aware acquisition, and audit calibration's effect on selection and reward re-ranking (evaluable congeneric set, \texttt{eg5}) on the
 OpenFF protein--ligand benchmark~\citep{hahn2022plbench}.
 
 \section{The BAR information bottleneck}\label{sec:bar}
@@ -277,7 +276,7 @@ prediction is zero; adding the $\texttt{0o}$ channel cuts enantiomer $\ddG$ MAE 
 \section{An honest audit: where calibration helps downstream---and where it does not}\label{sec:audit}
 The free, differentiable $\sigma$ is attractive; the operative question is whether it improves
 downstream machine learning. We test it on four tasks---interval sharpness, edge ranking,
-commit-to-synthesis selection, and target-directed generation---on the public OpenFF
+commit-to-synthesis selection, and reward re-ranking over a measured congeneric set (single target \texttt{eg5})---on the public OpenFF
 protein--ligand benchmark~\citep{hahn2022plbench}, which aggregates the FEP+ and Merck data
 sets~\citep{wang2015fep,schindler2020merck} (experimental $\ddG$ labels; both-endpoint
 scaffold-disjoint out-of-distribution (OOD) splits), and in controlled simulations. The
@@ -288,7 +287,7 @@ ensemble spread $\sigma_{\text{ens}}$ and a benchmark aleatoric floor $\sigma_{\
 conformally scaled by $q$ at miscoverage $\alpha=0.1$ (90\% target coverage).
 
 \begin{table}[t]\centering
-\caption{\textbf{The honest audit at a glance.} Does the free, calibrated $\sigma$ improve each
+\caption{\textbf{The honest audit at a glance (OpenFF benchmark / \texttt{eg5}).} Does this decomposed $\sigma$ improve each
 downstream task? Effects are the calibrated method minus the relevant baseline with a 95\%
 bootstrap CI; ``real'' = OpenFF benchmark out-of-distribution edges, ``sim'' = controlled
 simulation. The top block is performance (no gain); the bottom block is where calibration pays
@@ -302,7 +301,7 @@ Downstream task & Data & Effect (calibrated $-$ baseline) [95\% CI] & Verdict \\
 Interval sharpness (OOD) & real & width split/ours $0.92\times$; cond.\ $-0.044$ $[-0.121,0.005]$ & no gain \\
 Edge weighting (active learning) & sim & calls-to-top-$k$ $0.98\times$ $[0.93,1.03]$ & no gain \\
 Commit ranking (matched volume) & real & precision $-0.006$ $[-0.016,+0.007]$ & tie \\
-Generation (GFlowNet, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts \\
+Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts \\
 \midrule
 Commit trust (vs overconfident $\sigma$) & real & shortfall $+0.182$ $[0.132,0.225]$ better & \textbf{trust} \\
 Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust} \\
@@ -310,8 +309,8 @@ Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust
 \end{tabular}
 \end{table}
 
-\paragraph{Trust: an overconfident $\sigma$ corrupts decisions; a calibrated one does not---and
-calibration is cheap.} The clearest payoff of calibration is a trustworthy stop/commit
+\paragraph{Trust: an overconfident $\sigma$ corrupts decisions; this decomposed $\sigma$ does not---and
+calibration is cheap (on the OpenFF benchmark).} The clearest payoff of calibration is a trustworthy stop/commit
 decision. Figure~\ref{fig:J}B isolates the effect of $\sigma$ by holding the (ensemble) mean
 fixed and varying only the uncertainty used to commit a candidate to synthesis (commit iff the
 lower-confidence bound (LCB) $\mu-\kappa\sigma\ge\tau$, with $\kappa=z_{1-\alpha}$ the
@@ -333,7 +332,7 @@ on full reproducibility (Section~\ref{sec:bar}, Figure~\ref{fig:Arep}), the infl
 closer to neutral against the true run-to-run spread once pose and system-preparation variance
 are included.
 
-\paragraph{Sharpness: not sharper on real out-of-distribution residuals.} A natural hope is
+\paragraph{Sharpness: this decomposed $\sigma$ is not sharper on real out-of-distribution residuals (OpenFF benchmark).} A natural hope is
 that a decomposed, adaptive $\sigma$ yields tighter intervals than a flat conformal band at
 equal coverage. On a controlled 1-D problem whose generative structure the decomposition knows,
 it does (we keep that illustration in the supplement). On \emph{real} held-out trunk residuals
@@ -344,7 +343,7 @@ irreducible OOD error (correlation of half-width with $|$residual$|$ only $+0.11
 conditional calibration is marginally better than a flat band and comparable to a fair
 Mondrian-by-target conformal (per-target max coverage error $0.17$ vs $0.22$ for both split
 and Mondrian), but the advantage is not significant
-(ours$-$split $-0.044$, CI $[-0.121,0.005]$). The synthetic ``$2\times$ sharper'' result does
+(ours$-$split $-0.044$, CI $[-0.121,0.005]$). The synthetic ``up to $2.2\times$ sharper vs split-conformal ($2.0\times$ vs CQR)'' result does
 not transfer to real data.
 
 \begin{figure}[t]\centering
@@ -353,7 +352,7 @@ not transfer to real data.
 per target and per $|\ddG|$ bin: the decomposed $\sigma$ is comparable to a fair
 Mondrian-by-target conformal and only marginally better than a flat band (not significant).
 (B) Sharpness: the decomposed interval is \emph{not} tighter than flat split-conformal
-(split/ours $0.92\times$). The synthetic figure's $2\times$ sharpness is an oracle-DGP artifact.}
+(split/ours $0.92\times$). The synthetic figure's up to $2.2\times$ sharpness vs split-conformal ($2.0\times$ vs CQR) is an oracle-DGP artifact.}
 \label{fig:Breal}
 \end{figure}
 
@@ -380,7 +379,7 @@ buys trust, not a better ranking.}
 \label{fig:J}
 \end{figure}
 
-\paragraph{Generation: calibration does not help, and where $\sigma$ varies it hurts.} We drive
+\paragraph{Reward re-ranking (evaluable congeneric set): this decomposed $\sigma$ does not help, and where $\sigma$ varies it hurts.} We drive
 a trajectory-balance GFlowNet~\citep{bengio2021gflownet,malkin2022tb} over an evaluable ligand
 space (a held-out target's measured congeneric series; trunk trained target-disjoint) with three
 rewards: the calibrated LCB, the raw predicted value, and an overconfident
@@ -390,19 +389,19 @@ hit-rate of the generated distribution ($0.140$ vs raw $0.250$ and MVE $0.256$; 
 $-0.110$, CI $[-0.151,-0.073]$; Figure~\ref{fig:K}). The mechanism is instructive:
 $\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$---the high-$\sigma$ ligands are
 the chemically novel \emph{strong} binders, so the LCB penalty $-\kappa\sigma$ demotes the true
-winners. Calibration would help generation only if $\sigma$ flagged \emph{low-quality}
+winners. Calibration would help reward re-ranking only if $\sigma$ flagged \emph{low-quality}
 candidates; on congeneric chemistry it flags \emph{novelty} instead. This is the steelman target
-for calibration-in-generation, and it fails. More usefully, it yields a transferable diagnostic
-for calibrated active generation: an LCB reward helps only when $\sigma$ flags
+for calibrated reward re-ranking (the most $\sigma$-varying target available), and it fails. More usefully, it yields a transferable diagnostic
+for calibrated reward re-ranking: an LCB reward helps only when $\sigma$ flags
 \emph{low quality}; whenever $\sigma$ instead flags \emph{novelty}---the common case on
 congeneric or lead-like series---the bound penalizes exactly the candidates worth making, and an
 uncalibrated reward is the safer default. A regime where $\sigma$ tracks quality (e.g.\ diverse
-libraries with genuine actives and decoys) is where calibrated generation should pay, and is the
+libraries with genuine actives and decoys) is where calibrated re-ranking should pay, and is the
 natural next test.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.7\textwidth]{figK_calibrated_generation.pdf}
-\caption{\textbf{Honest audit, generation (real evaluable target \texttt{eg5}).} A calibrated
+\caption{\textbf{Honest audit, reward re-ranking over a measured congeneric set (single target \texttt{eg5}).} A calibrated
 reward lowers the GFlowNet's true hit-rate (cal $0.140$ vs raw $0.250$; cal$-$raw $-0.110$, CI
 $[-0.151,-0.073]$) because $\sigma$ tracks chemical novelty
 ($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), not low quality.}
@@ -413,8 +412,7 @@ $[-0.151,-0.073]$) because $\sigma$ tracks chemical novelty
 knowing when to \emph{stop} an active-learning loop. Figure~\ref{fig:G} runs two learners with
 the same correct posterior mean but different assumed uncertainty: the calibrated learner's
 claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and stops at $30$ calls
-$82\%$ correct, while an overconfident learner (using the learned head's $\approx 0.15\times$ scale, the
-midpoint of the $0.08$--$0.18\times$ range from Figure~\ref{fig:A}) stops twice as early at
+$82\%$ correct, while an overconfident learner (using the learned head's $\approx 0.14\times$ scale (the ${\sim}7\times$ central overconfidence from Figure~\ref{fig:A})) stops twice as early at
 only $60\%$ correct. This is a controlled simulation,
 but it is the same lesson as the commit panel: calibration is a trust instrument.
 
@@ -427,9 +425,9 @@ overconfident learner stops $2\times$ earlier but is much more often wrong.}
 \end{figure}
 
 \paragraph{Synthesis.} Five independent tests---sharpness, edge weighting, commit ranking,
-generation, and (positively) stopping---paint one coherent picture. A calibrated per-edge
+reward re-ranking over a measured congeneric set (single target \texttt{eg5}), and (positively) stopping---paint one coherent picture. A calibrated per-edge
 $\sigma$ does not sharpen intervals on real data, does not re-rank what to compute or commit,
-and does not steer a generator toward better molecules; an \emph{overconfident} $\sigma$,
+and does not steer reward re-ranking toward better molecules on this evaluable congeneric set; an \emph{overconfident} $\sigma$,
 however, silently corrupts the stop/commit decision. Calibration is therefore a
 \emph{trust/decision instrument}, not a performance multiplier---and the physics bottleneck
 delivers that calibration for free and differentiably. The differentiable graph weight earns its
@@ -454,9 +452,9 @@ coordinates (OpenFE \texttt{protocol\_repeats}), so the across-replicate SD refl
 sampling/convergence noise and is a lower bound on full reproducibility (excluding pose and
 system-preparation variance); the $\sim$$1.25$--$1.41\times$ conservatism may therefore be
 closer to neutral against real reproducibility. The
-gauge-acquisition and stopping experiments are controlled simulations. The generation audit is a
-single $\sigma$-varying target; the conclusion that $\sigma$ tracks novelty rather than quality
-should be tested across more chemotypes. Finally, a structure-based (docking) reverse-screen we
+gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
+single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
+should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. Finally, a structure-based (docking) reverse-screen we
 built as a follow-on did not beat a ligand-similarity baseline on this benchmark, so the
 structure-directed regime is left to future work rather than claimed here.
 
@@ -466,7 +464,7 @@ computed, differentiable, non-negative closed form rather than a learned guess, 
 Fisher--resistance graph weight (whose value is structural---gauge-identifiability and
 trust---rather than a better-ranking magnitude) and paired with an exact chirality requirement.
 Tested honestly, this free calibration does not improve downstream sharpness, ranking, or
-generation; what it buys---and what an overconfident learned $\sigma$ destroys---is trustworthy
+reward re-ranking over a measured congeneric set (single target \texttt{eg5}); what it buys---and what an overconfident learned $\sigma$ destroys---is trustworthy
 stop/commit decisions. Four theorems and a suite of falsifiable figures, including several
 pre-declared, falsifiable negatives, delimit what the construction does and does not buy: in the regimes we
 tested, calibration is a decision instrument rather than a performance multiplier; where the

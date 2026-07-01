@@ -10,7 +10,7 @@ ours 0.908 · split 0.895 · Mondrian 0.896 (8 seeds).
 
 ## Sharpness (mean half-width, kcal/mol; lower = tighter)
 ours 2.16 · Mondrian 2.04 · split 1.99. **split/ours = 0.92×.**
-On REAL residuals ours is **NOT sharper (wider)** than flat split — the synthetic figure's '2.2× sharper' does NOT transfer, because the
+On REAL residuals ours is **NOT sharper (wider)** than flat split — the synthetic figure's 'up to 2.2× sharper vs split-conformal (2.0× vs CQR)' does NOT transfer, because the
 epistemic se is small relative to the large irreducible OOD error (adapt corr(half-width,
 |residual|) = +0.11).
 
@@ -27,6 +27,6 @@ ours−split per-target max-error diff -0.044, CI [-0.121, +0.005] (ours better 
   the target partition — but a fair Mondrian conformal, which IS told the partition,
   matches it (0.22).
 - It is **not** sharper on real OOD data (split/ours 0.92×); the synthetic
-  '2× sharper' was an artifact of an oracle DGP whose conditioning axis built σ.
+  'up to 2.2× sharper vs split-conformal (2.0× vs CQR)' was an artifact of an oracle DGP whose conditioning axis built σ.
 - There is no real force-field-correction (Δ) head; σ is epistemic (ensemble) + a scalar
   aleatoric floor. The 3-way synthetic decomposition is illustrative only.
