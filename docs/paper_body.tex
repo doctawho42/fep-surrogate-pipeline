@@ -10,8 +10,8 @@ benchmarks and controlled simulations this free uncertainty does
 \emph{not} improve downstream ML: no sharper than conformal on out-of-distribution residuals, no
 change to edge selection or commit, and no help to reward re-ranking on a measured congeneric
 set (\texttt{eg5}). A fair learned-variance foil---fed work moments \emph{and} the
-overlap scalar $I$---stays $\sim$$7\times$ overconfident: one noisy $\widehat{\ddG}$ label per
-edge cannot identify a per-edge variance. What it buys is \emph{trust}: an overconfident $\sigma$
+overlap scalar $I$---stays $\sim$$7\times$ overconfident, an objective artifact rather than an
+identifiability limit. What it buys is \emph{trust}: an overconfident $\sigma$
 silently corrupts stop/commit decisions, while any properly calibrated $\sigma$---the physics one
 included, free for the aleatoric term---makes them reliable. On $1145$ real binding edges
 the MBAR form (equal to the sandwich to leading order) is conservative by $1.41\times$
@@ -153,7 +153,7 @@ regime (at extreme low overlap, $n{=}20$, the bias-corrected plug-in runs $\sim$
 MBAR, both $\approx1$).
 The sandwich is derived for independent samples; on real FEP works both the sandwich inputs and the bootstrap truth are subsampled to the statistical inefficiency $g$~\citep{shirts2008mbar} before $B$ is formed, so the reported panel-B ratios use effective $n$.
 
-\paragraph{Figure~\ref{fig:A}: the readout is correct; the learned foil cannot be.}
+\paragraph{Figure~\ref{fig:A}: the readout is correct; the learned foil is not (at any budget we tested).}
 Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with
 MBAR and Monte-Carlo truth across the range (reported/true se $\approx1$), with no Monte-Carlo.
 We tested a \emph{fair} learned MVE head trained by Gaussian NLL, now fed work-summary
@@ -162,10 +162,12 @@ $\sim$200 edges and also at a large-budget oracle of 4000 training edges --- twe
 The fair foil is still ${\approx}7\times$ overconfident at realistic budget (reported se
 ${\approx}0.15\times$ the truth; range $0.09$--$0.20\times$ across the overlap sweep), and
 ${\approx}5\times$ overconfident even at the large-budget oracle (se ${\approx}0.20\times$).
-A richly-fed head approaches the closed form only with a very large budget; one noisy
-$\ddG$ label per edge is fundamentally insufficient to teach a per-edge sampling variance,
-regardless of feature richness or budget.  The bottleneck \emph{computes} it exactly, per edge,
-differentiably, and at zero label cost. The honest frame is
+A richly-fed head approaches the closed form only with a very large budget. The conditional
+variance $se(\text{overlap})$ is itself identifiable from single labels: pooling single-label
+edges by overlap recovers the sandwich to $\sim$6\% at $4000$ edges ($\sim$4\% at $40000$), so
+the fair head's residual $\sim$5$\times$ overconfidence is a Gaussian-NLL objective/optimization
+artifact~\citep{seitzer2022pitfalls}, not an identifiability barrier. The bottleneck
+\emph{computes} it exactly, per edge, differentiably, and at zero label cost. The honest frame is
 ``learnable-with-data vs.\ exact-and-free''. Bare $1/I$ is shown only as the
 information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
 baseline anyone reports. Figure~\ref{fig:A}B checks calibration on real protein--ligand BACE1
