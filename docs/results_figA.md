@@ -21,9 +21,14 @@ sandwich**. So Fig A makes three honest points instead:
    **and** the overlap scalar `I` (6-dim feature, reviewer M2a), is overconfident by
    **0.09–0.20× true se across the overlap sweep (regime-dependent; central ~7×, se ≈ 0.15×)**.
    A **large-budget oracle** (4000 training edges, same features) reaches 0.20× — also
-   ~5× overconfident (regime-dependent). One noisy ΔΔĜ label per edge cannot teach the per-edge
-   sampling variance regardless of budget; the BAR bottleneck **computes** it exactly, untrained,
-   at zero label cost. The honest frame is "learnable-with-data vs exact-and-free."
+   ~5× overconfident (regime-dependent). This is a **training-objective artifact** (Seitzer
+   et al. 2022 — Gaussian-NLL couples the mean and variance heads and starves the variance
+   fit), **not an identifiability barrier**: the pooling check below shows se(overlap) *is*
+   recoverable from single per-edge labels once they are pooled by overlap bucket
+   (N=200: 20.1% error, N=4000: 5.8%, N=40000: 3.8% — shrinking with budget). The BAR
+   bottleneck sidesteps the objective entirely by **computing** the variance exactly,
+   untrained, at zero label cost. The honest frame is "learnable-with-data vs
+   exact-and-free," not "unlearnable vs exact."
 3. **`1/I` is shown only as the textbook value it corrects** — the information-equality
    plug-in, off by a *varying* factor — **not** as a baseline anyone reports.
 

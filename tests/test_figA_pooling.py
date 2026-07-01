@@ -1,4 +1,3 @@
-import numpy as np
 from figs.make_figA import pooled_se_recovery
 
 
