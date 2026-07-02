@@ -18,13 +18,16 @@ experimental affinity**:
 |---|---|---|
 | MUE | **0.79 kcal/mol** | [0.59, 0.97] |
 | RMSE | 0.93 kcal/mol | [0.71, 1.11] |
-| Kendall τ | +0.37 | [+0.11, +0.60] |
+| Kendall τ-b | +0.36 | [+0.11, +0.60] |
 | Pearson R | +0.65 | [+0.30, +0.83] |
 | n ligands | 28 | — |
 | cycle-closure reduced χ² | **0.64 (clean)** | — |
 
-(CIs = percentile bootstrap over ligands, gauge re-aligned per resample; τ and R exclude 0, so the
-rank/linear agreement is significant despite the small n.)
+(CIs = percentile bootstrap over ligands, gauge re-aligned per resample, **conditional on the
+fitted network** [fixed node potentials]; a network-refit bootstrap widens R toward 0 at this small
+n, so the CI is not the significance test. The rank/linear agreement is significant by parametric
+test: **Pearson R p≈1.6e-4, Kendall τ-b p≈7e-3**. τ is standard τ-b via scipy, not a tie-dropping
+variant.)
 
 This is the first time the QC/network is validated against **experiment** (everything else was
 internal consistency or replicate reproducibility), and the numbers are literature-credible for

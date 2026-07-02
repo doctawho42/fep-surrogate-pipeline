@@ -139,7 +139,7 @@ replicate-based systematic-vs-sampling separator. It operationalizes the paper's
 thesis into a concrete FEP capability.
 
 ## Gate
-Real public data (1145 edges, 34 systems, 3 replicates); one-command reproduction; calibration
+Real public data (1145 edges, 49 systems — the 48 with ≥1 cycle — 3 replicates); one-command reproduction; calibration
 sweep + replicate control both included. Positive, non-trivial, and it is exactly the task an
 overconfident σ ruins → **the paper's headline moves from "calibration buys trust" to
 "calibration buys a deployable QC capability."**

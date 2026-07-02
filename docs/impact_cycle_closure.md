@@ -11,7 +11,7 @@ and prove it on real data. That task is **detection**, not weighting.
 A calibrated per-edge aleatoric variance is exactly the **null model** that turns thermodynamic
 **cycle closure** into a properly-calibrated statistical test, separating **edge-level systematic
 error** (non-convergence, hysteresis, charge/water/protonation artifacts) from **sampling noise**.
-On the public OpenFE IndustryBenchmarks2024 (1145 edges, 34 systems, 3 replicates):
+On the public OpenFE IndustryBenchmarks2024 (1145 edges, 49 systems — the 48 with ≥1 cycle — 3 replicates):
 
 1. **Deployable.** GLS cycle-closure χ² with the sandwich null: median reduced χ²=0.34 (most
    systems sampling-consistent), BH-FDR flags 6 chemically-sensible systems (brd4, bace, faah,
@@ -63,8 +63,8 @@ conservative, Fig.~\ref{fig:Arep}); a reduced $\chi^2$ well above one signals ed
 systematic error. Cycle closure is (correctly) blind to node-consistent force-field bias, which
 cancels around a loop.
 
-\paragraph{Figure~\ref{fig:L}.} On the OpenFE IndustryBenchmarks2024 ($1145$ edges, $34$ systems,
-$3$ replicates), the median reduced $\chi^2$ is $0.34$ and a Benjamini--Hochberg test flags six
+\paragraph{Figure~\ref{fig:L}.} On the OpenFE IndustryBenchmarks2024 ($1145$ edges over $49$
+systems, the $48$ with $\geq1$ cycle, $3$ replicates), the median reduced $\chi^2$ is $0.34$ and a Benjamini--Hochberg test flags six
 chemically-sensible systems (\texttt{brd4}, \texttt{bace}, \texttt{faah}, \texttt{cdk8},
 \texttt{hif2a}, \texttt{p38}; Fig.~\ref{fig:L}A). The test's value is entirely a function of
 calibration (Fig.~\ref{fig:L}B): the overconfident learned $\sigma$ of Fig.~\ref{fig:A}

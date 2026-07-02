@@ -18,7 +18,7 @@ the MBAR form (equal to the sandwich to leading order) is conservative by $1.41\
 ($1.25\times$ bias-corrected), never systematically overconfident. Calibration's one decisive
 payoff is detection: the null that turns thermodynamic cycle-closure into a
 controlled-false-positive-rate quality-control test, flagging six systematic-error networks (of
-$34$) that an overconfident $\sigma$ cannot ($88\%$ vs $12\%$ false-flag rate). We establish four
+$48$) that an overconfident $\sigma$ cannot ($88\%$ of systems flagged vs a selective $12\%$). We establish four
 results---two new (the differentiable closed-form sandwich and its $O(1)$ backward) and two that
 make precise or connect known results (the Fisher--resistance correspondence and chirality
 completeness): an honest map of where a free, differentiable primitive helps---a decision and
@@ -475,8 +475,9 @@ per-edge, replicate-validated aleatoric variance that gives the test a controlle
 rate and per-edge-adaptive thresholds, in place of the field's fixed hysteresis cutoffs.
 
 \paragraph{Figure~\ref{fig:L}: a deployable detector whose usefulness \emph{is} $\sigma$-calibration.}
-On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges, $34$
-systems, $3$ replicates), the median reduced $\chi^2$ is $0.34$ and a Benjamini--Hochberg test
+On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over
+$49$ systems, the $48$ with $\geq1$ independent cycle, $3$ replicates), the median reduced
+$\chi^2$ is $0.34$ and a Benjamini--Hochberg test
 (FDR $0.05$) flags six chemically-sensible systems (\texttt{brd4}, \texttt{bace}, \texttt{faah},
 \texttt{cdk8}, \texttt{hif2a}, \texttt{p38}; Figure~\ref{fig:L}A; \texttt{brd4}'s data set is a
 buried-water set, \texttt{bace} is protonation-sensitive). The detector's value is entirely a
@@ -524,7 +525,7 @@ held-out runs (sampling noise $\to0$).}
 \paragraph{Grounding against experiment, and the honest limit.} On \texttt{eg5}, whose ligands
 carry ChEMBL identifiers, the network $\ddG$ (from the same GLS fit) agrees with real KIF11
 experimental affinity~\citep{zdrazil2024chembl} at MUE $0.79$ kcal/mol ($95\%$ bootstrap CI
-$[0.59,0.97]$; Pearson $R=0.65$ $[0.30,0.83]$, $n=28$), and its clean cycle-closure reduced
+$[0.59,0.97]$, conditional on the fitted network; Pearson $R=0.65$ $[0.30,0.83]$, $p{\approx}2{\times}10^{-4}$, $n=28$), and its clean cycle-closure reduced
 $\chi^2=0.64$ is consistent---a QC-clean system is
 indeed accurate. Acting on the QC does \emph{not} improve accuracy here (internal $|z|$ vs
 error-against-experiment: $r=+0.13$), exactly as the scope predicts: on a clean system the
