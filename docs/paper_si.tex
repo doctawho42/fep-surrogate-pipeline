@@ -26,3 +26,24 @@ fingerprint model ties a Tanimoto baseline on hidden-target recovery. (B) $P(\te
 well calibrated (ECE $0.008$).}
 \label{fig:F}
 \end{figure}
+
+\paragraph{Chirality completeness on a real molecule (Figure~\ref{fig:Ereal}).}
+Theorem~\ref{thm:chiral} is instantiated on thalidomide, the textbook case where the two
+enantiomers differ in biological activity. We embed one enantiomer in 3D (RDKit) and reflect it
+to the exact mirror geometry. Every O(3)-invariant readout is identical on the pair: all $171$
+pairwise distances and all pairwise dot products (the Gram matrix) match to machine precision
+($\max|\Delta|=0$), so a norm-and-dot-product readout is enantiomer-blind. The parity-odd
+\texttt{0o} pseudoscalar $\chi=\det[p_1{-}p_0,p_2{-}p_0,p_3{-}p_0]$ flips sign
+($+1.037\to-1.037$), and RDKit's CIP assignment flips $R\to S$. This reproduces, on real
+chemistry, the collapse-and-restore of the chirality bit proved for the designed test set
+(Figure~\ref{fig:E}). Deterministic; \texttt{make figEreal}.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.95\textwidth]{figE_chirality_real.pdf}
+\caption{\textbf{Supplement: Theorem~\ref{thm:chiral} on a real chiral drug (thalidomide).}
+An O(3)-invariant readout (all pairwise distances and dot products) is identical on the
+enantiomer pair to machine precision; the parity-odd \texttt{0o} pseudoscalar $\chi$ flips sign
+($+1.04\to-1.04$); RDKit CIP $R\to S$. The solid vs.\ hashed wedge at the stereocentre marks the
+enantiomer.}
+\label{fig:Ereal}
+\end{figure}

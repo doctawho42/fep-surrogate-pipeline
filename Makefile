@@ -33,6 +33,9 @@ figA:
 figE:
 	$(PY) figs/make_figE.py
 
+figEreal:  # SI illustration: Theorem 4 (chirality completeness) on a real drug (thalidomide)
+	$(PY) figs/make_figE_real.py
+
 figC:
 	$(PY) figs/make_figC.py
 
