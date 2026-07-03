@@ -20,7 +20,7 @@
 \setlength{\parskip}{4pt}
 \title{\vspace{-2em}The BAR Information Bottleneck\\[2pt]
 \large Self-calibration (sandwich variance), $O(1)$ differentiation,\\ a Fisher--resistance correspondence, and a chirality completeness theorem}
-\author{\normalsize working notes --- proofs for Paper 1 (v2, corrected)}
+\author{\normalsize working notes: proofs for Paper 1 (v2, corrected)}
 \date{}
 \begin{document}
 \maketitle
@@ -69,7 +69,7 @@ Under Assumption~\ref{ass:spec}, $\dFh$ is an M-estimator with asymptotic varian
 A=-\mathbb E[S']=I,\qquad
 B=\Var\!\big(S(\dF)\big)=n_f\Var_f[p]+n_r\Var_r[p].
 \]
-The information equality $A=B$ (which would give $\Var=1/I$) holds for prospective logistic regression but \emph{fails} under the stratified two-sample design of BAR; the naive $1/I$ over-estimates the variance. The sandwich $B/I^2$ is the correct, computable-from-samples uncertainty (it coincides with the Bennett 1976 / Shirts--Chodera estimator), so calibration remains free --- via the sandwich. It reduces to $1/I$ only in the information-equality (good-overlap) limit.
+The information equality $A=B$ (which would give $\Var=1/I$) holds for prospective logistic regression but \emph{fails} under the stratified two-sample design of BAR; the naive $1/I$ over-estimates the variance. The sandwich $B/I^2$ is the correct, computable-from-samples uncertainty (it coincides with the Bennett 1976 / Shirts--Chodera estimator), so calibration remains free, via the sandwich. It reduces to $1/I$ only in the information-equality (good-overlap) limit.
 \end{theorem}
 \begin{proof}
 $\dFh$ solves $S=0$; the one-step expansion $\dFh-\dF=S(\dF)/I(\tilde d)$ and the delta method give $\Var(\dFh)=\Var(S)/I^2$ to leading order, with $\Var(S)=B$ by independence of the two samples and $\Var[1-p]=\Var[p]$.
@@ -112,7 +112,7 @@ Triangle with conductances $(1,0.5,2)$: $\Omega_{12}=0.714286$ equals the series
 \end{remark}
 
 \begin{corollary}[the unified objects, corrected]
-The overlap $I_e$ governs \{curvature, backward-pass scale (Thm.~\ref{thm:backward})\}. The precision $I_e^2/B_e$ governs \{calibration (Thm.~\ref{thm:calib}), Laplacian weight (Thm.~\ref{thm:fr})\}. These coincide (a single object, $V=1/I$) only at the information-equality limit. They diverge \emph{most in the high-overlap regime} ($I/B$ grows large as $p\to\tfrac12$; numerically $I/B\approx17$ at $0.5\sigma$ separation), so the naive $1/I$ over-estimates the variance most for the well-overlapped, low-variance edges, converging to the sandwich only as overlap $\to0$. The sandwich is therefore essential precisely on the \emph{reliable}, well-overlapped edges an active learner exploits --- naive $1/I$ would systematically distrust the best edges (up to ${\sim}13\times$ inflation on real FEP edges). \emph{(Direction corrected; verified three ways: controlled MC, population $I/B$, real FEP edges --- see \texttt{docs/results\_figA.md}.)}
+The overlap $I_e$ governs \{curvature, backward-pass scale (Thm.~\ref{thm:backward})\}. The precision $I_e^2/B_e$ governs \{calibration (Thm.~\ref{thm:calib}), Laplacian weight (Thm.~\ref{thm:fr})\}. These coincide (a single object, $V=1/I$) only at the information-equality limit. They diverge \emph{most in the high-overlap regime} ($I/B$ grows large as $p\to\tfrac12$; numerically $I/B\approx17$ at $0.5\sigma$ separation), so the naive $1/I$ over-estimates the variance most for the well-overlapped, low-variance edges, converging to the sandwich only as overlap $\to0$. The sandwich is therefore essential precisely on the \emph{reliable}, well-overlapped edges an active learner exploits. Naive $1/I$ would systematically distrust the best edges (up to ${\sim}13\times$ inflation on real FEP edges). \emph{(Direction corrected; verified three ways: controlled MC, population $I/B$, real FEP edges; see \texttt{docs/results\_figA.md}.)}
 \end{corollary}
 
 \section*{Chirality completeness}
@@ -135,7 +135,7 @@ For generic (chiral, full-rank) configurations, the pair $\big(\{\|p_i-p_j\|\},\
 \end{corollary}
 
 \begin{remark}[implementation]
-The pseudoscalar is the parity-odd $\ell{=}0$ irrep (\texttt{0o}), realized as the triple product $v_1\!\cdot\!(v_2\times v_3)=\det[v_1,v_2,v_3]$ --- an odd contraction of vector features. A readout must contain a \texttt{0o} channel; a parity-even readout lies in the kernel and is blind. Note that $\|v\|$ and $v_i\!\cdot\!v_j$ are $\Oh$-invariant (even), so vector features pooled into norms/dot-products remain enantiomer-blind: the \emph{odd} triple product is required.
+The pseudoscalar is the parity-odd $\ell{=}0$ irrep (\texttt{0o}), realized as the triple product $v_1\!\cdot\!(v_2\times v_3)=\det[v_1,v_2,v_3]$, an odd contraction of vector features. A readout must contain a \texttt{0o} channel; a parity-even readout lies in the kernel and is blind. Note that $\|v\|$ and $v_i\!\cdot\!v_j$ are $\Oh$-invariant (even), so vector features pooled into norms/dot-products remain enantiomer-blind: the \emph{odd} triple product is required.
 \end{remark}
 
 \end{document}
