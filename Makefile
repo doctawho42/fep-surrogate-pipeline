@@ -36,6 +36,9 @@ figE:
 figEreal:  # SI illustration: Theorem 4 (chirality completeness) on a real drug (thalidomide)
 	$(PY) figs/make_figE_real.py
 
+qcstruct:  # SI: structural context of the Fig L QC flags (BACE1 catalytic dyad; BRD4 buried waters)
+	$(PY) figs/analyze_qc_structures.py
+
 figC:
 	$(PY) figs/make_figC.py
 

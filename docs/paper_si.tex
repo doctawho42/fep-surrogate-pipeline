@@ -47,3 +47,30 @@ enantiomer pair to machine precision; the parity-odd \texttt{0o} pseudoscalar $\
 enantiomer.}
 \label{fig:Ereal}
 \end{figure}
+
+\paragraph{Structural context of the flagged systems (Figure~\ref{fig:qcstruct}).}
+The six systems the cycle-closure QC flags (Figure~\ref{fig:L}) are the ones carrying an
+independently-documented hard structural feature, read here straight from public co-crystal
+structures. In BACE1 (PDB 4DJW) the catalytic aspartic-acid dyad hydrogen-bonds the inhibitor
+(Asp93 and Asp289, both $2.7$\,\AA); the protonation state of an aspartic-protease dyad is the
+textbook source of free-energy error. In BRD4 BD1 (PDB 3MXF, in complex with
+JQ1~\citep{filippakopoulos2010bet}) the acetyl-lysine pocket packs $16$ crystallographic waters
+within $4.5$\,\AA\ of the ligand ($8$ within $3.5$\,\AA) around the recognition asparagine Asn140
+($3.1$\,\AA); this conserved water network is the known BRD4 free-energy challenge~\citep{aldeghi2016binding}.
+The other flags carry analogous a-priori difficulties: \texttt{faah} (covalent serine hydrolase,
+large acyl channel), \texttt{cdk8} and \texttt{p38} (large scaffold and R-group changes), and
+\texttt{hif2a} (a buried polar cavity). This is retrospective structural \emph{context} for why
+the flags are chemically sensible, not a per-edge causal claim: cycle closure is edge-level and
+blind to node-consistent bias (main text), and the point is only that the flagged set coincides
+with the features a domain expert would flag a priori. Deterministic; \texttt{make qcstruct}
+(public PDBs cached in \texttt{data/pdb/}).
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.9\textwidth]{figQC_structures.pdf}
+\caption{\textbf{Supplement: structural context of two flagged systems.} Heavy-atom coordinates
+from public co-crystal structures. (A) BACE1 (PDB 4DJW): the catalytic aspartic dyad
+(Asp93/Asp289, red) hydrogen-bonds the inhibitor (grey), a protonation-state difficulty. (B) BRD4
+BD1 (PDB 3MXF, JQ1): the conserved acetyl-lysine-pocket waters (blue; $16$ within $4.5$\,\AA) and
+the recognition Asn140 (green) pack against the ligand, the buried-water challenge.}
+\label{fig:qcstruct}
+\end{figure}
