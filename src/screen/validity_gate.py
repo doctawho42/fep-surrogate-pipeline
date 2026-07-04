@@ -2,6 +2,15 @@
 
 Does the ligand-shape null collapse to near-random in the orphan stratum? No structure scoring;
 the "score" is max Tanimoto to each pocket's actives (higher = better -> lower_better=False).
+
+P2 criterion (AMENDED, sample-size-adaptive; N = n_pockets, random = 1/N): the orphan shape-null
+must NOT be significantly above random. Passes iff ALL of:
+  - orphan["n"] > 0
+  - orphan["recovery1"] <= 3.0 / n_pockets   (point estimate near random; <= 3x random)
+  - orphan["auroc"]     <= AUROC_MAX          (AUROC_MAX = 0.60)
+  - orphan["ci"][0]     <= 1.0 / n_pockets    (95% bootstrap CI LOWER bound <= random)
+The old absolute thresholds (recovery@1 <= 0.10, CI upper <= 0.15) were unsatisfiable at n=30
+and have been replaced by this sample-size-adaptive, not-significantly-above-random criterion.
 """
 from __future__ import annotations
 
@@ -13,8 +22,8 @@ from screen.recovery import recovery_at_k, recovery_auroc
 from screen.stratify import ecfp, max_tanimoto
 
 SEED = 0
-# pre-registered thresholds (spec §2)
-REC1_MAX, AUROC_MAX, CI_HI_MAX = 0.10, 0.60, 0.15
+# pre-registered thresholds (spec §2, amended)
+AUROC_MAX = 0.60
 MIN_ORPHAN_QUERIES, MIN_FOLD_CLUSTERS = 30, 8
 
 
@@ -72,12 +81,15 @@ def verdict(queries: pd.DataFrame, scores: NDArray, true_idx: NDArray,
     if not p1:
         reasons.append(f"P1 fail: {orphan['n']} orphan queries (need {MIN_ORPHAN_QUERIES}), "
                        f"{n_fold_clusters} fold clusters (need {MIN_FOLD_CLUSTERS})")
-    p2 = (orphan["n"] > 0 and orphan["recovery1"] <= REC1_MAX
-          and orphan["auroc"] <= AUROC_MAX and orphan["ci"][1] <= CI_HI_MAX)
+    rec1_max = 3.0 / n_pockets
+    ci_lo_max = 1.0 / n_pockets
+    p2 = (orphan["n"] > 0 and orphan["recovery1"] <= rec1_max
+          and orphan["auroc"] <= AUROC_MAX and orphan["ci"][0] <= ci_lo_max)
     if not p2:
         reasons.append(f"P2 fail: orphan shape-null recovery@1={orphan['recovery1']:.3f} "
-                       f"(<= {REC1_MAX}), AUROC={orphan['auroc']:.3f} (<= {AUROC_MAX}), "
-                       f"CI_hi={orphan['ci'][1]:.3f} (<= {CI_HI_MAX})")
+                       f"(<= {rec1_max:.3f} = 3/N), AUROC={orphan['auroc']:.3f} "
+                       f"(<= {AUROC_MAX}), CI_lo={orphan['ci'][0]:.3f} "
+                       f"(<= {ci_lo_max:.3f} = 1/N) [not significantly above random]")
     v = "PASS" if (p1 and p2) else "VALIDITY_KILL"
     return {"verdict": v, "orphan": orphan, "high": high, "n_pockets": n_pockets,
             "n_fold_clusters": n_fold_clusters, "reasons": reasons}

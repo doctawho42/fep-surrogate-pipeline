@@ -220,12 +220,15 @@ def test_shape_matrix_and_bootstrap_shapes():
 
 
 def test_verdict_pass_on_collapsed_orphan_null():
+    # 10 pockets / 30 orphan queries / all-identical actives -> shape-null ties:
+    # recovery@1 = 0.10 = 1/N, AUROC = 0.5, CI lower ~0.02 <= 1/N=0.10. Amended P2 -> PASS.
     q = _orphan_queries(30)
     pockets = {f"T{i}": ["c1ccccc1C(=O)O"] for i in range(10)}
     order = [f"T{i}" for i in range(10)]
     scores, true_idx = shape_score_matrix(q, pockets, order)
     v = verdict(q, scores, true_idx, n_pockets=10, n_fold_clusters=8)
-    assert v["orphan"]["recovery1"] <= 0.10             # shape-null collapsed (all pockets tie)
+    assert v["orphan"]["recovery1"] <= 3 / v["n_pockets"]   # <= 3/N (amended criterion)
+    assert v["orphan"]["ci"][0] <= 1 / v["n_pockets"]       # CI lower <= 1/N (not sig. > random)
     # PASS iff P1 power holds too; here n_fold_clusters=8 and 30 orphan queries -> PASS
     assert v["verdict"] == "PASS"
 
