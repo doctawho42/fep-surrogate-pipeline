@@ -91,7 +91,14 @@ paper:  # generic / arXiv build (article class); shared body in docs/paper_body.
 	cd docs && latexmk -pdf -interaction=nonstopmode paper_draft.tex
 
 jctc:  # JCTC (ACS) submission build (achemso class); same shared body
-	cd docs && latexmk -pdf -interaction=nonstopmode paper_jctc.tex
+	# achemso/mciteplus emits a benign head-entry PackageError under nonstopmode, so
+	# pdflatex returns 1 even when the PDF is complete and every citation resolves. -f
+	# forces latexmk through all passes (bibtex + reruns) to build the resolved PDF from a
+	# cold tree in one call; the leading `-` lets make ignore the benign nonzero exit, and
+	# the `test -f` guard still fails the build if no PDF was produced. (`make paper`, the
+	# arXiv/article build, has no mciteplus and stays a single clean pass.)
+	-cd docs && latexmk -pdf -f -interaction=nonstopmode paper_jctc.tex
+	cd docs && test -f paper_jctc.pdf
 
 all: check figA figE figC figD figB figF figG
 

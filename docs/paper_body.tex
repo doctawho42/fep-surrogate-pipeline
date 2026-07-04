@@ -425,7 +425,7 @@ $[-0.151,-0.073]$) because $\sigma$ tracks chemical novelty
 knowing when to \emph{stop} an active-learning loop. Figure~\ref{fig:G} runs two learners with
 the same correct posterior mean but different assumed uncertainty: the calibrated learner's
 claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and stops at $30$ calls
-$82\%$ correct, while an overconfident learner (using the learned head's $\approx 0.14\times$ scale (the ${\sim}7\times$ central overconfidence from Figure~\ref{fig:A})) stops twice as early at
+$82\%$ correct, while an overconfident learner (using the learned head's $0.15\times$ scale, the ${\sim}7\times$ central overconfidence from Figure~\ref{fig:A}) stops twice as early at
 only $60\%$ correct. This is a controlled simulation,
 but it is the same lesson as the commit panel: calibration is a trust instrument.
 
