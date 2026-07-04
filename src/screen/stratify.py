@@ -23,8 +23,9 @@ def ecfp(smiles: str):
 
 def max_tanimoto(query_fp, active_fps: list) -> float:
     """Max Tanimoto of the query to a pool of active fingerprints (0.0 if the pool is empty).
-    Fingerprints that are the same object as the query are dropped (self-exclusion)."""
-    pool = [fp for fp in active_fps if fp is not None and fp is not query_fp]
+    Does NOT self-exclude — the caller is responsible for removing the query from the pool
+    (see `stratify`, which excludes by value)."""
+    pool = [fp for fp in active_fps if fp is not None]
     if not pool:
         return 0.0
     return float(max(DataStructs.BulkTanimotoSimilarity(query_fp, pool)))
