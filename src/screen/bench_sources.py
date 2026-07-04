@@ -19,7 +19,7 @@ import urllib.request
 
 import pandas as pd
 
-from screen.sources import litpcba
+from screen.sources import chembl_diverse, litpcba
 
 # Candidate public sources. HEAD/GET probe only in the audit; real layout confirmed in Task 2.
 SOURCE_URLS: dict[str, str] = {
@@ -135,26 +135,43 @@ def assign_folds(records_by_target: dict[str, list[dict]]) -> dict[str, str]:
     return folds
 
 
-def build_triples(cache_dir: str = "data/paper2_bench", limit: int | None = None) -> pd.DataFrame:
-    """Aggregate active->target->holo-pocket triples from all sources, assign folds, cache
-    parquet. Idempotent (returns cached parquet if present). `limit` caps the number of targets
-    kept, for a fast smoke run."""
-    cache = pathlib.Path(cache_dir)
-    cache.mkdir(parents=True, exist_ok=True)
-    out = cache / "triples.parquet"
-    if out.exists():
-        return pd.read_parquet(out)
-
-    records = litpcba.load_litpcba_records(cache_dir)
-
+def aggregate_records(records: list[dict]) -> pd.DataFrame:
+    """Assign one Pfam fold per target across ALL sources, then shape+dedupe into the triple
+    table. Fold resolution is done ONCE over the union of all sources' records for a given
+    target, so a target seen from two sources doesn't get resolved twice (or inconsistently)."""
     by_target: dict[str, list[dict]] = {}
     for r in records:
         by_target.setdefault(r["target"], []).append(r)
     folds = assign_folds(by_target)
     for r in records:
         r["fold"] = folds[r["target"]]
+    return triples_from_records(records)
 
-    df = triples_from_records(records)
+
+def build_triples(
+    cache_dir: str = "data/paper2_bench",
+    limit: int | None = None,
+    include_chembl_diverse: bool = True,
+) -> pd.DataFrame:
+    """Aggregate active->target->holo-pocket triples from all sources, assign folds, cache
+    parquet. Idempotent (returns cached parquet if present). `limit` caps the number of targets
+    kept, for a fast smoke run.
+
+    `include_chembl_diverse=True` (default) merges LIT-PCBA + the ChEMBL-diverse targets into
+    `triples_aggregate.parquet` (Increment 2). `include_chembl_diverse=False` reproduces the
+    Increment-1 LIT-PCBA-only `triples.parquet` (kept for that increment's own tests/Fig M)."""
+    cache = pathlib.Path(cache_dir)
+    cache.mkdir(parents=True, exist_ok=True)
+    name = "triples_aggregate.parquet" if include_chembl_diverse else "triples.parquet"
+    out = cache / name
+    if out.exists():
+        return pd.read_parquet(out)
+
+    records = litpcba.load_litpcba_records(cache_dir)
+    if include_chembl_diverse:
+        records += chembl_diverse.load_chembl_diverse_records(cache_dir)
+
+    df = aggregate_records(records)
     if limit is not None:
         keep = set(sorted(df["target"].unique())[:limit])
         df = df[df["target"].isin(keep)].reset_index(drop=True)

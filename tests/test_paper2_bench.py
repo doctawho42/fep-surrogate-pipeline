@@ -5,6 +5,7 @@ import pandas as pd
 
 from screen.bench_sources import (
     _resolve_fold,
+    aggregate_records,
     assign_folds,
     audit_sources,
     triples_from_records,
@@ -266,6 +267,22 @@ def test_verdict_kill_when_shape_null_informative():
     scores, true_idx = shape_score_matrix(q, pockets, order)
     v = verdict(q, scores, true_idx, n_pockets=n_pockets, n_fold_clusters=8)
     assert v["verdict"] == "VALIDITY_KILL"
+
+
+# --- Aggregator (Increment-2 Task 3) --------------------------------------------------------
+
+
+def test_aggregate_merges_sources_and_assigns_folds(monkeypatch):
+    lit = [{"mol_id": "L:1", "smiles": "CCO", "target": "ALDH1", "pdb_id": "1A",
+            "lig_resname": "LIG", "affinity_nm": None, "source": "litpcba", "fold": None}]
+    chem = [{"mol_id": "EGFR:1", "smiles": "c1ccccc1", "target": "EGFR", "pdb_id": "1M17",
+             "lig_resname": "AQ4", "affinity_nm": None, "source": "chembl_diverse", "fold": None}]
+    monkeypatch.setattr("screen.bench_sources.assign_folds",
+                        lambda bt: {t: f"F_{t}" for t in bt})   # stub fold resolution (no network)
+    df = aggregate_records(lit + chem)
+    assert set(df["source"]) == {"litpcba", "chembl_diverse"}
+    assert df.loc[df["target"] == "EGFR", "fold"].iloc[0] == "F_EGFR"
+    assert len(df) == 2
 
 
 # --- chembl_diverse source (Increment-2 Task 2) ---------------------------------------------
