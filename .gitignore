@@ -43,3 +43,8 @@ data/campaign/run.out
 # reversedock: regenerable ligand SDFs + log (keep scores.csv + actives)
 data/reversedock/lig/
 data/reversedock/run.out
+
+# paper2_bench: LIT-PCBA raw tarball + extraction are regenerable via build_triples()
+# (keep the derived triples.parquet — it is the small, committed benchmark artifact)
+data/paper2_bench/*.tgz
+data/paper2_bench/litpcba/
