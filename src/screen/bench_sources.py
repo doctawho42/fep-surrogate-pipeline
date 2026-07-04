@@ -113,9 +113,16 @@ TRIPLE_COLS = [
 
 
 def triples_from_records(records: list[dict]) -> pd.DataFrame:
-    """Normalize raw records into the canonical triple table; dedupe on (mol_id, target)."""
+    """Normalize raw records into the canonical triple table; dedupe on (mol_id, target).
+
+    `dropna` only catches None/NaN, so empty-string identifiers are dropped explicitly too —
+    an empty `smiles` (or `mol_id`/`target`) is not a valid triple and must not survive to the
+    cached parquet.
+    """
     df = pd.DataFrame(records, columns=TRIPLE_COLS)
     df = df.dropna(subset=["mol_id", "smiles", "target"])
+    for col in ("mol_id", "smiles", "target"):
+        df = df[df[col].astype(str).str.strip() != ""]
     df = df.drop_duplicates(subset=["mol_id", "target"], keep="first").reset_index(drop=True)
     return df[TRIPLE_COLS]
 
@@ -204,6 +211,29 @@ def _resolve_fold(target: str, pdb_id: str | None) -> str:
     return target
 
 
+def assign_folds(records_by_target: dict[str, list[dict]]) -> dict[str, str]:
+    """Resolve one fold label per target, given each target's parsed records (for `pdb_id`).
+
+    Pure and network-free except for the `_resolve_fold` call it delegates to. Real PDB-keyed
+    folds are cached by `pdb_id` (so targets sharing a representative structure share a Pfam
+    lookup), but a structure-less target (`pdb_id is None`) NEVER shares that cache: it gets
+    its own fold label, namely its target name. This is the Fix-1 invariant — without it, the
+    first structure-less target's fold would get cached under a shared `None` key and silently
+    reused for every later structure-less target.
+    """
+    fold_by_pdb: dict[str, str] = {}
+    folds: dict[str, str] = {}
+    for target, recs in records_by_target.items():
+        pdb_id = recs[0]["pdb_id"] if recs else None
+        if pdb_id:
+            if pdb_id not in fold_by_pdb:
+                fold_by_pdb[pdb_id] = _resolve_fold(target, pdb_id)
+            folds[target] = fold_by_pdb[pdb_id]
+        else:
+            folds[target] = target
+    return folds
+
+
 def build_triples(cache_dir: str = "data/paper2_bench", limit: int | None = None) -> pd.DataFrame:
     """Assemble the triple table from LIT-PCBA (Task-2 scope; see module docstring) and cache
     it. Idempotent: returns the cached parquet if present. `limit` caps the number of targets
@@ -224,17 +254,17 @@ def build_triples(cache_dir: str = "data/paper2_bench", limit: int | None = None
             tf.extractall(litpcba_dir)  # noqa: S202 - trusted first-party academic mirror
 
     targets = LITPCBA_TARGETS[:limit] if limit is not None else LITPCBA_TARGETS
-    fold_cache: dict[str, str] = {}
-    records: list[dict] = []
+    records_by_target: dict[str, list[dict]] = {}
     for target in targets:
         target_dir = litpcba_dir / target
         if not target_dir.is_dir():
             continue
-        recs = parse_litpcba_target(str(target_dir))
-        pdb_id = recs[0]["pdb_id"] if recs else None
-        if pdb_id not in fold_cache:
-            fold_cache[pdb_id] = _resolve_fold(target, pdb_id) if pdb_id else target
-        fold = fold_cache[pdb_id]
+        records_by_target[target] = parse_litpcba_target(str(target_dir))
+
+    folds = assign_folds(records_by_target)
+    records: list[dict] = []
+    for target, recs in records_by_target.items():
+        fold = folds[target]
         for rec in recs:
             rec["fold"] = fold
         records.extend(recs)

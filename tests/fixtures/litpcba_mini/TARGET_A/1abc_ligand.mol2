@@ -1,0 +1,12 @@
+@<TRIPOS>MOLECULE
+1abc_ligand
+   10    10     1     0     0
+SMALL
+USER_CHARGES
+
+@<TRIPOS>ATOM
+      1 C1         0.0000    0.0000    0.0000 C.3       1 3XG601    0.0000
+@<TRIPOS>BOND
+     1     1     2    1
+@<TRIPOS>SUBSTRUCTURE
+     1 Q3XG603    55 GROUP             4 A     ****    0 ROOT 3XG A 603
