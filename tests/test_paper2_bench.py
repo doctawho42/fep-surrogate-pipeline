@@ -1,6 +1,8 @@
 """Test suite for Paper-2 benchmark infrastructure (Increment 1)."""
 import pathlib
 
+import pandas as pd
+
 from screen.bench_sources import (
     DEFAULT_LIG_RESNAME,
     _resname_from_ligand_mol2,
@@ -11,6 +13,7 @@ from screen.bench_sources import (
     parse_litpcba_target,
     triples_from_records,
 )
+from screen.stratify import assign_stratum, ecfp, max_tanimoto, stratify
 
 FIXTURE_DIR = pathlib.Path(__file__).parent / "fixtures" / "litpcba_mini"
 
@@ -142,3 +145,25 @@ def test_assign_folds_shares_cache_across_targets_with_same_pdb(monkeypatch):
     folds = assign_folds(records_by_target)
     assert folds["TARGET_X"] == folds["TARGET_Y"] == "PF00099"
     assert calls == ["1abc"]  # resolved once, cached by pdb_id for the second target
+
+
+# --- Stratification tests (orphan benchmark) --
+
+
+def test_tanimoto_self_is_one_and_stratum_cuts():
+    fp = ecfp("CCO")
+    assert abs(max_tanimoto(fp, [ecfp("CCO")]) - 1.0) < 1e-9
+    assert max_tanimoto(fp, []) == 0.0
+    assert assign_stratum(0.7) == "high"
+    assert assign_stratum(0.4) == "mid"
+    assert assign_stratum(0.30) == "orphan"
+    assert assign_stratum(0.15) == "deep_orphan"
+
+
+def test_stratify_self_excludes_query_from_active_pool():
+    # a query identical to an active of ANOTHER pocket must NOT count itself -> orphan if unique
+    queries = pd.DataFrame({"mol_id": ["q1"], "smiles": ["CCO"], "target": ["T1"]})
+    pocket_actives = {"T1": ["CCO"], "T2": ["c1ccccc1C(=O)O"]}   # T1's only active IS the query
+    out = stratify(queries, pocket_actives)
+    assert out.loc[0, "s"] < 0.35            # self excluded -> dissimilar to benzoic acid -> orphan
+    assert out.loc[0, "stratum"] in ("orphan", "deep_orphan")
