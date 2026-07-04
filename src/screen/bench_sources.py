@@ -26,9 +26,16 @@ def audit_sources(urls: dict[str, str] = SOURCE_URLS, timeout: int = 20) -> dict
     report: dict[str, dict] = {}
     for name, url in urls.items():
         try:
-            req = urllib.request.Request(url, method="GET", headers={"User-Agent": "fep-paper2/1.0"})
+            req = urllib.request.Request(
+                url,
+                method="GET",
+                headers={"User-Agent": "fep-paper2/1.0"},
+            )
             with urllib.request.urlopen(req, timeout=timeout) as resp:
-                report[name] = {"reachable": 200 <= resp.status < 400, "note": f"HTTP {resp.status}"}
+                report[name] = {
+                    "reachable": 200 <= resp.status < 400,
+                    "note": f"HTTP {resp.status}",
+                }
         except Exception as exc:  # noqa: BLE001 - audit must never crash; unreachable is a valid outcome
             report[name] = {"reachable": False, "note": f"{type(exc).__name__}: {exc}"[:200]}
     return report
