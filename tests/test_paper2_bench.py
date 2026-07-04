@@ -20,6 +20,7 @@ from screen.fold_cluster import (
     n_disjoint_clusters,
 )
 from screen.stratify import assign_stratum, ecfp, max_tanimoto, stratify
+from screen.validity_gate import bootstrap_recovery1, shape_score_matrix, verdict
 
 FIXTURE_DIR = pathlib.Path(__file__).parent / "fixtures" / "litpcba_mini"
 
@@ -196,3 +197,45 @@ def test_dedupe_drops_redundant_site():
     dropped = dedupe_pockets(sets, jaccard_thr=0.5)
     # T1/T2 identical site -> drop the later one
     assert dropped == ["T2"]
+
+
+# --- Step-0 shape-null validity gate --------------------------------------------------------------
+
+
+def _orphan_queries(n=30):
+    # 30 distinct alkane-ish queries dissimilar to every pocket's actives (aromatic acids)
+    smis = [f"C{'C'*(i%6+1)}O" for i in range(n)]
+    return pd.DataFrame({"mol_id": [f"q{i}" for i in range(n)], "smiles": smis,
+                         "target": [f"T{i%10}" for i in range(n)], "stratum": ["orphan"]*n})
+
+
+def test_shape_matrix_and_bootstrap_shapes():
+    q = _orphan_queries(10)
+    pockets = {f"T{i}": ["c1ccccc1C(=O)O"] for i in range(10)}   # all aromatic acid actives
+    order = [f"T{i}" for i in range(10)]
+    scores, true_idx = shape_score_matrix(q, pockets, order)
+    assert scores.shape == (10, 10) and true_idx.shape == (10,)
+    pt, lo, hi = bootstrap_recovery1(scores, true_idx, n_seed=5)
+    assert 0.0 <= lo <= pt <= hi <= 1.0
+
+
+def test_verdict_pass_on_collapsed_orphan_null():
+    q = _orphan_queries(30)
+    pockets = {f"T{i}": ["c1ccccc1C(=O)O"] for i in range(10)}
+    order = [f"T{i}" for i in range(10)]
+    scores, true_idx = shape_score_matrix(q, pockets, order)
+    v = verdict(q, scores, true_idx, n_pockets=10, n_fold_clusters=8)
+    assert v["orphan"]["recovery1"] <= 0.10             # shape-null collapsed (all pockets tie)
+    # PASS iff P1 power holds too; here n_fold_clusters=8 and 30 orphan queries -> PASS
+    assert v["verdict"] == "PASS"
+
+
+def test_verdict_kill_when_shape_null_informative():
+    # leaky: each pocket's active == its own query -> shape-null recovers -> must NOT pass
+    q = _orphan_queries(30)
+    pockets = {f"T{i}": [s for s, t in zip(q["smiles"], q["target"], strict=True) if t == f"T{i}"]
+               for i in range(10)}
+    order = [f"T{i}" for i in range(10)]
+    scores, true_idx = shape_score_matrix(q, pockets, order)
+    v = verdict(q, scores, true_idx, n_pockets=10, n_fold_clusters=8)
+    assert v["verdict"] == "VALIDITY_KILL"
