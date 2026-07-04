@@ -15,6 +15,7 @@ from screen.fold_cluster import (
     fold_of,
     n_disjoint_clusters,
 )
+from screen.sources.chembl_diverse import records_from_activities
 from screen.sources.litpcba import (
     DEFAULT_LIG_RESNAME,
     _resname_from_ligand_mol2,
@@ -265,3 +266,16 @@ def test_verdict_kill_when_shape_null_informative():
     scores, true_idx = shape_score_matrix(q, pockets, order)
     v = verdict(q, scores, true_idx, n_pockets=n_pockets, n_fold_clusters=8)
     assert v["verdict"] == "VALIDITY_KILL"
+
+
+# --- chembl_diverse source (Increment-2 Task 2) ---------------------------------------------
+
+
+def test_chembl_records_shape_and_fields():
+    acts = [{"molecule_chembl_id": "CHEMBL1", "canonical_smiles": "CCO"},
+            {"molecule_chembl_id": "CHEMBL1", "canonical_smiles": "CCO"},   # dup mol
+            {"molecule_chembl_id": "CHEMBL2", "canonical_smiles": ""}]       # empty smiles dropped
+    recs = records_from_activities(acts, target="EGFR", pdb_id="1M17", lig_resname="AQ4")
+    assert all(r["source"] == "chembl_diverse" and r["target"] == "EGFR"
+               and r["pdb_id"] == "1M17" and r["lig_resname"] == "AQ4" for r in recs)
+    assert {r["mol_id"] for r in recs} == {"EGFR:CHEMBL1"}   # dup collapsed, empty dropped
