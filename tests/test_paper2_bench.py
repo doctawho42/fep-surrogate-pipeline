@@ -13,6 +13,12 @@ from screen.bench_sources import (
     parse_litpcba_target,
     triples_from_records,
 )
+from screen.fold_cluster import (
+    cluster_pockets,
+    dedupe_pockets,
+    fold_of,
+    n_disjoint_clusters,
+)
 from screen.stratify import assign_stratum, ecfp, max_tanimoto, stratify
 
 FIXTURE_DIR = pathlib.Path(__file__).parent / "fixtures" / "litpcba_mini"
@@ -167,3 +173,26 @@ def test_stratify_self_excludes_query_from_active_pool():
     out = stratify(queries, pocket_actives)
     assert out.loc[0, "s"] < 0.35            # self excluded -> dissimilar to benzoic acid -> orphan
     assert out.loc[0, "stratum"] in ("orphan", "deep_orphan")
+
+
+# --- Fold clustering + pocket deduplication -------------------------------------------------------
+
+
+def test_fold_lookup_and_cluster_count():
+    ecod = {("1ABC", "A"): "F1", ("2XYZ", "A"): "F2", ("3QQQ", "A"): "F2"}
+    assert fold_of("1ABC", "A", ecod) == "F1"
+    assert fold_of("9ZZZ", "A", ecod) is None
+    clusters = cluster_pockets({"T1": "F1", "T2": "F2", "T3": "F2"})
+    assert clusters == {"T1": "F1", "T2": "F2", "T3": "F2"}
+    assert n_disjoint_clusters(clusters) == 2          # F1, F2
+
+
+def test_dedupe_drops_redundant_site():
+    sets = {
+        "T1": {"ASP93", "GLY95"},
+        "T2": {"ASP93", "GLY95"},
+        "T3": {"HIS41", "CYS145"},
+    }
+    dropped = dedupe_pockets(sets, jaccard_thr=0.5)
+    # T1/T2 identical site -> drop the later one
+    assert dropped == ["T2"]
