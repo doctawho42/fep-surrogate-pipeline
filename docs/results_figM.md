@@ -49,9 +49,10 @@ can be retrospectively validated as adding value there.
 | high | 4631 | 0.790 | — | — |
 
 - **N = 15 pockets**, random baseline = 1/N = 0.067.
-- **n_fold_clusters among orphan-query true targets = 12** (of 14 distinct orphan targets;
-  `ADRB2`/`OPRK1` share Pfam `PF00001`, `ESR1_ant`/`PPARG` share InterPro `IPR001628`), via
-  `screen.fold_cluster.n_disjoint_clusters` on the RCSB-derived `fold` column.
+- **n_fold_clusters among orphan-query true targets = 12** (14 distinct orphan-bearing targets
+  collapse to 12 fold clusters via two Pfam/InterPro merges — `ESR1_ago`/`VDR` share `PF00104` and
+  `ESR1_ant`/`PPARG` share `IPR001628`), via `screen.fold_cluster.n_disjoint_clusters` on the
+  RCSB-derived `fold` column.
 - **P1 (power): PASS.** 698 ≥ 30 orphan queries and 12 ≥ 8 fold-disjoint clusters — well populated,
   not thin. Rules out an "inconclusive / not enough data" verdict.
 - **P2 (amended, sample-size-adaptive collapse test): FAIL** on all three sub-conditions:
