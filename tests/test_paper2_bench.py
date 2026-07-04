@@ -4,13 +4,9 @@ import pathlib
 import pandas as pd
 
 from screen.bench_sources import (
-    DEFAULT_LIG_RESNAME,
-    _resname_from_ligand_mol2,
-    _resname_from_substructure_line,
     _resolve_fold,
     assign_folds,
     audit_sources,
-    parse_litpcba_target,
     triples_from_records,
 )
 from screen.fold_cluster import (
@@ -18,6 +14,12 @@ from screen.fold_cluster import (
     dedupe_pockets,
     fold_of,
     n_disjoint_clusters,
+)
+from screen.sources.litpcba import (
+    DEFAULT_LIG_RESNAME,
+    _resname_from_ligand_mol2,
+    _resname_from_substructure_line,
+    parse_litpcba_target,
 )
 from screen.stratify import assign_stratum, ecfp, max_tanimoto, stratify
 from screen.validity_gate import bootstrap_recovery1, shape_score_matrix, verdict
