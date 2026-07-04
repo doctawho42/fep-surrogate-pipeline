@@ -14,7 +14,8 @@ The test's usefulness is entirely a function of σ-calibration: an overconfident
 system fail (FPR → 1); only a calibrated σ (the sandwich) yields a selective test. Cycle closure
 is (correctly) blind to node-consistent force-field bias, which cancels around a loop.
 
-Pure NumPy; no SciPy/Torch dependency, so it imports fast and unit-tests run standalone.
+The GLS network fit is pure NumPy; the exact chi^2 tail (``chi2_sf``) uses a lazy SciPy import
+(SciPy is a core dependency), so the fit imports fast and its unit tests run standalone.
 """
 from __future__ import annotations
 
@@ -44,7 +45,7 @@ class NetworkFit:
 
     @property
     def p_value(self) -> float:
-        """Upper-tail chi^2 p-value (Wilson--Hilferty; accurate in the tail we test)."""
+        """Upper-tail chi^2 p-value (exact; regularized upper incomplete gamma)."""
         return chi2_sf(self.chi2, self.dof)
 
 
@@ -84,11 +85,16 @@ def gls_network(edges: list[Edge]) -> NetworkFit:
 
 
 def chi2_sf(x: float, k: int) -> float:
-    """Upper-tail survival function of chi^2(k) via the Wilson--Hilferty approximation."""
+    """Exact upper-tail survival function of chi^2(k): the regularized upper incomplete gamma
+    ``Q(k/2, x/2)``. Replaces a Wilson--Hilferty cube-root approximation, which is conservative
+    but 64--190% off in the far upper tail at the low degrees of freedom this test actually uses
+    (e.g. dof=1, 14); the exact tail leaves the BH-FDR flag set unchanged. SciPy is a core
+    dependency; the import is local so the network fit itself still imports without it."""
     if k <= 0:
         return math.nan
-    z = ((x / k) ** (1.0 / 3.0) - (1.0 - 2.0 / (9 * k))) / math.sqrt(2.0 / (9 * k))
-    return 0.5 * math.erfc(z / math.sqrt(2.0))
+    from scipy.special import gammaincc  # local import; scipy is a core dep
+
+    return float(gammaincc(k / 2.0, x / 2.0))
 
 
 def cycle_closure_test(edges: list[Edge]) -> NetworkFit:

@@ -9,9 +9,11 @@ Invariants:
     sigma) inflates reduced chi^2 as 1/scale^2 (FPR -> 1);
   * residuals are gauge-invariant (global shift of node potentials) and deterministic.
 """
+import math
+
 import numpy as np
 
-from bar.qc import benjamini_hochberg, cycle_closure_test, gls_network, repair_order
+from bar.qc import benjamini_hochberg, chi2_sf, cycle_closure_test, gls_network, repair_order
 
 
 def _complete_graph_edges(phi, se, rng, extra_bias=None):
@@ -91,3 +93,13 @@ def test_bh_flags_monotone():
     p = [1e-9, 0.2, 0.4, 0.8]
     flags = benjamini_hochberg(p, alpha=0.05)
     assert flags[0] and not flags[-1]
+
+
+def test_chi2_sf_is_exact():
+    # the QC p-value must be the EXACT chi^2 upper tail, not the Wilson--Hilferty approximation
+    # (WH is conservative but 64-190% off in the far tail at the low dof this test flags, e.g.
+    # brd4 dof=1 x=15.4: WH 1.43e-4 vs exact 8.7e-5). Guard against a regression to the approx.
+    from scipy.stats import chi2 as _chi2
+    for x, k in [(15.4, 1), (78.0, 14), (8.0, 8), (5.0, 5), (2.0, 3), (0.5, 2)]:
+        assert abs(chi2_sf(x, k) - float(_chi2.sf(x, k))) < 1e-12
+    assert math.isnan(chi2_sf(1.0, 0))  # dof <= 0 guard preserved

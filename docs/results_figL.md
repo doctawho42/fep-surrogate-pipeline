@@ -125,7 +125,10 @@ Two data-internal predictive checks (short of new MD), in `figs/figL_validation.
   the affinity estimate improves. Natural next experiment.
 - **χ² assumes Gaussian edge error;** Panel C's replicate reproducibility is the model-free
   backstop that does not rely on Gaussianity.
-- p-values via Wilson–Hilferty (adequate; flagged p ∈ [1e-10, 1e-4]); BH-FDR across 48 systems.
+- p-values via the exact χ² upper tail (regularized incomplete gamma `Q(k/2, x/2)`; flagged p ∈
+  [~7e-11, 1e-4]); BH-FDR across 48 systems. (The earlier Wilson–Hilferty approximation was
+  conservative but 64–190% off in the far tail at low dof — e.g. brd4 dof=1, bace dof=14 — and
+  gave the identical flag set; replaced by the exact tail for rigor.)
 - Threshold at nominal `χ²_ν=1` is conservative given the ≥1.7×-conservative bars; using the
   empirical conservative baseline (median ~0.34) would increase power.
 
