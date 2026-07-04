@@ -40,7 +40,13 @@ def shape_score_matrix(queries: pd.DataFrame, pocket_actives: dict[str, list[str
     for qi, (_, row) in enumerate(queries.iterrows()):
         qfp = ecfp(row["smiles"])
         for t in pocket_order:
-            scores[qi, tpos[t]] = 0.0 if qfp is None else max_tanimoto(qfp, pocket_fps[t])
+            if qfp is None:
+                scores[qi, tpos[t]] = 0.0
+            else:
+                # value-based self-exclusion (leave-one-out): the query must never match
+                # itself in ANY pocket's pool, same convention as `stratify`.
+                pool = [fp for fp in pocket_fps[t] if fp != qfp]
+                scores[qi, tpos[t]] = max_tanimoto(qfp, pool)
         true_idx[qi] = tpos[row["target"]]
     return scores, true_idx
 

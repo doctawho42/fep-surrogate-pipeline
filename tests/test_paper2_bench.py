@@ -233,12 +233,33 @@ def test_verdict_pass_on_collapsed_orphan_null():
     assert v["verdict"] == "PASS"
 
 
+def test_shape_matrix_self_excludes_query_leave_one_out():
+    # the query IS an active of its own target; a valid shape-null must NOT let it self-match
+    q = pd.DataFrame({"mol_id": ["x"], "smiles": ["c1ccccc1C(=O)O"], "target": ["T0"],
+                      "stratum": ["orphan"]})
+    pockets = {"T0": ["c1ccccc1C(=O)O", "CCCCCC"], "T1": ["c1ccccc1C(=O)O"]}
+    scores, true_idx = shape_score_matrix(q, pockets, ["T0", "T1"])
+    assert scores[0, 0] < 0.99   # T0 self-excluded -> sim to CCCCCC only, NOT a 1.0 self-match
+    assert scores[0, 1] == 0.0   # T1's only active WAS the query -> excluded -> empty pool -> 0.0
+
+
 def test_verdict_kill_when_shape_null_informative():
-    # leaky: each pocket's active == its own query -> shape-null recovers -> must NOT pass
-    q = _orphan_queries(30)
-    pockets = {f"T{i}": [s for s, t in zip(q["smiles"], q["target"], strict=True) if t == f"T{i}"]
-               for i in range(10)}
-    order = [f"T{i}" for i in range(10)]
+    # Genuine leakage (NOT the self-match artifact fixed above): each target's active pool
+    # is a close structural analog (near-duplicate, not value-identical) of its own queries'
+    # distinctive scaffold, with each of the 10 targets built on a mutually dissimilar
+    # substituent so cross-target similarity stays low. This leakage must survive correct
+    # value-based leave-one-out self-exclusion (the analog's fingerprint != the query's own
+    # fingerprint), so it exercises real near-duplicate leakage rather than a query trivially
+    # matching its own literal SMILES.
+    subs = ["F", "Cl", "Br", "I", "C", "CC", "CCC", "OC", "N", "S"]
+    n_pockets = 10
+    scaffolds = [f"c1cc({s})ccc1CCCCCCCCCC(=O)N" for s in subs]
+    actives = [s.replace("(=O)N", "(=O)NC") for s in scaffolds]   # close analog, not identical
+    rows = [{"mol_id": f"q{i}_{j}", "smiles": scaffolds[i], "target": f"T{i}", "stratum": "orphan"}
+            for i in range(n_pockets) for j in range(3)]
+    q = pd.DataFrame(rows)
+    pockets = {f"T{i}": [actives[i]] for i in range(n_pockets)}
+    order = [f"T{i}" for i in range(n_pockets)]
     scores, true_idx = shape_score_matrix(q, pockets, order)
-    v = verdict(q, scores, true_idx, n_pockets=10, n_fold_clusters=8)
+    v = verdict(q, scores, true_idx, n_pockets=n_pockets, n_fold_clusters=8)
     assert v["verdict"] == "VALIDITY_KILL"
