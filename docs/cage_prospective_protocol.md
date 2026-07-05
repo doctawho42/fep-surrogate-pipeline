@@ -266,10 +266,10 @@ no real result is left without an assigned interpretation decided in advance of 
 |---|---|---|---|
 | pass | yes | yes | **HIT** — specific engagement of a target/pathway; escalate to Stage 3. Supersedes the F2 in-silico steroid-hypothesis framing if the hit is not steroid-family. |
 | pass | no | yes | **ambiguous-engagement** — real engagement by the LCB rule, but fails the co-primary specificity bar; reported as-is, does **not** escalate. |
-| pass | any | no | **aggregation artifact** — LCB-significant but abolished by detergent challenge; consistent with F5, not treated as a hit. |
+| pass | any | no | **aggregation-artifact** — LCB-significant but abolished by detergent challenge; consistent with F5, not treated as a hit. |
 | fail | yes | yes | **inconclusive-but-suggestive** — held for one pre-registered confirmatory replicate; never silently folded into a "promiscuous binder" conclusion. |
 | fail | no | any | **F5-confirmed-promiscuous** — a weak, promiscuous binder; a real, publishable negative that bounds the chemotype. |
-| fail | yes | no | **aggregation artifact** — discordance without detergent survival is a systematic-artifact flag, not evidence of specificity. |
+| fail | yes | no | **aggregation-artifact** — discordance without detergent survival is a systematic-artifact flag, not evidence of specificity. |
 
 Reporter-specific dispositions layer on top of this table for Stage 2:
 - **Steroid rescue:** a GR or AR reporter positive (dose-responsive, enantioselective,

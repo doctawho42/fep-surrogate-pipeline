@@ -124,6 +124,8 @@ def _score_one(fid: str, forecast: dict, obs: dict) -> tuple[str, str]:
             return "not_testable", "steroid-rescue precondition not met"
         wet = obs.get("enantiomer_call") or {}
         pred = forecast["F4"]["per_target"]
+        # a wet key absent from the forecast (pred.get -> None) counts as a mismatch: the
+        # forecast made no claim there, so a call on it cannot confirm F4.
         mismatches = [t for t, e in wet.items() if pred.get(t) != e]
         if mismatches:
             return "refuted", f"enantiomer-call mismatch at {mismatches}"
