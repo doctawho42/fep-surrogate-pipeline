@@ -16,6 +16,7 @@ from screen.fold_cluster import (
     fold_of,
     n_disjoint_clusters,
 )
+from screen.sources.bindingdb import records_from_html
 from screen.sources.chembl_diverse import records_from_activities
 from screen.sources.litpcba import (
     DEFAULT_LIG_RESNAME,
@@ -296,3 +297,40 @@ def test_chembl_records_shape_and_fields():
     assert all(r["source"] == "chembl_diverse" and r["target"] == "EGFR"
                and r["pdb_id"] == "1M17" and r["lig_resname"] == "AQ4" for r in recs)
     assert {r["mol_id"] for r in recs} == {"EGFR:CHEMBL1"}   # dup collapsed, empty dropped
+
+
+# --- bindingdb source (Increment-2 collapse re-test) ----------------------------------------
+
+
+def test_bindingdb_records_shape_and_fields():
+    """Mirrors test_chembl_records_shape_and_fields: exercise the HTML-scrape shaping function
+    offline against a small fixture mimicking ByUniProtids.jsp's real markup (a `monomerid=`
+    anchor immediately followed by a `setClipboard('<smiles>')` Copy-SMILES button per ligand
+    row). Two rows share a monomerid (real duplicate-assay case) and must collapse to one
+    record; a row is included whose SMILES is present (no empty-SMILES case occurs on the real
+    page -- ligands without a SMILES simply have no Copy-SMILES button and are naturally
+    skipped by the regex, so there is nothing to "drop" here, only nothing to match)."""
+    html = """
+    <div><a href="/rwd/bind/chemsearch/marvin/MolStructure.jsp?monomerid=50029668&google=x">
+    <img src="a.png"/></a><a class="big">BDBM50029668</a>(AZD-9291)
+    <button onclick="setClipboard('COc1ccccc1')">Copy&nbsp;SMILES</button>
+    <button onclick="setClipboard('InChI=1S/x')">Copy&nbsp;InChI</button></div>
+    <div><a href="/rwd/bind/chemsearch/marvin/MolStructure.jsp?monomerid=3585&google=y">
+    <img src="b.png"/></a><a class="big">BDBM3585</a>(other)
+    <button onclick="setClipboard('Brc1ccccc1')">Copy&nbsp;SMILES</button>
+    <button onclick="setClipboard('InChI=1S/y')">Copy&nbsp;InChI</button></div>
+    <div><a href="/rwd/bind/chemsearch/marvin/MolStructure.jsp?monomerid=3585&google=y">
+    <img src="b.png"/></a><a class="big">BDBM3585</a>(dup assay row)
+    <button onclick="setClipboard('Brc1ccccc1')">Copy&nbsp;SMILES</button>
+    <button onclick="setClipboard('InChI=1S/y')">Copy&nbsp;InChI</button></div>
+    """
+    recs = records_from_html(html, target="EGFR", pdb_id="1M17", lig_resname="AQ4")
+    assert all(r["source"] == "bindingdb" and r["target"] == "EGFR"
+               and r["pdb_id"] == "1M17" and r["lig_resname"] == "AQ4" for r in recs)
+    assert {r["mol_id"] for r in recs} == {"EGFR:BDBM50029668", "EGFR:BDBM3585"}  # dup collapsed
+    assert {r["smiles"] for r in recs} == {"COc1ccccc1", "Brc1ccccc1"}
+    assert all(r["affinity_nm"] is None and r["fold"] is None for r in recs)
+
+
+def test_bindingdb_records_from_html_empty_page_returns_nothing():
+    assert records_from_html("<html><body>no results</body></html>", "T", "1ABC", "LIG") == []

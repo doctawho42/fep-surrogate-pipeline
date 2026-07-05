@@ -19,7 +19,7 @@ import urllib.request
 
 import pandas as pd
 
-from screen.sources import chembl_diverse, litpcba
+from screen.sources import bindingdb, chembl_diverse, litpcba
 
 # Candidate public sources. HEAD/GET probe only in the audit; real layout confirmed in Task 2.
 SOURCE_URLS: dict[str, str] = {
@@ -152,6 +152,7 @@ def build_triples(
     cache_dir: str = "data/paper2_bench",
     limit: int | None = None,
     include_chembl_diverse: bool = True,
+    include_bindingdb: bool = False,
 ) -> pd.DataFrame:
     """Aggregate active->target->holo-pocket triples from all sources, assign folds, cache
     parquet. Idempotent (returns cached parquet if present). `limit` caps the number of targets
@@ -159,10 +160,20 @@ def build_triples(
 
     `include_chembl_diverse=True` (default) merges LIT-PCBA + the ChEMBL-diverse targets into
     `triples_aggregate.parquet` (Increment 2). `include_chembl_diverse=False` reproduces the
-    Increment-1 LIT-PCBA-only `triples.parquet` (kept for that increment's own tests/Fig M)."""
+    Increment-1 LIT-PCBA-only `triples.parquet` (kept for that increment's own tests/Fig M).
+
+    `include_bindingdb=True` additionally merges the BindingDB breadth targets
+    (`screen.sources.bindingdb`) into a DISTINCT cache file, `triples_aggregate_bdb.parquet`
+    (Increment-2 collapse-count re-test) -- kept separate from `triples_aggregate.parquet` so
+    the original 29-target aggregate is never silently mutated by this re-test."""
     cache = pathlib.Path(cache_dir)
     cache.mkdir(parents=True, exist_ok=True)
-    name = "triples_aggregate.parquet" if include_chembl_diverse else "triples.parquet"
+    if include_bindingdb:
+        name = "triples_aggregate_bdb.parquet"
+    elif include_chembl_diverse:
+        name = "triples_aggregate.parquet"
+    else:
+        name = "triples.parquet"
     out = cache / name
     if out.exists():
         return pd.read_parquet(out)
@@ -170,6 +181,8 @@ def build_triples(
     records = litpcba.load_litpcba_records(cache_dir)
     if include_chembl_diverse:
         records += chembl_diverse.load_chembl_diverse_records(cache_dir)
+    if include_bindingdb:
+        records += bindingdb.load_bindingdb_records(cache_dir)
 
     df = aggregate_records(records)
     if limit is not None:
