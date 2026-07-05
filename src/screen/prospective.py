@@ -11,7 +11,12 @@ docs/cage_prospective_protocol.md.
 """
 from __future__ import annotations
 
+import hashlib
 import math
+from dataclasses import dataclass
+from pathlib import Path
+
+import yaml
 
 
 def decision_lcb(effect: float, sigma: float, z: float, tau: float) -> dict:
@@ -52,3 +57,37 @@ def stop_rule(effect: float, sigma_assay: float, tau: float, bound: float) -> di
         raise ValueError("sigma_assay must be > 0 (measured replicate/Hill-fit sigma)")
     conf = _normal_cdf((effect - tau) / sigma_assay)
     return {"conf": conf, "stop": conf >= bound}
+
+
+PREREG_PATH = "data/cage/prospective_prereg.yaml"
+# frozen anchor; must equal tests/test_prospective.py::PINNED_SHA256
+PREREG_SHA256 = "66ef0bc848ab0b515b2e5b32be44230b0f528504b0b018caccc6884a0c73c488"
+
+
+@dataclass(frozen=True)
+class Prereg:
+    """Parsed, read-only view of data/cage/prospective_prereg.yaml."""
+    version: int
+    species: list
+    forecast: dict
+    decision: dict
+    disposition_table: list
+    sha256: str
+
+
+def sha256_of(path: str) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def load_prereg(path: str = PREREG_PATH, expected_sha256: str = PREREG_SHA256) -> Prereg:
+    """Parse the frozen pre-registration read-only, asserting its SHA-256 equals an EXTERNAL
+    anchor (`expected_sha256`, pinned once in the test suite, never edited). Comparing against an
+    anchor the file-editor cannot re-derive in the same commit is what defeats coordinated
+    post-hoc tuning; a self-recomputed hash would not. Raises ValueError on hash mismatch."""
+    actual = sha256_of(path)
+    if actual != expected_sha256:
+        raise ValueError(
+            f"prereg immutability violation: {path} sha256={actual} != anchor {expected_sha256}")
+    d = yaml.safe_load(Path(path).read_text())
+    return Prereg(version=d["version"], species=d["species"], forecast=d["forecast"],
+                  decision=d["decision"], disposition_table=d["disposition_table"], sha256=actual)

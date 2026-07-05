@@ -3,10 +3,14 @@ from __future__ import annotations
 
 import inspect
 import math
+import pathlib
 
 import pytest
 
 from screen import prospective as P
+
+# external witness; independent literal, never edited
+PINNED_SHA256 = "66ef0bc848ab0b515b2e5b32be44230b0f528504b0b018caccc6884a0c73c488"
 
 
 def test_decision_lcb_commit_and_boundary():
@@ -51,3 +55,40 @@ def test_stop_rule_is_measured_sigma_only():
     assert P.stop_rule(2.0, 0.5, 1.0, 0.9)["conf"] > P.stop_rule(2.0, 1.0, 1.0, 0.9)["conf"]
     with pytest.raises(ValueError):
         P.stop_rule(2.0, 0.0, 1.0, 0.9)
+
+
+def test_prereg_loads_and_matches_pinned_anchor():
+    # the module constant and the test's independent witness must agree with the file on disk
+    assert P.PREREG_SHA256 == PINNED_SHA256
+    assert P.sha256_of(P.PREREG_PATH) == PINNED_SHA256
+    pr = P.load_prereg()
+    assert pr.version == 1
+    assert [s["id"] for s in pr.species] == ["RR-OAc", "SS-OAc", "RR-OH", "SS-OH"]
+    assert set(pr.forecast) == {"F1", "F2", "F3", "F4", "F5"}
+    assert pr.decision["z"] == 1.645
+    assert pr.decision["frac"] == 0.5
+    assert pr.decision["stop_bound"] == 0.90
+
+
+def test_prereg_immutable_against_external_anchor(tmp_path):
+    # mutate the frozen file's content -> its hash changes -> load must raise vs the external anchor
+    tampered = tmp_path / "tampered.yaml"
+    tampered.write_bytes(pathlib.Path(P.PREREG_PATH).read_bytes() + b"\n# post-hoc edit\n")
+    with pytest.raises(ValueError):
+        P.load_prereg(str(tampered), expected_sha256=PINNED_SHA256)
+
+
+def test_prereg_f3_not_scored_and_power_justified():
+    pr = P.load_prereg()
+    assert pr.forecast["F3"]["scored"] is False
+    mr = pr.decision["min_replicates"]
+    assert mr["value"] == 3
+    assert mr["power_justification"].strip()  # non-empty derivation present
+
+
+def test_disposition_table_is_exhaustive():
+    pr = P.load_prereg()
+    dispositions = {row["disposition"] for row in pr.disposition_table}
+    assert len(pr.disposition_table) == 6
+    assert "HIT" in dispositions and "F5-confirmed-promiscuous" in dispositions
+    assert "ambiguous-engagement" in dispositions and "inconclusive-but-suggestive" in dispositions
