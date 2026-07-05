@@ -92,3 +92,34 @@ def test_disposition_table_is_exhaustive():
     assert len(pr.disposition_table) == 6
     assert "HIT" in dispositions and "F5-confirmed-promiscuous" in dispositions
     assert "ambiguous-engagement" in dispositions and "inconclusive-but-suggestive" in dispositions
+
+
+def test_score_forecast_all_negative_outcomes():
+    pr = P.load_prereg()
+    obs = {"specific_engagement": False, "nr_signal": None,
+           "steroid_rescue": False, "detergent_surviving": False, "enantiodiscordant": False}
+    rep = P.score_forecast(pr, obs)
+    by = {o.fid: o.outcome for o in rep.outcomes}
+    assert by == {"F1": "confirmed", "F2": "confirmed", "F4": "not_testable", "F5": "confirmed"}
+    assert "F3" not in by  # F3 is context, never scored
+    assert rep.scorecard == {"confirmed": 3, "refuted": 0, "not_testable": 1}
+
+
+def test_score_forecast_all_refuted():
+    pr = P.load_prereg()
+    obs = {"specific_engagement": True,
+           "nr_signal": {"target": "ER", "agonist_comparable": True},
+           "steroid_rescue": True, "enantiomer_call": {"GR": "RR-OAc"},  # prereg says GR->SS-OAc
+           "detergent_surviving": True, "enantiodiscordant": True}
+    rep = P.score_forecast(pr, obs)
+    by = {o.fid: o.outcome for o in rep.outcomes}
+    assert by == {"F1": "refuted", "F2": "refuted", "F4": "refuted", "F5": "refuted"}
+    assert rep.scorecard["refuted"] == 4
+
+
+def test_score_forecast_f4_confirmed_on_matching_rescue():
+    pr = P.load_prereg()
+    obs = {"steroid_rescue": True, "enantiomer_call": {"GR": "SS-OAc", "AR": "RR-OAc"}}
+    rep = P.score_forecast(pr, obs)
+    f4 = next(o for o in rep.outcomes if o.fid == "F4")
+    assert f4.outcome == "confirmed"

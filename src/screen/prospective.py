@@ -91,3 +91,58 @@ def load_prereg(path: str = PREREG_PATH, expected_sha256: str = PREREG_SHA256) -
     d = yaml.safe_load(Path(path).read_text())
     return Prereg(version=d["version"], species=d["species"], forecast=d["forecast"],
                   decision=d["decision"], disposition_table=d["disposition_table"], sha256=actual)
+
+
+_SCORED = ("F1", "F2", "F4", "F5")  # F3 is context, never scored
+
+
+@dataclass(frozen=True)
+class ForecastOutcome:
+    fid: str
+    outcome: str  # "confirmed" | "refuted" | "not_testable"
+    note: str
+
+
+@dataclass(frozen=True)
+class FalsificationReport:
+    outcomes: list
+    scorecard: dict
+
+
+def _score_one(fid: str, forecast: dict, obs: dict) -> tuple[str, str]:
+    if fid == "F1":
+        if obs.get("specific_engagement", False):
+            return "refuted", "specific engagement observed"
+        return "confirmed", "no specific engagement observed"
+    if fid == "F2":
+        nr = obs.get("nr_signal")
+        if nr is not None and nr.get("agonist_comparable", False):
+            return "refuted", f"strong agonist-comparable NR signal at {nr.get('target')}"
+        return "confirmed", "no strong nuclear-receptor signal"
+    if fid == "F4":
+        if not obs.get("steroid_rescue", False):
+            return "not_testable", "steroid-rescue precondition not met"
+        wet = obs.get("enantiomer_call") or {}
+        pred = forecast["F4"]["per_target"]
+        mismatches = [t for t, e in wet.items() if pred.get(t) != e]
+        if mismatches:
+            return "refuted", f"enantiomer-call mismatch at {mismatches}"
+        return "confirmed", "wet enantiomer calls match the in-silico forecast"
+    if fid == "F5":
+        if obs.get("detergent_surviving", False) and obs.get("enantiodiscordant", False):
+            return "refuted", "detergent-surviving, enantiodiscordant signal"
+        return "confirmed", "consistent with the promiscuous/aggregation prior"
+    raise ValueError(f"unknown scored forecast {fid}")
+
+
+def score_forecast(prereg: Prereg, observations: dict) -> FalsificationReport:
+    """Score the SCORED forecasts {F1, F2, F4, F5} against wet observations (F3 is context, not
+    scored). Each -> confirmed | refuted | not_testable (F4 -> not_testable unless steroid_rescue
+    fired). Returns per-forecast outcomes + a counts scorecard."""
+    outcomes = []
+    scorecard = {"confirmed": 0, "refuted": 0, "not_testable": 0}
+    for fid in _SCORED:
+        outcome, note = _score_one(fid, prereg.forecast, observations)
+        outcomes.append(ForecastOutcome(fid=fid, outcome=outcome, note=note))
+        scorecard[outcome] += 1
+    return FalsificationReport(outcomes=outcomes, scorecard=scorecard)
