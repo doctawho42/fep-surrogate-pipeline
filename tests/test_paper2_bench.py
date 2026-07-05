@@ -334,3 +334,18 @@ def test_bindingdb_records_shape_and_fields():
 
 def test_bindingdb_records_from_html_empty_page_returns_nothing():
     assert records_from_html("<html><body>no results</body></html>", "T", "1ABC", "LIG") == []
+
+
+# --- Fig N Step-0 orchestrator (Increment-2 Task 4) ------------------------------------------
+
+import sys  # noqa: E402
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent / "figs"))
+
+from make_figN import is_monotone_gradient  # noqa: E402
+
+
+def test_monotone_gradient():
+    assert is_monotone_gradient({"high": 0.79, "mid": 0.60, "orphan": 0.47, "collapse": 0.10})
+    assert not is_monotone_gradient({"high": 0.5, "mid": 0.6, "orphan": 0.47, "collapse": 0.10})
+    assert is_monotone_gradient({"high": 0.79, "collapse": 0.10})  # missing strata skipped
