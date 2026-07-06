@@ -58,11 +58,13 @@ experiment**, not a contradiction.
 
 ## Why the strong claim is untestable here
 The strong claim ("QC repair improves accuracy") can only be tested on a **QC-flagged** system
-(brd4, bace, faah, cdk8, hif2a, p38) **with experimental affinities**. In the OpenFE
-IndustryBenchmarks2024 set those systems are **anonymized** (ligand identities/affinities withheld),
-and external experimental sources could not be fetched in this environment. So the strong test
-requires unblinded data or new MD (flag → re-run/repair a flagged edge → measure the improvement).
-That is the concrete, well-scoped next experiment — now with named target edges (e.g. bace CAT-13).
+(brd4, bace, faah, cdk8, hif2a, p38) **with experimental affinities**. Those affinities are not
+tabulated in the OpenFE IndustryBenchmarks2024 replicate set, but the ligands are named published
+series recoverable by ChEMBL structure-search: we grounded four (cdk8, hif2a, p38, bace) on public
+ChEMBL IC50 and ran the retrospective guided-vs-random accuracy race (`docs/results_figLcausal.md`),
+which came back **NULL** (guided QC-edge removal ties random on MUE-vs-experiment, Stouffer p=0.48) —
+the same scope boundary, now measured across four real systems. Only the fully-prospective
+flag → re-run/repair a flagged edge → re-measure (new MD) remains future.
 
 ## Bottom line
 The impact swing yields one real positive (experimental grounding of the QC on eg5) and an honest

@@ -125,8 +125,12 @@ affinities (`data/eg5_experimental_chembl.csv`): the eg5 network agrees with exp
 But acting on the QC does **not** improve accuracy on this clean system (internal |z| vs
 error-vs-exp: Pearson +0.13) — exactly the Fig L scope (cycle closure is blind to the
 node-consistent FF bias that dominates a clean system's error). The strong "QC-repair improves
-accuracy" claim needs a QC-flagged system **with** experimental data; those are anonymized in the
-benchmark, so it is scoped as the prospective next test. This null **reinforces** the paper's
+accuracy" claim needs QC-flagged systems **with** experimental data; those affinities are not
+tabulated in the replicate set but are recoverable by ChEMBL structure-search — we grounded four
+(cdk8, hif2a, p38, bace) and ran the retrospective guided-vs-random accuracy race
+(`docs/results_figLcausal.md`), which came back **NULL** (Stouffer p=0.48), confirming this scope
+boundary on real data; only the fully-prospective flag → repair/re-run → re-measure (new MD) remains
+future. This null **reinforces** the paper's
 thesis (calibration = decision/QC instrument, not a performance multiplier).
 
 ## Files
