@@ -78,6 +78,9 @@ figL:  # IMPACT: calibrated cycle-closure QC (separates systematic from sampling
 figLval:  # IMPACT validation: flags are causal (repair test) + reproduce out-of-sample (held-out replicates)
 	PYTHONPATH=src $(PY) figs/make_figL_validation.py
 
+figLcausal:  # close-the-loop: does acting on the QC flag improve accuracy vs experiment?
+	PYTHONPATH=src $(PY) figs/make_figLcausal.py
+
 boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
 	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
 
