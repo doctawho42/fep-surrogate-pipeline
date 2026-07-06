@@ -1,0 +1,23 @@
+version: 1
+description: >
+  Immutable pre-registration for the close-the-loop accuracy race (frozen BEFORE any affinity is
+  joined; immutability anchored by an external SHA-256 pinned in tests/test_closeloop.py). Tests
+  whether removing the calibrated-QC-flagged top-|z| edges improves MUE-vs-experiment more than
+  random removal, on flagged systems grounded on public ChEMBL affinity. NO new MD.
+systems: [cdk8, hif2a, p38, bace]
+coverage_min: 0.60          # a system is grounded iff >=60% of its network ligands map to affinity
+assay_order: [IC50, Ki]     # single assay per system, in this preference order; never mix
+n_perm: 1000                # random k-edge removals per system for the null
+target_reduced_chi2: 1.0    # repair_order stopping target (the guided k-trajectory endpoint)
+min_grounded: 2             # HARD ABORT if fewer than this many systems clear coverage_min
+primary_statistic: >
+  Per grounded system, effect = deltaMUE_guided - mean(deltaMUE_random) at the repair_order
+  trajectory endpoint K; per-system one-sided permutation p = P(deltaMUE_random >= deltaMUE_guided);
+  combine across grounded systems by one-sided Stouffer + a sign test on the per-system effect.
+success: >
+  combined Stouffer p < 0.05 AND per-system guided deltaMUE below the 5th percentile of its random
+  null in a majority of grounded systems.
+null_is_publishable: >
+  guided ~ random on experimental MUE -> a measured scope boundary: calibrated QC causally repairs
+  internal network consistency (closure, already a PASS) but not force-field-limited absolute
+  accuracy vs experiment (consistent with cycle closure being blind to node-consistent FF bias).
