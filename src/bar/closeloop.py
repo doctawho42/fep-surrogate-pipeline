@@ -131,14 +131,18 @@ def system_effect(edges: list, exp: dict, n_perm: int, target_rchi2: float, seed
 
 
 def combine(effects: list) -> dict:
-    """One-sided Stouffer on per-system p + a sign test on the per-system effect (guided-random)."""
-    ps = np.array([e["p"] for e in effects if not math.isnan(e["p"])])
-    z = norm.isf(ps)  # one-sided: small p -> large z
-    stouffer = float(norm.sf(z.sum() / math.sqrt(len(z)))) if z.size else math.nan
-    signs = [1 for e in effects if e["guided"] > e["random_mean"]]
-    n = len(effects)
-    sign_p = (float(sum(math.comb(n, i) for i in range(len(signs), n + 1)) / (2 ** n))
-              if n else math.nan)
-    majority_below = sum(bool(e.get("below_5pct")) for e in effects) > n / 2
+    """One-sided Stouffer on per-system p + a sign test on the per-system effect (guided-random).
+    Systems with a NaN p (degenerate networks where every permutation draw was NaN) are dropped
+    from ALL three sub-statistics consistently, so Stouffer, the sign test, and the majority-below
+    count share one effective sample size."""
+    valid = [e for e in effects if not math.isnan(e["p"])]
+    n = len(valid)
+    if n == 0:
+        return {"stouffer_p": math.nan, "sign_p": math.nan, "verdict": "NULL"}
+    z = norm.isf(np.array([e["p"] for e in valid]))  # one-sided: small p -> large z
+    stouffer = float(norm.sf(z.sum() / math.sqrt(n)))
+    signs = sum(1 for e in valid if e["guided"] > e["random_mean"])
+    sign_p = float(sum(math.comb(n, i) for i in range(signs, n + 1)) / (2 ** n))
+    majority_below = sum(bool(e.get("below_5pct")) for e in valid) > n / 2
     verdict = "SUCCESS" if (stouffer < 0.05 and majority_below) else "NULL"
     return {"stouffer_p": stouffer, "sign_p": sign_p, "verdict": verdict}

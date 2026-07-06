@@ -85,3 +85,15 @@ def test_combine_stouffer_and_sign():
     assert out["stouffer_p"] < 0.05 and out["verdict"] == "SUCCESS"
     null = C.combine([{"p": 0.6, "guided": 0.0, "random_mean": 0.1, "below_5pct": False}] * 2)
     assert null["verdict"] == "NULL"
+
+
+def test_combine_drops_nan_p_consistently():
+    # a NaN-p system must be dropped from ALL sub-statistics (n_effective=2), not just Stouffer
+    effs = [{"p": 0.01, "guided": 0.5, "random_mean": 0.1, "below_5pct": True},
+            {"p": 0.02, "guided": 0.4, "random_mean": 0.1, "below_5pct": True},
+            {"p": float("nan"), "guided": 0.0, "random_mean": 0.1, "below_5pct": False}]
+    out = C.combine(effs)
+    assert out["stouffer_p"] < 0.05       # NaN dropped -> Stouffer over the 2 valid systems
+    assert out["sign_p"] == 0.25          # 2/2 successes over n=2 -> comb(2,2)/2**2 = 0.25
+    assert out["verdict"] == "SUCCESS"
+    assert C.combine([{"p": float("nan"), "guided": 0.0, "random_mean": 0.1}])["verdict"] == "NULL"
