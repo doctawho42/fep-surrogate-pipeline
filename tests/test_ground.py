@@ -29,3 +29,25 @@ def test_median_pchembl_single_assay():
     assert G._median_pchembl(recs, assay="Ki") == 9.9
     null_rec = [{"standard_type": "IC50", "pchembl_value": None}]
     assert G._median_pchembl(null_rec, assay="IC50") is None
+
+
+def test_assay_fallback_prefers_first_available():
+    # IC50 has matches -> IC50 chosen even though Ki also has matches (never mix, first wins)
+    both = {"a": {"IC50": 7.0, "Ki": 6.9}, "b": {"IC50": 6.5}}
+    assert G.select_assay(both, ["IC50", "Ki"]) == "IC50"
+
+    # IC50 has zero matches for this system, Ki has matches -> fall back to Ki
+    ic50_empty = {"a": {"Ki": 7.0}, "b": {"Ki": 6.5}}
+    assert G.select_assay(ic50_empty, ["IC50", "Ki"]) == "Ki"
+
+    # neither assay has any match -> falls back to the last assay_order entry (definite, no raise)
+    assert G.select_assay({"a": {}}, ["IC50", "Ki"]) == "Ki"
+    assert G.select_assay({}, ["IC50", "Ki"]) == "Ki"
+
+
+def test_collapsed_enantiomer_pairs_hif2a():
+    # hif2a ligands 237/15 are ChEMBL-flexmatch-collapsed enantiomers (same pchembl=8.0, 2D graph
+    # identical, stored SMILES differ only in one stereocenter) -- reads the committed CSV.
+    pairs = G.collapsed_enantiomer_pairs("hif2a")
+    normalized = {frozenset(p) for p in pairs}
+    assert frozenset({"237", "15"}) in normalized

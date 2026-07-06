@@ -15,6 +15,21 @@ direct join against that csv's `system name` + ligand_A/ligand_B columns:
         "<n> flipped" alt-pose ligands vs the csv's "<n>-flipped" -> after space->hyphen
         normalization (documented, not fabricated -- same molecule, same SMILES), 35/35 matched.
 No other renaming/normalization was needed for any system.
+
+KNOWN LIMITATION -- stereo-blind enantiomer collapse (disclosed, not fabrication):
+`chembl_affinity` matches structures via ChEMBL's `flexmatch`, which is connectivity-based and
+stereo-blind. Consequently enantiomer pairs present in a network (same 2D graph, opposite
+stereocenter) resolve to the SAME ChEMBL molecule and therefore share one experimental affinity
+value (empirically observed: hif2a 237/15, hif2a 165/164, hif2a 7b/7a; cdk8 30/31). The match
+itself is real -- flexmatch legitimately found that ChEMBL record -- so this is NOT a fabricated
+value. It DOES inflate the ABSOLUTE MUE-vs-experiment for enantiomer edges (one arm of the pair is
+necessarily "wrong" relative to its true unmeasured enantiomer affinity), but it CANCELS in the
+guided-vs-random close-the-loop CONTRAST, because both arms of that comparison read the identical
+cached affinity for the identical ligand -- the shared value is a constant offset, not a
+differential bias. Given this project's chirality invariants (#5 "predict per enantiomer", #6
+"racemate apparent affinity ~= stronger binder"), the limitation must be disclosed rather than
+silently absorbed. `collapsed_enantiomer_pairs(system)` reports the affected ligand-name pairs
+for a given system's committed affinity CSV, for transparency in any accuracy claim built on it.
 """
 from __future__ import annotations
 
@@ -187,19 +202,96 @@ def chembl_affinity(smiles: str, target_chembl_id: str, assay: str) -> float | N
     return exp_dg(p) if p is not None else None
 
 
+def collapsed_enantiomer_pairs(system: str) -> list[tuple[str, str]]:
+    """Ligand-name pairs in the committed `data/openfe_replicates/affinity_<system>.csv` that
+    share a ChEMBL flexmatch experimental affinity SOLELY because flexmatch is stereo-blind (see
+    module docstring). Pure logic, no network: reads only the committed cache.
+
+    Two ligands collapse iff (a) their stored `pchembl` values are identical, AND (b) their 2D
+    graphs match (`Chem.MolToSmiles(mol, isomericSmiles=False)` equal for both), AND (c) their
+    stored `smiles` strings differ (i.e. they are written as distinct stereoisomers, not the same
+    string twice). Order-insensitive; each unordered pair reported once.
+    """
+    path = Path(f"data/openfe_replicates/affinity_{system}.csv")
+    with path.open(newline="") as f:
+        rows = list(csv.DictReader(f))
+
+    by_2d: dict[str, list[tuple[str, str, float]]] = {}
+    for row in rows:
+        smi = row["smiles"]
+        mol = Chem.MolFromSmiles(smi)
+        if mol is None:
+            continue
+        key2d = Chem.MolToSmiles(mol, isomericSmiles=False)
+        by_2d.setdefault(key2d, []).append((row["ligand"], smi, float(row["pchembl"])))
+
+    pairs: list[tuple[str, str]] = []
+    for group in by_2d.values():
+        if len(group) < 2:
+            continue
+        for i in range(len(group)):
+            name_i, smi_i, p_i = group[i]
+            for j in range(i + 1, len(group)):
+                name_j, smi_j, p_j = group[j]
+                if p_i == p_j and smi_i != smi_j:
+                    pairs.append((name_i, name_j))
+    return pairs
+
+
+def _map_ligands_for_assay(lig: dict[str, str], target: str, assay: str
+                            ) -> dict[str, tuple[str | None, float]]:
+    """name -> (chembl_id, pchembl) for every ligand that has a `pchembl` match for `assay`
+    against `target`. Pure wrapper around `_chembl_id_and_pchembl`; the per-system assay
+    fallback in `ground_system` calls this once per candidate assay."""
+    out: dict[str, tuple[str | None, float]] = {}
+    for name, smi in lig.items():
+        cid, p = _chembl_id_and_pchembl(smi, target, assay) if target else (None, None)
+        if p is not None:
+            out[name] = (cid, p)
+    return out
+
+
+def select_assay(name_to_assay_pchembl: dict[str, dict[str, float]], assay_order: list[str]
+                  ) -> str:
+    """Per-system assay fallback (plan-mandated): pick the FIRST assay in `assay_order` that
+    yields >=1 mapped ligand, given a `ligand name -> {assay -> pchembl}` mapping. Never mixes
+    assays within a system -- the returned assay is used for every ligand of that system. Falls
+    back to the last entry of `assay_order` if none has any match (so a system with zero matches
+    for every assay still reports a definite `assay_used` rather than raising)."""
+    for assay in assay_order:
+        if any(assay in per_ligand for per_ligand in name_to_assay_pchembl.values()):
+            return assay
+    return assay_order[-1]
+
+
 def ground_system(system: str, prereg) -> dict:
-    """Ground one system: name->SMILES->ChEMBL single-assay dG; cache + return coverage report."""
+    """Ground one system: name->SMILES->ChEMBL dG; cache + return coverage report.
+
+    Assay selection (Finding 2): tries each assay in `prereg.assay_order` in turn and uses the
+    FIRST one that yields >=1 mapped ligand for this system (never mixes assays within a system).
+    For the 4 currently-flagged systems IC50 always has matches, so `assay_used` stays "IC50" and
+    the committed `data/openfe_replicates/affinity_*.csv` are unchanged by this fallback logic.
+    """
     lig = network_ligands(system)  # name -> canonical SMILES (public IndustryBenchmarks2024 SDFs)
     target = TARGETS.get(system, "")
+    per_assay: dict[str, dict[str, tuple[str | None, float]]] = {
+        assay: _map_ligands_for_assay(lig, target, assay) for assay in prereg.assay_order
+    }
+    name_to_assay_pchembl = {
+        name: {assay: p for assay, m in per_assay.items() if name in m for _, p in [m[name]]}
+        for name in lig
+    }
+    assay_used = select_assay(name_to_assay_pchembl, prereg.assay_order)
+    chosen = per_assay[assay_used]
+
     mapped: dict[str, float] = {}
     rows: list[dict] = []
     failures: list[str] = []
-    assay_used = prereg.assay_order[0]
     for name, smi in lig.items():
-        cid, p = _chembl_id_and_pchembl(smi, target, assay_used) if target else (None, None)
-        if p is None:
+        if name not in chosen:
             failures.append(name)
             continue
+        cid, p = chosen[name]
         dg = exp_dg(p)
         mapped[name] = dg
         rows.append({"ligand": name, "smiles": smi, "chembl_id": cid, "assay": assay_used,
