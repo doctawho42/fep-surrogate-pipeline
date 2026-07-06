@@ -60,6 +60,11 @@ confirms no consistent direction).
 | p38   | 35 | 0.79 |
 | bace  | 24 | 0.88 |
 
+(`n ligands grounded` is the affinity-cache count from `bar.ground.ground_system`, the coverage
+denominator against the full network ligand list; the MUE fit itself runs on the smaller node set
+that both survives edge removal and has a grounded affinity, so this count can exceed the number of
+ligands actually contributing to a given MUE value.)
+
 These baselines are typical-magnitude FEP errors (sub-to-low-single-kcal/mol MUE), confirming the
 ChEMBL grounding itself is chemically sound — the null below is not an artifact of a broken
 affinity join.

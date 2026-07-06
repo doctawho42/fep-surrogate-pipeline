@@ -368,9 +368,39 @@ indeed accurate. Acting on the QC does \emph{not} improve accuracy here (interna
 error-against-experiment: $r=+0.13$), exactly as the scope predicts: on a clean system the
 residual error against experiment is dominated by node-consistent force-field bias, which cycle
 closure cannot see. The complementary test, that repairing a \emph{flagged} system improves its
-accuracy, requires experimental affinities for the flagged systems, which are anonymized in this
-benchmark, and is left as the prospective next experiment (flag $\to$ re-run/repair $\to$
-measure), now with named target edges.
+accuracy, needs experimental affinities for the flagged systems; these are not directly tabulated
+in the replicate set but are recoverable by per-paper ChEMBL structure-search, and we ran it. Of
+the six flagged systems, four clear a $60\%$ public-ChEMBL coverage gate (\texttt{cdk8, hif2a, p38,
+bace}; connectivity-based structure matching, one assay per system, IC50 before Ki, never mixed);
+their baseline network MUE against this grounded experimental affinity is $0.79$--$1.47$ kcal/mol,
+typical-magnitude FEP error, confirming the grounding itself is sound. On these four, guided
+removal of the flagged high-$|z|$ edges (the same repair order as Figure~\ref{fig:Lval}A, fixing a
+removal count $K=1$--$3$ per system) does \emph{not} reduce MUE-vs-experiment more than an
+equal-size random removal (Figure~\ref{fig:Lcausal}; per-system one-sided permutation
+$p=0.905,0.136,0.880,0.071$; combined Stouffer $p=0.48$, sign test $p=0.69$, pre-registered success
+required Stouffer $p<0.05$): two systems improve slightly over their random-null mean and two
+worsen slightly, a wash with no system individually significant. This is the honest, now
+experiment-grounded, multi-system generalization of the \texttt{eg5} result above, not a
+contradiction of the QC's value: cycle closure tests \emph{edge-level} consistency (signed $\ddG$
+sums to zero around a loop) and is blind to node-consistent force-field bias, which a smooth
+per-ligand offset cancels around any cycle, and it is exactly that bias that dominates residual
+MUE-vs-experiment on real, flagged, multi-system data. The remaining two flagged systems
+(\texttt{brd4, faah}) did not clear the coverage gate and are not included; the fully prospective
+flag $\to$ repair $\to$ remeasure test, which needs new MD rather than a retrospective affinity
+join, is left as future work.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figLcausal_guided_vs_random.pdf}
+\caption{\textbf{Close-the-loop accuracy race: guided versus random QC-edge removal (NULL).} On
+the four flagged systems groundable against public ChEMBL affinity (\texttt{cdk8, hif2a, p38,
+bace}), removing the calibrated-QC-flagged high-$|z|$ edges (guided, fixed $K$ per system) does not
+reduce MUE-vs-experiment more than a size-matched random removal (per-system one-sided permutation
+$p$ shown; combined Stouffer $p=0.48$, sign test $p=0.69$). The calibrated QC causally repairs
+internal network consistency (Figure~\ref{fig:Lval}) but does not, on this evidence, reduce
+force-field-limited absolute accuracy against experiment, exactly because cycle closure is blind to
+node-consistent force-field bias.}
+\label{fig:Lcausal}
+\end{figure}
 
 \paragraph{Summary.} The calibrated bottleneck supplies, for free and differentiably, the null
 model that turns FEP cycle-closure into a quality-control test that separates systematic from
@@ -596,7 +626,7 @@ system-preparation variance); the $\sim$$1.25$--$1.41\times$ conservatism may th
 closer to neutral against real reproducibility. The
 gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
 single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
-should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively (causal repair, held-out replicates) and against experiment on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms, as the scope predicts); the prospective flag$\to$repair$\to$remeasure test on a flagged system needs unblinded affinities or new MD. Finally, a structure-based (docking) reverse-screen we
+should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively (causal repair, held-out replicates) and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: the QC repairs internal consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, remains future work. Finally, a structure-based (docking) reverse-screen we
 built as a follow-on did not beat a ligand-similarity baseline on this benchmark, so the
 structure-directed regime is left to future work rather than claimed here.
 
@@ -622,7 +652,7 @@ multiplier; where the uncertainty would track quality rather than novelty, that 
 revisited.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
-figures via \texttt{make figL} and \texttt{make figLval}); the theorem constants and the
+figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF
 protein--ligand benchmark, the OpenFE IndustryBenchmarks2024 replicate
 set~\citep{baumann2025industrybenchmarks}, and ChEMBL~\citep{zdrazil2024chembl}). Recalibration
