@@ -5,8 +5,10 @@ $B/I^2$ is a closed, non-negative, $O(1)$-differentiable aleatoric-variance laye
 alchemical edge's finite-sampling uncertainty off the physics (\texttt{pymbar} returns a number, not
 a back-propagatable graph weight). Its decisive payoff is \emph{detection}: the calibrated null that
 turns thermodynamic cycle-closure into a quality-control test, flagging six systematic-error networks
-(of $48$) on $1145$ real OpenFE binding edges with distribution-free causal and cross-replicate
-backstops, where an overconfident learned $\sigma$ flags $88\%$ of systems and is useless. That bar
+(of $48$) on $1145$ real OpenFE binding edges, with distribution-free causal and cross-replicate
+backstops confirming the flags are systematic and reproducible (not a quantitative
+false-positive-rate guarantee), where an overconfident learned $\sigma$ flags $88\%$ of systems and
+is useless. That bar
 is trustworthy for the job: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
 order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected), never systematically
 overconfident. The same free primitive supplies a Fisher--resistance acquisition-graph weight (the
@@ -57,8 +59,8 @@ physics or geometry already determines, and learn only what they do not}): the s
 is read off the BAR estimator, the chirality bit off a geometric pseudoscalar, and the
 identifiable directions off the measurement graph. We then ask, honestly, whether this
 computed-for-free uncertainty improves downstream learning, and find its value is not a boost in
-sharpness, ranking, or reward re-ranking but a \emph{decision and quality-control} one:
-decisively, a calibrated cycle-closure test that separates systematic from sampling error on real
+sharpness, ranking, or reward re-ranking but a \emph{decision and quality-control} one: a
+calibrated cycle-closure test that separates systematic from sampling error on real
 perturbation networks, and, in simulation, trustworthy stop/commit decisions that an overconfident
 $\sigma$ corrupts.
 
@@ -74,9 +76,11 @@ $1145$ real edges, a capability an overconfident $\sigma$ destroys (Section~\ref
 results support and delimit it: two new (the differentiable closed-form sandwich and its $O(1)$
 backward) and two that make precise or connect known results (the Fisher--resistance correspondence
 and the chirality-completeness requirement). (1, new) The BAR sandwich variance as a
-\emph{differentiable closed form} with an $O(1)$ backward, so it propagates into a surrogate and
-into an acquisition graph and gives the quality-control null its per-edge-adaptive form.
-\texttt{pymbar} returns a number, not a back-propagatable graph weight. (2,
+\emph{differentiable closed form} with an $O(1)$ backward, so the \emph{same} per-edge variance that
+supplies the quality-control null also propagates into a surrogate and into an acquisition graph
+(the detector itself needs only the calibrated se; differentiability earns its place in those
+training-time and acquisition uses). \texttt{pymbar} returns a number, not a back-propagatable graph
+weight. (2,
 make-precise) A Fisher--resistance correspondence that turns the per-edge variances into a graph
 Laplacian and yields a gauge-aware, cost-aware acquisition. (3, make-precise) A
 chirality-completeness statement identifying a parity-odd readout channel an equivariant trunk
@@ -273,9 +277,11 @@ gauge-awareness wastes budget on redundant cross-cluster bridges.}
 The one downstream task where the calibrated variance's \emph{value}, not just its structure, is
 load-bearing, and the paper's central demonstrated capability, is separating \emph{edge-level
 systematic error} (non-convergence, hysteresis, charge/water/protonation artifacts) from
-\emph{sampling noise} in a perturbation network. This is detection, not weighting of a fixed
-estimate, so the Gauss--Markov ceiling that makes calibration second-order for sharpness and
-ranking (the applicability map of Section~\ref{sec:audit}) does not apply here.
+\emph{sampling noise} in a perturbation network. This is \emph{detection}, not weighting of a fixed
+estimate: the Gauss--Markov ceiling that makes the calibrated variance second-order elsewhere (in a
+connected graph the GLS contrast mean is unbiased for \emph{any} positive weights, so the weight
+\emph{value} cannot improve ranking, as the applicability map of Section~\ref{sec:audit} develops)
+does not bind a goodness-of-fit test, whose statistic depends on the weights directly.
 
 \paragraph{A calibrated cycle-closure test.} A perturbation network must close its cycles: the
 signed sum of $\ddG$ around any loop is zero in expectation. Fitting node potentials by
@@ -293,7 +299,12 @@ diagnostic~\citep{wang2015fep} are standard; what is new is the \emph{calibrated
 per-edge, replicate-validated aleatoric variance that gives the test per-edge-adaptive thresholds
 and a false-positive rate controlled \emph{to the extent the per-edge null is calibrated}
 (validated against independent replicates, Figure~\ref{fig:Arep}), in place of the field's fixed
-hysteresis cutoffs. Because that null is conservative (median reduced $\chi^2=0.34$, so the bars
+hysteresis cutoffs. This retrospective test needs only the calibrated per-edge $se$ (the sandwich
+$B/I^2$, equal to the reported MBAR se to leading order); it does \emph{not} require the
+differentiability or $O(1)$ backward of Theorems~\ref{thm:back}--\ref{thm:sand}, which earn their
+place in the training-time propagation, the acquisition graph weight (Section~\ref{sec:gauge}), and
+the simulated stop/commit uses, not in the detector's real-data operation. The detector's novelty is
+the \emph{calibrated null}, not the differentiable machinery. Because that null is conservative (median reduced $\chi^2=0.34$, so the bars
 are ${\gtrsim}1.7\times$ wide for closure residuals), the nominal Benjamini--Hochberg rate is an
 \emph{upper bound} on the true false-positive rate: the test under-flags rather than over-flags.
 Crucially, its validity does not rest on the $\chi^2$ tail at all; the flags are confirmed by the
@@ -400,7 +411,7 @@ prediction is zero; adding the $\texttt{0o}$ channel cuts enantiomer $\ddG$ MAE 
 \end{figure}
 
 \section{An applicability map: where this calibration helps downstream, and where it does not}\label{sec:audit}
-Having established the primitive's decisive real-data payoff (the cycle-closure detector of
+Having established the primitive's real-data payoff (the cycle-closure detector of
 Section~\ref{sec:qc}), we now delimit, honestly, the downstream tasks it does \emph{not} improve.
 This is an applicability map that scopes the free calibration to decisions and detection, not a
 catalogue of failures. The free, differentiable $\sigma$ is attractive; the operative question is
@@ -565,7 +576,7 @@ place through \emph{structure}, not magnitude: it makes the gauge directions exa
 unidentifiable (knowledge gradient $=0$) and supplies the trust calculation, even though, by the
 same Gauss--Markov argument that makes weighting second-order, the numerical \emph{value} of the
 weight does not improve ranking. The value of reading the variance off the physics is therefore a
-calibrated decision and an identifiable acquisition (and, decisively, the quality-control detector
+calibrated decision and an identifiable acquisition (and the quality-control detector
 of Section~\ref{sec:qc}), not a sharper or better-ranked prediction.
 
 \section{Limitations}
@@ -591,7 +602,7 @@ structure-directed regime is left to future work rather than claimed here.
 
 \section{Conclusion}
 A differentiable BAR estimator at a surrogate's bottleneck makes the aleatoric uncertainty a
-computed, differentiable, non-negative closed form rather than a learned guess. Its decisive
+computed, differentiable, non-negative closed form rather than a learned guess. Its clearest
 payoff is a \emph{calibrated cycle-closure quality-control test} that separates edge-level
 systematic error from sampling noise on $1145$ real edges (Section~\ref{sec:qc}), with a
 false-positive rate set by the calibrated null and confirmed by distribution-free causal and
