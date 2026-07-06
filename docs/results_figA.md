@@ -21,14 +21,18 @@ sandwich**. So Fig A makes three honest points instead:
    **and** the overlap scalar `I` (6-dim feature, reviewer M2a), is overconfident by
    **0.09–0.20× true se across the overlap sweep (regime-dependent; central ~7×, se ≈ 0.15×)**.
    A **large-budget oracle** (4000 training edges, same features) reaches 0.20× — also
-   ~5× overconfident (regime-dependent). This is a **training-objective artifact** (Seitzer
-   et al. 2022 — Gaussian-NLL couples the mean and variance heads and starves the variance
-   fit), **not an identifiability barrier**: the pooling check below shows se(overlap) *is*
-   recoverable from single per-edge labels once they are pooled by overlap bucket
+   ~5× overconfident (regime-dependent). Corrected foils do **not** rescue it at realistic
+   budget: a **β-NLL head** (Seitzer et al. 2022, β=0.5 — the standard objective fix) does
+   *not* recover calibration (**0.11× true se**, no better than plain NLL), and a **5-member
+   deep ensemble** (Lakshminarayanan et al. 2017) reaches only the large-budget floor
+   (**0.20×**). So the residual ~5× is a **data-efficiency limit of a per-edge *learned*
+   variance**, **not an identifiability barrier** and **not specific to the Gaussian-NLL
+   objective**: the pooling check below shows se(overlap) *is* recoverable from single per-edge
+   labels once they are pooled by overlap bucket
    (N=200: 20.1% error, N=4000: 5.8%, N=40000: 3.8% — shrinking with budget). The BAR
-   bottleneck sidesteps the objective entirely by **computing** the variance exactly,
-   untrained, at zero label cost. The honest frame is "learnable-with-data vs
-   exact-and-free," not "unlearnable vs exact."
+   bottleneck sidesteps the learned estimator's budget floor entirely by **computing** the
+   variance exactly, untrained, at zero label cost. The honest frame is "learnable-with-data
+   (at a label cost the physics avoids) vs exact-and-free," not "unlearnable vs exact."
 3. **`1/I` is shown only as the textbook value it corrects** — the information-equality
    plug-in, off by a *varying* factor — **not** as a baseline anyone reports.
 
@@ -62,7 +66,8 @@ overlap `I` (reviewer M2a); oracle = same features, 4000 training edges.
 **Headline numbers (M2a, honest fair-foil result):**
 - Fair-foil mean (realistic budget, fed moments + overlap I): **0.15× true se** (~7× overconfident, range 0.09–0.20× across overlap sweep).
 - Oracle mean (large budget, 4000 training edges, same features): **0.20× true se** (~5× overconfident).
-- Even with 20× more training data AND the overlap feature, the learned head remains ~5× overconfident at this training budget/objective. The conditional sampling variance IS identifiable from single ΔΔĜ labels (see the pooling check below) — the residual overconfidence is a Gaussian-NLL optimization artifact, not an information-theoretic floor. The physics computes it exactly, per-edge, differentiably, at zero label cost and with no training artifact to fight.
+- **β-NLL (β=0.5, realistic budget): 0.11× true se** — the standard objective fix does *not* recover calibration (no better than plain NLL). **5-member deep ensemble (realistic budget): 0.20× true se** — only reaches the large-budget floor.
+- Even with 20× more training data, a corrected objective (β-NLL), OR a stronger estimator (deep ensemble), the learned head stays ~5× overconfident at realistic budget. The conditional sampling variance IS identifiable from single ΔΔĜ labels (pooling check below) — so the residual overconfidence is a **data-efficiency floor of per-edge learned variance**, not an information-theoretic floor and not specific to the Gaussian-NLL objective (β-NLL is no better; the ensemble only reaches the 20×-budget floor). The physics computes it exactly, per-edge, differentiably, at zero label cost.
 - Honest frame: **"learnable-with-data vs exact-and-free"** — not "the learned head fails" and not "one label per edge can never work." It can improve substantially with data, and a differently-trained/pooled estimator *can* recover the target se — but no learned head matches the closed form for free, and the standard per-edge Gaussian-NLL MVE head does not get there at realistic budgets.
 
 **Identifiability check (reviewer round-2 §3): is `se(overlap)` recoverable from single labels?**
@@ -84,12 +89,14 @@ This directly falsifies the round-2-flagged claim that per-edge sampling varianc
 unlearnable "regardless of budget" or "fundamentally insufficient" from single labels: a
 nonparametric pooling-by-overlap estimator recovers it cleanly, and the recovery error is
 driven by finite-sample binning noise, not an identifiability barrier. The learned MVE head's
-residual ~5–7× overconfidence (above) is therefore best read as a **Gaussian-NLL objective/
-optimization artifact** — heteroscedastic NLL regression is known to be poorly calibrated and
-prone to underestimating variance in the underfit/limited-capacity regime (Seitzer et al.,
-"On the Pitfalls of Heteroscedastic Uncertainty Estimation with Probabilistic Neural Networks,"
-2022) — **not** evidence that the target is unlearnable in principle. The BAR bottleneck's
-advantage is that it sidesteps this objective-artifact failure mode entirely by computing the
+residual ~5–7× overconfidence (above) is therefore best read as a **data-efficiency limit of a
+per-edge learned variance** — it does not vanish under the standard objective fix (β-NLL, Seitzer
+et al. 2022, "On the Pitfalls of Heteroscedastic Uncertainty Estimation with Probabilistic Neural
+Networks," is no better here: 0.11×) nor under a stronger estimator (a deep ensemble only reaches
+the 20×-larger-budget floor, 0.20×); heteroscedastic per-edge variance regression stays poorly
+calibrated at realistic label budgets — but it is **not** evidence that the target is unlearnable
+in principle (pooling recovers it). The BAR bottleneck's advantage is that it sidesteps this
+learned-estimator budget floor entirely by computing the
 sandwich in closed form, untrained, at zero label cost — not that the quantity is otherwise
 unlearnable.
 

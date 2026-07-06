@@ -17,7 +17,9 @@ simulations it is no sharper than conformal on out-of-distribution residuals, do
 selection or commit ranking, and does not help reward re-ranking on a measured congeneric set
 (\texttt{eg5}), so it is a \emph{decision-and-quality-control instrument, not a performance
 multiplier}. A fair learned-variance foil, fed work moments \emph{and} the overlap scalar $I$, stays
-$\sim$$7\times$ overconfident, an objective artifact rather than an identifiability limit. We
+$\sim$$7\times$ overconfident; a corrected $\beta$-NLL head and a $5$-member deep ensemble do no
+better at a realistic budget, a data-efficiency limit of learned per-edge variance rather than an
+identifiability one (pooling confirms the variance is identifiable). We
 establish four results: two new (the differentiable closed-form sandwich and its $O(1)$ backward)
 and two that make precise or connect known results (the Fisher--resistance correspondence and
 chirality completeness). Together they map where a free, differentiable primitive helps: a decision
@@ -174,12 +176,18 @@ $\sim$200 edges and also at a large-budget oracle of 4000 training edges, twenty
 The fair foil is still ${\approx}7\times$ overconfident at realistic budget (reported se
 ${\approx}0.15\times$ the truth; range $0.09$--$0.20\times$ across the overlap sweep), and
 ${\approx}5\times$ overconfident even at the large-budget oracle (se ${\approx}0.20\times$).
-A richly-fed head approaches the closed form only with a very large budget. The conditional
-variance $se(\text{overlap})$ is itself identifiable from single labels: pooling single-label
-edges by overlap recovers the sandwich to $\sim$6\% at $4000$ edges ($\sim$4\% at $40000$), so
-the fair head's residual $\sim$5$\times$ overconfidence is a Gaussian-NLL objective/optimization
-artifact~\citep{seitzer2022pitfalls}, not an identifiability barrier. The bottleneck
-\emph{computes} it exactly, per edge, differentiably, and at zero label cost. The honest frame is
+Corrected foils do not rescue the head at a realistic budget: a $\beta$-NLL
+head~\citep{seitzer2022pitfalls} ($\beta{=}0.5$, the standard objective fix) does \emph{not}
+recover calibration (se ${\approx}0.11\times$, no better than plain NLL), and a $5$-member deep
+ensemble~\citep{lakshminarayanan2017ensembles} reaches only the large-budget floor
+(se ${\approx}0.20\times$, the same ${\approx}5\times$ overconfidence a $20\times$-larger-budget
+plain head reaches). The residual $\sim$5$\times$ overconfidence is therefore a
+\emph{data-efficiency} limit of a per-edge \emph{learned} variance, not an identifiability barrier
+and not specific to the Gaussian-NLL objective: the conditional variance $se(\text{overlap})$ is
+itself identifiable from single labels, pooling single-label edges by overlap recovering the
+sandwich to $\sim$6\% at $4000$ edges ($\sim$4\% at $40000$). The bottleneck
+\emph{computes} it exactly, per edge, differentiably, and at zero label cost, sidestepping the
+learned estimator's budget floor entirely. The honest frame is
 ``learnable-with-data vs.\ exact-and-free''. Bare $1/I$ is shown only as the
 information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
 baseline anyone reports. Figure~\ref{fig:A}B checks calibration on real protein--ligand BACE1
@@ -208,7 +216,9 @@ truth; a fair learned-variance head (fed work moments + overlap $I$; reviewer M2
 ${\approx}7\times$ overconfident at realistic budget (se ${\approx}0.15\times$ truth,
 range $0.09$--$0.20\times$); a richly-fed head approaches the closed form only with a large
 budget (${\approx}5\times$ overconfident at 4000-edge oracle, se ${\approx}0.20\times$);
-$1/I$ is the info-equality plug-in. (B) Real FEP edges, BACE1 RBFE
+corrected foils do not help at realistic budget ($\beta$-NLL se ${\approx}0.11\times$; $5$-member
+deep ensemble se ${\approx}0.20\times$, the large-budget floor); $1/I$ is the info-equality plug-in.
+(B) Real FEP edges, BACE1 RBFE
 binding (filled) and benzene solvation, sandwich tracks bootstrap truth (an internal check)
 while $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ (BACE1 $6.07$
 $[2.78,12.01]$; cf.\ the controlled-panel se range $1.08$--$2.65\times$ in panel~A).}
