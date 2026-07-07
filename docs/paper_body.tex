@@ -293,7 +293,40 @@ correctly-sampled physics $\mathbb{E}[X^2/\mathrm{dof}]\approx1$; here it runs \
 systematic error only \emph{raises} $\chi^2_\nu$, bounding them at ${\gtrsim}1.7\times$
 conservative for closure residuals. A reduced $\chi^2$ well above one signals edge-level
 systematic error. The test is (correctly) blind to
-node-consistent force-field bias, which cancels around a loop. Network maximum-likelihood
+node-consistent force-field bias, which cancels around a loop.
+
+\begin{theorem}[Estimation--detection conservation law]\label{thm:cons}
+In the whitened GLS fit let $M=I-H$ be the residual-maker projector onto the cycle space. Its
+diagonal, the curl-leverage $h_e=M_{ee}$, satisfies $h_e+w_e\Omega_e=1$ with $w_e=1/V_e$ and
+$\Omega_e$ the effective resistance of edge $e$ (Theorem~\ref{thm:fr}); hence
+$\sum_e h_e=\mathrm{dof}$, and the closure-$\chi^2$ noncentrality against a systematic shift $\mu$
+on edge $e$ is $h_e\mu^2/V_e$. A bridge edge (in no cycle) has $h_e=0$ and is undetectable at any
+$\mu$; a node-consistent (gradient) bias lies in $\mathrm{range}(H)$ and is annihilated by $M$.
+The QC's blindness to node-consistent force-field bias is therefore a \emph{derived} property, not
+an assumption, and $h_e$ is a per-edge observability certificate with detectable-shift resolution
+$\delta^\ast_e=\sqrt{V_e/h_e}$.
+\end{theorem}
+The map lists the structurally un-auditable (bridge) edges per system; on this benchmark the
+curl-leverage does not additionally predict the \emph{location} of reproducible systematic error
+(studentized Spearman $\rho=-0.073$, permutation $p=0.9571$, not significant; Figure~\ref{fig:Lev}),
+so we claim only the structural certificate.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figLev_observability.pdf}
+\caption{\textbf{Per-edge observability map and pre-registered predictive falsifier (Theorem~\ref{thm:cons}).}
+(A) Structural result: across all $48$ systems with $\geq1$ independent cycle, $\sum_e h_e=\mathrm{dof}$
+holds to machine precision ($1.78\times10^{-14}$ max deviation), and $48$ bridge edges (one
+structurally un-auditable, $h_e=0$, edge per system on average) are identified. (B) Predictive
+falsifier: curl-leverage $h_e$ versus the studentized, cross-replicate reproducible residual
+magnitude on $934$ pooled edges over $45$ systems (OpenFE IndustryBenchmarks2024, the same
+$1145$-edge replicate set as Figure~\ref{fig:L}); studentized Spearman $\rho=-0.073$, within-system
+block-permutation $p=0.9571$ ($10^4$ permutations) against the pre-registered rule (CONFIRMED if
+$\rho>0$ and $p<0.05$): VERDICT KILL. Observability does not predict where reproducible systematic
+error concentrates on this benchmark; the structural certificate in panel A stands regardless.}
+\label{fig:Lev}
+\end{figure}
+
+Network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet} and cycle-closure hysteresis as a
 diagnostic~\citep{wang2015fep} are standard; what is new is the \emph{calibrated} null: a
 per-edge, replicate-validated aleatoric variance that gives the test per-edge-adaptive thresholds
@@ -652,7 +685,8 @@ multiplier; where the uncertainty would track quality rather than novelty, that 
 revisited.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
-figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}); the theorem constants and the
+figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
+reproduces via \texttt{make figLev}); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF
 protein--ligand benchmark, the OpenFE IndustryBenchmarks2024 replicate
 set~\citep{baumann2025industrybenchmarks}, and ChEMBL~\citep{zdrazil2024chembl}). Recalibration
