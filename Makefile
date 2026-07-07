@@ -81,6 +81,9 @@ figLval:  # IMPACT validation: flags are causal (repair test) + reproduce out-of
 figLcausal:  # close-the-loop: does acting on the QC flag improve accuracy vs experiment?
 	PYTHONPATH=src $(PY) figs/make_figLcausal.py
 
+figLev:  # D1: per-edge observability map (sum_h==dof, bridges) + pre-registered predictive falsifier
+	PYTHONPATH=src $(PY) figs/make_figLev.py
+
 boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
 	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
 
