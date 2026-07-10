@@ -6,6 +6,18 @@ with the **D1 conservation-law theorem (Thm 4, `thm:cons`) + Fig Lev** (`make fi
 and `make paper` both **0 true undefined refs**; tracked `docs/paper_jctc.pdf` + `docs/paper_draft.pdf`
 are current; `docs/paper_draft.bbl` + `docs/paper_jctc.bbl` present (arXiv-ready).
 
+**2026-07-10 pending additions (UNCOMMITTED working tree — review the rebuilt PDFs, then commit):**
+three content moves, all verified (`make check` 160 green; `make jctc` 38 pp + `make paper` 25 pp,
+both 0 true undefined refs; g-sweep figure visually QA'd):
+1. **g-sweep SI panel** (`figAC_gsweep`, `make gsweep`, `results_figAC_gsweep.md`) — pre-empts the
+   #1 [MUST] referee ask (autocorrelation). Real BACE1 numbers: sandwich(n_eff)/truth `1.00`
+   [0.93,1.07] (calibrated, reproduces Fig A-B), raw-`n` `0.83` [0.67,0.97] = `1/sqrt(g_bar)`
+   (overconfident), matched-bootstrap `1.00` (formula self-consistent; `g_bar=1.48`).
+2. **`thm:cons` written proof** added to `bar_proofs.tex` (now Thm 4 there; was numerical-check-only).
+3. **Body→SI tightening**: 5 side-quest figures demoted to SI (Fig E chirality, D gauge-sim, K
+   GFlowNet-null, Lcausal close-the-loop-null, Lev observability); body figures 13→8, all theorems
+   and headline results kept inline with `Supplementary Figure` pointers. Reversible via git.
+
 **arXiv source bundle assembled + verified standalone:** `paper1_arxiv_bundle.tar.gz` (source +
 `.bbl` + 17 figs, `\graphicspath` flattened to `./`) compiles to **0 undefined** via the arXiv model
 (`pdflatex` x3, no bibtex, shipped `.bbl`). Built in the session scratchpad -- copy it out before the
@@ -40,8 +52,9 @@ scratchpad is cleared.
       figD_gauge_identifiability, figE_chirality_completeness, figE_chirality_real, figF_target_id,
       figG_calibrated_stopping, figJ_amortized_reward, figK_calibrated_generation,
       figL_calibrated_cycle_closure, figL_validation, figLcausal_guided_vs_random,
-      figLev_observability, figQC_structures, graphical_abstract (17 total, verified via the
-      `\includegraphics` grep; all copied into `paper1_arxiv_bundle.tar.gz`).
+      figLev_observability, figQC_structures, figAC_gsweep, graphical_abstract (18 total after the
+      2026-07-10 g-sweep addition; re-verify via the `\includegraphics` grep and re-copy into
+      `paper1_arxiv_bundle.tar.gz` before upload).
 - [ ] Categories: `physics.chem-ph` primary; cross-list `q-bio.BM`, `stat.ML`.
 - [ ] License: CC-BY recommended (max reuse/reach).
 - [ ] Build the arXiv bundle locally once and compile it in a clean dir to confirm it stands alone.

@@ -1,4 +1,33 @@
 \section*{Supporting Information}
+
+\paragraph{Autocorrelation robustness: raw $n$ vs $n_{\mathrm{eff}}=n/g$ (Figure~\ref{fig:gsweep}).}
+The sandwich $B=n_f\Var_f[p]+n_r\Var_r[p]$ (Theorem~\ref{thm:sand}) assumes independent samples,
+whereas real molecular-dynamics works are autocorrelated. On the $19$ real BACE1 RBFE binding edges
+of Figure~\ref{fig:A}B (no new MD), we recompute the sandwich se at the raw sample count and again
+after decorrelating each leg to its statistical inefficiency $g$~\citep{shirts2008mbar}
+(geometric-mean $\bar g=1.48$, range $[1.15,2.16]$; median count $n{=}500\to349$). Against the
+correlation-aware truth (the decorrelated bootstrap SD, the same reference as Figure~\ref{fig:A}B),
+the $n_{\mathrm{eff}}$ sandwich is calibrated (reported/truth $1.00$, $[0.93,1.07]$, reproducing
+Figure~\ref{fig:A}B), while the raw-$n$ sandwich is overconfident by $0.83\times$ ($[0.67,0.97]$),
+matching the $1/\sqrt{\bar g}=0.82$ autocorrelation prediction. The sandwich also tracks its
+\emph{own} matched (raw) bootstrap ($1.00$, $[0.92,1.05]$): the closed form is internally
+consistent, and the only quantity that must be right is the effective sample count, which the paper
+decorrelates to $g$ throughout (Section~\ref{sec:bar}, paper text). The calibration verdict is
+therefore robust to autocorrelation once $n_{\mathrm{eff}}$ is used, as it is in every real-data
+panel. Deterministic; \texttt{make gsweep}.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figAC_gsweep.pdf}
+\caption{\textbf{Supplement: the sandwich calibration is robust to MD autocorrelation given
+$n_{\mathrm{eff}}=n/g$ (real BACE1 edges).} (A) Sandwich se versus the correlation-aware
+(decorrelated bootstrap) truth: at $n_{\mathrm{eff}}$ the sandwich lies on the $y{=}x$ line
+($1.00\times$, calibrated), while at raw $n$ it sits below it ($0.83\times$, overconfident). (B) The
+raw-$n$ overconfidence equals the $1/\sqrt{\bar g}$ autocorrelation factor ($\bar g=1.48$); because
+the sandwich matches its own bootstrap under raw $n$ as well, the fix is the effective sample count
+$n_{\mathrm{eff}}$, not the closed form.}
+\label{fig:gsweep}
+\end{figure}
+
 \paragraph{Synthetic decomposition (illustration).} A controlled 1-D problem where the
 generative structure is known shows the decomposed interval is up to $2.2\times$ sharper vs split-conformal ($2.0\times$ vs CQR) at equal coverage with better conditional calibration; this is an illustration of the
 mechanism, not evidence on real data (Figure~\ref{fig:Breal} is the real test).
@@ -19,12 +48,40 @@ random; the sandwich-vs-naive weighting does not move calls-to-top-$k$ (Gauss--M
 \label{fig:C}
 \end{figure}
 
+\paragraph{Gauge-aware acquisition (Figure~\ref{fig:D}).} The Fisher--resistance Laplacian
+(Theorem~\ref{thm:fr}) makes the knowledge gradient exactly zero on gauge (all-ones) contrasts; a
+controlled simulation confirms $\mathrm{KG}=10^{-21}$ there and shows a gauge-\emph{unaware}
+acquisition wastes budget resolving a decision-irrelevant cross-cluster offset (within-target
+top-$k$ regret $0.27$ vs $0.01$).
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figD_gauge_identifiability.pdf}
+\caption{\textbf{Supplement: gauge-aware acquisition (simulation).} (A) Knowledge gradient is
+exactly $0$ on the gauge (all-ones) contrast and routes value to decision-relevant edges. (B)
+Ablating gauge-awareness wastes budget on redundant cross-cluster bridges.}
+\label{fig:D}
+\end{figure}
+
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figF_target_id.pdf}
 \caption{\textbf{Supplement: ligand-only reverse screening is similarity-bound.} (A) A
 fingerprint model ties a Tanimoto baseline on hidden-target recovery. (B) $P(\text{binds})$ is
 well calibrated (ECE $0.008$).}
 \label{fig:F}
+\end{figure}
+
+\paragraph{Chirality completeness on the designed set (Figure~\ref{fig:E}).} An even
+$O(3)$-invariant readout collapses every enantiomer pair exactly (collapse $=0$ to machine
+precision, so its best possible chiral $\ddG$ prediction is zero); adding one parity-odd
+$\texttt{0o}$ triple-product channel cuts enantiomer $\ddG$ MAE $11.7\times$ ($1.67\to0.14$
+kcal/mol), realizing Theorem~\ref{thm:chiral}.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figE_chirality_completeness.pdf}
+\caption{\textbf{Supplement: a parity-odd channel is necessary and one triple product suffices.}
+(A) The even ($O(3)$) readout collapses enantiomers exactly; $\texttt{0o}$ separates them.
+(B) Enantiomer $\ddG$ MAE drops $11.7\times$ when the $\texttt{0o}$ channel is added.}
+\label{fig:E}
 \end{figure}
 
 \paragraph{Chirality completeness on a real molecule (Figure~\ref{fig:Ereal}).}
@@ -73,4 +130,61 @@ from public co-crystal structures. (A) BACE1 (PDB 4DJW): the catalytic aspartic 
 BD1 (PDB 3MXF, JQ1): the conserved acetyl-lysine-pocket waters (blue; $16$ within $4.5$\,\AA) and
 the recognition Asn140 (green) pack against the ligand, the buried-water challenge.}
 \label{fig:qcstruct}
+\end{figure}
+
+\paragraph{Per-edge observability map and predictive falsifier (Figure~\ref{fig:Lev}).} The
+estimation--detection conservation law (Theorem~\ref{thm:cons}) certifies $\sum_e h_e=\mathrm{dof}$
+to machine precision across the $48$ cyclic systems and lists the structurally un-auditable bridge
+edges; a pre-registered test of whether the curl-leverage \emph{additionally} predicts the location
+of reproducible systematic error is negative (studentized Spearman $\rho=-0.073$, $p=0.9571$: KILL),
+so only the structural certificate is claimed.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figLev_observability.pdf}
+\caption{\textbf{Supplement: per-edge observability map and pre-registered predictive falsifier
+(Theorem~\ref{thm:cons}).} (A) Structural result: across all $48$ systems with $\geq1$ independent
+cycle, $\sum_e h_e=\mathrm{dof}$ holds to machine precision ($1.78\times10^{-14}$ max deviation), and
+$48$ bridge edges (one structurally un-auditable, $h_e=0$, edge per system on average) are
+identified. (B) Predictive falsifier: curl-leverage $h_e$ versus the studentized, cross-replicate
+reproducible residual magnitude on $934$ pooled edges over $45$ systems (OpenFE
+IndustryBenchmarks2024, the same $1145$-edge replicate set as Figure~\ref{fig:L}); studentized
+Spearman $\rho=-0.073$, within-system block-permutation $p=0.9571$ ($10^4$ permutations) against the
+pre-registered rule (CONFIRMED if $\rho>0$ and $p<0.05$): VERDICT KILL. Observability does not
+predict where reproducible systematic error concentrates on this benchmark; the structural
+certificate in panel A stands regardless.}
+\label{fig:Lev}
+\end{figure}
+
+\paragraph{Close-the-loop accuracy race (Figure~\ref{fig:Lcausal}).} On the four flagged systems
+groundable against public ChEMBL affinity, guided removal of the QC-flagged high-$|z|$ edges ties a
+size-matched random removal on MUE-vs-experiment (combined Stouffer $p=0.48$): the calibrated QC
+causally repairs internal cycle-closure (Figure~\ref{fig:Lval}) but not force-field-limited absolute
+accuracy, the same scope boundary as the clean \texttt{eg5} system.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figLcausal_guided_vs_random.pdf}
+\caption{\textbf{Supplement: close-the-loop accuracy race, guided versus random QC-edge removal
+(NULL).} On the four flagged systems groundable against public ChEMBL affinity (\texttt{cdk8, hif2a,
+p38, bace}), removing the calibrated-QC-flagged high-$|z|$ edges (guided, fixed $K$ per system) does
+not reduce MUE-vs-experiment more than a size-matched random removal (per-system one-sided
+permutation $p$ shown; combined Stouffer $p=0.48$, sign test $p=0.69$). The calibrated QC causally
+repairs internal network consistency (Figure~\ref{fig:Lval}) but does not, on this evidence, reduce
+force-field-limited absolute accuracy against experiment, exactly because cycle closure is blind to
+node-consistent force-field bias.}
+\label{fig:Lcausal}
+\end{figure}
+
+\paragraph{Reward re-ranking over a measured congeneric set (Figure~\ref{fig:K}).} Driving a
+trajectory-balance GFlowNet over \texttt{eg5} (the most $\sigma$-varying evaluable target), the
+calibrated LCB reward \emph{lowers} the true hit-rate (cal$-$raw $-0.110$) because $\sigma$ tracks
+chemical novelty ($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), not low quality; an
+LCB reward helps only when $\sigma$ flags low-quality candidates (Table~\ref{tab:audit}, main text).
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.7\textwidth]{figK_calibrated_generation.pdf}
+\caption{\textbf{Supplement: honest audit, reward re-ranking over a measured congeneric set (single
+target \texttt{eg5}).} A calibrated reward lowers the GFlowNet's true hit-rate (cal $0.140$ vs raw
+$0.250$; cal$-$raw $-0.110$, CI $[-0.151,-0.073]$) because $\sigma$ tracks chemical novelty
+($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), not low quality.}
+\label{fig:K}
 \end{figure}

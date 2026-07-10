@@ -259,19 +259,12 @@ automatically gauge-invariant.
 \end{theorem}
 The edge weights are the inverse sandwich variances: the differentiable readout of
 Section~\ref{sec:bar} entering the decision layer, which a black-box uncertainty number cannot
-provide. The gauge-zero property is structural: $\ker L=\mathrm{span}\{\mathbf 1\}$ for \emph{any} positive conductances, so KG$=0$ on gauge directions does not depend on the weight \emph{value}; and by Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). The sandwich's contribution here is its differentiable closed form entering training and the trust calculation, not its magnitude. The Laplacian-precision and resistance-distance machinery is classical GLS-on-graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the \emph{sandwich} precision $I_e^2/B_e$ as the conductance (not raw overlap) and the automatic gauge-invariance of the acquisition. We make the correspondence precise, we do not claim new graph theory. Figure~\ref{fig:D} shows the knowledge gradient on the all-ones gauge contrast is
+provide. The gauge-zero property is structural: $\ker L=\mathrm{span}\{\mathbf 1\}$ for \emph{any} positive conductances, so KG$=0$ on gauge directions does not depend on the weight \emph{value}; and by Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). The sandwich's contribution here is its differentiable closed form entering training and the trust calculation, not its magnitude. The Laplacian-precision and resistance-distance machinery is classical GLS-on-graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the \emph{sandwich} precision $I_e^2/B_e$ as the conductance (not raw overlap) and the automatic gauge-invariance of the acquisition. We make the correspondence precise, we do not claim new graph theory. A controlled simulation
+(Supplementary Figure~\ref{fig:D}) shows the knowledge gradient on the all-ones gauge contrast is
 $10^{-21}$ (exact zero, an identifiability statement that transfers structurally to multi-target
 networks), and that a gauge-\emph{unaware} acquisition wastes budget resolving a
 decision-irrelevant cross-cluster offset, reaching the within-target top-$k$ at regret $0.27$
-where the gauge-aware one reaches $0.01$. This experiment is a controlled simulation.
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figD_gauge_identifiability.pdf}
-\caption{\textbf{Gauge-aware acquisition (simulation).} (A) Knowledge gradient is exactly $0$ on
-the gauge (all-ones) contrast and routes value to decision-relevant edges. (B) Ablating
-gauge-awareness wastes budget on redundant cross-cluster bridges.}
-\label{fig:D}
-\end{figure}
+where the gauge-aware one reaches $0.01$.
 
 \section{The decisive payoff: calibrated cycle-closure quality control}\label{sec:qc}
 The one downstream task where the calibrated variance's \emph{value}, not just its structure, is
@@ -308,23 +301,8 @@ $\delta^\ast_e=\sqrt{V_e/h_e}$.
 \end{theorem}
 The map lists the structurally un-auditable (bridge) edges per system; on this benchmark the
 curl-leverage does not additionally predict the \emph{location} of reproducible systematic error
-(studentized Spearman $\rho=-0.073$, permutation $p=0.9571$, not significant; Figure~\ref{fig:Lev}),
-so we claim only the structural certificate.
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figLev_observability.pdf}
-\caption{\textbf{Per-edge observability map and pre-registered predictive falsifier (Theorem~\ref{thm:cons}).}
-(A) Structural result: across all $48$ systems with $\geq1$ independent cycle, $\sum_e h_e=\mathrm{dof}$
-holds to machine precision ($1.78\times10^{-14}$ max deviation), and $48$ bridge edges (one
-structurally un-auditable, $h_e=0$, edge per system on average) are identified. (B) Predictive
-falsifier: curl-leverage $h_e$ versus the studentized, cross-replicate reproducible residual
-magnitude on $934$ pooled edges over $45$ systems (OpenFE IndustryBenchmarks2024, the same
-$1145$-edge replicate set as Figure~\ref{fig:L}); studentized Spearman $\rho=-0.073$, within-system
-block-permutation $p=0.9571$ ($10^4$ permutations) against the pre-registered rule (CONFIRMED if
-$\rho>0$ and $p<0.05$): VERDICT KILL. Observability does not predict where reproducible systematic
-error concentrates on this benchmark; the structural certificate in panel A stands regardless.}
-\label{fig:Lev}
-\end{figure}
+(studentized Spearman $\rho=-0.073$, permutation $p=0.9571$, not significant; Supplementary
+Figure~\ref{fig:Lev}), so we claim only the structural certificate.
 
 Network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet} and cycle-closure hysteresis as a
@@ -409,7 +387,7 @@ their baseline network MUE against this grounded experimental affinity is $0.79$
 typical-magnitude FEP error, confirming the grounding itself is sound. On these four, guided
 removal of the flagged high-$|z|$ edges (the same repair order as Figure~\ref{fig:Lval}A, fixing a
 removal count $K=1$--$3$ per system) does \emph{not} reduce MUE-vs-experiment more than an
-equal-size random removal (Figure~\ref{fig:Lcausal}; per-system one-sided permutation
+equal-size random removal (Supplementary Figure~\ref{fig:Lcausal}; per-system one-sided permutation
 $p=0.905,0.136,0.880,0.071$; combined Stouffer $p=0.48$, sign test $p=0.69$, pre-registered success
 required Stouffer $p<0.05$): two systems improve slightly over their random-null mean and two
 worsen slightly, a wash with no system individually significant. This is the honest, now
@@ -421,19 +399,6 @@ MUE-vs-experiment on real, flagged, multi-system data. The remaining two flagged
 (\texttt{brd4, faah}) did not clear the coverage gate and are not included; the fully prospective
 flag $\to$ repair $\to$ remeasure test, which needs new MD rather than a retrospective affinity
 join, is left as future work.
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figLcausal_guided_vs_random.pdf}
-\caption{\textbf{Close-the-loop accuracy race: guided versus random QC-edge removal (NULL).} On
-the four flagged systems groundable against public ChEMBL affinity (\texttt{cdk8, hif2a, p38,
-bace}), removing the calibrated-QC-flagged high-$|z|$ edges (guided, fixed $K$ per system) does not
-reduce MUE-vs-experiment more than a size-matched random removal (per-system one-sided permutation
-$p$ shown; combined Stouffer $p=0.48$, sign test $p=0.69$). The calibrated QC causally repairs
-internal network consistency (Figure~\ref{fig:Lval}) but does not, on this evidence, reduce
-force-field-limited absolute accuracy against experiment, exactly because cycle closure is blind to
-node-consistent force-field bias.}
-\label{fig:Lcausal}
-\end{figure}
 
 \paragraph{Summary.} The calibrated bottleneck supplies, for free and differentiably, the null
 model that turns FEP cycle-closure into a quality-control test that separates systematic from
@@ -459,19 +424,11 @@ chirality bit.
 Consistent with the paper's principle, the chirality bit is \emph{read off} the geometry (a
 pseudoscalar), not learned; this makes precise a fact familiar from the equivariant-network
 literature (the role of odd irreps), stated here as an architectural-completeness requirement on
-the trunk that feeds the bottleneck rather than as a central result. Figure~\ref{fig:E} realizes
-it: an even readout gives bit-identical outputs on every
+the trunk that feeds the bottleneck rather than as a central result. Supplementary
+Figure~\ref{fig:E} realizes it: an even readout gives bit-identical outputs on every
 enantiomer pair (collapse $=0$ to machine precision), so its best possible chiral $\ddG$
 prediction is zero; adding the $\texttt{0o}$ channel cuts enantiomer $\ddG$ MAE $11.7\times$
 ($1.67\to0.14$ kcal/mol).
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figE_chirality_completeness.pdf}
-\caption{\textbf{A parity-odd channel is necessary and one triple product suffices.}
-(A) The even ($O(3)$) readout collapses enantiomers exactly; $\texttt{0o}$ separates them.
-(B) Enantiomer $\ddG$ MAE drops $11.7\times$ when the $\texttt{0o}$ channel is added.}
-\label{fig:E}
-\end{figure}
 
 \section{An applicability map: where this calibration helps downstream, and where it does not}\label{sec:audit}
 Having established the primitive's real-data payoff (the cycle-closure detector of
@@ -590,7 +547,7 @@ rewards: the calibrated LCB, the raw predicted value, and an overconfident
 MVE reward. On \texttt{eg5}, the on-disk target with the \emph{largest} $\sigma$ spread (so the
 calibrated reward genuinely re-ranks candidates), the calibrated reward \emph{lowers} the true
 hit-rate of the generated distribution ($0.140$ vs raw $0.250$ and MVE $0.256$; cal$-$raw
-$-0.110$, CI $[-0.151,-0.073]$; Figure~\ref{fig:K}). The mechanism is instructive:
+$-0.110$, CI $[-0.151,-0.073]$; Supplementary Figure~\ref{fig:K}). The mechanism is instructive:
 $\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$: the high-$\sigma$ ligands are
 the chemically novel \emph{strong} binders, so the LCB penalty $-\kappa\sigma$ demotes the true
 winners. Calibration would help reward re-ranking only if $\sigma$ flagged \emph{low-quality}
@@ -602,15 +559,6 @@ congeneric or lead-like series, the bound penalizes exactly the candidates worth
 uncalibrated reward is the safer default. A regime where $\sigma$ tracks quality (e.g.\ diverse
 libraries with genuine actives and decoys) is where calibrated re-ranking should pay, and is the
 natural next test.
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.7\textwidth]{figK_calibrated_generation.pdf}
-\caption{\textbf{Honest audit, reward re-ranking over a measured congeneric set (single target \texttt{eg5}).} A calibrated
-reward lowers the GFlowNet's true hit-rate (cal $0.140$ vs raw $0.250$; cal$-$raw $-0.110$, CI
-$[-0.151,-0.073]$) because $\sigma$ tracks chemical novelty
-($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), not low quality.}
-\label{fig:K}
-\end{figure}
 
 \paragraph{Where it pays: the stopping decision.} The one place a calibrated bar clearly pays is
 knowing when to \emph{stop} an active-learning loop. Figure~\ref{fig:G} runs two learners with
@@ -686,7 +634,8 @@ revisited.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
 figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
-reproduces via \texttt{make figLev}); the theorem constants and the
+reproduces via \texttt{make figLev}; the autocorrelation panel Fig.~\ref{fig:gsweep} via
+\texttt{make gsweep}); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF
 protein--ligand benchmark, the OpenFE IndustryBenchmarks2024 replicate
 set~\citep{baumann2025industrybenchmarks}, and ChEMBL~\citep{zdrazil2024chembl}). Recalibration

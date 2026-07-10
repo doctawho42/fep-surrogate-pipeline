@@ -72,6 +72,9 @@ figBreal:  # honest audit: Fig B on REAL OOD FEP residuals (not sharper; fair Mo
 figArep:  # independent-replicate validation of the reported se (OpenFE IndustryBenchmarks2024)
 	PYTHONPATH=src $(PY) figs/make_figA_replicates.py
 
+gsweep:  # SI: autocorrelation robustness of the sandwich calibration (raw n vs n_eff = n/g, BACE1)
+	PYTHONPATH=src $(PY) figs/make_figAC_gsweep.py
+
 figL:  # IMPACT: calibrated cycle-closure QC (separates systematic from sampling; FPR = f(calibration))
 	PYTHONPATH=src $(PY) figs/make_figL.py
 

@@ -19,8 +19,8 @@
 \newcommand{\SOh}{SO(3)}
 \setlength{\parskip}{4pt}
 \title{\vspace{-2em}The BAR Information Bottleneck\\[2pt]
-\large Self-calibration (sandwich variance), $O(1)$ differentiation,\\ a Fisher--resistance correspondence, and a chirality completeness theorem}
-\author{\normalsize working notes: proofs for Paper 1 (v2, corrected)}
+\large Self-calibration (sandwich variance), $O(1)$ differentiation, a Fisher--resistance\\ correspondence, an estimation--detection conservation law, and a chirality completeness theorem}
+\author{\normalsize working notes: proofs for Paper 1 (v3, corrected)}
 \date{}
 \begin{document}
 \maketitle
@@ -114,6 +114,51 @@ Triangle with conductances $(1,0.5,2)$: $\Omega_{12}=0.714286$ equals the series
 \begin{corollary}[the unified objects, corrected]
 The overlap $I_e$ governs \{curvature, backward-pass scale (Thm.~\ref{thm:backward})\}. The precision $I_e^2/B_e$ governs \{calibration (Thm.~\ref{thm:calib}), Laplacian weight (Thm.~\ref{thm:fr})\}. These coincide (a single object, $V=1/I$) only at the information-equality limit. They diverge \emph{most in the high-overlap regime} ($I/B$ grows large as $p\to\tfrac12$; numerically $I/B\approx17$ at $0.5\sigma$ separation), so the naive $1/I$ over-estimates the variance most for the well-overlapped, low-variance edges, converging to the sandwich only as overlap $\to0$. The sandwich is therefore essential precisely on the \emph{reliable}, well-overlapped edges an active learner exploits. Naive $1/I$ would systematically distrust the best edges (up to ${\sim}13\times$ inflation on real FEP edges). \emph{(Direction corrected; verified three ways: controlled MC, population $I/B$, real FEP edges; see \texttt{docs/results\_figA.md}.)}
 \end{corollary}
+
+\section*{Estimation--detection conservation law}
+
+\paragraph{Setup.} Collect the per-edge relative measurements of Theorem~\ref{thm:fr} into
+$y=D\varphi+\varepsilon$, where $D\in\mathbb R^{E\times N}$ is the signed incidence matrix (row $e=(i,j)$
+equals $\mathbf e_j^\top-\mathbf e_i^\top$), $\varepsilon\sim\mathcal N(0,W^{-1})$,
+$W=\operatorname{diag}(w_e)$, $w_e=1/V_e$. Whitening by $W^{1/2}$ gives design $\tilde D=W^{1/2}D$; the
+GLS fit has orthogonal projector (hat matrix) $H=\tilde D L^{+}\tilde D^{\top}=W^{1/2}DL^{+}D^{\top}W^{1/2}$,
+with $L=D^\top W D$ the weighted Laplacian (Theorem~\ref{thm:fr}), and residual-maker $M=I_E-H$
+(reusing $M$ for the residual-maker, as in the main text; the log-count ratio of the estimator setup
+does not appear here). The closure statistic is $X^2=z^\top M z$ in whitened coordinates $z=W^{1/2}y$.
+
+\begin{theorem}[Estimation--detection conservation law]\label{thm:cons}
+Let the \emph{curl-leverage} be $h_e=M_{ee}$. Then
+\begin{enumerate}[label=(\roman*),leftmargin=2.2em,itemsep=1pt]
+\item $h_e+w_e\Omega_e=1$, with $\Omega_e$ the effective resistance across edge $e$ (Theorem~\ref{thm:fr});
+\item $\sum_e h_e=\operatorname{trace}M=E-\operatorname{rank}D=E-N+c=\mathrm{dof}$, the number of
+independent cycles (first Betti number; $c$ connected components);
+\item under a systematic shift of size $\mu$ on edge $e$ (the mean of $y$ shifted by $\mu\,\mathbf 1_e$),
+$X^2$ is noncentral $\chi^2_{\mathrm{dof}}$ with noncentrality $\lambda_e=h_e\,\mu^2/V_e$.
+\end{enumerate}
+Hence a bridge edge ($e$ in no cycle) has $h_e=0$ and is undetectable at every $\mu$; a node-consistent
+bias $b=D\psi$ maps into $\operatorname{range}(\tilde D)=\operatorname{range}(H)$ and is annihilated by
+$M$, so the test is blind to it \emph{by construction} rather than by assumption; and the smallest shift
+reaching unit noncentrality is $\delta^\ast_e=\sqrt{V_e/h_e}$.
+\end{theorem}
+\begin{proof}
+(i) $H_{ee}=w_e\,(\mathbf e_j-\mathbf e_i)^\top L^{+}(\mathbf e_j-\mathbf e_i)=w_e\Omega_e$ by
+Theorem~\ref{thm:fr}(i); hence $h_e=M_{ee}=1-H_{ee}=1-w_e\Omega_e$. (ii) $H$ is the orthogonal projector
+onto $\operatorname{range}(\tilde D)$, so $\operatorname{trace}H=\operatorname{rank}\tilde D
+=\operatorname{rank}D=N-c$ ($W^{1/2}$ is a full-rank positive diagonal, and $\operatorname{rank}D=N-c$
+for a graph with $c$ components); therefore $\operatorname{trace}M=E-(N-c)$, the cycle-space dimension.
+(iii) $z\sim\mathcal N(\nu,I_E)$ since $\operatorname{Cov}(y)=W^{-1}$; under the null
+$\nu\in\operatorname{range}(\tilde D)$, so $M\nu=0$ and $X^2\sim\chi^2_{\mathrm{dof}}$. Shifting the mean
+of $y$ by $\mu\,\mathbf 1_e$ moves $\nu$ by $s=\mu W^{1/2}\mathbf 1_e=(\mu/\sqrt{V_e})\,\mathbf 1_e$,
+giving noncentrality $\|Ms\|^2=s^\top M s=(\mu^2/V_e)\,M_{ee}=h_e\mu^2/V_e$. Finally $h_e=\|M\mathbf 1_e\|^2$
+(idempotent $M$), so $h_e=0\Leftrightarrow\mathbf 1_e\in\operatorname{range}(H)$, i.e.\ $\mathbf 1_e$ lies
+in the cut space $\operatorname{range}(D)$ ($e$ in no cycle); $W^{1/2}D\psi\in\operatorname{range}(\tilde D)$
+gives the gradient-bias annihilation; and $\delta^\ast_e$ solves $\lambda_e=1$.
+\end{proof}
+\begin{remark}[numerical check]
+Across the $48$ OpenFE IndustryBenchmarks2024 systems with $\ge1$ independent cycle,
+$\sum_e h_e=\mathrm{dof}$ holds to a maximum deviation $1.78\times10^{-14}$, and the two evaluations of
+$h_e$ (from $M=I-H$ and from $1-w_e\Omega_e$) agree to machine precision; \texttt{make figLev}.
+\end{remark}
 
 \section*{Chirality completeness}
 
