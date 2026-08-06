@@ -30,6 +30,9 @@ verify:
 figA:
 	$(PY) figs/make_figA.py
 
+figAseeds:  # P6c: multi-seed spread of the learned-variance foils (frozen 5 seeds)
+	$(PY) figs/make_figA.py seeds
+
 figE:
 	$(PY) figs/make_figE.py
 
