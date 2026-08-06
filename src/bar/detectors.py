@@ -82,7 +82,7 @@ def fundamental_cycle_sums(edges: list[Edge]) -> list[float]:
     return sums
 
 
-def flag_calibrated(systems: dict, alpha: float = 0.05) -> dict:
+def flag_calibrated(systems: dict, alpha: float = 0.05) -> dict[str, bool]:
     """Detector A (ours): closure chi^2 with the per-edge sandwich V_e, BH-FDR across systems."""
     names: list[str] = []
     pvals: list[float] = []
@@ -98,7 +98,7 @@ def flag_calibrated(systems: dict, alpha: float = 0.05) -> dict:
     return {n: bool(f) for n, f in zip(names, flags, strict=True)}
 
 
-def flag_fixed_cutoff(systems: dict, cutoff: float = HYSTERESIS_CUTOFF) -> dict:
+def flag_fixed_cutoff(systems: dict, cutoff: float = HYSTERESIS_CUTOFF) -> dict[str, bool]:
     """Detector B (field standard): flag if any independent cycle closes worse than ``cutoff``."""
     out: dict = {}
     for name in sorted(systems):
@@ -110,7 +110,7 @@ def flag_fixed_cutoff(systems: dict, cutoff: float = HYSTERESIS_CUTOFF) -> dict:
     return out
 
 
-def flag_fixed_se(systems: dict, alpha: float = 0.05) -> dict:
+def flag_fixed_se(systems: dict, alpha: float = 0.05) -> dict[str, bool]:
     """Detector C: the chi^2 test with ONE pooled se per system (its median per-edge se)."""
     names: list[str] = []
     pvals: list[float] = []
