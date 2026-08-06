@@ -3,7 +3,7 @@ We turn a routine consistency check into a calibrated diagnostic for relative bi
 (RBFE). At a surrogate's bottleneck, the Bennett Acceptance Ratio (BAR) \emph{sandwich} variance
 $B/I^2$ is a closed, non-negative, $O(1)$-differentiable aleatoric-variance layer that reads each
 alchemical edge's finite-sampling uncertainty off the physics (\texttt{pymbar} returns a number, not
-a back-propagatable graph weight). Its decisive payoff is \emph{detection}: the calibrated null that
+a back-propagatable graph weight). Its sharpest use is \emph{detection}: the calibrated null that
 turns thermodynamic cycle-closure into a quality-control test, flagging six systematic-error networks
 (of $48$) on $1145$ real OpenFE binding edges, with distribution-free causal and cross-replicate
 backstops confirming the flags are systematic and reproducible (not a quantitative
@@ -266,7 +266,7 @@ networks), and that a gauge-\emph{unaware} acquisition wastes budget resolving a
 decision-irrelevant cross-cluster offset, reaching the within-target top-$k$ at regret $0.27$
 where the gauge-aware one reaches $0.01$.
 
-\section{The decisive payoff: calibrated cycle-closure quality control}\label{sec:qc}
+\section{The sharpest use: calibrated cycle-closure quality control}\label{sec:qc}
 The one downstream task where the calibrated variance's \emph{value}, not just its structure, is
 load-bearing, and the paper's central demonstrated capability, is separating \emph{edge-level
 systematic error} (non-convergence, hysteresis, charge/water/protonation artifacts) from
@@ -284,8 +284,15 @@ with $\mathrm{dof}$ the number of independent cycles ($E$ minus the incidence ra
 correctly-sampled physics $\mathbb{E}[X^2/\mathrm{dof}]\approx1$; here it runs \emph{below} one
 (median $0.34$), consistent with the conservative bars of Figure~\ref{fig:Arep} and, since
 systematic error only \emph{raises} $\chi^2_\nu$, bounding them at ${\gtrsim}1.7\times$
-conservative for closure residuals. A reduced $\chi^2$ well above one signals edge-level
-systematic error. The test is (correctly) blind to
+conservative for closure residuals. The closure-implied conservatism ($1.71\times$ over the full
+$48$-system set, $1.67\times$ on the $46$ systems where this diagnostic is estimable) and the
+replicate-validated one ($1.41\times$) do not fully agree. We tested the natural explanation,
+correlation among residuals of edges sharing a ligand endpoint, which the diagonal-$V$ GLS does
+not model, and it does not account for the gap (excess correlation over the projector-induced
+null $-0.0079$ $[-0.0314,+0.0164]$; correcting for the resulting effective degrees of freedom
+moves the implied factor only to $1.67\times$). We therefore report the discrepancy as
+unexplained. The Benjamini--Hochberg flag set is unchanged under this correction. A reduced
+$\chi^2$ well above one signals edge-level systematic error. The test is (correctly) blind to
 node-consistent force-field bias, which cancels around a loop.
 
 \begin{theorem}[Estimation--detection conservation law]\label{thm:cons}
@@ -309,8 +316,17 @@ estimation of $\ddG$ networks~\citep{xu2019diffnet} and cycle-closure hysteresis
 diagnostic~\citep{wang2015fep} are standard; what is new is the \emph{calibrated} null: a
 per-edge, replicate-validated aleatoric variance that gives the test per-edge-adaptive thresholds
 and a false-positive rate controlled \emph{to the extent the per-edge null is calibrated}
-(validated against independent replicates, Figure~\ref{fig:Arep}), in place of the field's fixed
-hysteresis cutoffs. This retrospective test needs only the calibrated per-edge $se$ (the sandwich
+(validated against independent replicates, Figure~\ref{fig:Arep}), complementing the field's fixed
+hysteresis cutoffs. We benchmarked this directly: on the same $1145$ edges, flagging by the
+calibrated per-edge null does not measurably out-discriminate a fixed $1.0$ kcal/mol hysteresis
+cutoff or a fixed-$\mathrm{se}$ $\chi^2$ test against a cross-replicate reproducibility anchor (AUC
+$0.865$ vs $0.575$ and $0.725$; paired bootstrap difference $+0.140$ $[-0.008,+0.316]$,
+Fig.~\ref{fig:Cut}). The calibrated null's advantages are therefore structural, namely
+per-edge-adaptive thresholds, a false-positive rate tied to a replicate-validated null, and the
+observability map of Theorem~\ref{thm:cons}, rather than a demonstrated gain in discrimination on
+this benchmark. The evidence that the flags are real remains the two distribution-free backstops
+(causal edge removal and cross-replicate residual correlation), neither of which depends on the
+$\chi^2$ scaling. This retrospective test needs only the calibrated per-edge $se$ (the sandwich
 $B/I^2$, equal to the reported MBAR se to leading order); it does \emph{not} require the
 differentiability or $O(1)$ backward of Theorems~\ref{thm:back}--\ref{thm:sand}, which earn their
 place in the training-time propagation, the acquisition graph weight (Section~\ref{sec:gauge}), and
@@ -634,7 +650,8 @@ revisited.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
 figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
-reproduces via \texttt{make figLev}; the autocorrelation panel Fig.~\ref{fig:gsweep} via
+reproduces via \texttt{make figLev}; Fig.~\ref{fig:Cut} reproduces via \texttt{make figCut}; the
+autocorrelation panel Fig.~\ref{fig:gsweep} via
 \texttt{make gsweep}); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF
 protein--ligand benchmark, the OpenFE IndustryBenchmarks2024 replicate
