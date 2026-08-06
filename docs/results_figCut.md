@@ -12,10 +12,22 @@ public OpenFE replicate set, 1145 edges across 49 named systems, 3 independently
 fitted replicates per edge (`repeat_0/1/2`, complex + solvent legs). Of the 49
 systems, **48** have ≥3 replicate-0 edges and ≥1 independent cycle (`gls_network(...).dof
 >= 1`); every one of those 48 also has a complete row in all 3 replicates with
-`dof >= 1` in each replicate network, so the same 48 systems feed both P1 (detectors +
-anchor) and P2 (residual correlation + effective dof). One system was dropped (too
-few edges / acyclic on replicate 0). No new MD; all labels are the pre-computed
-public FEP+ dataset.
+`dof >= 1` in each replicate network, so all **48** systems feed P1 (detectors +
+anchor). One system was dropped from that 48 (too few edges / acyclic on replicate
+0). **P2's χ²-reconciliation loop (pooled correlations, nominal/effective reduced
+χ², both median se factors) runs on only 46 of those 48** — `run_p2` additionally
+requires each system to contribute at least one disjoint (non-shared-node) edge
+pair, since the null correlation used to compute the excess is only estimable from
+a shared-vs-disjoint pair contrast. Two systems fail that requirement and are
+dropped: **`bace1`** and **`factor_xa`**, each a 3-edge triangle over 3 ligands, so
+every edge pair in the triangle shares a ligand node and no disjoint pair — hence no
+null — exists. This 48→46 subset difference (not a computational error) is why the
+nominal median reduced χ² reported below for P2 (0.361, implying the 1.67× factor)
+differs from the manuscript-wide, full-48-system Fig L figure (0.3435, ~0.34,
+implying the 1.71× factor): the two excluded triangle systems happen to pull the
+48-system median down relative to the 46-system median used here. The P2 verdict
+itself (NOT-CONFIRMED) is unaffected by this subset difference — see below. No new
+MD; all labels are the pre-computed public FEP+ dataset.
 
 ![Fig Cut](../figs/figCut_cutoff_benchmark.png)
 
@@ -98,7 +110,8 @@ se) and the replicate-validated factor (`FACTOR_REPLICATE = 1.41`×, range
 error covariance, while residuals of edges sharing a ligand endpoint are actually
 correlated, which changes `E[χ²]` away from the nominal dof independently of how
 wide the bars are. The test: compare the empirical pair correlation (pooled over the
-48 aligned systems, from the 3-replicate standardized residuals) against the
+46 aligned systems that have both a shared-node and a disjoint edge pair — see Data
+provenance above — from the 3-replicate standardized residuals) against the
 correlation the residual-maker projector `M` itself induces under a perfect null
 (`null_pair_correlation`) — the EXCESS is the evidence for genuine error
 correlation — then recompute each system's effective dof (`tr(M·C)` with
@@ -108,9 +121,11 @@ excluding zero AND the corrected factor closes at least half the 1.71→1.41 gap
 (`FACTOR_HALFWAY = 1.56`, i.e. `factor_eff <= 1.56`). Mandatory either way: re-run
 BH-FDR under the effective dof and report whether the flag set moves.
 
-**Measured result** (n=48 systems, `N_BOOT=2000`, `seed=0`):
+**Measured result** (n=46 systems — see Data provenance above for why P2 uses 46 of
+the 48 P1 systems — `N_BOOT=2000`, `seed=0`):
 
 ```
+[P2] n_systems=46  excluded (2, no disjoint edge pairs): bace1, factor_xa
 [P2] excess corr shared-node=-0.0079 [-0.0314, +0.0164]  disjoint=+0.0018
 [P2] median reduced chi2 0.361 (nominal) -> 0.359 (effective dof)
 [P2] implied se factor 1.67x -> 1.67x (replicate-validated 1.41x; CONFIRMED needs <= 1.56)
@@ -131,11 +146,15 @@ P2 VERDICT: NOT-CONFIRMED
 - Implied se factor: **1.67× (nominal) → 1.67× (effective)** — no meaningful change
   (rounds identically to 2 d.p.), nowhere near closing the gap to the
   replicate-validated 1.41×, and does not clear the `<= 1.56` CONFIRMED threshold.
-  (Note: the measured nominal median reduced χ² on this exact 48-system pull is
-  0.361, close to but not identical to the manuscript's previously reported
-  0.34/1.71× closure-implied figure — both are the same order of over-conservatism;
-  this run does not investigate the small residual difference, which is not
-  material to either verdict.)
+  (Note: the nominal median reduced χ² measured here, 0.361 → 1.67×, is on the
+  **46-system** P2 subset, not the full 48. The manuscript-wide Fig L figure,
+  0.3435 (~0.34) → 1.71×, is measured on all **48** P1 systems. The gap between
+  0.361 and 0.3435 is fully explained by the two excluded triangle systems
+  (`bace1`, `factor_xa` — see Data provenance) and is not a computational
+  discrepancy. Both numbers describe the same order of over-conservatism, and this
+  subset difference does not affect the P2 verdict, which is decided by the
+  shared-node excess correlation and the nominal→effective factor movement within
+  the 46-system run, not by which of the two medians is quoted.)
 - **BH-FDR flag-set stability: unchanged.** Both the nominal-dof and effective-dof
   BH-FDR passes (α=0.05) flag the identical 6 systems: `bace, brd4, cdk8, faah,
   hif2a, p38`.
