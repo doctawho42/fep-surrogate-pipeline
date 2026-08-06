@@ -68,7 +68,7 @@ overlap `I` (reviewer M2a); oracle = same features, 4000 training edges.
 - Fair-foil mean (realistic budget, fed moments + overlap I): **0.15× true se** (~7× overconfident, range 0.09–0.20× across overlap sweep).
 - Oracle mean (large budget, 4000 training edges, same features): **0.20× true se** (~5× overconfident).
 - **β-NLL (β=0.5, realistic budget): 0.11× true se** — the standard objective fix does *not* recover calibration (it is slightly worse than plain NLL's 0.15×, i.e. further from calibrated). **5-member deep ensemble (realistic budget): 0.20× true se** — only reaches the large-budget floor.
-- Even with 20× more training data, a corrected objective (β-NLL), OR a stronger estimator (deep ensemble), the learned head stays ~5× overconfident at realistic budget. The conditional sampling variance IS identifiable from single ΔΔĜ labels (pooling check below) — so the residual overconfidence is a **data-efficiency floor of per-edge learned variance**, not an information-theoretic floor and not specific to the Gaussian-NLL objective (β-NLL is no better; the ensemble only reaches the 20×-budget floor). The physics computes it exactly, per-edge, differentiably, at zero label cost.
+- Even with 20× more training data, a corrected objective (β-NLL), OR a stronger estimator (deep ensemble), the learned head stays ~5× overconfident at realistic budget. The conditional sampling variance IS identifiable from single ΔΔĜ labels (pooling check below) — so the residual overconfidence is a **data-efficiency floor of per-edge learned variance**, not an information-theoretic floor and not specific to the Gaussian-NLL objective (β-NLL does not help — if anything it is slightly worse; the ensemble only reaches the 20×-budget floor). The physics computes it exactly, per-edge, differentiably, at zero label cost.
 - Honest frame: **"learnable-with-data vs exact-and-free"** — not "the learned head fails" and not "one label per edge can never work." It can improve substantially with data, and a differently-trained/pooled estimator *can* recover the target se — but no learned head matches the closed form for free, and the standard per-edge Gaussian-NLL MVE head does not get there at realistic budgets.
 
 **Identifiability check (reviewer round-2 §3): is `se(overlap)` recoverable from single labels?**
@@ -93,8 +93,8 @@ driven by finite-sample binning noise, not an identifiability barrier. The learn
 residual ~5–7× overconfidence (above) is therefore best read as a **data-efficiency limit of a
 per-edge learned variance** — it does not vanish under the standard objective fix (β-NLL, Seitzer
 et al. 2022, "On the Pitfalls of Heteroscedastic Uncertainty Estimation with Probabilistic Neural
-Networks," is no better here: 0.11×) nor under a stronger estimator (a deep ensemble only reaches
-the 20×-larger-budget floor, 0.20×); heteroscedastic per-edge variance regression stays poorly
+Networks") — if anything worse, 0.11× vs plain NLL's 0.15× — nor under a stronger estimator (a deep
+ensemble only reaches the 20×-larger-budget floor, 0.20×); heteroscedastic per-edge variance regression stays poorly
 calibrated at realistic label budgets — but it is **not** evidence that the target is unlearnable
 in principle (pooling recovers it). The BAR bottleneck's advantage is that it sidesteps this
 learned-estimator budget floor entirely by computing the
