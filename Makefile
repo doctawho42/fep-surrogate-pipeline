@@ -87,6 +87,9 @@ figLcausal:  # close-the-loop: does acting on the QC flag improve accuracy vs ex
 figLev:  # D1: per-edge observability map (sum_h==dof, bridges) + pre-registered predictive falsifier
 	PYTHONPATH=src $(PY) figs/make_figLev.py
 
+figCut:  # peer-review P1+P2: fixed-cutoff head-to-head + chi^2 reconciliation
+	PYTHONPATH=src $(PY) figs/make_figCut.py
+
 boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
 	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
 
