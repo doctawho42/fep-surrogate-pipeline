@@ -23,7 +23,8 @@ sandwich**. So Fig A makes three honest points instead:
    A **large-budget oracle** (4000 training edges, same features) reaches 0.20× — also
    ~5× overconfident (regime-dependent). Corrected foils do **not** rescue it at realistic
    budget: a **β-NLL head** (Seitzer et al. 2022, β=0.5 — the standard objective fix) does
-   *not* recover calibration (**0.11× true se**, no better than plain NLL), and a **5-member
+   *not* recover calibration (**0.11× true se**, in fact slightly *worse* than plain NLL's
+   0.15×), and a **5-member
    deep ensemble** (Lakshminarayanan et al. 2017) reaches only the large-budget floor
    (**0.20×**). So the residual ~5× is a **data-efficiency limit of a per-edge *learned*
    variance**, **not an identifiability barrier** and **not specific to the Gaussian-NLL
@@ -66,7 +67,7 @@ overlap `I` (reviewer M2a); oracle = same features, 4000 training edges.
 **Headline numbers (M2a, honest fair-foil result):**
 - Fair-foil mean (realistic budget, fed moments + overlap I): **0.15× true se** (~7× overconfident, range 0.09–0.20× across overlap sweep).
 - Oracle mean (large budget, 4000 training edges, same features): **0.20× true se** (~5× overconfident).
-- **β-NLL (β=0.5, realistic budget): 0.11× true se** — the standard objective fix does *not* recover calibration (no better than plain NLL). **5-member deep ensemble (realistic budget): 0.20× true se** — only reaches the large-budget floor.
+- **β-NLL (β=0.5, realistic budget): 0.11× true se** — the standard objective fix does *not* recover calibration (it is slightly worse than plain NLL's 0.15×, i.e. further from calibrated). **5-member deep ensemble (realistic budget): 0.20× true se** — only reaches the large-budget floor.
 - Even with 20× more training data, a corrected objective (β-NLL), OR a stronger estimator (deep ensemble), the learned head stays ~5× overconfident at realistic budget. The conditional sampling variance IS identifiable from single ΔΔĜ labels (pooling check below) — so the residual overconfidence is a **data-efficiency floor of per-edge learned variance**, not an information-theoretic floor and not specific to the Gaussian-NLL objective (β-NLL is no better; the ensemble only reaches the 20×-budget floor). The physics computes it exactly, per-edge, differentiably, at zero label cost.
 - Honest frame: **"learnable-with-data vs exact-and-free"** — not "the learned head fails" and not "one label per edge can never work." It can improve substantially with data, and a differently-trained/pooled estimator *can* recover the target se — but no learned head matches the closed form for free, and the standard per-edge Gaussian-NLL MVE head does not get there at realistic budgets.
 
@@ -140,6 +141,8 @@ vs exact-and-free" framing; calibrated on real binding edges → **proceed**.
 feature). Large-budget oracle added. The measured numbers are honest: the physics wins
 not because the target is unidentifiable from one label/edge (the pooling-by-overlap check
 above shows it IS identifiable, recovering to ~4–6% error by N=4000–40000) but because the
-standard per-edge Gaussian-NLL MVE objective is a poor estimator of it at realistic and even
-large training budgets (Seitzer 2022) — the BAR bottleneck avoids that objective-artifact
-failure mode entirely by computing the sandwich in closed form, untrained, for free.
+standard per-edge *learned* variance (MVE) estimator hits a data-efficiency floor at
+realistic and even large training budgets — a floor that persists under the corrected
+β-NLL objective (Seitzer 2022) and under a deep ensemble, so it is not specific to the
+Gaussian-NLL objective — the BAR bottleneck sidesteps that data-efficiency floor entirely
+by computing the variance exactly, per edge, untrained, at zero label cost.
