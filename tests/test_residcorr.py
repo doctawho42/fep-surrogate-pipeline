@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pytest
 
 from bar.qc import gls_network
 from bar.residcorr import (
@@ -74,4 +75,8 @@ def test_effective_dof_moves_with_excess_correlation():
     M = residual_maker(edges)
     shared, disjoint = pair_masks(edges)
     base = effective_dof(M, shared, disjoint, 0.0, 0.0)
-    assert effective_dof(M, shared, disjoint, 0.3, 0.0) != base
+    moved = effective_dof(M, shared, disjoint, 0.3, 0.0)
+    assert moved != base
+    # exact value: tr(M) + 2 * rho_shared * sum(M[shared]), rho_disjoint=0 contributes nothing --
+    # catches a sign flip or a factor-of-2 regression in the off-diagonal symmetrization.
+    assert moved == pytest.approx(float(np.trace(M)) + 2 * 0.3 * float(M[shared].sum()))

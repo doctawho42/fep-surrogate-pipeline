@@ -84,12 +84,14 @@ def gls_network(edges: list[Edge]) -> NetworkFit:
                       chi2=chi2, dof=dof)
 
 
-def chi2_sf(x: float, k: int) -> float:
+def chi2_sf(x: float, k: float) -> float:
     """Exact upper-tail survival function of chi^2(k): the regularized upper incomplete gamma
     ``Q(k/2, x/2)``. Replaces a Wilson--Hilferty cube-root approximation, which is conservative
     but 64--190% off in the far upper tail at the low degrees of freedom this test actually uses
-    (e.g. dof=1, 14); the exact tail leaves the BH-FDR flag set unchanged. SciPy is a core
-    dependency; the import is local so the network fit itself still imports without it."""
+    (e.g. dof=1, 14); the exact tail leaves the BH-FDR flag set unchanged. ``k`` may be
+    fractional (e.g. an effective dof corrected for residual correlation, Fig Cut's P2) -- the
+    incomplete-gamma definition is exact for any positive real ``k``, not just integers. SciPy is
+    a core dependency; the import is local so the network fit itself still imports without it."""
     if k <= 0:
         return math.nan
     from scipy.special import gammaincc  # local import; scipy is a core dep

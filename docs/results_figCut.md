@@ -13,8 +13,8 @@ fitted replicates per edge (`repeat_0/1/2`, complex + solvent legs). Of the 49
 systems, **48** have ≥3 replicate-0 edges and ≥1 independent cycle (`gls_network(...).dof
 >= 1`); every one of those 48 also has a complete row in all 3 replicates with
 `dof >= 1` in each replicate network, so all **48** systems feed P1 (detectors +
-anchor). One system was dropped from that 48 (too few edges / acyclic on replicate
-0). **P2's χ²-reconciliation loop (pooled correlations, nominal/effective reduced
+anchor). One system was dropped from the 49 systems in the CSV (49 -> 48 eligible;
+too few edges / acyclic on replicate 0). **P2's χ²-reconciliation loop (pooled correlations, nominal/effective reduced
 χ², both median se factors) runs on only 46 of those 48** — `run_p2` additionally
 requires each system to contribute at least one disjoint (non-shared-node) edge
 pair, since the null correlation used to compute the excess is only estimable from

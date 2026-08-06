@@ -183,7 +183,13 @@ shared-ligand-endpoint residual-correlation hypothesis for the closure-implied (
 $1.67\times$ on the $46$-system subset where this diagnostic is estimable) versus
 replicate-validated ($1.41\times$) se-conservatism gap is not confirmed (excess correlation
 $-0.0079$ $[-0.0314,+0.0164]$; corrected factor $1.67\times$, VERDICT: NOT-CONFIRMED); the
-Benjamini--Hochberg flag set is unchanged.
+Benjamini--Hochberg flag set is unchanged. The calibrated null flags $6$ of $48$ systems, the
+fixed-$\mathrm{se}$ $\chi^2$ test $11$, and the fixed cutoff $26$; the three flag sets are
+strictly nested (calibrated $\subset$ fixed-$\mathrm{se}$ $\subset$ fixed cutoff), so on this
+benchmark the calibrated null catches no system the fixed cutoff misses and instead removes
+$20$ of its flags at a higher AUC. The $1.0$ kcal/mol cutoff was pre-registered at the
+field-standard value before this comparison was run, and no sweep over alternative thresholds
+was performed, so the comparison above is specific to that one fixed rule.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figCut_cutoff_benchmark.pdf}
