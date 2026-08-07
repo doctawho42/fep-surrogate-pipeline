@@ -2,7 +2,7 @@
 # Uses the project conda env `fluor_screening` by default; override with `PY=...`.
 PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
 
-.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN all
+.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figP4 all
 
 help:
 	@echo "make test    - run the pytest suite (theorem invariants)"
@@ -92,6 +92,9 @@ figLev:  # D1: per-edge observability map (sum_h==dof, bridges) + pre-registered
 
 figCut:  # peer-review P1+P2: fixed-cutoff head-to-head + chi^2 reconciliation
 	PYTHONPATH=src $(PY) figs/make_figCut.py
+
+figP4:  # peer-review P4: QC sweep under the real heterogeneous learned-sigma profile
+	PYTHONPATH=src $(PY) figs/make_figP4.py
 
 boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
 	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
