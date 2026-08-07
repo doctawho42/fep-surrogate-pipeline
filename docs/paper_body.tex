@@ -7,8 +7,9 @@ a back-propagatable graph weight). Its sharpest use is \emph{detection}: the cal
 turns thermodynamic cycle-closure into a quality-control test, flagging six systematic-error networks
 (of $48$) on $1145$ real OpenFE binding edges, with distribution-free causal and cross-replicate
 backstops confirming the flags are systematic and reproducible (not a quantitative
-false-positive-rate guarantee), where an overconfident learned $\sigma$ flags $88\%$ of systems and
-is useless. That bar
+false-positive-rate guarantee), where a uniform-shrink stress test and, more representatively, the
+learned head's own measured overconfidence profile transferred per edge both flag $88\%$ of systems
+and are useless. That bar
 is trustworthy for the job against sampling and convergence noise: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
 order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected), never systematically
 overconfident. The same free primitive supplies a Fisher--resistance acquisition-graph weight (the
@@ -374,7 +375,20 @@ buried-water set, \texttt{bace} is protonation-sensitive). The detector's value 
 function of calibration (Figure~\ref{fig:L}B): a uniform ${\times}0.15$ shrink standing in for the
 learned head's central overconfidence (Figure~\ref{fig:A}) flags $88\%$ of systems (false-positive rate $\to1$,
 useless), the calibrated sandwich flags $12\%$ (selective), and over-wide bars flag none, the
-concrete decision an overconfident $\sigma$ silently corrupts and a calibrated one enables. The
+concrete decision an overconfident $\sigma$ silently corrupts and a calibrated one enables. That
+uniform shrink is a stress test rather than a realistic head. Applying instead the learned head's
+\emph{measured}, overlap-dependent miscalibration profile per edge (rank-transferred onto each
+edge's own overlap, Supplementary Figure~\ref{fig:P4}) flags $42$ of $48$ systems against the
+calibrated sandwich's $6$ ($7.00\times$), so the degradation survives a heterogeneous, non-uniform
+profile and is not an artifact of the uniform factor. A shuffled-profile control, the identical
+multiset of per-edge ratios with the association to overlap destroyed, also flags $42$ of $48$:
+because the profile's entire measured range ($0.09$--$0.20\times$) is deeply overconfident, even
+its mildest value inflates an edge's $\chi^2$ contribution ${\sim}25\times$, so once a network's
+edges are all shrunk somewhere in that range, whether it crosses the Benjamini--Hochberg threshold
+is set by how much shrink there is on average, not by which edges get more or less of it. It is
+therefore the \emph{magnitude} of the learned head's miscalibration, not the \emph{uniformity} of
+the Figure~\ref{fig:L}B stand-in, that destroys the test, and the heterogeneous, overlap-dependent
+structure of a profile this overconfident carries no additional information for it. The
 three independent replicates confirm the flags are systematic, not sampling: pooling the
 replicates shrinks the bars ($\mathrm{se}\to\mathrm{se}/\sqrt3$) yet \emph{increases} the flagged
 systems' reduced $\chi^2$ toward the $3\times$ variance-components ceiling (Figure~\ref{fig:L}C),
@@ -385,8 +399,10 @@ pooled $1+3s^2/V_{\text{samp}}$; the ratio $\to3$ iff systematic-dominated).
 \includegraphics[width=\textwidth]{figL_calibrated_cycle_closure.pdf}
 \caption{\textbf{Calibrated cycle-closure quality control (1145 real edges).} (A) Per-system
 reduced $\chi^2$: most systems are sampling-consistent ($\le1$, shaded), six are flagged
-(Benjamini--Hochberg, FDR $0.05$). (B) The same test under different $\sigma$: an overconfident
-learned $\sigma$ (${\times}0.15$, Figure~\ref{fig:A}) flags $88\%$ of systems (useless), the
+(Benjamini--Hochberg, FDR $0.05$). (B) The same test under different $\sigma$: a uniform
+${\times}0.15$ shrink (a stress test standing in for the learned head's central overconfidence,
+Figure~\ref{fig:A}; Supplementary Figure~\ref{fig:P4} shows the head's real, non-uniform
+miscalibration profile gives the same verdict) flags $88\%$ of systems (useless), the
 calibrated sandwich flags $12\%$ (selective), over-wide bars none. The detector's usefulness
 \emph{is} $\sigma$-calibration. (C) Pooling the 3 replicates increases the flagged systems'
 reduced $\chi^2$ toward the $3\times$ (pure-systematic) line, not the diagonal (pure-sampling):
@@ -677,7 +693,8 @@ revisited.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
 figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
-reproduces via \texttt{make figLev}; Fig.~\ref{fig:Cut} reproduces via \texttt{make figCut}; the
+reproduces via \texttt{make figLev}; Fig.~\ref{fig:Cut} reproduces via \texttt{make figCut};
+Supplementary Figure~\ref{fig:P4} reproduces via \texttt{make figP4}; the
 autocorrelation panel Fig.~\ref{fig:gsweep} via
 \texttt{make gsweep}); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF

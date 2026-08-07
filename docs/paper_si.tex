@@ -206,6 +206,43 @@ NOT-CONFIRMED.}
 \label{fig:Cut}
 \end{figure}
 
+\paragraph{QC sweep under the real learned-$\sigma$ profile (Figure~\ref{fig:P4}).}
+Figure~\ref{fig:L}B's uniform ${\times}0.15$ shrink is a stress test; here the learned head's
+\emph{measured}, overlap-dependent miscalibration profile (Figure~\ref{fig:A}A: ratio
+$0.09$--$0.20\times$ across overlap $0.26$--$0.78$) is pushed through the identical GLS $+$
+Benjamini--Hochberg pipeline, per edge, by percentile-rank transfer onto each of $1143$ real
+edges' own OpenFE \texttt{smallest\_overlap} (an approximation: the two overlap statistics are on
+different scales, so only the profile's ordering and spread are transferred, not its raw values).
+Four arms on the same $48$-system, $1143$-edge network: the calibrated sandwich (${\times}1$)
+flags $6/48$ ($12\%$); the real profile (primary) flags $42/48$ ($88\%$), $7.00\times$ the
+calibrated count, past the pre-registered $2\times$ threshold (VERDICT: DEGRADES); a
+shuffled-profile control (the identical per-edge ratios with their association to overlap
+destroyed, seed $20260808$) also flags $42/48$; and the uniform ${\times}0.15$ stress test again
+flags $42/48$. The three shrinking arms are not identical sets of systems (real vs.\ shuffled and
+real vs.\ uniform each swap exactly one system, \texttt{bace1} for \texttt{egfr}), so the per-edge
+ratio assignment is genuinely heterogeneous; the near-identical flagged counts instead reflect
+that the profile's entire measured range is deeply overconfident, inflating every edge's $\chi^2$
+contribution by at least ${\sim}25\times$, so which systems cross the Benjamini--Hochberg
+threshold is set by the magnitude of the shrink, not by its structure. Deterministic;
+\texttt{make figP4}.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figP4_sigma_profile.pdf}
+\caption{\textbf{Supplement: the QC sweep under the learned head's real, non-uniform
+miscalibration profile (peer-review item P4).} Four arms on the identical $48$-system,
+$1143$-edge OpenFE network. Calibrated sandwich (${\times}1$): $6/48$ flagged ($12\%$). Real
+learned profile (primary; percentile-rank transfer of Figure~\ref{fig:A}A's measured ratio onto
+each edge's own overlap): $42/48$ ($88\%$), $7.00\times$ the calibrated count (VERDICT: DEGRADES
+against the pre-registered $2\times$ threshold). Shuffled-profile control (association with
+overlap destroyed): $42/48$. Uniform ${\times}0.15$ stress test (Figure~\ref{fig:L}B): $42/48$.
+The rank transfer approximates how the head's measured overconfidence would vary across these
+edges; it is not the head's own output on this benchmark. The profile's narrow, uniformly
+overconfident range ($0.09$--$0.20\times$) is why the heterogeneous and uniform stand-ins agree so
+closely: it is the magnitude of the miscalibration, not the uniformity of the Figure~\ref{fig:L}B
+stand-in, that destroys the test.}
+\label{fig:P4}
+\end{figure}
+
 \paragraph{Reward re-ranking over a measured congeneric set (Figure~\ref{fig:K}).} Driving a
 trajectory-balance GFlowNet over \texttt{eg5} (the most $\sigma$-varying evaluable target), the
 calibrated LCB reward \emph{lowers} the true hit-rate (cal$-$raw $-0.110$) because $\sigma$ tracks
