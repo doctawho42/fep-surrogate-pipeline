@@ -113,9 +113,19 @@ the identical 16-row table, `s_onset = 0.9`, `s50 = 0.3`, and the
 ## Readouts
 
 - **`s_onset = 0.9`.** The largest scale that flags strictly more systems
-  than the calibrated `x1` arm (7/48 at `s=0.9` vs 6/48 at `s=1.0`). Onset is
-  immediate: a mere **10% shrink below the calibrated sandwich is already
-  enough to flag an additional system.**
+  than the calibrated `x1` arm (7/48 at `s=0.9` vs 6/48 at `s=1.0`). This
+  step is **exactly one system flipping** (6/48 -> 7/48, 12% -> 15%) — a
+  1-in-48 move, and one that is close to **mechanically forced**: uniform
+  sigma scaling leaves the GLS point estimates unchanged and multiplies
+  every system's chi-square by the same deterministic `1/scale^2`, so
+  `s_onset` lands on the first grid point below `1.0` as soon as any one
+  borderline system's p-value crosses the BH cutoff. On its own, `s_onset`
+  is weak evidence of broad degradation.
+- **The substantive climb is mid-curve.** As the scale sweeps from `s=0.7`
+  down to `s=0.3`, the flagged count rises from **12/48 (25%) to 30/48
+  (62%)** — by `s=0.5` it already stands at 17/48 (35%). This range, not
+  the single-system `s_onset` step, is where the curve substantively
+  separates from the calibrated baseline.
 - **`s50 = 0.3`.** The largest scale at which at least half (`>= 24/48`) of
   the systems are flagged; `s=0.3` flags 30/48 (62%), and the next grid point
   up, `s=0.35`, flags only 23/48 (48%), just under half — so `0.3` is the
@@ -145,30 +155,37 @@ already-published Fig L and Fig P4 numbers — no drift.
 
 ## Honest reading
 
-**The curve is steep starting immediately below `x1`, not flat until deep
-shrink.** `s_onset = 0.9` means selectivity is not robust to even a mild,
-10%, overconfident sigma: one additional system is already spuriously flagged
-one grid step below calibration, and the flagged fraction climbs
-monotonically and continuously from 12% at `s=1.0` to 62% at `s=0.3` — there
-is no plateau or "safe zone" of mild overconfidence in which the test stays
-close to its calibrated 12% baseline. This means the earlier binary framing
-("an overconfident sigma destroys the QC," evidenced only by the deep `x0.15`
-stress point) was not overstating the test's sensitivity — if anything, the
-dose-response shows the test is *more* fragile than the binary framing
-implied, because degradation begins essentially at the calibration boundary
-itself rather than only far into the overconfident regime. At the same time,
-the curve is **not** a single-step jump: 48%-of-systems-flagged is not
-reached until `s=0.35`, and the shape over the full grid is a classic
-sigmoid in `log(s)` — near-flat and low at `s=2.0`–`1.3` (0–2%), a steep
-graded rise through the middle of the grid (`s=1.0` at 12% to `s=0.25` at
-75%), then flattening again as it approaches saturation at the deep-shrink
-end (`s=0.2`–`0.1`, 81–92%). So there is a genuine graded dose-response
-across the middle of the range — not an instantaneous, all-or-nothing
-threshold effect — even though the *onset* of departure from the calibrated
-rate is early and the *top* of the curve saturates well before the grid's
-deepest point. The measured learned-head band (`[0.09, 0.20]`) sits
-entirely below `s50 = 0.3`, i.e., past the point where the test has already
-lost selectivity for a majority of systems; P4's finding that this band
+**Selectivity erodes immediately below calibration, but the first step is a
+single system.** `s_onset = 0.9` reflects exactly one system crossing the
+BH cutoff (6/48 -> 7/48, 12% -> 15%) — a 1-in-48 move that is weak evidence
+of broad degradation on its own. It is also close to **mechanically
+forced**: uniform sigma scaling leaves the GLS point estimates unchanged and
+inflates every system's chi-square by the same deterministic `1/scale^2`, so
+the first grid point below `1.0` at which *any* single borderline system's
+p-value crosses the BH threshold is essentially bound to register as
+`s_onset`. Read alone, `s_onset` should not be taken as evidence that
+selectivity is broadly fragile to mild overconfidence — the approach to
+`s=1.0` stays comparatively modest through `s=0.8` (9/48, 19%), a rise of
+only a few systems over the first two grid steps below calibration.
+
+The better-supported claim is the mid-curve climb. As the scale sweeps from
+`s=0.7` down to `s=0.3`, the flagged count rises from **12/48 (25%) to
+30/48 (62%)** — the range where the fraction climbs past a genuinely
+substantial departure from the calibrated 12% baseline: by `s=0.5` the
+count already stands at 17/48 (35%), and it continues climbing to 30/48
+(62%) at `s=0.3`. This mid-curve range, not the single-system `s_onset`
+step, carries the real evidentiary weight for "selectivity is being lost."
+At the same time, the curve is **not** a single-step jump: 48%-of-systems-
+flagged is not reached until `s=0.35`, and the shape over the full grid
+remains a graded rise in `log(s)` — near-flat and low at `s=2.0`–`1.3`
+(0–2%), a graded climb through the middle of the grid, then flattening
+again as it approaches saturation at the deep-shrink end (`s=0.2`–`0.1`,
+81–92%). So there is a genuine graded dose-response across the middle of
+the range — not an instantaneous, all-or-nothing threshold effect, and not
+a demonstration that the test is fragile right at the calibration boundary
+itself. The measured learned-head band (`[0.09, 0.20]`) sits entirely below
+`s50 = 0.3`, i.e., past the point where the test has already lost
+selectivity for a majority of systems; P4's finding that this band
 saturates the test (42/48, 88%) is thus not an edge case of the swept range
 but sits well into its high-flagging regime, consistent with (and now given
 quantitative context by) this curve.
