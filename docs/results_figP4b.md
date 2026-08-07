@@ -9,9 +9,10 @@ anywhere in this script — a pure sweep of `gls_network` + `chi2_sf` +
 new modules, no new MD beyond this file.
 
 **Data provenance:** `data/openfe_replicates/combined_pymbar4_edge_data.csv`,
-loaded by data-loading helpers (`_f`, `edge_val`, `edge_overlap`, `load`)
-copied **verbatim** from `figs/make_figP4.py` — the population and the test
-path are therefore provably identical to P4 and to Fig L. Replicate 0 only.
+loaded by data-loading helpers (`_f`, `edge_val`, `edge_overlap`, `load`) that
+are **code-identical (docstrings aside)** to `figs/make_figP4.py` — the
+population and the test path are therefore provably identical to P4 and to
+Fig L. Replicate 0 only.
 Each edge's `(a, b, ΔΔG, se)` comes from `complex_repeat_0_DG/dDG` minus
 `solvent_repeat_0_DG/dDG` (se combined in quadrature); each edge's overlap is
 the **minimum** of its `complex_repeat_0_smallest_overlap` and
@@ -115,12 +116,15 @@ the identical 16-row table, `s_onset = 0.9`, `s50 = 0.3`, and the
 - **`s_onset = 0.9`.** The largest scale that flags strictly more systems
   than the calibrated `x1` arm (7/48 at `s=0.9` vs 6/48 at `s=1.0`). This
   step is **exactly one system flipping** (6/48 -> 7/48, 12% -> 15%) — a
-  1-in-48 move, and one that is close to **mechanically forced**: uniform
-  sigma scaling leaves the GLS point estimates unchanged and multiplies
-  every system's chi-square by the same deterministic `1/scale^2`, so
-  `s_onset` lands on the first grid point below `1.0` as soon as any one
-  borderline system's p-value crosses the BH cutoff. On its own, `s_onset`
-  is weak evidence of broad degradation.
+  1-in-48 move. `s_onset` is reported because it was pre-registered, but it
+  is not a measurement: on a discrete grid a strictly-exceeds onset readout
+  returns the first grid point below `1.0` for any monotone test, and
+  probing finds a system flipping as high as `s = 0.995`, so a finer grid
+  would return `s_onset = 0.995`, and in the continuum limit `s_onset ->
+  1.0` for any dataset with a system near the cutoff. It therefore carries
+  no information about this benchmark. A magnitude-anchored readout (the
+  largest scale that doubles the calibrated count, `s = 0.7` here, 12/48)
+  would have been the informative pre-registration.
 - **The substantive climb is mid-curve.** As the scale sweeps from `s=0.7`
   down to `s=0.3`, the flagged count rises from **12/48 (25%) to 30/48
   (62%)** — by `s=0.5` it already stands at 17/48 (35%). This range, not
@@ -155,18 +159,24 @@ already-published Fig L and Fig P4 numbers — no drift.
 
 ## Honest reading
 
-**Selectivity erodes immediately below calibration, but the first step is a
-single system.** `s_onset = 0.9` reflects exactly one system crossing the
-BH cutoff (6/48 -> 7/48, 12% -> 15%) — a 1-in-48 move that is weak evidence
-of broad degradation on its own. It is also close to **mechanically
-forced**: uniform sigma scaling leaves the GLS point estimates unchanged and
-inflates every system's chi-square by the same deterministic `1/scale^2`, so
-the first grid point below `1.0` at which *any* single borderline system's
-p-value crosses the BH threshold is essentially bound to register as
-`s_onset`. Read alone, `s_onset` should not be taken as evidence that
-selectivity is broadly fragile to mild overconfidence — the approach to
-`s=1.0` stays comparatively modest through `s=0.8` (9/48, 19%), a rise of
-only a few systems over the first two grid steps below calibration.
+**The first step below calibration is a single system and is an artifact of
+grid spacing; selectivity degrades gradually, with no threshold.**
+`s_onset = 0.9` reflects exactly one system crossing the BH cutoff (6/48 ->
+7/48, 12% -> 15%) — a 1-in-48 move. `s_onset` is reported because it was
+pre-registered, but it is not a measurement: on a discrete grid a
+strictly-exceeds onset readout returns the first grid point below `1.0` for
+any monotone test, and probing finds a system flipping as high as
+`s = 0.995`, so a finer grid would return `s_onset = 0.995`, and in the
+continuum limit `s_onset -> 1.0` for any dataset with a system near the
+cutoff. A magnitude-anchored readout (the largest scale that doubles the
+calibrated count, `s = 0.7` here) would have been the informative
+pre-registration. Naming a pre-registered readout as a poor one is more
+credible than hedging it — `s_onset` is kept in this report because it was
+pre-registered and must not be dropped, but read alone it should not be
+taken as evidence that selectivity is broadly fragile to mild
+overconfidence — the approach to `s=1.0` stays comparatively modest through
+`s=0.8` (9/48, 19%), a rise of only a few systems over the first two grid
+steps below calibration.
 
 The better-supported claim is the mid-curve climb. As the scale sweeps from
 `s=0.7` down to `s=0.3`, the flagged count rises from **12/48 (25%) to
@@ -183,7 +193,18 @@ again as it approaches saturation at the deep-shrink end (`s=0.2`–`0.1`,
 81–92%). So there is a genuine graded dose-response across the middle of
 the range — not an instantaneous, all-or-nothing threshold effect, and not
 a demonstration that the test is fragile right at the calibration boundary
-itself. The measured learned-head band (`[0.09, 0.20]`) sits entirely below
+itself.
+
+The over-wide half of the grid (`s=2.0`–`1.3`) is reported above but is
+substantive, not merely flat: relative to the calibrated `6/48`, a bar only
+30% too wide (`s=1.3`) has already lost five of the six flagged systems
+(`1/48`), and any wider bar (`s=1.5`, `s=2.0`) loses all six (`0/48`). This
+strengthens the paper's claim rather than weakening it — it shows the
+test's requirement is calibration, not conservatism: making sigma bigger
+does not preserve power, it costs power just as fast in the other
+direction as making sigma too small costs specificity.
+
+The measured learned-head band (`[0.09, 0.20]`) sits entirely below
 `s50 = 0.3`, i.e., past the point where the test has already lost
 selectivity for a majority of systems; P4's finding that this band
 saturates the test (42/48, 88%) is thus not an edge case of the swept range
