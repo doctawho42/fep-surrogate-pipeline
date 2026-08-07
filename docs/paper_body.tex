@@ -363,7 +363,14 @@ are ${\gtrsim}1.7\times$ wide for closure residuals), the nominal Benjamini--Hoc
 \emph{upper bound} on the true false-positive rate: the test under-flags rather than over-flags.
 Crucially, its validity does not rest on the $\chi^2$ tail at all; the flags are confirmed by the
 two distribution-free checks below (causal edge-removal and cross-replicate residual correlation),
-which assume no Gaussian null.
+which assume no Gaussian null. A subtler concern is that four of the six flagged systems are
+themselves locally overconfident against their own across-replicate spread
+(Figure~\ref{fig:Arep}: \texttt{brd4} $0.76\times$, \texttt{faah} $0.90\times$, \texttt{bace}
+$0.96\times$, \texttt{hif2a} $0.96\times$), so a flag could partly reflect that system's own
+too-tight bars rather than genuine physical inconsistency; inflating each such system's own null
+by the reciprocal of its own measured ratio (Supplementary Table~\ref{tab:P8}) leaves all six
+flags in place, each self-calibrated reduced $\chi^2$ remaining above the ${\gtrsim}1.7\times$
+conservatism bound established above.
 
 \paragraph{Figure~\ref{fig:L}: a deployable detector whose usefulness \emph{is} $\sigma$-calibration.}
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over

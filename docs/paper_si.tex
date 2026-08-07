@@ -303,6 +303,57 @@ Deterministic; \texttt{make figP4b}.}
 \label{fig:P4b}
 \end{figure}
 
+\paragraph{Per-system flag robustness to each system's own calibration error (Table~\ref{tab:P8}).}
+The Figure~\ref{fig:L} flag set raises a mild circularity concern: the per-system calibration of
+the sandwich null, measured independently against across-replicate spread
+(Figure~\ref{fig:Arep}), is heterogeneous, and four of the six flagged systems are themselves
+locally overconfident (\texttt{brd4} $0.76\times$, \texttt{faah} $0.90\times$, \texttt{bace}
+$0.96\times$, \texttt{hif2a} $0.96\times$; only \texttt{cdk8} $1.41\times$ and \texttt{p38}
+$1.43\times$ are conservative), so a flag could partly reflect that system's own too-tight bars
+rather than genuine physical inconsistency. We test this directly: for replicate $0$, the $48$
+systems with $\geq1$ independent cycle (the identical population as Figure~\ref{fig:L}), each
+system's per-edge $\mathrm{se}$ is inflated by $1/\mathrm{ratio}$ where its own ratio is below
+$1$ (systems with ratio $\geq1$ are already conservative and are left unchanged), and the
+Benjamini--Hochberg test is recomputed over the whole set under this self-calibrated null.
+Frozen pre-registration: SURVIVES iff every nominally-flagged system remains flagged;
+PARTIAL/FAILS iff some/none do; the population, inflation rule, and $\alpha=0.05$ were fixed
+before this run and not adjusted afterward. Result: \textbf{SURVIVES} -- all six flags remain
+under their own self-calibrated null (Table~\ref{tab:P8}), each self-calibrated reduced $\chi^2$
+still exceeding the paper's own ${\gtrsim}1.7\times$ conservatism bound (Section~\ref{sec:qc},
+main text). The two distribution-free backstops of Figure~\ref{fig:Lval} (causal edge removal,
+cross-replicate residual correlation) are functions of rank order and raw residual correlation
+only, never of $\mathrm{se}$, so neither depends on this null and neither is affected by this
+concern in either direction. Deterministic; \texttt{make figP8}; full $48$-system table in
+\texttt{docs/results\_figP8.md}.
+
+\begin{table}[t]\centering
+\caption{\textbf{Supplement: per-system flag robustness to each system's own measured
+calibration error (peer-review item P8; the six Figure~\ref{fig:L} flagged systems).} ``ratio''
+is the per-system \textbf{root-mean-square} calibration ratio -- $\mathrm{ratio}_s=\sqrt{\smash[b]{\langle
+\mathrm{se}_e^2\rangle_{e\in s}}}/\sqrt{\smash[b]{\langle\mathrm{SD}_e^2\rangle_{e\in s}}}$, the
+root-mean-square reported $\mathrm{se}$ over the root-mean-square across-independent-replicate SD
+of binding $\ddG$, pooled per system -- identical to Supplementary Figure~\ref{fig:Arep}'s
+per-target ratio (not a naive per-system average of per-edge ratios or a naive ratio of
+arithmetic means, which for three of the six systems below sit on the opposite side of
+$\mathrm{ratio}=1$). $\chi^2_{\text{nom}}$ is the nominal reduced $\chi^2$ (Figure~\ref{fig:L}A);
+$\chi^2_{\text{self}}$ inflates that system's own $\mathrm{se}$ by $1/\mathrm{ratio}$ where
+$\mathrm{ratio}<1$ and leaves it unchanged otherwise.}
+\label{tab:P8}
+\small
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+System & ratio & $\chi^2_{\text{nom}}$ & $\chi^2_{\text{self}}$ & Still flagged \\
+\midrule
+\texttt{brd4}  & $0.76$ & $15.40$ & $8.97$ & yes \\
+\texttt{bace}  & $0.96$ & $5.57$  & $5.13$ & yes \\
+\texttt{faah}  & $0.90$ & $3.71$  & $2.99$ & yes \\
+\texttt{cdk8}  & $1.41$ & $2.68$  & $2.68$ & yes (unchanged; already conservative) \\
+\texttt{hif2a} & $0.96$ & $2.53$  & $2.36$ & yes \\
+\texttt{p38}   & $1.43$ & $2.40$  & $2.40$ & yes (unchanged; already conservative) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{Reward re-ranking over a measured congeneric set (Figure~\ref{fig:K}).} Driving a
 trajectory-balance GFlowNet over \texttt{eg5} (the most $\sigma$-varying evaluable target), the
 calibrated LCB reward \emph{lowers} the true hit-rate (cal$-$raw $-0.110$) because $\sigma$ tracks
