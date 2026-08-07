@@ -9,7 +9,7 @@ turns thermodynamic cycle-closure into a quality-control test, flagging six syst
 backstops confirming the flags are systematic and reproducible (not a quantitative
 false-positive-rate guarantee), where an overconfident learned $\sigma$ flags $88\%$ of systems and
 is useless. That bar
-is trustworthy for the job: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
+is trustworthy for the job against sampling and convergence noise: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
 order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected), never systematically
 overconfident. The same free primitive supplies a Fisher--resistance acquisition-graph weight (the
 knowledge gradient is exactly zero on gauge directions) and exposes a parity-odd (\texttt{0o}) readout
@@ -21,7 +21,10 @@ selection or commit ranking, and does not help reward re-ranking on a measured c
 multiplier}. A fair learned-variance foil, fed work moments \emph{and} the overlap scalar $I$, stays
 $\sim$$7\times$ overconfident; a corrected $\beta$-NLL head and a $5$-member deep ensemble do no
 better at a realistic budget, a data-efficiency limit of learned per-edge variance rather than an
-identifiability one (pooling confirms the variance is identifiable). We
+identifiability one (pooling confirms the variance is identifiable). Across independent training
+seeds the plain and $\beta$-NLL foils' overconfidence is stable, but the ensemble's is not:
+its ratio spans $0.20$--$1.22\times$ over $5$ retrains, one of them crossing perfect calibration,
+so a learned per-edge variance is unreliable at this budget in either direction. We
 establish four results: two new (the differentiable closed-form sandwich and its $O(1)$ backward)
 and two that make precise or connect known results (the Fisher--resistance correspondence and
 chirality completeness). Together they map where a free, differentiable primitive helps: a decision
@@ -182,10 +185,22 @@ ${\approx}0.15\times$ the truth; range $0.09$--$0.20\times$ across the overlap s
 ${\approx}5\times$ overconfident even at the large-budget oracle (se ${\approx}0.20\times$).
 Corrected foils do not rescue the head at a realistic budget: a $\beta$-NLL
 head~\citep{seitzer2022pitfalls} ($\beta{=}0.5$, the standard objective fix) does \emph{not}
-recover calibration (se ${\approx}0.11\times$, no better than plain NLL), and a $5$-member deep
+recover calibration (se ${\approx}0.11\times$, in fact slightly worse than plain NLL's
+$0.15\times$), and at this training seed a $5$-member deep
 ensemble~\citep{lakshminarayanan2017ensembles} reaches only the large-budget floor
 (se ${\approx}0.20\times$, the same ${\approx}5\times$ overconfidence a $20\times$-larger-budget
-plain head reaches). The residual $\sim$5$\times$ overconfidence is therefore a
+plain head reaches). These ratios are stable across independent training seeds for the plain and
+$\beta$-NLL heads: over $5$ seeds the plain head spans $0.1229$--$0.2103\times$ (mean
+$0.1537\times$) and the $\beta$-NLL head $0.1024$--$0.1256\times$ (mean $0.1147\times$), so their
+overconfidence is a property of the estimator at this budget rather than of one lucky
+initialization. The $5$-member ensemble is not stable: across the same $5$ seeds, each with a
+disjoint $5$-network member block, it spans $0.1984$--$1.2200\times$ (mean $0.4198\times$, sd
+$0.4481\times$), and one seed \emph{overestimates} the true se by $22\%$, crossing perfect
+calibration. Unlike the plain, oracle, and $\beta$-NLL heads, whose overconfidence is robust
+across independent retrains, the ensemble is unreliable in \emph{both} directions at this budget,
+so a learned per-edge variance is not a trustworthy substitute for the closed-form sandwich either
+way. The residual $\sim$5$\times$ overconfidence of the plain, oracle, and $\beta$-NLL heads is
+therefore a
 \emph{data-efficiency} limit of a per-edge \emph{learned} variance, not an identifiability barrier
 and not specific to the Gaussian-NLL objective: the conditional variance $se(\text{overlap})$ is
 itself identifiable from single labels, pooling single-label edges by overlap recovering the
@@ -220,8 +235,10 @@ truth; a fair learned-variance head (fed work moments + overlap $I$; reviewer M2
 ${\approx}7\times$ overconfident at realistic budget (se ${\approx}0.15\times$ truth,
 range $0.09$--$0.20\times$); a richly-fed head approaches the closed form only with a large
 budget (${\approx}5\times$ overconfident at 4000-edge oracle, se ${\approx}0.20\times$);
-corrected foils do not help at realistic budget ($\beta$-NLL se ${\approx}0.11\times$; $5$-member
-deep ensemble se ${\approx}0.20\times$, the large-budget floor); $1/I$ is the info-equality plug-in.
+corrected foils do not help at realistic budget ($\beta$-NLL se ${\approx}0.11\times$, stable across
+seeds; $5$-member deep ensemble se ${\approx}0.20\times$ at this seed, the large-budget floor, but
+$0.20$--$1.22\times$ and unstable across $5$ independent seeds, one crossing calibration); $1/I$ is
+the info-equality plug-in.
 (B) Real FEP edges, BACE1 RBFE
 binding (filled) and benzene solvation, sandwich tracks bootstrap truth (an internal check)
 while $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ (BACE1 $6.07$
@@ -270,7 +287,9 @@ where the gauge-aware one reaches $0.01$.
 The one downstream task where the calibrated variance's \emph{value}, not just its structure, is
 load-bearing, and the paper's central demonstrated capability, is separating \emph{edge-level
 systematic error} (non-convergence, hysteresis, charge/water/protonation artifacts) from
-\emph{sampling noise} in a perturbation network. This is \emph{detection}, not weighting of a fixed
+\emph{sampling noise} in a perturbation network. The calibration underwriting this test is
+validated against seed and velocity replicate spread, a lower bound on full run-to-run
+reproducibility (it excludes pose and system-preparation variance). This is \emph{detection}, not weighting of a fixed
 estimate: the Gauss--Markov ceiling that makes the calibrated variance second-order elsewhere (in a
 connected graph the GLS contrast mean is unbiased for \emph{any} positive weights, so the weight
 \emph{value} cannot improve ranking, as the applicability map of Section~\ref{sec:audit} develops)
@@ -312,12 +331,17 @@ curl-leverage does not additionally predict the \emph{location} of reproducible 
 Figure~\ref{fig:Lev}), so we claim only the structural certificate.
 
 Network maximum-likelihood
-estimation of $\ddG$ networks~\citep{xu2019diffnet} and cycle-closure hysteresis as a
-diagnostic~\citep{wang2015fep} are standard; what is new is the \emph{calibrated} null: a
+estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as a
+diagnostic~\citep{wang2015fep,cui2020hysteresis}, weighted cycle closure~\citep{li2023wcc}, and the
+constrained variational solution of a whole network under loop closure~\citep{giese2021variational}
+are established; what is new is the \emph{calibrated} null: a
 per-edge, replicate-validated aleatoric variance that gives the test per-edge-adaptive thresholds
 and a false-positive rate controlled \emph{to the extent the per-edge null is calibrated}
 (validated against independent replicates, Figure~\ref{fig:Arep}), complementing the field's fixed
-hysteresis cutoffs. We benchmarked this directly: on the same $1145$ edges, flagging by the
+hysteresis cutoffs, together with the two distribution-free backstops of Figure~\ref{fig:Lval} and the
+estimation--detection conservation law of Theorem~\ref{thm:cons}, which fixes which edges are
+auditable at all; what is shared with the works above is the weighted least-squares treatment of the
+cycle graph itself. We benchmarked this directly: on the same $1145$ edges, flagging by the
 calibrated per-edge null does not measurably out-discriminate a fixed $1.0$ kcal/mol hysteresis
 cutoff or a fixed-$\mathrm{se}$ $\chi^2$ test against a cross-replicate reproducibility anchor (AUC
 $0.865$ vs $0.575$ and $0.725$; paired bootstrap difference $+0.140$ $[-0.008,+0.316]$,
@@ -633,7 +657,8 @@ computed, differentiable, non-negative closed form rather than a learned guess. 
 payoff is a \emph{calibrated cycle-closure quality-control test} that separates edge-level
 systematic error from sampling noise on $1145$ real edges (Section~\ref{sec:qc}), with a
 false-positive rate set by the calibrated null and confirmed by distribution-free causal and
-cross-replicate checks, the sharpest use of the free calibration and one an overconfident learned
+cross-replicate checks, the sharpest use of the free calibration, calibrated against sampling and
+convergence noise, and one an overconfident learned
 $\sigma$ destroys. The same primitive is usable as a Fisher--resistance graph weight (whose value
 is structural, gauge-identifiability and trust, rather than a better-ranking magnitude) and is
 paired with an exact chirality requirement. Tested honestly across the remaining downstream tasks,

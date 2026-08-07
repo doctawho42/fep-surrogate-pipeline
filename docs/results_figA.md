@@ -26,7 +26,11 @@ sandwich**. So Fig A makes three honest points instead:
    *not* recover calibration (**0.11× true se**, in fact slightly *worse* than plain NLL's
    0.15×), and a **5-member
    deep ensemble** (Lakshminarayanan et al. 2017) reaches only the large-budget floor
-   (**0.20×**). So the residual ~5× is a **data-efficiency limit of a per-edge *learned*
+   (**0.20×** at this seed). That single-seed number is **not** stable across independent
+   retrains: `results_figA_seeds.md` reports the ensemble spanning **0.1984–1.2200×** over 5
+   genuinely independent seeds (mean 0.42×, sd 0.45×), with one seed *overestimating* the true
+   se by 22%, crossing perfect calibration — unlike the plain, oracle, and β-NLL foils, whose
+   5-seed intervals are tight and stay deeply overconfident. So the residual ~5× is a **data-efficiency limit of a per-edge *learned*
    variance**, **not an identifiability barrier** and **not specific to the Gaussian-NLL
    objective**: the pooling check below shows se(overlap) *is* recoverable from single per-edge
    labels once they are pooled by overlap bucket
@@ -67,8 +71,8 @@ overlap `I` (reviewer M2a); oracle = same features, 4000 training edges.
 **Headline numbers (M2a, honest fair-foil result):**
 - Fair-foil mean (realistic budget, fed moments + overlap I): **0.15× true se** (~7× overconfident, range 0.09–0.20× across overlap sweep).
 - Oracle mean (large budget, 4000 training edges, same features): **0.20× true se** (~5× overconfident).
-- **β-NLL (β=0.5, realistic budget): 0.11× true se** — the standard objective fix does *not* recover calibration (it is slightly worse than plain NLL's 0.15×, i.e. further from calibrated). **5-member deep ensemble (realistic budget): 0.20× true se** — only reaches the large-budget floor.
-- Even with 20× more training data, a corrected objective (β-NLL), OR a stronger estimator (deep ensemble), the learned head stays ~5× overconfident at realistic budget. The conditional sampling variance IS identifiable from single ΔΔĜ labels (pooling check below) — so the residual overconfidence is a **data-efficiency floor of per-edge learned variance**, not an information-theoretic floor and not specific to the Gaussian-NLL objective (β-NLL does not help — if anything it is slightly worse; the ensemble only reaches the 20×-budget floor). The physics computes it exactly, per-edge, differentiably, at zero label cost.
+- **β-NLL (β=0.5, realistic budget): 0.11× true se** — the standard objective fix does *not* recover calibration (it is slightly worse than plain NLL's 0.15×, i.e. further from calibrated). **5-member deep ensemble (realistic budget): 0.20× true se** at this seed — only reaches the large-budget floor. But this is a single-seed number: across 5 independent seeds (`results_figA_seeds.md`) the ensemble ranges **0.1984–1.2200×** (mean 0.42×, sd 0.45×) and one seed crosses 1.0, so the ensemble is *unstable*, not a reliable 0.20×, unlike plain/oracle/β-NLL whose seed intervals are tight.
+- Even with 20× more training data, a corrected objective (β-NLL), OR a stronger estimator (deep ensemble), the learned head stays ~5× overconfident at realistic budget (at least at the seed Fig A plots). The conditional sampling variance IS identifiable from single ΔΔĜ labels (pooling check below) — so the residual overconfidence is a **data-efficiency floor of per-edge learned variance**, not an information-theoretic floor and not specific to the Gaussian-NLL objective (β-NLL does not help — if anything it is slightly worse; the ensemble only reaches the 20×-budget floor at this seed, but is unreliable across seeds — see the multi-seed spread above). The physics computes it exactly, per-edge, differentiably, at zero label cost.
 - Honest frame: **"learnable-with-data vs exact-and-free"** — not "the learned head fails" and not "one label per edge can never work." It can improve substantially with data, and a differently-trained/pooled estimator *can* recover the target se — but no learned head matches the closed form for free, and the standard per-edge Gaussian-NLL MVE head does not get there at realistic budgets.
 
 **Identifiability check (reviewer round-2 §3): is `se(overlap)` recoverable from single labels?**
