@@ -19,10 +19,11 @@ simulations it is no sharper than conformal on out-of-distribution residuals, do
 selection or commit ranking, and does not help reward re-ranking on a measured congeneric set
 (\texttt{eg5}), so it is a \emph{decision-and-quality-control instrument, not a performance
 multiplier}. A fair learned-variance foil, fed work moments \emph{and} the overlap scalar $I$, stays
-$\sim$$7\times$ overconfident; a corrected $\beta$-NLL head and a $5$-member deep ensemble do no
-better at a realistic budget, a data-efficiency limit of learned per-edge variance rather than an
-identifiability one (pooling confirms the variance is identifiable). Across independent training
-seeds the plain and $\beta$-NLL foils' overconfidence is stable, but the ensemble's is not:
+$\sim$$7\times$ overconfident; a corrected $\beta$-NLL head does not recover calibration either
+(${\approx}0.11\times$, slightly worse than plain), a data-efficiency limit of learned per-edge
+variance rather than an identifiability one for these single-objective heads (pooling confirms the
+variance is identifiable). Across independent training seeds the plain and $\beta$-NLL foils'
+overconfidence is stable, but a $5$-member deep ensemble's is not:
 its ratio spans $0.20$--$1.22\times$ over $5$ retrains, one of them crossing perfect calibration,
 so a learned per-edge variance is unreliable at this budget in either direction. We
 establish four results: two new (the differentiable closed-form sandwich and its $O(1)$ backward)
@@ -196,8 +197,9 @@ overconfidence is a property of the estimator at this budget rather than of one 
 initialization. The $5$-member ensemble is not stable: across the same $5$ seeds, each with a
 disjoint $5$-network member block, it spans $0.1984$--$1.2200\times$ (mean $0.4198\times$, sd
 $0.4481\times$), and one seed \emph{overestimates} the true se by $22\%$, crossing perfect
-calibration. Unlike the plain, oracle, and $\beta$-NLL heads, whose overconfidence is robust
-across independent retrains, the ensemble is unreliable in \emph{both} directions at this budget,
+calibration. Unlike the plain, oracle ($0.1941$--$0.2571\times$, mean $0.2101\times$), and
+$\beta$-NLL heads, whose overconfidence is robust across independent retrains, the ensemble is
+unreliable in \emph{both} directions at this budget,
 so a learned per-edge variance is not a trustworthy substitute for the closed-form sandwich either
 way. The residual $\sim$5$\times$ overconfidence of the plain, oracle, and $\beta$-NLL heads is
 therefore a
@@ -237,7 +239,7 @@ range $0.09$--$0.20\times$); a richly-fed head approaches the closed form only w
 budget (${\approx}5\times$ overconfident at 4000-edge oracle, se ${\approx}0.20\times$);
 corrected foils do not help at realistic budget ($\beta$-NLL se ${\approx}0.11\times$, stable across
 seeds; $5$-member deep ensemble se ${\approx}0.20\times$ at this seed, the large-budget floor, but
-$0.20$--$1.22\times$ and unstable across $5$ independent seeds, one crossing calibration); $1/I$ is
+spanning $0.20$--$1.22\times$ across $5$ independent retrains, one crossing calibration); $1/I$ is
 the info-equality plug-in.
 (B) Real FEP edges, BACE1 RBFE
 binding (filled) and benzene solvation, sandwich tracks bootstrap truth (an internal check)
