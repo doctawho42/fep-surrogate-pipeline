@@ -35,6 +35,17 @@ tight, rather than because its physics is inconsistent. This table answers the d
 question — inflate each system's own null by its own measured local miscalibration and
 see whether the flags survive.
 
+**Note on the raw vs. c4-corrected ratio.** The four sub-1 ratios above (`brd4 0.76`,
+`faah 0.90`, `bace 0.96`, `hif2a 0.96`) are raw `n=3` SD ratios, uncorrected for the
+`c4(3)=0.886` small-sample SD bias that `figs/make_figA_replicates.py` applies to the
+*aggregate* ratio elsewhere (`1.41x` raw → `1.25x` c4-corrected,
+`docs/results_figA_replicates.md`). Applying that identical correction (`ratio * c4(3)`,
+the same operation `make_figA_replicates.py` uses) to these four per-system ratios makes
+all four appear **more**, not less, locally overconfident: `brd4 0.68`, `faah 0.80`,
+`bace 0.85`, `hif2a 0.86`. So the raw ratios used to build the self-calibrated null below
+are, if anything, generous to these systems, not the reverse — the self-calibration test
+run here is not as aggressive as a fully bias-corrected version would be.
+
 ## 2. Frozen pre-registration (restated verbatim, recorded before this run)
 
 - Population: replicate 0, systems with `dof >= 1` (Fig L's own population), BH-FDR
@@ -59,9 +70,11 @@ for every edge belonging to system `s` with a non-degenerate replicate spread,
 ratio_s = sqrt( mean_e[ reported_se_e^2 ] )  /  sqrt( mean_e[ replicate_sd_e^2 ] )
 ```
 
-where `reported_se_e = sqrt(complex_dDG_e^2 + solvent_dDG_e^2)` (pymbar4 MBAR/sandwich
-uncertainty, RMS'd is not applied per-edge — it is a single per-edge quantity already
-combined in quadrature across the two legs) and `replicate_sd_e` is the empirical SD of
+where `reported_se_e = sqrt(complex_dDG_e^2 + solvent_dDG_e^2)` is the pymbar4 MBAR/sandwich
+uncertainty (combined in quadrature across the two legs, complex and solvent, once per edge --
+that quadrature combination happens before the RMS aggregation across edges shown above, so
+`reported_se_e` itself is a single per-edge number, not an RMS) and `replicate_sd_e` is the
+empirical SD of
 that edge's binding ΔΔG across the 3 independent OpenFE replicates. This is **root-mean-
 square of se over root-mean-square of replicate SD**, not a naive per-system average of
 per-edge ratios. It is exactly the formula `figs/make_figA_replicates.py` uses for its
@@ -246,10 +259,14 @@ inflated by its own measured local miscalibration (`1/ratio` where `ratio < 1`):
 | hif2a | 0.965 | 2.534 | 2.358 | yes |
 | p38 | 1.427 | 2.396 | 2.396 | yes (unchanged; already conservative) |
 
-Every self-calibrated reduced chi-square remains well above the paper's own
-conservatism-implied threshold (`~1.7x`, `docs/results_figL.md` / `docs/paper_body.tex`
-Section "The sharpest use") — the smallest surviving value, `hif2a` at `2.358`, is still
-`>1.7`.
+Every self-calibrated reduced chi-square remains `7`-`26x` the `~0.34` median reduced
+chi-square a sampling-consistent network shows under this conservative null -- the correct
+variance-scale comparison (the paper's `~1.7x` figure, `docs/results_figL.md` /
+`docs/paper_body.tex` Section "The sharpest use", is an se-scale factor and is not directly
+comparable to a chi-square; squared it is `~2.9x`, which `cdk8` (`2.678`), `p38` (`2.396`),
+and `hif2a` (`2.358`) would all fall below, so `0.34` -- not `1.7` or its square -- is the
+correct comparison point). The smallest surviving value, `hif2a` at `2.358`, is `6.9x` the
+`0.34` baseline.
 
 ## 8. Honest reading
 

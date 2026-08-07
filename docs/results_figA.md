@@ -151,3 +151,54 @@ realistic and even large training budgets — a floor the plain, oracle, and β-
 persistently hit, so it is not specific to the Gaussian-NLL objective; the ensemble's
 calibration is not stable across seeds (see above) — the BAR bottleneck sidesteps that data-efficiency floor entirely
 by computing the variance exactly, per edge, untrained, at zero label cost.
+
+## Appendix: BACE1 per-edge table with lambda labels (whole-branch review I4)
+
+Supplementary Table `tab:bace1` (`docs/paper_si.tex`) previously paired its
+`(lambda_i, lambda_j)` columns by hand against `figs/make_figA.py`'s `_bace_edges()`
+generator output, since `real_panel()` discards the lambda labels in its returned row
+dicts (`dict(kind, overlap, sand, naive)`). This appendix commits a programmatic,
+re-derivable source: `bace_table_rows()` (added to `figs/make_figA.py`) replays the
+identical binding-edge computation `real_panel()`'s `binding` branch performs (same
+`RNG_SEED=20260629`, same `_bace_edges()` edge order, same bootstrap truth), but also
+carries `(lambda_i, lambda_j)` through, so the pairing is generated, not hand-carried.
+
+Reproduce: `PYTHONPATH=src python figs/make_figA.py bace_table`. Deterministic.
+Numerically identical to the `binding` rows `real_panel()` produces for Figure A panel B
+(the `binding` branch is drawn from the shared rng before the `solvation` branch, so a
+fresh `rng(RNG_SEED)` restricted to `_bace_edges()` reproduces the exact same draws;
+confirmed by comparing against the previously-published `tab:bace1` values, matching to
++/-0.001 in overlap, a float-precision-level difference, not a data difference).
+
+Verbatim stdout (19 edges, sorted by overlap ascending):
+
+```
+[BACE1 table] 19 edges, sorted by overlap ascending (lambda_i, lambda_j, 4<p(1-p)>, sandwich/boot, naive/boot):
+  0.437  0.563  0.846  0.992  2.780
+  0.316  0.437  0.858  1.001  3.020
+  0.206  0.316  0.876  0.967  4.377
+  0.750  1.000  0.884  0.956  3.315
+  0.563  0.684  0.909  1.041  3.451
+  0.500  0.750  0.917  0.971  3.618
+  0.684  0.794  0.921  0.997  3.581
+  0.250  0.500  0.927  1.017  3.860
+  0.000  0.250  0.928  0.967  3.678
+  0.500  0.750  0.943  1.018  9.823
+  0.794  0.885  0.943  0.981  4.165
+  0.000  0.250  0.947  0.986  9.360
+  0.115  0.206  0.949  1.005  6.414
+  0.250  0.500  0.967  1.004  9.116
+  0.750  1.000  0.968  1.052  9.901
+  0.885  0.952  0.968  0.995  5.670
+  0.952  1.000  0.983  1.064  8.193
+  0.048  0.115  0.984  1.066  8.960
+  0.000  0.048  0.992  1.007  12.007
+```
+
+**Spearman correlation (whole-branch review recommendation).** Computed from the table
+above with `scipy.stats.spearmanr(overlap, naive_ratio)`: **rho = 0.842** (n = 19,
+p = 6.2e-06). The naive/bootstrap-ratio trend with overlap is not an artifact of which
+two edges happen to sit at the extremes (worst `12.01x` at the single highest-overlap
+edge, best `2.78x` at the single lowest-overlap edge) -- it holds across the full
+narrow `[0.846, 0.992]` overlap band. `docs/paper_si.tex` now reports this rho alongside
+the extreme-edge sentence.

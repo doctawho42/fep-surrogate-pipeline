@@ -4,16 +4,22 @@
 that naive $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ on the $19$ BACE1 RBFE
 binding edges (mean $6.07$, $[2.78,12.01]$), the worst overstatement occurring at \emph{high}
 overlap, consistent with the controlled panel (invariant \#1, main text). Table~\ref{tab:bace1}
-lists the per-edge overlap $4\langle p(1-p)\rangle$ and both ratios for all $19$ edges (adjacent-$\lambda$
-BAR windows, complex leg, alchemtest AMBER \texttt{load\_bace\_example}), recomputed from the
-identical source Figure~\ref{fig:A}B uses (\texttt{figs/make\_figA.py}: \texttt{\_bace\_edges()} +
-\texttt{real\_panel()}, seed $20260629$; both sandwich inputs and the bootstrap truth
-subsampled to the statistical inefficiency $g$ before $B$ is formed, Section~\ref{sec:bar}).
-Every edge sits at overlap $\geq0.85$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
+lists the $(\lambda_i,\lambda_j)$ BAR-window labels, per-edge overlap $4\langle p(1-p)\rangle$,
+and both ratios for all $19$ edges (adjacent-$\lambda$ BAR windows, complex leg, alchemtest AMBER
+\texttt{load\_bace\_example}), emitted verbatim, lambda labels included, by
+\texttt{figs/make\_figA.py bace\_table} (\texttt{bace\_table\_rows()}, seed $20260629$; both
+sandwich inputs and the bootstrap truth subsampled to the statistical inefficiency $g$ before $B$
+is formed, Section~\ref{sec:bar}; numerically identical to \texttt{real\_panel()}'s binding rows,
+committed verbatim in \texttt{docs/results\_figA.md}), so the $\lambda$ pairing is
+programmatically re-derivable rather than hand-carried.
+Every edge sits at overlap $\geq0.84$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
 occurs at the single highest-overlap edge ($4\langle p(1-p)\rangle=0.992$), and the best (least
 overstated, $2.78\times$) occurs at the lowest-overlap edge in the set ($0.846$) -- the same
 high-overlap-is-worst regime as the controlled sweep of Figure~\ref{fig:A}A, not an artifact of
-which real edges happened to be sampled.
+which real edges happened to be sampled. Across the full $19$-edge set the trend is not an
+artifact of the extremes either: the Spearman rank correlation between overlap and the
+naive/bootstrap ratio is $\rho=0.84$ ($n=19$, computed from Table~\ref{tab:bace1}), so the
+relationship holds within the narrow $[0.846,0.992]$ overlap band, not just at its endpoints.
 
 \begin{table}[t]\centering
 \caption{\textbf{Supplement: per-edge overlap on the $19$ real BACE1 RBFE binding edges of
@@ -371,8 +377,9 @@ Frozen pre-registration: SURVIVES iff every nominally-flagged system remains fla
 PARTIAL/FAILS iff some/none do; the population, inflation rule, and $\alpha=0.05$ were fixed
 before this run and not adjusted afterward. Result: \textbf{SURVIVES} -- all six flags remain
 under their own self-calibrated null (Table~\ref{tab:P8}), each self-calibrated reduced $\chi^2$
-still exceeding the paper's own ${\gtrsim}1.7\times$ conservatism bound (Section~\ref{sec:qc},
-main text). The two distribution-free backstops of Figure~\ref{fig:Lval} (causal edge removal,
+($2.36$--$8.97$) remaining $7$--$26\times$ the ${\approx}0.34$ a sampling-consistent network shows
+under this conservative null (Section~\ref{sec:qc}, main text). The two distribution-free
+backstops of Figure~\ref{fig:Lval} (causal edge removal,
 cross-replicate residual correlation) are functions of rank order and raw residual correlation
 only, never of $\mathrm{se}$, so neither depends on this null and neither is affected by this
 concern in either direction. Deterministic; \texttt{make figP8}; full $48$-system table in
@@ -389,7 +396,12 @@ per-target ratio (not a naive per-system average of per-edge ratios or a naive r
 arithmetic means, which for three of the six systems below sit on the opposite side of
 $\mathrm{ratio}=1$). $\chi^2_{\text{nom}}$ is the nominal reduced $\chi^2$ (Figure~\ref{fig:L}A);
 $\chi^2_{\text{self}}$ inflates that system's own $\mathrm{se}$ by $1/\mathrm{ratio}$ where
-$\mathrm{ratio}<1$ and leaves it unchanged otherwise.}
+$\mathrm{ratio}<1$ and leaves it unchanged otherwise. ``ratio'' below is the raw $n{=}3$ SD ratio,
+uncorrected for the $c_4(3)=0.886$ small-sample bias applied to the aggregate ratio elsewhere
+(Figure~\ref{fig:Arep}); correcting each of the four sub-$1$ ratios by that same factor moves all
+four \emph{further} below $1$ ($\texttt{brd4}$ $0.68$, $\texttt{faah}$ $0.80$, $\texttt{bace}$
+$0.85$, $\texttt{hif2a}$ $0.86$), so the raw ratios used here and to build $\chi^2_{\text{self}}$
+are, if anything, generous to these systems rather than the reverse.}
 \label{tab:P8}
 \small
 \begin{tabular}{@{}lrrrl@{}}

@@ -116,6 +116,27 @@ def test_sandwich_matches_mbar_asymptotically():
     assert np.mean(sand) == pytest.approx(np.mean(mbar), rel=0.03)
 
 
+def test_mbar_sandwich_discrepancy_shrinks_with_n():
+    """Thm 2 remark: Var_MBAR = B/I^2 + O(1/n^2), i.e. the two forms converge as n grows.
+    Paired Monte-Carlo check (against bar_estimate's own var_mbar/var_sandwich fields)
+    over the range the manuscript cites (n=40..320, docs/paper_body.tex Thm 2 remark):
+    the mean paired |Var_MBAR - B/I^2| should shrink monotonically and substantially,
+    faster than 1/n. Kept fast (n<=320, 800 reps, ~0.5s)."""
+    rng = np.random.default_rng(20260807)
+    reps = 800
+    mean_abs_diff = []
+    for n in (40, 80, 160, 320):
+        diffs = []
+        for _ in range(reps):
+            xf, xr = gaussian_works(1.5, n, rng)
+            res = bar_estimate(xf, xr)
+            diffs.append(res.var_mbar - res.var_sandwich)
+        mean_abs_diff.append(float(np.mean(np.abs(diffs))))
+    assert mean_abs_diff[0] > mean_abs_diff[1] > mean_abs_diff[2] > mean_abs_diff[3]
+    # faster than a bare 1/n decay (>8x shrinkage over an 8x n range)
+    assert mean_abs_diff[0] / mean_abs_diff[3] > 8.0
+
+
 # --------------------------------------------------------------------------
 # #2 — calibration: sandwich tracks MC truth; naive 1/I does NOT (varying factor)
 # --------------------------------------------------------------------------
