@@ -393,7 +393,15 @@ the Figure~\ref{fig:L}B stand-in, that destroys the test, and the heterogeneous,
 structure of a profile this overconfident carries no additional information for it. The
 demonstration is therefore scoped to heads as overconfident as the measured one (reported
 $\mathrm{se}$ $5$--$11\times$ too small); it establishes that such heads saturate the test, not the
-shrink magnitude at which selectivity is first lost. The
+shrink magnitude at which selectivity is first lost. Sweeping the shrink magnitude supplies that
+missing curve (Supplementary Figure~\ref{fig:P4b}): the flagged fraction climbs from the calibrated
+$6/48$ ($12\%$) through a graded mid-curve rise, $12/48$ ($25\%$) at a $0.7\times$ scale to $30/48$
+($62\%$) at $0.3\times$, reaching half the $48$-system benchmark at $s_{50}=0.3\times$, and the
+learned head's measured miscalibration band ($0.09$--$0.20\times$) lies below that point, on the
+deep-shrink side of where the test already flags a majority of systems. The quality-control test is
+therefore selective over roughly a factor-of-three range of $\sigma$ miscalibration around the
+calibrated scale, and the head we measured is not marginal but well inside the saturated regime.
+The
 three independent replicates confirm the flags are systematic, not sampling: pooling the
 replicates shrinks the bars ($\mathrm{se}\to\mathrm{se}/\sqrt3$) yet \emph{increases} the flagged
 systems' reduced $\chi^2$ toward the $3\times$ variance-components ceiling (Figure~\ref{fig:L}C),
@@ -699,7 +707,8 @@ revisited.
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
 figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
 reproduces via \texttt{make figLev}; Fig.~\ref{fig:Cut} reproduces via \texttt{make figCut};
-Supplementary Figure~\ref{fig:P4} reproduces via \texttt{make figP4}; the
+Supplementary Figure~\ref{fig:P4} reproduces via \texttt{make figP4}; Supplementary
+Figure~\ref{fig:P4b} reproduces via \texttt{make figP4b}; the
 autocorrelation panel Fig.~\ref{fig:gsweep} via
 \texttt{make gsweep}); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF

@@ -248,6 +248,50 @@ band rather than only asserting it.}
 \label{fig:P4}
 \end{figure}
 
+\paragraph{Dose-response of the QC to $\sigma$ miscalibration (Figure~\ref{fig:P4b}).}
+Figure~\ref{fig:L}B and Supplementary Figure~\ref{fig:P4} each characterize the cycle-closure test
+at a small number of scale points (${\times}1$ calibrated, ${\times}0.15$ stress test / real
+profile); here a pre-registered, frozen grid of $16$ uniform $\mathrm{se}$ scale factors
+($2.0$--$0.10\times$) is swept through the identical GLS $+$ Benjamini--Hochberg pipeline on the
+same $48$-system OpenFE network. Two frozen readouts: $s_{\text{onset}}$, the largest scale that
+flags strictly more systems than calibrated, and $s_{50}$, the largest scale at which at least half
+the systems are flagged. $s_{\text{onset}}=0.9\times$ ($7/48$ vs.\ the calibrated $6/48$) is exactly
+one system crossing the Benjamini--Hochberg threshold and is close to mechanically forced (a
+uniform scale multiplies every system's $\chi^2$ by the same $1/\text{scale}^2$, so the first grid
+point below $1.0$ at which any single borderline system's $p$-value crosses the cutoff is close to
+guaranteed to register); it is not, on its own, evidence of broad sensitivity to mild
+overconfidence. The substantive change is mid-curve: from $0.7\times$ to $0.3\times$ the flagged
+fraction climbs from $12/48$ ($25\%$) to $30/48$ ($62\%$), reaching half the benchmark at
+$s_{50}=0.3\times$. The learned head's measured, rank-transferred miscalibration band
+($0.09$--$0.20\times$; Figure~\ref{fig:A}A, Supplementary Figure~\ref{fig:P4}) lies entirely below
+$s_{50}$, so the head is not near the transition but well inside the saturated regime. Two sanity
+anchors confirm the sweep reproduces the already-published test path: the ${\times}1.0$ row reads
+$6/48$, matching Figure~\ref{fig:L}A's calibrated count, and the ${\times}0.15$ row reads $42/48$,
+matching Figure~\ref{fig:L}B and Supplementary Figure~\ref{fig:P4}'s uniform/real-profile arms.
+Deterministic; \texttt{make figP4b}.
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.92\textwidth]{figP4b_dose_response.pdf}
+\caption{\textbf{Supplement: dose-response of the cycle-closure QC to $\sigma$ miscalibration
+(peer-review item P4b).} Flagged fraction of the $48$-system OpenFE network across a
+pre-registered, frozen grid of $16$ uniform $\mathrm{se}$ scale factors ($2.0$--$0.10\times$;
+$1.0=$ calibrated sandwich, lower $=$ more overconfident), swept through the identical GLS $+$
+Benjamini--Hochberg pipeline as Figure~\ref{fig:L} and Supplementary Figure~\ref{fig:P4}. Vertical
+dotted line: the calibrated scale ($1.0\times$, $6/48$ flagged). Vertical dashed line:
+$s_{50}=0.3\times$, the largest scale at which at least half the systems ($30/48$) are flagged.
+Shaded band: the learned head's measured, rank-transferred miscalibration range
+($0.09$--$0.20\times$), which lies entirely below $s_{50}$. The other frozen readout,
+$s_{\text{onset}}=0.9\times$ (the largest scale flagging more than the calibrated count), is
+exactly one system crossing the Benjamini--Hochberg threshold ($7/48$ vs.\ $6/48$) and is close to
+mechanically forced by the uniform rescaling of every system's $\chi^2$, so it should not be read
+as evidence of broad sensitivity near calibration; the mid-curve climb ($12/48$ at $0.7\times$ to
+$30/48$ at $0.3\times$) carries the real evidentiary weight. Two sanity anchors: the ${\times}1.0$
+point matches Figure~\ref{fig:L}A's calibrated count ($6/48$) and the ${\times}0.15$ point matches
+Figure~\ref{fig:L}B / Supplementary Figure~\ref{fig:P4}'s uniform/real-profile arms ($42/48$).
+Deterministic; \texttt{make figP4b}.}
+\label{fig:P4b}
+\end{figure}
+
 \paragraph{Reward re-ranking over a measured congeneric set (Figure~\ref{fig:K}).} Driving a
 trajectory-balance GFlowNet over \texttt{eg5} (the most $\sigma$-varying evaluable target), the
 calibrated LCB reward \emph{lowers} the true hit-rate (cal$-$raw $-0.110$) because $\sigma$ tracks
