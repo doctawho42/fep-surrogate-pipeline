@@ -43,6 +43,13 @@ GLS + BH-FDR test, **per edge**, and reports what actually happens.
   re-tuned.
 - Ranking is **global** (pool every edge across all 48 systems, rank-transfer
   once, then split back per system) — **not** per-system.
+- Shuffling (arm 3) is likewise **global**: `bar.sigma_profile.shuffled` is
+  called once on the pooled 1143-ratio array before it is split back per
+  system, not called independently within each system. (The original design
+  brief for this task described a per-system permutation; the committed code
+  implements the global version, which predates this run and is therefore
+  not an integrity issue — and it is the stronger control, since it can also
+  reassign ratios across systems, not only reorder them within one.)
 - Each edge's overlap = the **minimum** of its complex-leg and solvent-leg
   `smallest_overlap` at replicate 0.
 - Verdict threshold: **`2×`**.
@@ -84,18 +91,35 @@ wrote figP4_sigma_profile.(pdf|png) to /Users/nikitapolomosnov/PycharmProjects/f
 P4 VERDICT: DEGRADES
 [P4] flagged by real profile but not calibrated: ['bace1', 'bace_p3_arg368_in', 'btk', 'cdk2', 'chk1', 'ciordia_retro', 'cmet', 'eg5', 'ephx2', 'factor_xa', 'galectin', 'hiv1_protease', 'hne', 'hsp90_2rings', 'hsp90_kung', 'hsp90_single_ring', 'irak4_s2', 'itk', 'jak2_set1', 'jak2_set2', 'jnk1', 'keranen_p2', 'liga', 'mcl1', 'mup1', 'ptp1b', 'renin', 'scyt_dehyd', 'shp2', 'syk', 't4_lysozyme', 'taf12', 'thrombin', 'tnks2', 'tyk2', 'urokinase']
 [P4] flagged by calibrated but not real profile: []
+[P4] calibrated sandwich (x1)               flagged set: ['bace', 'brd4', 'cdk8', 'faah', 'hif2a', 'p38']
+[P4] real learned profile (PRIMARY)         flagged set: ['bace', 'bace1', 'bace_p3_arg368_in', 'brd4', 'btk', 'cdk2', 'cdk8', 'chk1', 'ciordia_retro', 'cmet', 'eg5', 'ephx2', 'faah', 'factor_xa', 'galectin', 'hif2a', 'hiv1_protease', 'hne', 'hsp90_2rings', 'hsp90_kung', 'hsp90_single_ring', 'irak4_s2', 'itk', 'jak2_set1', 'jak2_set2', 'jnk1', 'keranen_p2', 'liga', 'mcl1', 'mup1', 'p38', 'ptp1b', 'renin', 'scyt_dehyd', 'shp2', 'syk', 't4_lysozyme', 'taf12', 'thrombin', 'tnks2', 'tyk2', 'urokinase']
+[P4] shuffled profile (control)             flagged set: ['bace', 'bace_p3_arg368_in', 'brd4', 'btk', 'cdk2', 'cdk8', 'chk1', 'ciordia_retro', 'cmet', 'eg5', 'egfr', 'ephx2', 'faah', 'factor_xa', 'galectin', 'hif2a', 'hiv1_protease', 'hne', 'hsp90_2rings', 'hsp90_kung', 'hsp90_single_ring', 'irak4_s2', 'itk', 'jak2_set1', 'jak2_set2', 'jnk1', 'keranen_p2', 'liga', 'mcl1', 'mup1', 'p38', 'ptp1b', 'renin', 'scyt_dehyd', 'shp2', 'syk', 't4_lysozyme', 'taf12', 'thrombin', 'tnks2', 'tyk2', 'urokinase']
+[P4] uniform x0.15 (stress test)            flagged set: ['bace', 'bace_p3_arg368_in', 'brd4', 'btk', 'cdk2', 'cdk8', 'chk1', 'ciordia_retro', 'cmet', 'eg5', 'egfr', 'ephx2', 'faah', 'factor_xa', 'galectin', 'hif2a', 'hiv1_protease', 'hne', 'hsp90_2rings', 'hsp90_kung', 'hsp90_single_ring', 'irak4_s2', 'itk', 'jak2_set1', 'jak2_set2', 'jnk1', 'keranen_p2', 'liga', 'mcl1', 'mup1', 'p38', 'ptp1b', 'renin', 'scyt_dehyd', 'shp2', 'syk', 't4_lysozyme', 'taf12', 'thrombin', 'tnks2', 'tyk2', 'urokinase']
+[P4] real - shuffled = ['bace1']   shuffled - real = ['egfr']
+[P4] real - uniform = ['bace1']   uniform - real = ['egfr']
+[P4] shuffled - uniform = []   uniform - shuffled = []
+[P4] distinct transferred ratios (real arm): 1143/1143
 ```
 
 Re-run via `make figP4` reproduces byte-for-byte identical printed numbers
-(verified).
+(verified). This stdout supersedes an earlier version of this document that
+lacked the flagged-set, pairwise-discordance, and distinct-ratio-count lines;
+the four arms' flagged counts, the real-vs-calibrated ratio, and the verdict
+are byte-for-byte identical to that earlier run -- the added lines are new
+`print` statements in `figs/make_figP4.py`, not a re-computation. The new
+lines also confirm, from the script itself rather than an ad hoc check, the
+discordant-system claim below (`real - shuffled = {bace1}`,
+`shuffled - real = {egfr}`; same for `real` vs.\ `uniform`) and the calibrated
+flagged set (`bace, brd4, cdk8, faah, hif2a, p38`).
 
 ## Results
 
 **Ratio range** (per-edge se-scaling factor after global rank-transfer):
 **0.090–0.200×** — i.e. every edge's se is shrunk somewhere between 5× and
-11× (variance inflated 25×–121×) relative to the calibrated sandwich, never
-inflated. This is a narrow dynamic range: the whole profile sits well below
-`×1`.
+11× (variance inflated 25×–123×, since `1/0.090² ≈ 123.5`; `121×` is the
+rounded `11×`-in-se figure squared and is not the precise bound) relative to
+the calibrated sandwich, never inflated. This is a narrow dynamic range: the
+whole profile sits well below `×1`.
 
 **Four arms' flagged counts and percentages** (n = 48 systems each):
 
@@ -122,7 +146,8 @@ inflated. This is a narrow dynamic range: the whole profile sits well below
 - **Flagged by the calibrated sandwich but not by the real profile:**
   **none** (empty set) — the 6 calibrated-sandwich flags (`bace, brd4, cdk8,
   faah, hif2a, p38` per Fig L / Fig Cut) are a strict subset of the 42
-  real-profile flags.
+  real-profile flags. This containment is a sanity anchor, not a substantive
+  finding — see "Honest reading" below.
 
 A supplementary check (not part of the pre-registered output, run to rule
 out a bug given how closely the three shrinking arms agree — see "Honest
@@ -138,8 +163,14 @@ below), not a computational artifact.
 **Post-hoc tie-handling correction (not a re-run):** a review found
 `rank_transfer`'s partial-tie handling assigned strictly increasing ranks via
 `np.argsort` rather than sharing a percentile, which would matter only if the
-input contained repeated overlap values. Since all 1143 real edges have
-distinct overlaps (previous paragraph), this was a no-op here; `bar.sigma_profile.rank_transfer`
+input contained repeated overlap values. The 1143 per-edge **overlaps**
+themselves are distinct (1143/1143 unique values, zero duplicates) — this,
+not the "1143/1143 unique ratio values" cited two paragraphs above, is the
+relevant fact: the pre-fix `argsort` code would have produced 1143 distinct
+*ratios* regardless of whether any overlaps were tied, since strictly
+increasing ranks give strictly increasing interpolated ratios even for equal
+inputs. Because the overlaps have no duplicates, the fix was a no-op here;
+`bar.sigma_profile.rank_transfer`
 was fixed to use average-rank tie handling (`scipy.stats.rankdata`) and this
 exact run was reproduced byte-for-byte identical (verbatim stdout above,
 `P4 VERDICT: DEGRADES` and all four arms' flagged counts unchanged) after the
@@ -156,8 +187,11 @@ must never be read as more than it is:
   work-distribution Monte Carlo with `n_f = n_r = 20`.
 - **OpenFE's `pymbar` `smallest_overlap`** (this task's per-edge overlap,
   minimum of the complex and solvent legs at replicate 0) spans
-  **`0.0001`–`0.233`** across the 1143 real edges — a much lower, much wider
-  range, measured by a different overlap statistic on real alchemical legs.
+  **`0.000066`–`0.231377`** across the 1143 real edges — a much lower, much
+  wider range, measured by a different overlap statistic on real alchemical
+  legs. (`0.233` is the max over the 2290 individual complex/solvent leg
+  values before taking each edge's minimum; the per-edge minimum actually
+  fed to `rank_transfer` tops out slightly lower, at `0.231377`.)
 
 Because the two quantities are not interchangeable in raw value, the
 transfer in `bar.sigma_profile.rank_transfer` is by **percentile rank, not
@@ -183,7 +217,7 @@ output on the OpenFE edges."
   other (42/48, 42/48, 42/48) despite genuinely different per-edge
   assignments.** This is not a coincidence of a narrow test: the profile's
   entire dynamic range (`0.090`–`0.200×`) inflates every edge's variance by
-  at least 25× and at most ~121×, and — echoing the repo's Fig C finding that
+  at least 25× and at most ~123× (`1/0.090² ≈ 123.5`), and — echoing the repo's Fig C finding that
   "weight choice is 2nd-order for GLS aggregate significance" — once a
   system's edges are *all* shrunk by a factor in this range, whether the
   network as a whole crosses the BH-FDR threshold is overwhelmingly
@@ -200,35 +234,53 @@ output on the OpenFE edges."
   past the `2×` threshold regardless of the shuffled/uniform arms' exact
   agreement with the real arm.
 - **The 6 calibrated-sandwich flags are a strict subset of the 42
-  real-profile flags** — the real profile does not disagree with the
-  calibrated detector about which systems are wrong, it additionally flags
-  36 more that the calibrated sandwich judges consistent. Combined with the
-  narrow ratio range noted above, this is consistent with the real profile
-  behaving, for the purposes of this specific test, close to (but not
-  exactly) a uniform shrink of comparable magnitude to Fig L's `×0.15`
-  stress test — which is itself the honest, pre-registered reading, not an
-  engineered-around one.
+  real-profile flags — a sanity anchor, not a substantive finding.** Because
+  every real-profile ratio is `< 1` (range `0.090`–`0.200×`, i.e. a shrink),
+  the real profile's per-edge `χ²` contribution pointwise dominates the
+  calibrated sandwich's for every edge, so each system's total `χ²` under the
+  real profile is `≥` its calibrated-sandwich value; combined with
+  Benjamini--Hochberg's monotone dependence on `χ²`/p-value ordering, a
+  system already flagged at the calibrated sandwich's smaller `χ²` is
+  essentially forced to remain flagged once its `χ²` can only grow. The empty
+  reverse set (`flagged by calibrated but not real profile`, above) is
+  exactly what this pointwise-domination argument predicts; it is not
+  independent evidence that the real profile's per-edge assignment is
+  realistic, nor that the two arms "agree" in any richer sense than every
+  factor in the profile being a shrink.
 - No numbers, arms, the seed, the overlap definition, or the threshold were
   adjusted after inspecting this result.
 
 ## What this changes in the manuscript
 
-**The `DEGRADES` branch is selected.** The referees' objection — that a
-uniform `×0.15` shrink is near-mechanically forced and says little about a
-real learned head — is **not upheld** by this test: pushing the actual
-measured, overlap-dependent profile through the identical GLS + BH-FDR
-pipeline, per edge, still flags 42/48 (88%) of systems, 7.00× the calibrated
-sandwich's 6/48 (12%), comfortably past the pre-registered `2×` bar. The
-manuscript's existing claim — "an overconfident learned sigma destroys the
-cycle-closure QC test" — **stands**, and Fig L's uniform `×0.15` panel can
-continue to be cited as representative in direction and magnitude, not just
-as a mechanically-forced stress test. What should change in the text:
+**The `DEGRADES` branch is selected.** The referees' objection has two
+halves: that Fig L's uniform `×0.15` shrink is (a) uniform, unlike a real
+learned head's heterogeneous miscalibration, and (b) near-mechanically
+forced, inflating every edge's `χ²` by the same factor regardless of
+overlap. This test is **answered in part**, not "not upheld": pushing the
+actual measured, overlap-dependent profile through the identical GLS +
+BH-FDR pipeline, per edge, answers (a) directly — it still flags 42/48 (88%)
+of systems, 7.00× the calibrated sandwich's 6/48 (12%), comfortably past the
+pre-registered `2×` bar, so uniformity was not doing the work. But it
+**confirms and relocates** (b) rather than refuting it: every ratio in the
+measured profile sits in `0.090`–`0.200×`, so every system's `χ²` inflates
+by at least `25×` regardless of which edges get which ratio (see "Honest
+reading" above) — for a head this overconfident, the flagging is itself
+close to arithmetic. The manuscript's existing claim — "an overconfident
+learned sigma destroys the cycle-closure QC test" — **stands for heads at
+least this overconfident**; this result does **not** locate the shrink
+magnitude at which the test's selectivity is first lost. What should change
+in the text:
 
 - Cite this task's real-profile result (42/48, 7.00× calibrated) alongside
   or in place of the uniform `×0.15` result (also 42/48) as the primary
-  evidence, since it answers the referees' specific objection and is no
-  longer open to the "mechanically forced" critique — the shrink is
-  per-edge and overlap-dependent, not uniform.
+  evidence, since it answers the "uniform, unlike a real head" half of the
+  referees' objection — the shrink is per-edge and overlap-dependent, not
+  uniform. It does **not** answer the "near-mechanically forced" half: at
+  this profile's magnitude (ratio ceiling `0.20×`, `χ²` inflation `≥25×`),
+  the test could not have distinguished the real, heterogeneous profile from
+  a uniform stand-in of the same magnitude — that half of the objection is
+  confirmed, not refuted, and should be stated as a scope limit in the
+  manuscript text (see the addition to the Figure~\ref{fig:L} paragraph).
 - Add the rank-transfer caveat (above) wherever this result is cited: the
   transfer is by percentile rank across two different overlap scales, so it
   approximates how the learned head's known overconfidence pattern would

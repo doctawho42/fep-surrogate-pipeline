@@ -12,7 +12,9 @@ def test_output_length_matches_input():
 
 
 def test_ratios_stay_inside_the_measured_profile_range():
-    ov = np.linspace(0.0001, 0.233, 50)
+    # Mirrors the real per-edge overlap range used by figs/make_figP4.py: 0.000066-0.231377
+    # (the min of each edge's complex/solvent-leg pymbar smallest_overlap at replicate 0).
+    ov = np.linspace(0.000066, 0.231377, 50)
     r = rank_transfer(ov)
     lo = min(p[1] for p in PROFILE_POINTS)
     hi = max(p[1] for p in PROFILE_POINTS)

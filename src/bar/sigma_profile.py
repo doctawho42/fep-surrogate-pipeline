@@ -8,8 +8,11 @@ the Fig A sweep).
 
 This module applies that measured profile PER EDGE. The catch: the two overlap quantities are
 not the same measurement. Fig A's controlled sweep uses a normalized BAR overlap spanning
-``0.26``-``0.78``; the OpenFE benchmark reports pymbar's ``smallest_overlap`` spanning
-``0.0001``-``0.233``. Their values are not interchangeable, so the transfer is by **rank
+``0.26``-``0.78``; the OpenFE benchmark's per-edge overlap (the min of the complex/solvent legs'
+pymbar ``smallest_overlap``, the statistic this module's callers actually feed in) spans
+``0.000066``-``0.231377``. (``0.233`` is the max over the individual complex/solvent leg values
+*before* taking each edge's minimum -- a slightly wider, less relevant range.) The two scales are
+not interchangeable, so the transfer is by **rank
 (percentile), not by raw value**: an edge at the p-th percentile of the real overlap
 distribution receives the ratio the learned head showed at the p-th percentile of the Fig A
 sweep. That preserves the ordering and spread of the head's miscalibration, which is what

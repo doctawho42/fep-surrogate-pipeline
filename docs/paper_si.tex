@@ -210,7 +210,8 @@ NOT-CONFIRMED.}
 Figure~\ref{fig:L}B's uniform ${\times}0.15$ shrink is a stress test; here the learned head's
 \emph{measured}, overlap-dependent miscalibration profile (Figure~\ref{fig:A}A: ratio
 $0.09$--$0.20\times$ across overlap $0.26$--$0.78$) is pushed through the identical GLS $+$
-Benjamini--Hochberg pipeline, per edge, by percentile-rank transfer onto each of $1143$ real
+Benjamini--Hochberg pipeline, per edge, by percentile-rank transfer onto each of $1143$ (of the
+$1145$; the sole cycle-free system contributes the other two) real
 edges' own OpenFE \texttt{smallest\_overlap} (an approximation: the two overlap statistics are on
 different scales, so only the profile's ordering and spread are transferred, not its raw values).
 Four arms on the same $48$-system, $1143$-edge network: the calibrated sandwich (${\times}1$)
@@ -229,17 +230,21 @@ threshold is set by the magnitude of the shrink, not by its structure. Determini
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figP4_sigma_profile.pdf}
 \caption{\textbf{Supplement: the QC sweep under the learned head's real, non-uniform
-miscalibration profile (peer-review item P4).} Four arms on the identical $48$-system,
+miscalibration profile (peer-review item P4).} (Left) Four arms on the identical $48$-system,
 $1143$-edge OpenFE network. Calibrated sandwich (${\times}1$): $6/48$ flagged ($12\%$). Real
 learned profile (primary; percentile-rank transfer of Figure~\ref{fig:A}A's measured ratio onto
 each edge's own overlap): $42/48$ ($88\%$), $7.00\times$ the calibrated count (VERDICT: DEGRADES
 against the pre-registered $2\times$ threshold). Shuffled-profile control (association with
 overlap destroyed): $42/48$. Uniform ${\times}0.15$ stress test (Figure~\ref{fig:L}B): $42/48$.
 The rank transfer approximates how the head's measured overconfidence would vary across these
-edges; it is not the head's own output on this benchmark. The profile's narrow, uniformly
-overconfident range ($0.09$--$0.20\times$) is why the heterogeneous and uniform stand-ins agree so
-closely: it is the magnitude of the miscalibration, not the uniformity of the Figure~\ref{fig:L}B
-stand-in, that destroys the test.}
+edges; it is not the head's own output on this benchmark. (Right) Histogram of the $1143$
+per-edge transferred ratios (real learned profile), with Figure~\ref{fig:L}B's uniform
+${\times}0.15$ stand-in marked (dashed line): the per-edge assignment is genuinely heterogeneous
+(all $1143$ ratios are distinct), but the whole distribution sits in a narrow, uniformly
+overconfident band ($0.09$--$0.20\times$). That narrow band is why the heterogeneous and uniform
+stand-ins agree so closely in flagged count: it is the magnitude of the miscalibration, not the
+uniformity of the Figure~\ref{fig:L}B stand-in, that destroys the test, and this figure shows the
+band rather than only asserting it.}
 \label{fig:P4}
 \end{figure}
 

@@ -7,9 +7,9 @@ a back-propagatable graph weight). Its sharpest use is \emph{detection}: the cal
 turns thermodynamic cycle-closure into a quality-control test, flagging six systematic-error networks
 (of $48$) on $1145$ real OpenFE binding edges, with distribution-free causal and cross-replicate
 backstops confirming the flags are systematic and reproducible (not a quantitative
-false-positive-rate guarantee), where a uniform-shrink stress test and, more representatively, the
-learned head's own measured overconfidence profile transferred per edge both flag $88\%$ of systems
-and are useless. That bar
+false-positive-rate guarantee), where a uniform-shrink stress test and, more representatively, a
+rank-transferred stand-in built from the learned head's measured overconfidence profile both flag
+$88\%$ of systems and are useless. That bar
 is trustworthy for the job against sampling and convergence noise: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
 order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected), never systematically
 overconfident. The same free primitive supplies a Fisher--resistance acquisition-graph weight (the
@@ -385,10 +385,15 @@ multiset of per-edge ratios with the association to overlap destroyed, also flag
 because the profile's entire measured range ($0.09$--$0.20\times$) is deeply overconfident, even
 its mildest value inflates an edge's $\chi^2$ contribution ${\sim}25\times$, so once a network's
 edges are all shrunk somewhere in that range, whether it crosses the Benjamini--Hochberg threshold
-is set by how much shrink there is on average, not by which edges get more or less of it. It is
+is guaranteed by the ratio ceiling alone: every ratio is at most $0.20$, so every system's $\chi^2$
+contribution inflates by at least $25\times$, which saturates the test regardless of which edges
+get more or less of it within that range. It is
 therefore the \emph{magnitude} of the learned head's miscalibration, not the \emph{uniformity} of
 the Figure~\ref{fig:L}B stand-in, that destroys the test, and the heterogeneous, overlap-dependent
 structure of a profile this overconfident carries no additional information for it. The
+demonstration is therefore scoped to heads as overconfident as the measured one (reported
+$\mathrm{se}$ $5$--$11\times$ too small); it establishes that such heads saturate the test, not the
+shrink magnitude at which selectivity is first lost. The
 three independent replicates confirm the flags are systematic, not sampling: pooling the
 replicates shrinks the bars ($\mathrm{se}\to\mathrm{se}/\sqrt3$) yet \emph{increases} the flagged
 systems' reduced $\chi^2$ toward the $3\times$ variance-components ceiling (Figure~\ref{fig:L}C),
