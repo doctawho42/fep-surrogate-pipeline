@@ -45,6 +45,14 @@ def test_single_edge_is_finite():
     assert r.shape == (1,) and np.isfinite(r[0])
 
 
+def test_partial_ties_share_a_ratio():
+    """Edges with an identical measured overlap must get an identical ratio -- otherwise the
+    assignment is an artifact of input order, not a measurement."""
+    r = rank_transfer(np.array([0.1, 0.1, 0.1, 0.2]))
+    assert np.allclose(r[:3], r[0])
+    assert not np.isclose(r[3], r[0])
+
+
 def test_shuffle_preserves_the_multiset_and_is_seeded():
     r = rank_transfer(np.linspace(0.01, 0.23, 20))
     s1 = shuffled(r, seed=20260808)

@@ -135,6 +135,16 @@ differ the same way (`real - uniform = {bace1}`, `uniform - real =
 *counts* are a real feature of this profile's narrow dynamic range (see
 below), not a computational artifact.
 
+**Post-hoc tie-handling correction (not a re-run):** a review found
+`rank_transfer`'s partial-tie handling assigned strictly increasing ranks via
+`np.argsort` rather than sharing a percentile, which would matter only if the
+input contained repeated overlap values. Since all 1143 real edges have
+distinct overlaps (previous paragraph), this was a no-op here; `bar.sigma_profile.rank_transfer`
+was fixed to use average-rank tie handling (`scipy.stats.rankdata`) and this
+exact run was reproduced byte-for-byte identical (verbatim stdout above,
+`P4 VERDICT: DEGRADES` and all four arms' flagged counts unchanged) after the
+fix, confirming no reported number in this document moved.
+
 ## The rank-transfer caveat, in full
 
 Fig A's controlled overlap sweep and OpenFE's `pymbar` `smallest_overlap` are

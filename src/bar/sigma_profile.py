@@ -33,10 +33,14 @@ def rank_transfer(
 
     ``overlaps`` are the real per-edge overlaps (any scale). The returned array has the same shape:
     element ``e`` is the profile ratio at edge ``e``'s percentile within ``overlaps``. Ties share a
-    percentile; a single edge or an all-equal input maps to the profile's midpoint by convention
-    (``np.interp`` at 0.0 would silently pin every such edge to the lowest-overlap ratio, which
-    would be an artifact of degeneracy rather than a measurement).
+    percentile -- edges with an identical measured overlap get the identical average rank (via
+    ``scipy.stats.rankdata(method="average")``), so their assignment reflects the measurement, not
+    their position in the input array. A single edge or an all-equal input maps to the profile's
+    midpoint by convention (``np.interp`` at 0.0 would silently pin every such edge to the
+    lowest-overlap ratio, which would be an artifact of degeneracy rather than a measurement).
     """
+    from scipy.stats import rankdata  # local import; scipy is a core dep
+
     ov = np.asarray(overlaps, dtype=float)
     if ov.size == 0:
         return ov
@@ -44,12 +48,10 @@ def rank_transfer(
     prof_pct = np.linspace(0.0, 1.0, len(pts))
     prof_ratio = np.array([p[1] for p in pts], dtype=float)
 
-    order = np.argsort(ov, kind="stable")
-    ranks = np.empty(ov.size, dtype=float)
-    ranks[order] = np.arange(ov.size, dtype=float)
     if ov.size == 1 or np.allclose(ov, ov[0]):
         pct = np.full(ov.size, 0.5)
     else:
+        ranks = rankdata(ov, method="average") - 1.0  # 0-based average rank; ties share it
         pct = ranks / (ov.size - 1.0)
     return np.interp(pct, prof_pct, prof_ratio)
 
