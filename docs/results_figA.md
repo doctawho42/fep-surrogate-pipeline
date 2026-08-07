@@ -98,7 +98,8 @@ residual ~5–7× overconfidence (above) is therefore best read as a **data-effi
 per-edge learned variance** — it does not vanish under the standard objective fix (β-NLL, Seitzer
 et al. 2022, "On the Pitfalls of Heteroscedastic Uncertainty Estimation with Probabilistic Neural
 Networks") — if anything worse, 0.11× vs plain NLL's 0.15× — nor under a stronger estimator (a deep
-ensemble only reaches the 20×-larger-budget floor, 0.20×); heteroscedastic per-edge variance regression stays poorly
+ensemble only reaches the 20×-larger-budget floor, 0.20×) at this seed, though not stable across independent
+retrains (see the multi-seed spread above); heteroscedastic per-edge variance regression stays poorly
 calibrated at realistic label budgets — but it is **not** evidence that the target is unlearnable
 in principle (pooling recovers it). The BAR bottleneck's advantage is that it sidesteps this
 learned-estimator budget floor entirely by computing the
@@ -146,7 +147,7 @@ feature). Large-budget oracle added. The measured numbers are honest: the physic
 not because the target is unidentifiable from one label/edge (the pooling-by-overlap check
 above shows it IS identifiable, recovering to ~4–6% error by N=4000–40000) but because the
 standard per-edge *learned* variance (MVE) estimator hits a data-efficiency floor at
-realistic and even large training budgets — a floor that persists under the corrected
-β-NLL objective (Seitzer 2022) and under a deep ensemble, so it is not specific to the
-Gaussian-NLL objective — the BAR bottleneck sidesteps that data-efficiency floor entirely
+realistic and even large training budgets — a floor the plain, oracle, and β-NLL heads
+persistently hit, so it is not specific to the Gaussian-NLL objective; the ensemble's
+calibration is not stable across seeds (see above) — the BAR bottleneck sidesteps that data-efficiency floor entirely
 by computing the variance exactly, per edge, untrained, at zero label cost.
