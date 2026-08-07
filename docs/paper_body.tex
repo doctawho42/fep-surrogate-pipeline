@@ -1,15 +1,16 @@
 \begin{abstract}
 We turn a routine consistency check into a calibrated diagnostic for relative binding free energy
-(RBFE). At a surrogate's bottleneck, the Bennett Acceptance Ratio (BAR) \emph{sandwich} variance
-$B/I^2$ is a closed, non-negative, $O(1)$-differentiable aleatoric-variance layer that reads each
-alchemical edge's finite-sampling uncertainty off the physics (\texttt{pymbar} returns a number, not
-a back-propagatable graph weight). Its sharpest use is \emph{detection}: the calibrated null that
-turns thermodynamic cycle-closure into a quality-control test, flagging six systematic-error networks
-(of $48$) on $1145$ real OpenFE binding edges, with distribution-free causal and cross-replicate
-backstops confirming the flags are systematic and reproducible (not a quantitative
-false-positive-rate guarantee), where a uniform-shrink stress test and, more representatively, a
-rank-transferred stand-in built from the learned head's measured overconfidence profile both flag
-$88\%$ of systems and are useless. That bar
+(RBFE). Its sharpest use is \emph{detection}: a calibrated null turns thermodynamic cycle-closure
+into a quality-control test that flags six systematic-error networks (of $48$) on $1145$ real
+OpenFE binding edges, with distribution-free causal and cross-replicate backstops confirming the
+flags are systematic and reproducible (not a quantitative false-positive-rate guarantee), where a
+uniform-shrink stress test and, more representatively, a rank-transferred stand-in built from the
+learned head's measured overconfidence profile both flag $88\%$ of systems and are useless. The
+calibrated per-edge uncertainty behind this test is read off a surrogate's bottleneck: the Bennett
+Acceptance Ratio (BAR) \emph{sandwich} variance $B/I^2$, a closed, non-negative,
+$O(1)$-differentiable aleatoric-variance layer that reads each alchemical edge's finite-sampling
+uncertainty off the physics (\texttt{pymbar} returns a number, not a back-propagatable graph
+weight). That bar
 is trustworthy for the job against sampling and convergence noise: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
 order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected), never systematically
 overconfident. The same free primitive supplies a Fisher--resistance acquisition-graph weight (the
@@ -155,7 +156,15 @@ $\Var(\dFh)=A^{-1}BA^{-1}=B/I^2$, with $A=I$ and $B=n_f\Var_f[p]+n_r\Var_r[p]$
 \citep{huber1967}. Here $A\neq B$ arises from BAR's \emph{stratified two-sample design}, not
 from model misspecification; the sandwich is the sample-computable form and equals the
 Bennett/Shirts--Chodera (MBAR) uncertainty to leading order in $1/n$
-\citep{bennett1976bar,shirts2008mbar}.
+\citep{bennett1976bar,shirts2008mbar}. Concretely, the plug-in MBAR/Bennett uncertainty is
+$\Var_{\text{MBAR}}=1/I-(1/n_f+1/n_r)$ (identical to \texttt{pymbar}'s \texttt{MBAR}
+uncertainty), and $\Var_{\text{MBAR}}=B/I^2+O(1/n^2)$: the $-(1/n_f+1/n_r)$ correction is
+exactly what removes the $O(1/n)$ discrepancy between the naive information-equality plug-in
+$1/I$ and the sandwich, leaving an $O(1/n^2)$ residual (numerically verified on the estimator
+above: the two forms' expectations differ by $\lesssim$two orders of magnitude below the
+$O(1/n)$ scale of $1/n_f+1/n_r$ already at $n{=}40$, and the discrepancy shrinks
+$\propto n^{-2}$ on doubling $n$ from $40$ to $5120$). This is why bare $1/I$ (Figure~\ref{fig:A},
+naive) overstates the calibrated uncertainty and \texttt{pymbar}'s reported MBAR se does not.
 \end{theorem}
 
 \begin{remark}[scope of ``calibrated'']
@@ -180,7 +189,7 @@ The sandwich is derived for independent samples; on real FEP works both the sand
 Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with
 MBAR and Monte-Carlo truth across the range (reported/true se $\approx1$), with no Monte-Carlo.
 We tested a \emph{fair} learned MVE head trained by Gaussian NLL, now fed work-summary
-moments \emph{and} the overlap scalar $I$ (6-dim feature; reviewer M2a) at a realistic budget of
+moments \emph{and} the overlap scalar $I$ (6-dim feature) at a realistic budget of
 $\sim$200 edges and also at a large-budget oracle of 4000 training edges, twenty times larger.
 The fair foil is still ${\approx}7\times$ overconfident at realistic budget (reported se
 ${\approx}0.15\times$ the truth; range $0.09$--$0.20\times$ across the overlap sweep), and
@@ -234,7 +243,7 @@ at realistic budget (${\approx}5\times$ even at large budget).
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
 \caption{\textbf{The bottleneck reads calibrated aleatoric variance.}
 (A) Controlled Monte-Carlo sweep: sandwich $B/I^2$ coincides with \texttt{pymbar}-MBAR and
-truth; a fair learned-variance head (fed work moments + overlap $I$; reviewer M2a) is
+truth; a fair learned-variance head (fed work moments + overlap $I$) is
 ${\approx}7\times$ overconfident at realistic budget (se ${\approx}0.15\times$ truth,
 range $0.09$--$0.20\times$); a richly-fed head approaches the closed form only with a large
 budget (${\approx}5\times$ overconfident at 4000-edge oracle, se ${\approx}0.20\times$);
@@ -245,7 +254,8 @@ the info-equality plug-in.
 (B) Real FEP edges, BACE1 RBFE
 binding (filled) and benzene solvation, sandwich tracks bootstrap truth (an internal check)
 while $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ (BACE1 $6.07$
-$[2.78,12.01]$; cf.\ the controlled-panel se range $1.08$--$2.65\times$ in panel~A).}
+$[2.78,12.01]$; cf.\ the controlled-panel se range $1.08$--$2.65\times$ in panel~A; per-edge
+overlap values, all $\geq0.85$, high-overlap regime, Supplementary Table~\ref{tab:bace1}).}
 \label{fig:A}
 \end{figure}
 
@@ -500,9 +510,15 @@ $\chi(M)=\det[\mathbf r_2{-}\mathbf r_1,\mathbf r_3{-}\mathbf r_1,\mathbf r_4{-}
 (the $\texttt{0o}$ triple product of four readout points $\mathbf r_i$) satisfies
 $\chi(AM)=\det(A)\chi(M)$ for $A\in O(3)$, so it is $SO(3)$-invariant and flips sign under
 reflection; $(\{\|\mathbf r_i{-}\mathbf r_j\|\},\,\mathrm{sgn}\,\chi)$ is a complete $SO(3)$
-invariant (complete for distinguishing the enantiomer pair $\{M,\sigma M\}$ once the full distance set fixes the cloud up to $O(3)$; fully characterizing the chirality of a many-atom molecule needs a consistent set of pseudoscalars). Thus a single
+invariant (complete for distinguishing the enantiomer pair $\{M,\sigma M\}$ once the full distance set fixes the cloud up to $O(3)$; fully characterizing the chirality of a many-atom molecule needs a consistent set of pseudoscalars),
+\textbf{provided the four readout points $\mathbf r_1,\ldots,\mathbf r_4$ are non-coplanar}: $\chi$
+is the (signed) volume of the tetrahedron they span, so it vanishes identically whenever the
+points are coplanar (the three difference vectors become linearly dependent), and a vanishing
+$\chi$ carries no sign, hence no chirality bit, regardless of the underlying molecule's true
+handedness. Thus, for a non-coplanar readout quadruple, a single
 $\texttt{0o}$ triple-product channel is a \emph{sufficient} minimal addition that restores the
-chirality bit.
+chirality bit; the trunk's readout must select (or the architecture must guarantee) such a
+non-degenerate quadruple for the completeness statement to apply.
 \end{theorem}
 Consistent with the paper's principle, the chirality bit is \emph{read off} the geometry (a
 pseudoscalar), not learned; this makes precise a fact familiar from the equivariant-network
@@ -528,7 +544,16 @@ amortized $\sigma$ we test (the decomposed physics $\sigma$, written
 $\sigma_{\text{total}}$) is a deep-ensemble trunk's
 $\sigma_{\text{total}}=q\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$: an epistemic
 ensemble spread $\sigma_{\text{ens}}$ and a benchmark aleatoric floor $\sigma_{\text{ale}}$,
-conformally scaled by $q$ at miscoverage $\alpha=0.1$ (90\% target coverage).
+conformally scaled by $q$ at miscoverage $\alpha=0.1$ (90\% target coverage). This
+$\sigma_{\text{total}}$ is a different quantity from Figure~\ref{fig:A}'s per-edge BAR
+sampling-se and its learned-variance foil: Figure~\ref{fig:A} asks whether a model can learn to
+\emph{predict} the sampling variance of a single BAR $\dFh$ from its own work statistics (found
+overconfident), whereas $\sigma_{\text{total}}$ here is the surrogate's downstream
+\emph{predictive} uncertainty on unseen $\ddG$ values (ensemble epistemic spread plus an
+aleatoric floor), tested on the OpenFF benchmark rather than the controlled work-sampling model of
+Figure~\ref{fig:A}; the two are evaluated on different data and answer different questions. Any
+bare ``$\sigma$'' below this point refers to $\sigma_{\text{total}}$ unless a figure reference
+says otherwise.
 
 \begin{table}[t]\centering
 \caption{\textbf{The honest audit at a glance (OpenFF benchmark / \texttt{eg5}).} Does this decomposed $\sigma$ improve each
@@ -538,19 +563,25 @@ simulation. The top block is performance (no gain); the bottom block is where ca
 (trust).}
 \label{tab:audit}
 \small
-\begin{tabular}{@{}llll@{}}
+\begin{tabular}{@{}p{3.1cm}lp{5.4cm}p{2.6cm}@{}}
 \toprule
 Downstream task & Data & Effect (calibrated $-$ baseline) [95\% CI] & Verdict \\
 \midrule
 Interval sharpness (OOD) & real & width split/ours $0.92\times$; cond.\ $-0.044$ $[-0.121,0.005]$ & no gain \\
 Edge weighting (active learning) & sim & calls-to-top-$k$ $0.98\times$ $[0.93,1.03]$ & no gain \\
 Commit ranking (matched volume) & real & precision $-0.006$ $[-0.016,+0.007]$ & tie \\
-Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts \\
+Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts (directional, single target)$^{a}$ \\
 \midrule
 Commit trust (vs overconfident $\sigma$) & real & shortfall $+0.182$ $[0.132,0.225]$ better & \textbf{trust} \\
 Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust} \\
 \bottomrule
 \end{tabular}
+
+\smallskip
+\noindent{\footnotesize $^{a}$The reward re-ranking effect is measured on a single evaluable
+target (\texttt{eg5}) and is directional (point estimates shift modestly run-to-run under torch
+CPU non-determinism, Section~\ref{sec:limitations}); it is not yet established as a general
+property of calibrated reward re-ranking across chemotypes.\par}
 \end{table}
 
 \paragraph{Trust: an overconfident $\sigma$ corrupts decisions; this decomposed $\sigma$ does not, and
@@ -635,19 +666,24 @@ $\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$: the high-$\sigma$ 
 the chemically novel \emph{strong} binders, so the LCB penalty $-\kappa\sigma$ demotes the true
 winners. Calibration would help reward re-ranking only if $\sigma$ flagged \emph{low-quality}
 candidates; on congeneric chemistry it flags \emph{novelty} instead. This is the steelman target
-for calibrated reward re-ranking (the most $\sigma$-varying target available), and it fails. More usefully, it yields a transferable diagnostic
-for calibrated reward re-ranking: an LCB reward helps only when $\sigma$ flags
-\emph{low quality}; whenever $\sigma$ instead flags \emph{novelty}, the common case on
-congeneric or lead-like series, the bound penalizes exactly the candidates worth making, and an
-uncalibrated reward is the safer default. A regime where $\sigma$ tracks quality (e.g.\ diverse
-libraries with genuine actives and decoys) is where calibrated re-ranking should pay, and is the
+for calibrated reward re-ranking (the most $\sigma$-varying target available), and it fails. From
+this single target we draw a \emph{hypothesis}, not a transferable diagnostic: an LCB reward may
+help only when $\sigma$ flags \emph{low quality}; whenever $\sigma$ instead flags \emph{novelty},
+as it does on this congeneric series, the bound penalizes exactly the candidates worth making,
+and an uncalibrated reward is the safer default. Because this rests on one evaluable target, we
+state it as a hypothesis to be tested rather than a general rule: a regime where $\sigma$ tracks
+quality (e.g.\ diverse libraries with genuine actives and decoys) is where calibrated re-ranking
+should pay, and is the
 natural next test.
 
 \paragraph{Where it pays: the stopping decision.} The one place a calibrated bar clearly pays is
 knowing when to \emph{stop} an active-learning loop. Figure~\ref{fig:G} runs two learners with
-the same correct posterior mean but different assumed uncertainty: the calibrated learner's
-claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and stops at $30$ calls
-$82\%$ correct, while an overconfident learner (using the learned head's $0.15\times$ scale, the ${\sim}7\times$ central overconfidence from Figure~\ref{fig:A}) stops twice as early at
+the same correct (true-precision GLS) posterior mean but different assumed uncertainty -- a
+distinct, simulated posterior variance, not $\sigma_{\text{total}}$ above: the calibrated
+learner's claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and stops at
+$30$ calls $82\%$ correct, while an overconfident learner (its assumed posterior se scaled by
+$0.15\times$, the ${\sim}7\times$ central overconfidence \emph{measured} by Figure~\ref{fig:A}'s
+sampling-se foil and reused here only as a numeric shrink factor) stops twice as early at
 only $60\%$ correct. This is a controlled simulation,
 but it is the same lesson as the commit panel: calibration is a trust instrument.
 
@@ -673,7 +709,7 @@ weight does not improve ranking. The value of reading the variance off the physi
 calibrated decision and an identifiable acquisition (and the quality-control detector
 of Section~\ref{sec:qc}), not a sharper or better-ranked prediction.
 
-\section{Limitations}
+\section{Limitations}\label{sec:limitations}
 The sandwich is aleatoric-only and conditional on correctly sampled ensembles; systematic
 force-field bias is outside it, and the out-of-distribution behavior we audit rests on an
 ensemble plus a scalar aleatoric floor (there is no learned force-field-correction head, so the
@@ -690,7 +726,7 @@ system-preparation variance); the $\sim$$1.25$--$1.41\times$ conservatism may th
 closer to neutral against real reproducibility. The
 gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
 single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
-should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively (causal repair, held-out replicates) and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: the QC repairs internal consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, remains future work. Finally, a structure-based (docking) reverse-screen we
+should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively (causal repair, held-out replicates) and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: the QC repairs internal consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, remains future work. The detector's \emph{recall} (false-negative rate) is likewise uncharacterized -- there are no ground-truth error labels -- and the median reduced $\chi^2=0.34$ (Section~\ref{sec:qc}) implies limited single-replicate power, so the six flagged systems are a \emph{lower bound} on the systems carrying systematic error, not a prevalence estimate: on the same replicate data, \texttt{renin} is systematic by the pooled-replicate ratio (reduced $\chi^2$ $2.5\to4.7$ pooling the three replicates, the same near-$3\times$ systematic-dominated signature Panel~C uses to confirm the six flagged systems) yet did not clear FDR on a single replicate, a documented systematic-but-unflagged case (\texttt{docs/results\_figL.md}). Finally, a structure-based (docking) reverse-screen we
 built as a follow-on did not beat a ligand-similarity baseline on this benchmark, so the
 structure-directed regime is left to future work rather than claimed here.
 

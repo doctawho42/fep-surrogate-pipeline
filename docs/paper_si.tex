@@ -1,5 +1,56 @@
 \section*{Supporting Information}
 
+\paragraph{BACE1 per-edge overlap values (Figure~\ref{fig:A}B).} Figure~\ref{fig:A}B reports
+that naive $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ on the $19$ BACE1 RBFE
+binding edges (mean $6.07$, $[2.78,12.01]$), the worst overstatement occurring at \emph{high}
+overlap, consistent with the controlled panel (invariant \#1, main text). Table~\ref{tab:bace1}
+lists the per-edge overlap $4\langle p(1-p)\rangle$ and both ratios for all $19$ edges (adjacent-$\lambda$
+BAR windows, complex leg, alchemtest AMBER \texttt{load\_bace\_example}), recomputed from the
+identical source Figure~\ref{fig:A}B uses (\texttt{figs/make\_figA.py}: \texttt{\_bace\_edges()} +
+\texttt{real\_panel()}, seed $20260629$; both sandwich inputs and the bootstrap truth
+subsampled to the statistical inefficiency $g$ before $B$ is formed, Section~\ref{sec:bar}).
+Every edge sits at overlap $\geq0.85$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
+occurs at the single highest-overlap edge ($4\langle p(1-p)\rangle=0.992$), and the best (least
+overstated, $2.78\times$) occurs at the lowest-overlap edge in the set ($0.846$) -- the same
+high-overlap-is-worst regime as the controlled sweep of Figure~\ref{fig:A}A, not an artifact of
+which real edges happened to be sampled.
+
+\begin{table}[t]\centering
+\caption{\textbf{Supplement: per-edge overlap on the $19$ real BACE1 RBFE binding edges of
+Figure~\ref{fig:A}B.} $4\langle p(1-p)\rangle$ is the normalized BAR overlap; sandwich/boot and
+naive/boot are the reported-se/bootstrap-se ratios for the sandwich $B/I^2$ and the naive $1/I$
+respectively, against the same decorrelated-bootstrap truth Figure~\ref{fig:A}B plots. Sorted by
+overlap ascending; repeated $(\lambda_i,\lambda_j)$ pairs are distinct edges from BACE1's
+decharge/recharge/vdw alchemical legs, which share a common $\lambda$ schedule.}
+\label{tab:bace1}
+\small
+\begin{tabular}{@{}rrrrr@{}}
+\toprule
+$\lambda_i$ & $\lambda_j$ & $4\langle p(1-p)\rangle$ & sandwich/boot & naive/boot \\
+\midrule
+$0.437$ & $0.563$ & $0.846$ & $0.992$ & $2.780$ \\
+$0.316$ & $0.437$ & $0.858$ & $1.001$ & $3.020$ \\
+$0.206$ & $0.316$ & $0.876$ & $0.967$ & $4.377$ \\
+$0.750$ & $1.000$ & $0.884$ & $0.956$ & $3.315$ \\
+$0.563$ & $0.684$ & $0.909$ & $1.041$ & $3.451$ \\
+$0.500$ & $0.750$ & $0.917$ & $0.971$ & $3.618$ \\
+$0.684$ & $0.794$ & $0.921$ & $0.997$ & $3.581$ \\
+$0.250$ & $0.500$ & $0.927$ & $1.017$ & $3.860$ \\
+$0.000$ & $0.250$ & $0.928$ & $0.967$ & $3.678$ \\
+$0.500$ & $0.750$ & $0.943$ & $1.018$ & $9.823$ \\
+$0.794$ & $0.885$ & $0.943$ & $0.981$ & $4.165$ \\
+$0.000$ & $0.250$ & $0.948$ & $0.986$ & $9.360$ \\
+$0.115$ & $0.206$ & $0.949$ & $1.005$ & $6.414$ \\
+$0.250$ & $0.500$ & $0.967$ & $1.004$ & $9.116$ \\
+$0.750$ & $1.000$ & $0.968$ & $1.052$ & $9.901$ \\
+$0.885$ & $0.952$ & $0.969$ & $0.995$ & $5.670$ \\
+$0.952$ & $1.000$ & $0.983$ & $1.064$ & $8.193$ \\
+$0.048$ & $0.115$ & $0.984$ & $1.066$ & $8.960$ \\
+$0.000$ & $0.048$ & $0.992$ & $1.007$ & $12.007$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \paragraph{Autocorrelation robustness: raw $n$ vs $n_{\mathrm{eff}}=n/g$ (Figure~\ref{fig:gsweep}).}
 The sandwich $B=n_f\Var_f[p]+n_r\Var_r[p]$ (Theorem~\ref{thm:sand}) assumes independent samples,
 whereas real molecular-dynamics works are autocorrelated. On the $19$ real BACE1 RBFE binding edges
@@ -78,7 +129,8 @@ kcal/mol), realizing Theorem~\ref{thm:chiral}.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figE_chirality_completeness.pdf}
-\caption{\textbf{Supplement: a parity-odd channel is necessary and one triple product suffices.}
+\caption{\textbf{Supplement: a parity-odd channel is necessary, and one non-coplanar triple
+product suffices (Theorem~\ref{thm:chiral}).}
 (A) The even ($O(3)$) readout collapses enantiomers exactly; $\texttt{0o}$ separates them.
 (B) Enantiomer $\ddG$ MAE drops $11.7\times$ when the $\texttt{0o}$ channel is added.}
 \label{fig:E}
