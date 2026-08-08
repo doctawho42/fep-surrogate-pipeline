@@ -248,38 +248,26 @@ at realistic budget (${\approx}5\times$ even at large budget).
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
-\caption{\textbf{The bottleneck reads calibrated aleatoric variance.}
-(A) Controlled Monte-Carlo sweep: sandwich $B/I^2$ coincides with \texttt{pymbar}-MBAR and
-truth; a fair learned-variance head (fed work moments + overlap $I$) is
-${\approx}7\times$ overconfident at realistic budget (se ${\approx}0.15\times$ truth,
-range $0.09$--$0.20\times$); a richly-fed head approaches the closed form only with a large
-budget (${\approx}5\times$ overconfident at 4000-edge oracle, se ${\approx}0.20\times$);
-corrected foils do not help at realistic budget ($\beta$-NLL se ${\approx}0.11\times$, stable across
-seeds; $5$-member deep ensemble se ${\approx}0.20\times$ at this seed, the large-budget floor, but
-spanning $0.20$--$1.22\times$ across $5$ independent retrains, one crossing calibration); $1/I$ is
-the info-equality plug-in.
-(B) Real FEP edges, BACE1 RBFE
-binding (filled) and benzene solvation, sandwich tracks bootstrap truth (an internal check)
-while $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ (BACE1 $6.07$
-$[2.78,12.01]$; cf.\ the controlled-panel se range $1.08$--$2.65\times$ in panel~A; per-edge
-overlap values, all $\geq0.84$, high-overlap regime, Supplementary Table~\ref{tab:bace1}).}
+\caption{\textbf{Sandwich variance against learned-variance foils, controlled and real data.}
+(A) Reported standard error divided by the true standard error, versus work-distribution
+overlap, for the sandwich $B/I^2$, \texttt{pymbar}-MBAR, the naive information-equality
+plug-in $1/I$, a learned mean--variance (MVE) head at a realistic and at a large training
+budget, a $\beta$-NLL head, and a $5$-member deep ensemble, in a controlled Monte-Carlo
+sweep.
+(B) Reported standard error versus decorrelated-bootstrap standard error on real BACE1 RBFE
+binding edges (filled markers) and a benzene solvation edge, for the sandwich $B/I^2$ and
+the naive $1/I$.}
 \label{fig:A}
 \end{figure}
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_replicate_validation.pdf}
 \caption{\textbf{Independent-replicate validation on real binding edges.} Reported
-MBAR se (equal to the sandwich $B/I^2$ to leading order; Fig~\ref{fig:A}A) vs the
-across-replicate empirical SD over $1145$ OpenFE
-IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3 independent replicates
-each; seed/velocity-only repeats from identical starting coordinates via OpenFE
-\texttt{protocol\_repeats}~\citep{baumann2025industrybenchmarks}, so the SD reflects sampling noise, a lower bound on full
-reproducibility). (A) Points sit above the $y{=}x$ line: the reported se is conservative
-(reported/replicate-SD $1.41$, CI $[1.26,1.62]$; $1.25\times$ after the $n{=}3$
-small-sample SD bias correction, $\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$). (B) Per-target
-pooled ratio: conservative on $28$ of $34$ targets, with one protonation-variant outlier
-overconfident. The reported bar is not \emph{systematically} overconfident, the opposite
-of the learned head.}
+per-edge standard error versus the across-replicate empirical standard deviation, on
+$1145$ OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3
+independent replicates each). (A) Reported standard error versus across-replicate
+standard deviation, with the $y{=}x$ line. (B) Per-target pooled ratio of reported
+standard error to across-replicate standard deviation, for $34$ targets.}
 \label{fig:Arep}
 \end{figure}
 
@@ -444,16 +432,14 @@ pooled $1+3s^2/V_{\text{samp}}$; the ratio $\to3$ iff systematic-dominated).
 
 \begin{figure}[t]\centering
 \includegraphics[width=\textwidth]{figL_calibrated_cycle_closure.pdf}
-\caption{\textbf{Calibrated cycle-closure quality control (1145 real edges).} (A) Per-system
-reduced $\chi^2$: most systems are sampling-consistent ($\le1$, shaded), six are flagged
-(Benjamini--Hochberg, FDR $0.05$). (B) The same test under different $\sigma$: a uniform
-${\times}0.15$ shrink (a stress test standing in for the learned head's central overconfidence,
-Figure~\ref{fig:A}; Supplementary Figure~\ref{fig:P4} shows the head's real, non-uniform
-miscalibration profile gives the same verdict) flags $88\%$ of systems (useless), the
-calibrated sandwich flags $12\%$ (selective), over-wide bars none. The detector's usefulness
-\emph{is} $\sigma$-calibration. (C) Pooling the 3 replicates increases the flagged systems'
-reduced $\chi^2$ toward the $3\times$ (pure-systematic) line, not the diagonal (pure-sampling):
-the flags are reproducible systematic error, not noise or under-sized bars.}
+\caption{\textbf{Calibrated cycle-closure quality control ($1145$ real edges, $48$
+systems).} (A) Per-system reduced $\chi^2$ from a generalized-least-squares cycle-closure
+fit, ranked; shading marks $\chi^2_\nu\le1$; six systems are flagged by a
+Benjamini--Hochberg test (FDR $0.05$). (B) Percentage of systems flagged by the same test
+under four $\sigma$ models: the calibrated sandwich, a uniform $\times0.15$ shrink, a
+$\times1.3$ inflation, and a $\times2$ inflation. (C) Reduced $\chi^2$ from a single
+replicate versus from the three replicates pooled, for the six flagged systems and the
+remaining systems, with reference lines at pooled/single $=1$ and $=3$.}
 \label{fig:L}
 \end{figure}
 
@@ -467,11 +453,12 @@ reproduces on unseen runs. Sampling noise would give zero.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figL_validation.pdf}
-\caption{\textbf{The flags are causal and reproduce out-of-sample.} (A) Removing the flagged
-high-$|z|$ edges restores cycle-closure consistency in far fewer removals than random. The
-detector localizes the causal culprits. (B) Per-edge standardized residuals from independent
-replicates are positively correlated ($r=+0.30$ to $+0.42$), so systematic flags persist on
-held-out runs (sampling noise $\to0$).}
+\caption{\textbf{Edge-removal repair test and cross-replicate residual reproduction.} (A)
+Number of edges removed, in descending order of $|z|$, before reduced $\chi^2\le1$ is
+restored: guided removal of the flagged high-$|z|$ edges versus random removal, per system.
+(B) Standardized residual $z_e$ from a replicate-0 network fit versus $z_e$ from a
+replicate-1 fit, for edges in flagged and in non-flagged systems, with the $y=x$ line and
+the Pearson correlation between each pair of replicates.}
 \label{fig:Lval}
 \end{figure}
 
@@ -568,34 +555,10 @@ Figure~\ref{fig:A}; the two are evaluated on different data and answer different
 bare ``$\sigma$'' below this point refers to $\sigma_{\text{total}}$ unless a figure reference
 says otherwise.
 
-\begin{table}[t]\centering
-\caption{\textbf{The honest audit at a glance (OpenFF benchmark / \texttt{eg5}).} Does this decomposed $\sigma$ improve each
-downstream task? Effects are the calibrated method minus the relevant baseline with a 95\%
-bootstrap CI; ``real'' = OpenFF benchmark out-of-distribution edges, ``sim'' = controlled
-simulation. The top block is performance (no gain); the bottom block is where calibration pays
-(trust).}
-\label{tab:audit}
-\small
-\begin{tabular}{@{}p{3.1cm}lp{5.4cm}p{2.6cm}@{}}
-\toprule
-Downstream task & Data & Effect (calibrated $-$ baseline) [95\% CI] & Verdict \\
-\midrule
-Interval sharpness (OOD) & real & width split/ours $0.92\times$; cond.\ $-0.044$ $[-0.121,0.005]$ & no gain \\
-Edge weighting (active learning) & sim & calls-to-top-$k$ $0.98\times$ $[0.93,1.03]$ & no gain \\
-Commit ranking (matched volume) & real & precision $-0.006$ $[-0.016,+0.007]$ & tie \\
-Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts (directional, single target)$^{a}$ \\
-\midrule
-Commit trust (vs overconfident $\sigma$) & real & shortfall $+0.182$ $[0.132,0.225]$ better & \textbf{trust} \\
-Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust} \\
-\bottomrule
-\end{tabular}
-
-\smallskip
-\noindent{\footnotesize $^{a}$The reward re-ranking effect is measured on a single evaluable
-target (\texttt{eg5}) and is directional (point estimates shift modestly run-to-run under torch
-CPU non-determinism, Section~\ref{sec:limitations}); it is not yet established as a general
-property of calibrated reward re-ranking across chemotypes.\par}
-\end{table}
+Supplementary Table~\ref{tab:audit} collects the effect of this decomposed $\sigma$, relative to
+the relevant baseline, across all six downstream tasks audited below: no measurable gain on
+interval sharpness, edge weighting, commit ranking, or reward re-ranking, and a clear benefit on
+commit trust and on the stopping decision.
 
 \paragraph{Trust: an overconfident $\sigma$ corrupts decisions; this decomposed $\sigma$ does not, and
 calibration is cheap (on the OpenFF benchmark).} The clearest payoff of calibration is a trustworthy stop/commit
@@ -636,11 +599,11 @@ not transfer to real data.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figB_real_decomposition.pdf}
-\caption{\textbf{Honest audit, sharpness (real OOD residuals).} (A) Conditional coverage error
-per target and per $|\ddG|$ bin: the decomposed $\sigma$ is comparable to a fair
-Mondrian-by-target conformal and only marginally better than a flat band (not significant).
-(B) Sharpness: the decomposed interval is \emph{not} tighter than flat split-conformal
-(split/ours $0.92\times$). The synthetic figure's up to $2.2\times$ sharpness vs split-conformal ($2.0\times$ vs CQR) is an oracle-DGP artifact.}
+\caption{\textbf{Conditional calibration and interval sharpness on real out-of-distribution
+trunk residuals.} (A) Maximum conditional coverage error, computed per target and per
+$|\ddG|$ bin, for the decomposed physics $\sigma$, a Mondrian-by-target conformal interval,
+and a flat split-conformal interval, each at approximately $90\%$ marginal coverage.
+(B) Mean prediction-interval half-width for the same three methods.}
 \label{fig:Breal}
 \end{figure}
 
@@ -659,11 +622,14 @@ first.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figJ_amortized_reward.pdf}
-\caption{\textbf{Honest audit, commit decision (real OOD).} (A) At matched commit volume the
-$\sigma$-aware ranking ties a raw-$\mu$ ranking (a Gauss--Markov-style ceiling); the learned MVE
-mean ranks worst. (B) With the mean held fixed, an overconfident $\sigma$ over-claims, while the
-decomposed $\sigma$ \emph{and} cheaply recalibrated $\sigma$'s are all trustworthy. Calibration
-buys trust, not a better ranking.}
+\caption{\textbf{Commit-to-synthesis ranking and calibration on real out-of-distribution
+edges.} (A) Commit precision (fraction of committed candidates with true value at or above a
+threshold $\tau$) versus commit volume (fraction of edges committed), for candidates ranked
+by the trunk $\sigma$-aware margin, by the raw predicted mean, and by a learned MVE-head
+margin, with the random base rate marked. (B) Actual commit-correctness versus claimed
+commit confidence $1-\alpha$, for the decomposed physics $\sigma$, an epistemic-only
+$\sigma$, and the same epistemic-only $\sigma$ after temperature and after split-conformal
+recalibration, with the ideal (actual = claimed) line.}
 \label{fig:J}
 \end{figure}
 
@@ -702,9 +668,12 @@ but it is the same lesson as the commit panel: calibration is a trust instrument
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figG_calibrated_stopping.pdf}
-\caption{\textbf{Where calibration pays: trustworthy stopping (simulation).} (A) Calibrated
-claimed confidence tracks actual correctness; overconfident confidence races ahead. (B) The
-overconfident learner stops $2\times$ earlier but is much more often wrong.}
+\caption{\textbf{Simulated active-learning stopping under calibrated versus overconfident
+claimed uncertainty.} (A) Actual top-$k$ correctness and claimed stopping confidence,
+averaged over $60$ seeds, versus the number of oracle calls, for a calibrated learner and
+for a learner whose assumed posterior standard error is scaled by $0.15\times$
+(overconfident). (B) Oracle calls at the stopping rule (bars) and top-$k$ correctness at
+that stop (points), for the two learners.}
 \label{fig:G}
 \end{figure}
 

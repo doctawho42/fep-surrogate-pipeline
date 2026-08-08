@@ -22,12 +22,13 @@ naive/bootstrap ratio is $\rho=0.84$ ($n=19$, computed from Table~\ref{tab:bace1
 relationship holds within the narrow $[0.846,0.992]$ overlap band, not just at its endpoints.
 
 \begin{table}[t]\centering
-\caption{\textbf{Supplement: per-edge overlap on the $19$ real BACE1 RBFE binding edges of
-Figure~\ref{fig:A}B.} $4\langle p(1-p)\rangle$ is the normalized BAR overlap; sandwich/boot and
-naive/boot are the reported-se/bootstrap-se ratios for the sandwich $B/I^2$ and the naive $1/I$
-respectively, against the same decorrelated-bootstrap truth Figure~\ref{fig:A}B plots. Sorted by
-overlap ascending; repeated $(\lambda_i,\lambda_j)$ pairs are distinct edges from BACE1's
-decharge/recharge/vdw alchemical legs, which share a common $\lambda$ schedule.}
+\caption{\textbf{Per-edge overlap on $19$ real BACE1 RBFE binding edges.} $\lambda_i,\lambda_j$
+are the BAR window endpoints; $4\langle p(1-p)\rangle$ is the normalized BAR overlap;
+sandwich/boot and naive/boot are the reported-se/bootstrap-se ratios for the sandwich $B/I^2$
+and the naive $1/I$, respectively, against a decorrelated-bootstrap reference standard error.
+Rows are sorted by overlap, ascending; repeated $(\lambda_i,\lambda_j)$ pairs are distinct
+edges from BACE1's decharge, recharge, and van der Waals alchemical legs, which share a
+common $\lambda$ schedule.}
 \label{tab:bace1}
 \small
 \begin{tabular}{@{}rrrrr@{}}
@@ -75,13 +76,13 @@ panel. Deterministic; \texttt{make gsweep}.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figAC_gsweep.pdf}
-\caption{\textbf{Supplement: the sandwich calibration is robust to MD autocorrelation given
-$n_{\mathrm{eff}}=n/g$ (real BACE1 edges).} (A) Sandwich se versus the correlation-aware
-(decorrelated bootstrap) truth: at $n_{\mathrm{eff}}$ the sandwich lies on the $y{=}x$ line
-($1.00\times$, calibrated), while at raw $n$ it sits below it ($0.83\times$, overconfident). (B) The
-raw-$n$ overconfidence equals the $1/\sqrt{\bar g}$ autocorrelation factor ($\bar g=1.48$); because
-the sandwich matches its own bootstrap under raw $n$ as well, the fix is the effective sample count
-$n_{\mathrm{eff}}$, not the closed form.}
+\caption{\textbf{Sandwich standard error at the raw sample count versus at the effective
+sample count $n_{\mathrm{eff}}=n/g$, on real BACE1 edges.} (A) Sandwich standard error at
+$n_{\mathrm{eff}}$ and at raw $n$, plotted against the correlation-aware (decorrelated
+bootstrap) reference standard error, with the $y{=}x$ line. (B) Aggregate ratio of sandwich
+standard error to the reference, at $n_{\mathrm{eff}}$, at raw $n$, and of the sandwich to
+its own raw-$n$-matched bootstrap, with bootstrap confidence intervals; the
+$1/\sqrt{\bar g}$ autocorrelation prediction is marked.}
 \label{fig:gsweep}
 \end{figure}
 
@@ -100,8 +101,12 @@ Beating similarity needs orthogonal 3D/pocket information.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.7\textwidth]{figC_active_learning.pdf}
-\caption{\textbf{Supplement: edge weighting is second-order for ranking.} The policy beats
-random; the sandwich-vs-naive weighting does not move calls-to-top-$k$ (Gauss--Markov).}
+\caption{\textbf{Simulated active-learning acquisition policies.} (A) Simple regret versus
+oracle calls (simulated FEP edges evaluated), for a sandwich-weighted knowledge-gradient
+policy, a naive-weighted knowledge-gradient policy, an uncertainty-only policy, and random
+selection, averaged over $24$ seeds with $95\%$ confidence bands. (B) Median oracle calls to
+reach the top-$k$ candidates (regret at or below tolerance), with interquartile-range error
+bars, for the same four policies.}
 \label{fig:C}
 \end{figure}
 
@@ -113,17 +118,21 @@ top-$k$ regret $0.27$ vs $0.01$).
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figD_gauge_identifiability.pdf}
-\caption{\textbf{Supplement: gauge-aware acquisition (simulation).} (A) Knowledge gradient is
-exactly $0$ on the gauge (all-ones) contrast and routes value to decision-relevant edges. (B)
-Ablating gauge-awareness wastes budget on redundant cross-cluster bridges.}
+\caption{\textbf{Knowledge-gradient score on gauge and decision-relevant contrasts
+(simulation).} (A) Knowledge gradient for the within-cluster decision contrast and for the
+gauge (all-ones) contrast, by edge type (within-cluster-A, within-cluster-B, bridge). (B)
+Regret on the cluster-A top-$k$ candidates versus oracle calls, for a gauge-aware and a
+gauge-unaware acquisition policy, averaged over seeds with $95\%$ confidence bands.}
 \label{fig:D}
 \end{figure}
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figF_target_id.pdf}
-\caption{\textbf{Supplement: ligand-only reverse screening is similarity-bound.} (A) A
-fingerprint model ties a Tanimoto baseline on hidden-target recovery. (B) $P(\text{binds})$ is
-well calibrated (ECE $0.008$).}
+\caption{\textbf{Ligand-only reverse target screening on real ChEMBL data.} (A) Top-1 target
+recovery for a fingerprint model and a Tanimoto shape baseline, on a diverse target set and
+on a within-family aminergic GPCR target set, with the random baseline marked. (B)
+Reliability diagram of predicted $P(\text{binds chosen target})$ versus empirical accuracy,
+pooled across both sets, with the $y{=}x$ line and the expected calibration error (ECE).}
 \label{fig:F}
 \end{figure}
 
@@ -135,10 +144,12 @@ kcal/mol), realizing Theorem~\ref{thm:chiral}.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figE_chirality_completeness.pdf}
-\caption{\textbf{Supplement: a parity-odd channel is necessary, and one non-coplanar triple
-product suffices (Theorem~\ref{thm:chiral}).}
-(A) The even ($O(3)$) readout collapses enantiomers exactly; $\texttt{0o}$ separates them.
-(B) Enantiomer $\ddG$ MAE drops $11.7\times$ when the $\texttt{0o}$ channel is added.}
+\caption{\textbf{Even and parity-odd readout values on enantiomer pairs, and their effect on
+predicted binding free energy.} (A) Readout value on a molecule $M$ versus on its mirror
+image $M'$, for an even ($O(3)$-invariant) readout and for the $\texttt{0o}$ triple-product
+channel, over $120$ randomly sampled point quadruples, with the $y{=}x$ line. (B) Enantiomer
+$\ddG$ mean absolute error, over $5$ training seeds, for a trunk with an even-only readout
+and for the same trunk with the $\texttt{0o}$ channel added.}
 \label{fig:E}
 \end{figure}
 
@@ -155,11 +166,12 @@ chemistry, the collapse-and-restore of the chirality bit proved for the designed
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.95\textwidth]{figE_chirality_real.pdf}
-\caption{\textbf{Supplement: Theorem~\ref{thm:chiral} on a real chiral drug (thalidomide).}
-An O(3)-invariant readout (all pairwise distances and dot products) is identical on the
-enantiomer pair to machine precision; the parity-odd \texttt{0o} pseudoscalar $\chi$ flips sign
-($+1.04\to-1.04$); RDKit CIP $R\to S$. The solid vs.\ hashed wedge at the stereocentre marks the
-enantiomer.}
+\caption{\textbf{Chirality readout on a real drug molecule (thalidomide).} Left and center:
+2D structure of one enantiomer and of its exact mirror image, generated from a 3D embedding,
+each labeled with its RDKit CIP descriptor and the parity-odd pseudoscalar $\chi$. Right: the
+maximum absolute difference between the two enantiomers' $O(3)$-invariant readouts (all
+pairwise distances, all pairwise dot products) and the pseudoscalar value on each
+enantiomer. The solid versus hashed wedge at the stereocentre marks the enantiomer.}
 \label{fig:Ereal}
 \end{figure}
 
@@ -182,34 +194,32 @@ with the features a domain expert would flag a priori. Deterministic; \texttt{ma
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.9\textwidth]{figQC_structures.pdf}
-\caption{\textbf{Supplement: structural context of two flagged systems.} Heavy-atom coordinates
-from public co-crystal structures. (A) BACE1 (PDB 4DJW): the catalytic aspartic dyad
-(Asp93/Asp289, red) hydrogen-bonds the inhibitor (grey), a protonation-state difficulty. (B) BRD4
-BD1 (PDB 3MXF, JQ1): the conserved acetyl-lysine-pocket waters (blue; $16$ within $4.5$\,\AA) and
-the recognition Asn140 (green) pack against the ligand, the buried-water challenge.}
+\caption{\textbf{Structural context of two flagged systems, from public co-crystal
+structures.} Heavy-atom coordinates. (A) BACE1 (PDB 4DJW): the catalytic aspartic-acid dyad
+(Asp93/Asp289, red) and the bound inhibitor (grey). (B) BRD4 BD1 (PDB 3MXF, in complex with
+JQ1): crystallographic waters within $4.5$\,\AA\ of the ligand (blue) and the recognition
+residue Asn140 (green).}
 \label{fig:qcstruct}
 \end{figure}
 
 \paragraph{Per-edge observability map and predictive falsifier (Figure~\ref{fig:Lev}).} The
 estimation--detection conservation law (Theorem~\ref{thm:cons}) certifies $\sum_e h_e=\mathrm{dof}$
-to machine precision across the $48$ cyclic systems and lists the structurally un-auditable bridge
-edges; a pre-registered test of whether the curl-leverage \emph{additionally} predicts the location
-of reproducible systematic error is negative (studentized Spearman $\rho=-0.073$, $p=0.9571$: KILL),
-so only the structural certificate is claimed.
+to machine precision (maximum deviation $1.78\times10^{-14}$) across the $48$ cyclic systems and
+identifies $48$ structurally un-auditable bridge edges ($h_e=0$, one per system on average); a
+pre-registered test of whether the curl-leverage \emph{additionally} predicts the location of
+reproducible systematic error, run on $934$ pooled edges over $45$ systems against the rule
+confirmed iff $\rho>0$ and $p<0.05$ ($10^4$ within-system block permutations), is negative
+(studentized Spearman $\rho=-0.073$, $p=0.9571$: KILL), so only the structural certificate is
+claimed.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figLev_observability.pdf}
-\caption{\textbf{Supplement: per-edge observability map and pre-registered predictive falsifier
-(Theorem~\ref{thm:cons}).} (A) Structural result: across all $48$ systems with $\geq1$ independent
-cycle, $\sum_e h_e=\mathrm{dof}$ holds to machine precision ($1.78\times10^{-14}$ max deviation), and
-$48$ bridge edges (one structurally un-auditable, $h_e=0$, edge per system on average) are
-identified. (B) Predictive falsifier: curl-leverage $h_e$ versus the studentized, cross-replicate
-reproducible residual magnitude on $934$ pooled edges over $45$ systems (OpenFE
-IndustryBenchmarks2024, the same $1145$-edge replicate set as Figure~\ref{fig:L}); studentized
-Spearman $\rho=-0.073$, within-system block-permutation $p=0.9571$ ($10^4$ permutations) against the
-pre-registered rule (CONFIRMED if $\rho>0$ and $p<0.05$): VERDICT KILL. Observability does not
-predict where reproducible systematic error concentrates on this benchmark; the structural
-certificate in panel A stands regardless.}
+\caption{\textbf{Per-system curl-leverage, and curl-leverage versus reproducible residual
+magnitude.} (A) Median curl-leverage $h_e$ per system, ranked, across the $48$ systems with
+at least one independent cycle; the six cycle-closure-flagged systems are labeled with their
+number of bridge ($h_e=0$) edges. (B) Curl-leverage $h_e$, binned into $8$ quantiles, versus
+the mean studentized cross-replicate reproducible residual magnitude in each bin, with the
+Spearman correlation and permutation $p$-value.}
 \label{fig:Lev}
 \end{figure}
 
@@ -221,14 +231,11 @@ accuracy, the same scope boundary as the clean \texttt{eg5} system.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figLcausal_guided_vs_random.pdf}
-\caption{\textbf{Supplement: close-the-loop accuracy race, guided versus random QC-edge removal
-(NULL).} On the four flagged systems groundable against public ChEMBL affinity (\texttt{cdk8, hif2a,
-p38, bace}), removing the calibrated-QC-flagged high-$|z|$ edges (guided, fixed $K$ per system) does
-not reduce MUE-vs-experiment more than a size-matched random removal (per-system one-sided
-permutation $p$ shown; combined Stouffer $p=0.48$, sign test $p=0.69$). The calibrated QC causally
-repairs internal network consistency (Figure~\ref{fig:Lval}) but does not, on this evidence, reduce
-force-field-limited absolute accuracy against experiment, exactly because cycle closure is blind to
-node-consistent force-field bias.}
+\caption{\textbf{Change in mean unsigned error against experimental affinity after guided
+versus random QC-edge removal.} Bars: change in mean unsigned error against experiment
+($\Delta$MUE) after guided removal of the QC-flagged high-$|z|$ edges, per system. Points:
+mean $\Delta$MUE after a size-matched random removal, per system. Systems: \texttt{cdk8},
+\texttt{hif2a}, \texttt{p38}, \texttt{bace}.}
 \label{fig:Lcausal}
 \end{figure}
 
@@ -251,16 +258,13 @@ was performed, so the comparison above is specific to that one fixed rule.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figCut_cutoff_benchmark.pdf}
-\caption{\textbf{Supplement: fixed-cutoff head-to-head and $\chi^2$ reconciliation (peer-review
-checks, same $1145$ edges).} (A) P1: Mann-Whitney AUC of each detector against the cross-replicate
-reproducibility anchor. The calibrated per-edge null (AUC $0.865$) does not clear both foils, the
-fixed $1.0$ kcal/mol hysteresis cutoff (AUC $0.575$) and the fixed-$\mathrm{se}$ $\chi^2$ test (AUC
-$0.725$), at $95\%$ confidence (paired bootstrap difference $+0.140$ $[-0.008,+0.316]$): VERDICT
-TIE. (B) P2: nominal versus shared-node-correlation-corrected (effective-dof) median reduced
-$\chi^2$ and the implied se-conservatism factor, against the independently replicate-validated
-factor. The correction leaves the factor at $1.67\times$ (nominal $1.67\times$ on the $46$-system
-subset where the diagnostic is estimable), short of the replicate-validated $1.41\times$: VERDICT
-NOT-CONFIRMED.}
+\caption{\textbf{Detection AUC of three flagging rules, and nominal versus
+correlation-corrected reduced $\chi^2$.} (A) Area under the ROC curve (AUC) against a
+cross-replicate reproducibility anchor, for the calibrated per-edge null, a fixed $1.0$
+kcal/mol hysteresis cutoff, and a fixed-standard-error $\chi^2$ test, with the chance level
+($\mathrm{AUC}=0.5$) marked. (B) Per-system reduced $\chi^2$ at the nominal degrees of
+freedom versus at the shared-node-correlation-corrected effective degrees of freedom, with
+the $y{=}x$ line and the $\chi^2_\nu=1$ reference.}
 \label{fig:Cut}
 \end{figure}
 
@@ -287,22 +291,13 @@ threshold is set by the magnitude of the shrink, not by its structure. Determini
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figP4_sigma_profile.pdf}
-\caption{\textbf{Supplement: the QC sweep under the learned head's real, non-uniform
-miscalibration profile (peer-review item P4).} (Left) Four arms on the identical $48$-system,
-$1143$-edge OpenFE network. Calibrated sandwich (${\times}1$): $6/48$ flagged ($12\%$). Real
-learned profile (primary; percentile-rank transfer of Figure~\ref{fig:A}A's measured ratio onto
-each edge's own overlap): $42/48$ ($88\%$), $7.00\times$ the calibrated count (VERDICT: DEGRADES
-against the pre-registered $2\times$ threshold). Shuffled-profile control (association with
-overlap destroyed): $42/48$. Uniform ${\times}0.15$ stress test (Figure~\ref{fig:L}B): $42/48$.
-The rank transfer approximates how the head's measured overconfidence would vary across these
-edges; it is not the head's own output on this benchmark. (Right) Histogram of the $1143$
-per-edge transferred ratios (real learned profile), with Figure~\ref{fig:L}B's uniform
-${\times}0.15$ stand-in marked (dashed line): the per-edge assignment is genuinely heterogeneous
-(all $1143$ ratios are distinct), but the whole distribution sits in a narrow, uniformly
-overconfident band ($0.09$--$0.20\times$). That narrow band is why the heterogeneous and uniform
-stand-ins agree so closely in flagged count: it is the magnitude of the miscalibration, not the
-uniformity of the Figure~\ref{fig:L}B stand-in, that destroys the test, and this figure shows the
-band rather than only asserting it.}
+\caption{\textbf{Cycle-closure flagging under four per-edge $\sigma$ assignments, and the
+distribution of the real-profile ratios.} (Left) Percentage of the $48$-system OpenFE
+network flagged, for the calibrated sandwich, the learned head's measured overlap-dependent
+miscalibration profile transferred by percentile rank onto each edge's own overlap, a
+shuffled-profile control, and a uniform $\times0.15$ shrink. (Right) Histogram of the $1143$
+per-edge transferred ratios from the real learned profile, with the uniform $\times0.15$
+stand-in marked.}
 \label{fig:P4}
 \end{figure}
 
@@ -340,24 +335,13 @@ Deterministic; \texttt{make figP4b}.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figP4b_dose_response.pdf}
-\caption{\textbf{Supplement: dose-response of the cycle-closure QC to $\sigma$ miscalibration
-(peer-review item P4b).} Flagged fraction of the $48$-system OpenFE network across a
-pre-registered, frozen grid of $16$ uniform $\mathrm{se}$ scale factors ($2.0$--$0.10\times$;
-$1.0=$ calibrated sandwich, lower $=$ more overconfident), swept through the identical GLS $+$
-Benjamini--Hochberg pipeline as Figure~\ref{fig:L} and Supplementary Figure~\ref{fig:P4}. Vertical
-dotted line: the calibrated scale ($1.0\times$, $6/48$ flagged). Vertical dashed line:
-$s_{50}=0.3\times$, the largest scale at which at least half the systems ($30/48$) are flagged.
-Shaded band: the learned head's measured, rank-transferred miscalibration range
-($0.09$--$0.20\times$), which lies entirely below $s_{50}$. The other frozen readout,
-$s_{\text{onset}}=0.9\times$ (the largest scale flagging more than the calibrated count), is
-exactly one system crossing the Benjamini--Hochberg threshold ($7/48$ vs.\ $6/48$); it is fully
-grid-determined rather than a measurement of this benchmark (probing finds the flipping system as
-high as $s=0.995\times$), so it should not be read as evidence of broad sensitivity near
-calibration; the mid-curve climb ($12/48$ at $0.7\times$ to
-$30/48$ at $0.3\times$) carries the real evidentiary weight. Two sanity anchors: the ${\times}1.0$
-point matches Figure~\ref{fig:L}A's calibrated count ($6/48$) and the ${\times}0.15$ point matches
-Figure~\ref{fig:L}B / Supplementary Figure~\ref{fig:P4}'s uniform/real-profile arms ($42/48$).
-Deterministic; \texttt{make figP4b}.}
+\caption{\textbf{Fraction of the OpenFE network flagged across a swept uniform $\sigma$ scale
+factor.} Percentage of the $48$-system network flagged by the cycle-closure test, across a
+frozen grid of $16$ uniform standard-error scale factors from $2.0\times$ to $0.10\times$
+(lower $=$ more overconfident; $1.0\times$ is the calibrated sandwich). Vertical dotted
+line: the calibrated scale. Vertical dashed line: $s_{50}$, the largest scale at which at
+least half the systems are flagged. Shaded band: the learned head's measured,
+rank-transferred miscalibration range.}
 \label{fig:P4b}
 \end{figure}
 
@@ -382,26 +366,22 @@ under this conservative null (Section~\ref{sec:qc}, main text). The two distribu
 backstops of Figure~\ref{fig:Lval} (causal edge removal,
 cross-replicate residual correlation) are functions of rank order and raw residual correlation
 only, never of $\mathrm{se}$, so neither depends on this null and neither is affected by this
-concern in either direction. Deterministic; \texttt{make figP8}; full $48$-system table in
+concern in either direction. The per-system ratio in Table~\ref{tab:P8} is the
+root-mean-square reported standard error over the root-mean-square across-independent-replicate
+SD, pooled per system, not a naive per-system average of per-edge ratios or a naive ratio of
+arithmetic means, which for three of the six systems below would sit on the opposite side of
+$\mathrm{ratio}=1$. Deterministic; \texttt{make figP8}; full $48$-system table in
 \texttt{docs/results\_figP8.md}.
 
 \begin{table}[t]\centering
-\caption{\textbf{Supplement: per-system flag robustness to each system's own measured
-calibration error (peer-review item P8; the six Figure~\ref{fig:L} flagged systems).} ``ratio''
-is the per-system \textbf{root-mean-square} calibration ratio -- $\mathrm{ratio}_s=\sqrt{\smash[b]{\langle
-\mathrm{se}_e^2\rangle_{e\in s}}}/\sqrt{\smash[b]{\langle\mathrm{SD}_e^2\rangle_{e\in s}}}$, the
-root-mean-square reported $\mathrm{se}$ over the root-mean-square across-independent-replicate SD
-of binding $\ddG$, pooled per system -- identical to Supplementary Figure~\ref{fig:Arep}'s
-per-target ratio (not a naive per-system average of per-edge ratios or a naive ratio of
-arithmetic means, which for three of the six systems below sit on the opposite side of
-$\mathrm{ratio}=1$). $\chi^2_{\text{nom}}$ is the nominal reduced $\chi^2$ (Figure~\ref{fig:L}A);
-$\chi^2_{\text{self}}$ inflates that system's own $\mathrm{se}$ by $1/\mathrm{ratio}$ where
-$\mathrm{ratio}<1$ and leaves it unchanged otherwise. ``ratio'' below is the raw $n{=}3$ SD ratio,
-uncorrected for the $c_4(3)=0.886$ small-sample bias applied to the aggregate ratio elsewhere
-(Figure~\ref{fig:Arep}); correcting each of the four sub-$1$ ratios by that same factor moves all
-four \emph{further} below $1$ ($\texttt{brd4}$ $0.68$, $\texttt{faah}$ $0.80$, $\texttt{bace}$
-$0.85$, $\texttt{hif2a}$ $0.86$), so the raw ratios used here and to build $\chi^2_{\text{self}}$
-are, if anything, generous to these systems rather than the reverse.}
+\caption{\textbf{Per-system reduced $\chi^2$ before and after inflating each system's own
+per-edge standard error by its own measured calibration error.} ``ratio'' is the per-system
+root-mean-square ratio of reported standard error to across-independent-replicate standard
+deviation of binding $\ddG$ (raw $n=3$ ratio; identical definition to Supplementary
+Figure~\ref{fig:Arep}'s per-target ratio). $\chi^2_{\text{nom}}$ is the nominal reduced
+$\chi^2$; $\chi^2_{\text{self}}$ inflates that system's own standard error by
+$1/\mathrm{ratio}$ where $\mathrm{ratio}<1$ and leaves it unchanged otherwise. Rows are the
+six systems flagged by the cycle-closure test.}
 \label{tab:P8}
 \small
 \begin{tabular}{@{}lrrrl@{}}
@@ -422,13 +402,49 @@ System & ratio & $\chi^2_{\text{nom}}$ & $\chi^2_{\text{self}}$ & Still flagged 
 trajectory-balance GFlowNet over \texttt{eg5} (the most $\sigma$-varying evaluable target), the
 calibrated LCB reward \emph{lowers} the true hit-rate (cal$-$raw $-0.110$) because $\sigma$ tracks
 chemical novelty ($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), not low quality; an
-LCB reward helps only when $\sigma$ flags low-quality candidates (Table~\ref{tab:audit}, main text).
+LCB reward helps only when $\sigma$ flags low-quality candidates (Table~\ref{tab:audit} below).
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.7\textwidth]{figK_calibrated_generation.pdf}
-\caption{\textbf{Supplement: honest audit, reward re-ranking over a measured congeneric set (single
-target \texttt{eg5}).} A calibrated reward lowers the GFlowNet's true hit-rate (cal $0.140$ vs raw
-$0.250$; cal$-$raw $-0.110$, CI $[-0.151,-0.073]$) because $\sigma$ tracks chemical novelty
-($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), not low quality.}
+\caption{\textbf{True hit-rate of a trajectory-balance GFlowNet under three reward
+functions.} Mean true hit-rate of generated ligands, over $12$ seeds with standard-error
+bars, for a calibrated lower-confidence-bound (LCB) reward, a raw predicted-mean reward, and
+an overconfident MVE-uncertainty reward, on the \texttt{eg5} congeneric ligand series.}
 \label{fig:K}
 \end{figure}
+
+\paragraph{Downstream audit summary (Table~\ref{tab:audit}).} Table~\ref{tab:audit} collects,
+for four downstream performance tasks (interval sharpness, active-learning edge weighting,
+commit-to-synthesis ranking, and reward re-ranking on the \texttt{eg5} congeneric set) and two
+decision tasks (commit trust and active-learning stopping), the calibrated method's effect
+relative to the relevant baseline. The top block shows no measurable performance gain
+(Figures~\ref{fig:Breal}, \ref{fig:C}, \ref{fig:J}A, \ref{fig:K}, main text and above); the
+bottom block shows a clear benefit for the two decision tasks (Figures~\ref{fig:J}B,
+\ref{fig:G}, main text).
+
+\begin{table}[t]\centering
+\caption{\textbf{Effect of the decomposed $\sigma$ relative to a baseline, across six
+downstream tasks.} Effects are the calibrated method minus the relevant baseline with a
+$95\%$ bootstrap confidence interval; ``real'' denotes OpenFF benchmark out-of-distribution
+edges, ``sim'' denotes a controlled simulation.}
+\label{tab:audit}
+\small
+\begin{tabular}{@{}p{3.1cm}lp{5.4cm}p{2.6cm}@{}}
+\toprule
+Downstream task & Data & Effect (calibrated $-$ baseline) [95\% CI] & Verdict \\
+\midrule
+Interval sharpness (OOD) & real & width split/ours $0.92\times$; cond.\ $-0.044$ $[-0.121,0.005]$ & no gain \\
+Edge weighting (active learning) & sim & calls-to-top-$k$ $0.98\times$ $[0.93,1.03]$ & no gain \\
+Commit ranking (matched volume) & real & precision $-0.006$ $[-0.016,+0.007]$ & tie \\
+Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts \\
+\midrule
+Commit trust (vs overconfident $\sigma$) & real & shortfall $+0.182$ $[0.132,0.225]$ better & \textbf{trust} \\
+Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The reward re-ranking effect (row 4) is measured on a single evaluable target (\texttt{eg5})
+and is directional: point estimates shift modestly run-to-run under torch CPU
+non-determinism (Section~\ref{sec:limitations}), and it is not yet established as a general
+property of calibrated reward re-ranking across chemotypes.
