@@ -2,7 +2,7 @@
 # Uses the project conda env `fluor_screening` by default; override with `PY=...`.
 PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
 
-.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figP4 figP4b figP8 all
+.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figP4 figP4b figP8 gabs all
 
 help:
 	@echo "make test    - run the pytest suite (theorem invariants)"
@@ -109,6 +109,9 @@ boltzcage:  # analyze downloaded Boltz cage screen runs -> calibrated results do
 	PYTHONPATH=figs $(PY) figs/make_boltz_cage.py
 
 graphical:  # graphical abstract (vector schematic, every label exact)
+	$(PY) figs/make_graphical_abstract.py
+
+gabs:  # graphical abstract (Figma-style pastel redraw: BAR bottleneck -> cycle-closure QC)
 	$(PY) figs/make_graphical_abstract.py
 
 paper:  # generic / arXiv build (article class); shared body in docs/paper_body.tex
