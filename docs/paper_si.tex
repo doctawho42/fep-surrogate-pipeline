@@ -14,7 +14,7 @@ committed verbatim in \texttt{docs/results\_figA.md}), so the $\lambda$ pairing 
 programmatically re-derivable rather than hand-carried.
 Every edge sits at overlap $\geq0.84$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
 occurs at the single highest-overlap edge ($4\langle p(1-p)\rangle=0.992$), and the best (least
-overstated, $2.78\times$) occurs at the lowest-overlap edge in the set ($0.846$) -- the same
+overstated, $2.78\times$) occurs at the lowest-overlap edge in the set ($0.846$), the same
 high-overlap-is-worst regime as the controlled sweep of Figure~\ref{fig:A}A, not an artifact of
 which real edges happened to be sampled. Across the full $19$-edge set the trend is not an
 artifact of the extremes either: the Spearman rank correlation between overlap and the
@@ -241,7 +241,8 @@ mean $\Delta$MUE after a size-matched random removal, per system. Systems: \text
 
 \paragraph{Fixed-cutoff head-to-head and $\chi^2$ reconciliation (Figure~\ref{fig:Cut}).} Two
 pre-registered peer-review checks on the same $1145$ edges. P1: the calibrated per-edge null (AUC
-$0.865$ against a cross-replicate reproducibility anchor) does not measurably out-discriminate a
+$0.865$ scored against edges whose sign and magnitude reproduce across independent replicates)
+does not measurably out-discriminate a
 fixed $1.0$ kcal/mol hysteresis cutoff (AUC $0.575$) or a fixed-$\mathrm{se}$ $\chi^2$ test (AUC
 $0.725$); paired bootstrap difference $+0.140$ $[-0.008,+0.316]$ (VERDICT: TIE). P2: the
 shared-ligand-endpoint residual-correlation hypothesis for the closure-implied ($1.71\times$;
@@ -259,8 +260,9 @@ was performed, so the comparison above is specific to that one fixed rule.
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figCut_cutoff_benchmark.pdf}
 \caption{\textbf{Detection AUC of three flagging rules, and nominal versus
-correlation-corrected reduced $\chi^2$.} (A) Area under the ROC curve (AUC) against a
-cross-replicate reproducibility anchor, for the calibrated per-edge null, a fixed $1.0$
+correlation-corrected reduced $\chi^2$.} (A) Area under the ROC curve (AUC) scored against
+edges whose sign and magnitude reproduce across independent replicates, for the calibrated
+per-edge null, a fixed $1.0$
 kcal/mol hysteresis cutoff, and a fixed-standard-error $\chi^2$ test, with the chance level
 ($\mathrm{AUC}=0.5$) marked. (B) Per-system reduced $\chi^2$ at the nominal degrees of
 freedom versus at the shared-node-correlation-corrected effective degrees of freedom, with
@@ -316,7 +318,7 @@ returning whichever grid point below $1.0$ happens to sit just past the first sy
 crossing. Independent probing finds that system flipping as high as $s=0.995\times$, so a finer
 grid would return $s_{\text{onset}}=0.995\times$, and in the continuum limit
 $s_{\text{onset}}\to1.0\times$ for any benchmark with a system near the cutoff. A
-magnitude-anchored readout, such as the largest scale that doubles the calibrated count
+magnitude-based readout, such as the largest scale that doubles the calibrated count
 ($0.7\times$ here, $12/48$), would have been the informative pre-registration. The substantive
 change is mid-curve: from $0.7\times$ to $0.3\times$ the flagged fraction climbs from $12/48$
 ($25\%$) to $30/48$ ($62\%$), reaching half the benchmark at $s_{50}=0.3\times$ (the true $50\%$
@@ -328,7 +330,7 @@ over-wide half of the grid is not merely flat either: relative to the calibrated
 only $30\%$ too wide ($1.3\times$) already loses five of the six flagged systems ($1/48$), and any
 wider bar ($1.5\times$, $2.0\times$) flags none, so the requirement is calibration, not
 conservatism. Two sanity
-anchors confirm the sweep reproduces the already-published test path: the ${\times}1.0$ row reads
+checks confirm the sweep reproduces the already-published test path: the ${\times}1.0$ row reads
 $6/48$, matching Figure~\ref{fig:L}A's calibrated count, and the ${\times}0.15$ row reads $42/48$,
 matching Figure~\ref{fig:L}B and Supplementary Figure~\ref{fig:P4}'s uniform/real-profile arms.
 Deterministic; \texttt{make figP4b}.
@@ -359,7 +361,7 @@ $1$ (systems with ratio $\geq1$ are already conservative and are left unchanged)
 Benjamini--Hochberg test is recomputed over the whole set under this self-calibrated null.
 Frozen pre-registration: SURVIVES iff every nominally-flagged system remains flagged;
 PARTIAL/FAILS iff some/none do; the population, inflation rule, and $\alpha=0.05$ were fixed
-before this run and not adjusted afterward. Result: \textbf{SURVIVES} -- all six flags remain
+before this run and not adjusted afterward. Result: \textbf{SURVIVES}. All six flags remain
 under their own self-calibrated null (Table~\ref{tab:P8}), each self-calibrated reduced $\chi^2$
 ($2.36$--$8.97$) remaining $7$--$26\times$ the ${\approx}0.34$ a sampling-consistent network shows
 under this conservative null (Section~\ref{sec:qc}, main text). The two distribution-free
