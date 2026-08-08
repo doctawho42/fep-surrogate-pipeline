@@ -13,7 +13,7 @@ test, flagging nearly every network regardless of whether it actually has a prob
 bottleneck yields a differentiable acquisition weight insensitive to gauge-redundant measurement
 directions and a chirality-sensitive readout channel that distinguishes enantiomers. Audited
 across further downstream uses, the calibrated bar sharpens no interval, changes no edge or
-candidate ranking, and improves no reward-guided generation; its value is confined to detection,
+candidate ranking, and improves no reward-guided re-ranking; its value is confined to detection,
 commit trust, and stopping decisions. Reading uncertainty off the physics is therefore a decision
 and quality-control instrument, not a performance multiplier.
 \end{abstract}
@@ -91,7 +91,7 @@ direction of that graph.
 equivariant readout restores the readout's ability to distinguish a molecule from its mirror
 image.
 \item A systematic audit across interval sharpness, edge ranking, synthesis-commit selection,
-and reward-guided molecule generation finds this calibrated uncertainty valuable only for
+and reward-guided re-ranking finds this calibrated uncertainty valuable only for
 detection and stopping decisions, not for sharper or better-ranked predictions.
 \end{itemize}
 
@@ -646,7 +646,7 @@ space (a held-out target's measured congeneric series; trunk trained target-disj
 rewards: the calibrated LCB, the raw predicted value, and an overconfident
 MVE reward. On \texttt{eg5}, the on-disk target with the \emph{largest} $\sigma$ spread (so the
 calibrated reward genuinely re-ranks candidates), the calibrated reward \emph{lowers} the true
-hit-rate of the generated distribution ($0.140$ vs raw $0.250$ and MVE $0.256$; cal$-$raw
+hit-rate of the sampled distribution ($0.140$ vs raw $0.250$ and MVE $0.256$; cal$-$raw
 $-0.110$, CI $[-0.151,-0.073]$; Supplementary Figure~\ref{fig:K}). The mechanism is a positive
 correlation between uncertainty and affinity,
 $\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$: the high-$\sigma$ ligands are
@@ -734,7 +734,7 @@ calibrated error bar turns thermodynamic cycle closure into a quality-control te
 separates systematic simulation error from ordinary sampling noise, and an overconfident learned
 error bar destroys that same test. Audited across further downstream uses, sharper
 prediction intervals, better edge ranking, better synthesis-commit decisions, and better
-reward-guided molecule generation, the calibrated uncertainty delivers none of them; what it
+reward-guided re-ranking, the calibrated uncertainty delivers none of them; what it
 delivers, beyond detection, is a trustworthy commit decision and a trustworthy stopping rule for
 an active-learning loop. Reading uncertainty off the physics is therefore a decision and
 quality-control instrument, earned for
