@@ -1,37 +1,20 @@
 \begin{abstract}
-We turn a routine consistency check into a calibrated diagnostic for relative binding free energy
-(RBFE). The sharpest use of a calibrated per-edge bar is \emph{detection}: a calibrated null turns thermodynamic cycle-closure
-into a quality-control test that flags six systematic-error networks (of $48$) on $1145$ real
-OpenFE binding edges, with distribution-free causal and cross-replicate backstops confirming the
-flags are systematic and reproducible (not a quantitative false-positive-rate guarantee), where a
-uniform-shrink stress test and, more representatively, a rank-transferred stand-in built from the
-learned head's measured overconfidence profile both flag $88\%$ of systems and are useless. The
-calibrated per-edge uncertainty behind this test is read off a surrogate's bottleneck: the Bennett
-Acceptance Ratio (BAR) \emph{sandwich} variance $B/I^2$, a closed, non-negative,
-$O(1)$-differentiable aleatoric-variance layer that reads each alchemical edge's finite-sampling
-uncertainty off the physics (\texttt{pymbar} returns a number, not a back-propagatable graph
-weight). That bar
-is trustworthy for the job against sampling and convergence noise: on the same $1145$ edges the MBAR form (equal to the sandwich to leading
-order) is conservative by $1.41\times$ ($1.25\times$ bias-corrected), never systematically
-overconfident. The same free primitive supplies a Fisher--resistance acquisition-graph weight (the
-knowledge gradient is exactly zero on gauge directions) and exposes a parity-odd (\texttt{0o}) readout
-channel that resolves enantiomers ($11.7\times$ lower chiral $\ddG$ error). We then map, honestly,
-where this free calibration helps and where it does not: across public benchmarks and controlled
-simulations it is no sharper than conformal on out-of-distribution residuals, does not change edge
-selection or commit ranking, and does not help reward re-ranking on a measured congeneric set
-(\texttt{eg5}), so it is a \emph{decision-and-quality-control instrument, not a performance
-multiplier}. A fair learned-variance foil, fed work moments \emph{and} the overlap scalar $I$, stays
-$\sim$$7\times$ overconfident; a corrected $\beta$-NLL head does not recover calibration either
-(${\approx}0.11\times$, slightly worse than plain), a data-efficiency limit of learned per-edge
-variance rather than an identifiability one for these single-objective heads (pooling confirms the
-variance is identifiable). Across independent training seeds the plain and $\beta$-NLL foils'
-overconfidence is stable, but a $5$-member deep ensemble's is not:
-its ratio spans $0.20$--$1.22\times$ over $5$ retrains, one of them crossing perfect calibration,
-so a learned per-edge variance is unreliable at this budget in either direction. We
-establish four results: two new (the differentiable closed-form sandwich and its $O(1)$ backward)
-and two that make precise or connect known results (the Fisher--resistance correspondence and
-chirality completeness). Together they map where a free, differentiable primitive helps: a decision
-and quality-control instrument, not a performance multiplier.
+We turn a routine thermodynamic consistency check into a calibrated diagnostic for relative
+binding free energy calculations. At a surrogate's bottleneck sits the Bennett Acceptance Ratio
+estimator's own finite-sampling variance, computed in closed form from the work samples rather
+than learned, with a backward pass no costlier than the forward pass. This per-edge error bar is
+validated against independent molecular-dynamics replicates on $1145$ real protein-ligand
+binding edges and found trustworthy. Its sharpest use is detection: fitting cycle closure with
+these calibrated bars turns an ordinary consistency check into a quality-control test flagging
+$12\%$ of perturbation networks as carrying systematic error, confirmed by independent,
+distribution-free checks. An overconfident learned substitute for that error bar destroys the
+test, flagging nearly every network regardless of whether it actually has a problem. The same
+bottleneck yields a differentiable acquisition weight insensitive to gauge-redundant measurement
+directions and a chirality-sensitive readout channel that distinguishes enantiomers. Audited
+across further downstream uses, the calibrated bar sharpens no interval, changes no edge or
+candidate ranking, and improves no reward-guided generation; its value is confined to detection
+and stopping decisions. Reading uncertainty off the physics is therefore a decision and
+quality-control instrument, not a performance multiplier.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -45,66 +28,88 @@ systems and an overconfident learned error bar flags 42 of 48.}
 \end{figure}
 
 \section{Introduction}
-Relative binding free energy calculations are the accuracy standard of structure-based drug
-design, but each edge of a perturbation network costs hours of molecular dynamics. Machine
-learning surrogates promise to triage which edges to run, and increasingly the bottleneck is
-not the point prediction but the \emph{uncertainty}: active learning, network design, and
-stop/go decisions all consume a per-edge error bar, and a miscalibrated bar silently corrupts
-every downstream decision. The dominant recipe estimates that uncertainty by \emph{learning}
-it: a mean--variance (MVE) head~\citep{nix1994mve}, a deep ensemble~\citep{lakshminarayanan2017ensembles},
-or a conformal wrapper~\citep{angelopoulos2021conformal}. We argue this discards information the
-physics already contains. The free-energy estimator at the end of every FEP edge, the Bennett
-Acceptance Ratio (BAR)~\citep{bennett1976bar}, is an $M$-estimator whose finite-sampling
-variance has a known closed form. Our central design choice is to make that estimator the
-bottleneck of the surrogate and to read its variance off analytically rather than learn it.
-This is one instance of a single principle that runs through the paper (\emph{compute what the
-physics or geometry already determines, and learn only what they do not}): the sampling variance
-is read off the BAR estimator, the chirality bit off a geometric pseudoscalar, and the
-identifiable directions off the measurement graph. We then ask, honestly, whether this
-computed-for-free uncertainty improves downstream learning, and find its value is not a boost in
-sharpness, ranking, or reward re-ranking but a \emph{decision and quality-control} one: a
-calibrated cycle-closure test that separates systematic from sampling error on real
-perturbation networks, and, in simulation, trustworthy stop/commit decisions that an overconfident
-$\sigma$ corrupts.
+Relative binding free energy calculations are the most accurate computational tool available for
+ranking how tightly a set of candidate molecules will bind a target, and structure-based drug
+discovery programs increasingly build them into decisions about which molecules to synthesize.
+That accuracy comes at a price: each transformation between two related candidates, one edge of
+a perturbation network, requires hours of molecular dynamics simulation, and a realistic project
+touches dozens to hundreds of such edges. No program can run every edge to full convergence, so
+triage is unavoidable: some edges get simulated first, some get simulated longer, and some
+results get trusted enough to act on.
 
-\paragraph{What is, and is not, new.} It is well understood in the free-energy community that
-the naive inverse-Fisher-information $1/I$ over-states the BAR variance, and the field-standard
-tool \texttt{pymbar} already reports the corrected MBAR uncertainty~\citep{shirts2008mbar}; we
-do \emph{not} claim to fix FEP variance. Our contributions are one demonstrated capability and
-three supporting results. \emph{(Capability)} A \emph{calibrated cycle-closure quality-control
-test}: the replicate-validated sandwich variance is the per-edge null that turns thermodynamic
-closure into a detector with per-edge-adaptive thresholds and distribution-free causal and
-cross-replicate backstops, flagging six chemically-sensible systematic-error networks of $48$ on
-$1145$ real edges, a capability an overconfident $\sigma$ destroys (Section~\ref{sec:qc}). Four
-results support and delimit it: two new (the differentiable closed-form sandwich and its $O(1)$
-backward) and two that make precise or connect known results (the Fisher--resistance correspondence
-and the chirality-completeness requirement). (1, new) The BAR sandwich variance as a
-\emph{differentiable closed form} with an $O(1)$ backward, so the \emph{same} per-edge variance that
-supplies the quality-control null also propagates into a surrogate and into an acquisition graph
-(the detector itself needs only the calibrated se; differentiability earns its place in those
-training-time and acquisition uses). \texttt{pymbar} returns a number, not a back-propagatable graph
-weight. (2,
-make-precise) A Fisher--resistance correspondence that turns the per-edge variances into a graph
-Laplacian and yields a gauge-aware, cost-aware acquisition. (3, make-precise) A
-chirality-completeness statement identifying a parity-odd readout channel an equivariant trunk
-must contain. (4) Finally, an \emph{honest applicability map} of where this free, calibrated
-uncertainty helps downstream learning, and where it does not. We report (on real benchmark data and
-controlled simulations) that it mostly does not: it is no sharper than flat conformal on real
-out-of-distribution residuals, does not improve ranking or commit selection at matched budget,
-and does not improve (and on a $\sigma$-varying target hurts) reward re-ranking over a measured
-congeneric set (single target \texttt{eg5}). Calibration buys \emph{trust and detection}, not a
-sharper or better-ranked prediction. We pair every claim with a falsifiable figure and report the
-experiments where the method does not beat a simple baseline.
+That triage is only as good as the error bar attached to each prediction. A result that looks
+converged but is not will silently mislead a ranking of candidates; a result that is genuinely
+well converged but reported with an inflated error bar wastes compute chasing a number that was
+already trustworthy. A machine-learning surrogate built to speed up this triage inherits the
+same requirement: it has to report not only a predicted binding free energy but how much to
+trust it, because every downstream use of that number, choosing what to simulate next, deciding
+when to stop simulating, and deciding which candidate to commit to synthesis, consumes the
+uncertainty as directly as it consumes the prediction.
 
-\section{Related work}
+The prevailing way to obtain that uncertainty is to learn it, the same way the prediction itself
+is learned: a head trained to output a mean and a variance~\citep{nix1994mve}, an ensemble of
+independently trained models whose disagreement stands in for uncertainty~\citep{lakshminarayanan2017ensembles},
+or a distribution-free wrapper calibrated after the fact on held-out
+data~\citep{angelopoulos2021conformal}. All three treat uncertainty as something to be inferred
+statistically from training examples. That approach overlooks a piece of the problem that is
+already solved: the estimator that turns raw simulation output into a binding free energy for a
+single edge, the Bennett Acceptance Ratio (BAR) estimator~\citep{bennett1976bar}, is a textbook
+statistical estimator whose finite-sampling variance has a closed-form expression. That variance
+is not a property of the surrogate model; it is a property of the estimator itself, and it is
+computed directly from the same simulation output that produces the free-energy estimate,
+without any additional training data.
+
+This work builds a relative-binding-free-energy surrogate around exactly that estimator: its
+bottleneck is the BAR calculation itself, so the finite-sampling part of its uncertainty is
+computed rather than learned, at no extra data cost. The question this raises is not whether
+such a computed error bar is theoretically correct, that follows from standard estimation
+theory, but whether it is trustworthy in practice, and where trustworthiness actually matters in
+a real screening workflow. We check the first question directly, against independent simulation
+replicates on a large set of real protein-ligand binding calculations, and then trace the second
+question through the rest of a screening pipeline: through an acquisition procedure that decides
+what to simulate next, through a readout that has to tell molecules apart from their mirror
+images, and, most consequentially, through a quality-control test that uses the calibrated error
+bar to flag perturbation networks whose simulations disagree with each other more than sampling
+noise can explain.
+
+This paper makes the following contributions.
+\begin{itemize}
+\item This paper reads the finite-sampling uncertainty of a relative binding free energy
+estimate off a closed-form expression, the sandwich variance of the Bennett Acceptance Ratio
+estimator, with a backward pass that costs a single division and trains inside a differentiable
+surrogate at the same cost as the point estimate itself.
+\item This calibrated per-edge error bar, validated against independent simulation replicates on
+real protein-ligand binding data, turns thermodynamic cycle closure into a quality-control test
+that separates systematic simulation error from ordinary sampling noise, with the resulting
+flags confirmed by independent causal and cross-replicate checks.
+\item The same per-edge variance forms the conductance of a measurement graph, producing an
+acquisition weight whose knowledge gradient is exactly zero along every gauge-redundant
+direction of that graph.
+\item Adding a single parity-odd readout channel to an otherwise distance-and-angle-based
+equivariant readout restores the readout's ability to distinguish a molecule from its mirror
+image.
+\item A systematic audit across interval sharpness, edge ranking, synthesis-commit selection,
+and reward-guided molecule generation finds this calibrated uncertainty valuable only for
+detection and stopping decisions, not for sharper or better-ranked predictions.
+\end{itemize}
+
+The remainder of this article is organised as follows. Section~\ref{sec:related} places this
+work against prior free-energy estimators, learned uncertainty, equivariant trunks, and
+acquisition methods. Section~\ref{sec:bar} derives the closed-form sandwich variance and its
+constant-cost backward pass. Section~\ref{sec:gauge} turns that variance into a gauge-aware
+acquisition weight. Section~\ref{sec:qc} presents the calibrated cycle-closure quality-control
+test on real binding data. Section~\ref{sec:chiral} establishes the chirality-completeness
+requirement for the readout. Section~\ref{sec:audit} audits where the calibrated uncertainty
+helps downstream learning and where it does not. Section~\ref{sec:limitations} collects the
+limitations of the approach, and Section~\ref{sec:conclusion} concludes.
+
+\section{Related work}\label{sec:related}
 \paragraph{Free-energy estimators.} BAR~\citep{bennett1976bar} and its multistate
 generalization MBAR~\citep{shirts2008mbar} are the standard estimators for alchemical free
 energies; FEP+~\citep{wang2015fep} brought them to prospective potency prediction, and large
 retrospective assessments~\citep{schindler2020merck} and best-practice guides~\citep{mey2020alchem}
-document both their accuracy and their per-edge uncertainty. Our contribution is not a new
-estimator but the observation that this uncertainty is a differentiable closed form, the
-sandwich variance of $M$-estimation~\citep{huber1967,white1982sandwich}, readable off the
-bottleneck and back-propagatable.
+document both their accuracy and their per-edge uncertainty, the sandwich variance of
+$M$-estimation~\citep{huber1967,white1982sandwich}.
 
 \paragraph{Learned and recalibrated uncertainty.} The prevailing alternative is to learn
 predictive uncertainty: a mean--variance head by Gaussian NLL~\citep{nix1994mve}, a deep
@@ -113,23 +118,25 @@ split~\citep{kendall2017uncertainties}, or distribution-free conformal
 prediction~\citep{angelopoulos2021conformal}, including quantile-adaptive variants such as
 CQR~\citep{romano2019cqr}. A predicted $\sigma$ can also be \emph{recalibrated} post hoc by
 temperature/Platt scaling~\citep{guo2017calibration} or isotonic
-regression~\citep{zadrozny2002isotonic}. We use these as baselines: the honest question is not
-whether the physics $\sigma$ beats a \emph{raw} overconfident head, but whether it beats a
-\emph{properly recalibrated} one, and on which downstream task.
+regression~\citep{zadrozny2002isotonic}.
 
 \paragraph{Equivariant trunks and chirality.} $E(3)$-equivariant
 networks~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} are the de-facto trunks for
 3D molecular property prediction, and the use of parity-\emph{odd} (pseudoscalar) irreps to
-break achirality is standard in that literature; we make the architectural requirement precise
-and verify it.
+break achirality is standard in that literature.
 
 \paragraph{Acquisition and reward re-ranking.} Acquisition by the knowledge gradient~\citep{frazier2008kg}
 and its Monte-Carlo implementations~\citep{balandat2020botorch,gardner2018gpytorch} drive edge
 selection, while GFlowNets~\citep{bengio2021gflownet,malkin2022tb} sample candidates in
-proportion to reward. We connect the per-edge sandwich variances to a Fisher--resistance graph
-Laplacian (whose contrast variance is the resistance distance~\citep{klein1993resistance}) for
-gauge-aware acquisition, and audit calibration's effect on selection and reward re-ranking (evaluable congeneric set, \texttt{eg5}) on the
-OpenFF protein--ligand benchmark~\citep{hahn2022plbench}.
+proportion to reward; the resistance distance of a weighted graph Laplacian equals contrast
+variance in a Gaussian graphical model~\citep{klein1993resistance}.
+
+Across this literature, per-edge uncertainty is either read off a fixed pipeline as a single
+number after the fact or learned as a separate predictive model; in neither case does it enter a
+training loop or an acquisition procedure as a differentiable quantity in its own right. This
+work closes that gap: it propagates the same sandwich variance through the surrogate and through
+a gauge-aware acquisition graph, and puts it to a further, distinct use as the calibrated null of
+a real-data cycle-closure quality-control test.
 
 \section{The BAR information bottleneck}\label{sec:bar}
 \paragraph{Setup.} For a single alchemical edge, forward and reverse works
@@ -732,31 +739,29 @@ system-preparation variance); the $\sim$$1.25$--$1.41\times$ conservatism may th
 closer to neutral against real reproducibility. The
 gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
 single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
-should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively (causal repair, held-out replicates) and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: the QC repairs internal consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, remains future work. The detector's \emph{recall} (false-negative rate) is likewise uncharacterized -- there are no ground-truth error labels -- and the median reduced $\chi^2=0.34$ (Section~\ref{sec:qc}) implies limited single-replicate power, so the six flagged systems are a \emph{lower bound} on the systems carrying systematic error, not a prevalence estimate: on the same replicate data, \texttt{renin} is systematic by the pooled-replicate ratio (reduced $\chi^2$ $2.5\to4.7$ pooling the three replicates, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems -- ratio $1.9$, between the sampling-only pole at $1$ and the systematic pole at $3$) yet did not clear FDR on a single replicate, a documented systematic-but-unflagged case (\texttt{docs/results\_figL.md}). Finally, a structure-based (docking) reverse-screen we
+should be tested across more chemotypes. Point estimates also shift modestly run-to-run (torch CPU non-determinism), so the single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively (causal repair, held-out replicates) and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: the QC repairs internal consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, remains future work. The two distribution-free backstops (causal edge removal and cross-replicate residual correlation) establish that the flags are systematic and reproducible, but they are not a quantitative false-positive-rate guarantee: neither check certifies the nominal Benjamini--Hochberg rate itself, only that what is flagged is real. The detector's \emph{recall} (false-negative rate) is likewise uncharacterized -- there are no ground-truth error labels -- and the median reduced $\chi^2=0.34$ (Section~\ref{sec:qc}) implies limited single-replicate power, so the six flagged systems are a \emph{lower bound} on the systems carrying systematic error, not a prevalence estimate: on the same replicate data, \texttt{renin} is systematic by the pooled-replicate ratio (reduced $\chi^2$ $2.5\to4.7$ pooling the three replicates, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems -- ratio $1.9$, between the sampling-only pole at $1$ and the systematic pole at $3$) yet did not clear FDR on a single replicate, a documented systematic-but-unflagged case (\texttt{docs/results\_figL.md}). Finally, a structure-based (docking) reverse-screen we
 built as a follow-on did not beat a ligand-similarity baseline on this benchmark, so the
 structure-directed regime is left to future work rather than claimed here.
 
-\section{Conclusion}
-A differentiable BAR estimator at a surrogate's bottleneck makes the aleatoric uncertainty a
-computed, differentiable, non-negative closed form rather than a learned guess. Its clearest
-payoff is a \emph{calibrated cycle-closure quality-control test} that separates edge-level
-systematic error from sampling noise on $1145$ real edges (Section~\ref{sec:qc}), with a
-false-positive rate set by the calibrated null and confirmed by distribution-free causal and
-cross-replicate checks, the sharpest use of the free calibration, calibrated against sampling and
-convergence noise, and one an overconfident learned
-$\sigma$ destroys. The same primitive is usable as a Fisher--resistance graph weight (whose value
-is structural, gauge-identifiability and trust, rather than a better-ranking magnitude) and is
-paired with an exact chirality requirement. Tested honestly across the remaining downstream tasks,
-this free calibration does not improve sharpness, ranking, or reward re-ranking over a measured
-congeneric set (single target \texttt{eg5}); what it buys, beyond the quality-control test, is
-trustworthy stop/commit decisions that an overconfident learned $\sigma$ destroys. Four results,
-two new (the differentiable closed-form sandwich and its $O(1)$ backward) and two that make precise
-or connect known results (the Fisher--resistance correspondence and the chirality-completeness
-requirement), and a suite of falsifiable figures, including several
-pre-declared, falsifiable negatives, delimit what the construction does and does not buy: in the regimes we
-tested, calibration is a decision and quality-control instrument rather than a performance
-multiplier; where the uncertainty would track quality rather than novelty, that verdict should be
-revisited.
+\section{Conclusion}\label{sec:conclusion}
+This paper builds a relative-binding-free-energy surrogate whose uncertainty is computed rather
+than learned: the Bennett Acceptance Ratio estimator's own finite-sampling variance, in closed
+form, with a backward pass that costs a single division rather than an unrolled computation. The
+same variance becomes a conductance on the network of alchemical measurements, giving an
+acquisition weight that is exactly blind to gauge-redundant directions, and the trunk that feeds
+it carries a parity-odd readout channel that distinguishes the binding free energies of
+mirror-image molecules.
+
+Validated against independent simulation replicates on real protein-ligand binding data, this
+calibrated error bar turns thermodynamic cycle closure into a quality-control test that
+separates systematic simulation error from ordinary sampling noise, and an overconfident learned
+error bar destroys that same test. Audited honestly across further downstream uses, sharper
+prediction intervals, better edge ranking, better synthesis-commit decisions, and better
+reward-guided molecule generation, the calibrated uncertainty delivers none of them; what it
+delivers, beyond detection, is a trustworthy stopping rule for an active-learning loop. Reading
+uncertainty off the physics is therefore a decision and quality-control instrument, earned for
+free from an estimator the field already runs, rather than a route to sharper or better-ranked
+predictions.
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
 figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
