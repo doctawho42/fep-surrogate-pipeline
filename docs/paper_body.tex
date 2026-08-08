@@ -36,14 +36,11 @@ and quality-control instrument, not a performance multiplier.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.96\textwidth]{graphical_abstract.pdf}
-\caption{\textbf{Overview.} A differentiable BAR bottleneck turns each alchemical edge's
-forward/reverse works into $(\dFh, B/I^2)$ in closed form with an $O(1)$ backward
-(Theorem~\ref{thm:back}--\ref{thm:sand}). The variance is read off, not learned, and feeds three
-downstream uses: a Fisher--resistance Laplacian for gauge-aware acquisition
-(Theorem~\ref{thm:fr}), a parity-odd readout channel for chirality (Theorem~\ref{thm:chiral}), and a
-risk-aware decision (stop/commit). The honest audit (right) maps where this free calibration
-helps (\emph{trust} in the stop/commit decision) and where it does not: sharpness, ranking,
-and reward re-ranking (evaluable congeneric set, \texttt{eg5}).}
+\caption{\textbf{Overview.} Forward and reverse alchemical work samples enter a differentiable
+BAR bottleneck, which returns the closed-form free-energy estimate and variance $(\dFh, B/I^2)$.
+A small perturbation network is shown with one cycle highlighted and one edge marked as flagged.
+Across 1145 real binding edges and 48 systems with a cycle, a calibrated error bar flags 6 of 48
+systems and an overconfident learned error bar flags 42 of 48.}
 \label{fig:overview}
 \end{figure}
 
