@@ -278,6 +278,8 @@ Benjamini--Hochberg pipeline, per edge, by percentile-rank transfer onto each of
 $1145$; the sole cycle-free system contributes the other two) real
 edges' own OpenFE \texttt{smallest\_overlap} (an approximation: the two overlap statistics are on
 different scales, so only the profile's ordering and spread are transferred, not its raw values).
+The rank transfer approximates how the head's measured overconfidence would vary across these
+edges; it is not the head's own output on this benchmark.
 Four arms on the same $48$-system, $1143$-edge network: the calibrated sandwich (${\times}1$)
 flags $6/48$ ($12\%$); the real profile (primary) flags $42/48$ ($88\%$), $7.00\times$ the
 calibrated count, past the pre-registered $2\times$ threshold (VERDICT: DEGRADES); a
@@ -326,7 +328,7 @@ crossing is bracketed by the adjacent $0.35\times$ and $0.30\times$ grid points,
 $23/48$ and $30/48$ respectively). The learned head's measured, rank-transferred miscalibration
 band ($0.09$--$0.20\times$; Figure~\ref{fig:A}A, Supplementary Figure~\ref{fig:P4}) lies entirely
 below $s_{50}$, so the head is not near the transition but well inside the saturated regime. The
-over-wide half of the grid is not merely flat either: relative to the calibrated $6/48$, a bar
+over-wide half of the grid is not flat either: relative to the calibrated $6/48$, a bar
 only $30\%$ too wide ($1.3\times$) already loses five of the six flagged systems ($1/48$), and any
 wider bar ($1.5\times$, $2.0\times$) flags none, so the requirement is calibration, not
 conservatism. Two sanity
@@ -438,15 +440,16 @@ Downstream task & Data & Effect (calibrated $-$ baseline) [95\% CI] & Verdict \\
 Interval sharpness (OOD) & real & width split/ours $0.92\times$; cond.\ $-0.044$ $[-0.121,0.005]$ & no gain \\
 Edge weighting (active learning) & sim & calls-to-top-$k$ $0.98\times$ $[0.93,1.03]$ & no gain \\
 Commit ranking (matched volume) & real & precision $-0.006$ $[-0.016,+0.007]$ & tie \\
-Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts \\
+Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.110$ $[-0.151,-0.073]$ & hurts (directional, single target)$^{a}$ \\
 \midrule
 Commit trust (vs overconfident $\sigma$) & real & shortfall $+0.182$ $[0.132,0.225]$ better & \textbf{trust} \\
 Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust} \\
 \bottomrule
 \end{tabular}
-\end{table}
 
-The reward re-ranking effect (row 4) is measured on a single evaluable target (\texttt{eg5})
-and is directional: point estimates shift modestly run-to-run under torch CPU
-non-determinism (Section~\ref{sec:limitations}), and it is not yet established as a general
-property of calibrated reward re-ranking across chemotypes.
+\smallskip
+\noindent{\footnotesize $^{a}$The reward re-ranking effect is measured on a single evaluable
+target (\texttt{eg5}) and is directional: point estimates shift modestly run-to-run under torch
+CPU non-determinism (Section~\ref{sec:limitations}), and it is not yet established as a general
+property of calibrated reward re-ranking across chemotypes.\par}
+\end{table}
