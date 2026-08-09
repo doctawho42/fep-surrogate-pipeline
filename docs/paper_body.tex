@@ -239,9 +239,10 @@ binding edges from
 the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} (3 independent replicates
 each), the reported MBAR se (equal to the sandwich $B/I^2$ to leading order, established in
 Fig~\ref{fig:A}A) is calibrated-to-conservative against the across-replicate
-truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; $1.25\times$ after correcting the
-$n{=}3$ small-sample SD bias, $\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$; conservative on $72\%$
-of edges and $28$ of $34$ targets).
+truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; conservative on $72\%$
+of edges and $28$ of $34$ targets). Both sides of that ratio pool in quadrature, so the
+$n{=}3$ replicate term is unbiased at the variance level and needs no small-sample
+correction.
 The three replicates are independent stochastic repeats of the sampling process from identical
 starting coordinates (OpenFE \texttt{protocol\_repeats}~\citep{baumann2025industrybenchmarks});
 the across-replicate SD therefore reflects sampling/convergence noise alone and is a
@@ -288,7 +289,7 @@ automatically gauge-invariant.
 \end{theorem}
 The edge weights are the inverse sandwich variances: the differentiable readout of
 Section~\ref{sec:bar} entering the decision layer, which a black-box uncertainty number cannot
-provide. The gauge-zero property is structural: $\ker L=\mathrm{span}\{\mathbf 1\}$ for \emph{any} positive conductances, so KG$=0$ on gauge directions does not depend on the weight \emph{value}; and by Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). The sandwich's contribution here is its differentiable closed form entering training and the trust calculation, not its magnitude. The Laplacian-precision and resistance-distance machinery is classical generalized least squares (GLS) on graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the \emph{sandwich} precision $I_e^2/B_e$ as the conductance (not raw overlap) and the automatic gauge-invariance of the acquisition. The graph theory it rests on is standard. A controlled simulation
+provide. The gauge-zero property is structural: KG$=0$ on gauge directions follows from the inclusion alone and so does not depend on the weight \emph{value}. For a \emph{connected} network the inclusion is an equality, $\ker L=\mathrm{span}\{\mathbf 1\}$, for any positive conductances, and the overall additive offset is then the only unidentifiable direction; a network with $k$ components has a $k$-dimensional kernel, one offset per component. and by Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). The sandwich's contribution here is its differentiable closed form entering training and the trust calculation, not its magnitude. The Laplacian-precision and resistance-distance machinery is classical generalized least squares (GLS) on graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the \emph{sandwich} precision $I_e^2/B_e$ as the conductance (not raw overlap) and the automatic gauge-invariance of the acquisition. The graph theory it rests on is standard. A controlled simulation
 (Supplementary Figure~\ref{fig:D}) shows the knowledge gradient on the all-ones gauge contrast is
 $10^{-21}$ (exact zero, an identifiability statement that transfers structurally to multi-target
 networks), and that a gauge-\emph{unaware} acquisition wastes budget resolving a
@@ -377,10 +378,9 @@ two distribution-free checks below (causal edge-removal and cross-replicate resi
 which assume no Gaussian null. A subtler concern is that four of the six flagged systems are
 themselves locally overconfident against their own across-replicate spread
 (Figure~\ref{fig:Arep}: \texttt{brd4} $0.76\times$, \texttt{faah} $0.90\times$, \texttt{bace}
-$0.96\times$, \texttt{hif2a} $0.96\times$; raw $n{=}3$ SD ratios, uncorrected for the
-$c_4(3)=0.886$ small-sample bias applied to the aggregate ratio elsewhere (Figure~\ref{fig:Arep});
-applying that same correction here would make all four appear \emph{more}, not less, locally
-overconfident ($0.68\times$, $0.80\times$, $0.85\times$, $0.86\times$), so the raw ratios used
+$0.96\times$, \texttt{hif2a} $0.96\times$; raw $n{=}3$ SD ratios, whose residual small-sample
+bias is upward and target-specific, of order the reciprocal of the edge count, so that debiasing
+moves all four \emph{further} below one rather than toward it, and the raw ratios used
 below are if anything generous to these systems, not the reverse), so a flag could partly reflect
 that system's own too-tight bars rather than genuine physical inconsistency; inflating each such
 system's own null by the reciprocal of its own measured (raw) ratio (Supplementary
@@ -583,7 +583,7 @@ $[-0.077,0.007]$; both indistinguishable from ours). Trustworthy
 decisions therefore require \emph{some} proper calibration, which the physics $\sigma$ supplies at no
 calibration-set cost for the aleatoric term and, uniquely, as a differentiable graph weight.
 Even a \emph{conservative} bar carries a decision cost: a systematic
-${\sim}1.25$--$1.41\times$ se inflation is itself a (safe-direction) miscalibration that, via
+${\sim}1.41\times$ se inflation is itself a (safe-direction) miscalibration that, via
 the LCB rule $\mu-\kappa\sigma\ge\tau$, biases toward late stopping and under-commit. It errs
 safe against sampling noise; and because the independent-replicate SD is itself a lower bound
 on full reproducibility (Section~\ref{sec:bar}, Figure~\ref{fig:Arep}), the inflation may be
@@ -706,13 +706,12 @@ ensemble plus a scalar aleatoric floor (there is no learned force-field-correcti
 three-way decomposition of the synthetic illustration is not reproduced on real data). The
 binding-edge se is validated against the three independent replicates of the OpenFE
 IndustryBenchmarks2024 (Figure~\ref{fig:Arep}): in aggregate it is conservative by
-$\sim$$1.4\times$ (raw ratio), or $\sim$$1.25\times$ after correcting the $n{=}3$
-small-sample SD bias ($\mathbb{E}[s]=c_4\sigma$, $c_4=0.886$), though calibration is
+$\sim$$1.4\times$, though calibration is
 heterogeneous per system ($28$ of $34$ targets conservative; one protonation-variant outlier
 overconfident). The three replicates are seed/velocity-only repeats from identical starting
 coordinates (OpenFE \texttt{protocol\_repeats}), so the across-replicate SD reflects
 sampling/convergence noise and is a lower bound on full reproducibility (excluding pose and
-system-preparation variance); the $\sim$$1.25$--$1.41\times$ conservatism may therefore be
+system-preparation variance); the $\sim$$1.41\times$ conservatism may therefore be
 closer to neutral against real reproducibility. The
 gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
 single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
