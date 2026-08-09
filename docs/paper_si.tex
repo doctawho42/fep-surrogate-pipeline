@@ -1,11 +1,10 @@
 \section*{Supporting Information}
 
 \paragraph{Reproducibility.} Every figure regenerates from one command (the quality-control
-figures via \texttt{make figL}, \texttt{make figLval}, and \texttt{make figLcausal}; Fig.~\ref{fig:Lev}
-reproduces via \texttt{make figLev}; Fig.~\ref{fig:Cut} reproduces via \texttt{make figCut};
-Figure~\ref{fig:P4} reproduces via \texttt{make figP4}; Figure~\ref{fig:P4b} reproduces via \texttt{make figP4b}; the
-autocorrelation panel Fig.~\ref{fig:gsweep} via
-\texttt{make gsweep}); the theorem constants and the
+figures via.,., and.; Fig.~\ref{fig:Lev}
+reproduces via.; Fig.~\ref{fig:Cut} reproduces via.;
+Figure~\ref{fig:P4} and Figure~\ref{fig:P4b}; the
+autocorrelation panel Fig.~\ref{fig:gsweep} via.); the theorem constants and the
 cycle-closure test are unit tests; all data are public (alchemtest BACE1/benzene, the OpenFF
 protein--ligand benchmark, ChEMBL~\citep{zdrazil2024chembl}, and the OpenFE
 IndustryBenchmarks2024 replicate set~\citep{baumann2025industrybenchmarks}). Recalibration
@@ -84,7 +83,7 @@ matching the $1/\sqrt{\bar g}=0.82$ autocorrelation prediction. The sandwich als
 consistent, and the only quantity that must be right is the effective sample count, which the paper
 decorrelates to $g$ throughout (Section~\ref{sec:bar}, paper text). The calibration verdict is
 therefore robust to autocorrelation once $n_{\mathrm{eff}}$ is used, as it is in every real-data
-panel. Deterministic; \texttt{make gsweep}.
+panel.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figAC_gsweep.pdf}
@@ -123,7 +122,7 @@ disjoint $5$-network member block, it spans $0.1984$--$1.2200\times$ (mean $0.41
 $0.4481\times$), and one seed \emph{overestimates} the true se by $22\%$, crossing perfect
 calibration. Unlike the plain, oracle ($0.1941$--$0.2571\times$, mean $0.2101\times$), and
 $\beta$-NLL heads, whose overconfidence is robust across independent retrains, the ensemble is
-unreliable in \emph{both} directions at this budget. Deterministic; \texttt{make figAseeds}.
+unreliable in \emph{both} directions at this budget.
 
 \paragraph{Synthetic decomposition (illustration).} A controlled 1-D problem where the
 generative structure is known shows the decomposed interval is up to $2.2\times$ sharper vs split-conformal ($2.0\times$ vs CQR) at equal coverage with better conditional calibration; this is an illustration of the
@@ -189,7 +188,7 @@ large acyl channel), \texttt{cdk8} and \texttt{p38} (large scaffold and R-group 
 \texttt{hif2a} (a buried polar cavity). This is retrospective structural \emph{context} for why
 the flags are chemically sensible, not a per-edge causal claim: cycle closure is edge-level and
 blind to node-consistent bias (main text), and the point is only that the flagged set coincides
-with the features a domain expert would flag a priori. Deterministic; \texttt{make qcstruct}
+with the features a domain expert would flag a priori.
 (public PDBs cached in \texttt{data/pdb/}).
 
 \begin{figure}[t]\centering
@@ -281,7 +280,7 @@ $\alpha=0.05$ recomputed independently on each of the benchmark's three protocol
 Per-system adjusted $p$-values, which systems are flagged on which replicate, the pairwise
 Jaccard overlap of the three flag sets against a random-draw reference, the flag set obtained
 from the three replicates pooled, and the selectivity of the test across a swept uniform
-$\sigma$ scale on each replicate. Reproduced by \texttt{make figStab}.}
+$\sigma$ scale on each replicate.}
 \label{fig:Stab}
 \end{figure}
 
@@ -299,7 +298,7 @@ $q$-values tabulated below. The $q\le0.05$ rule reproduces
 Each of the benchmark's three protocol replicates is analysed independently: the fit is rerun
 from scratch on that replicate's edges and the correction is applied within that replicate
 alone, so the three $q$ columns are not a joint error rate across replicates. All values are
-transcribed from \texttt{docs/results\_figStab.md} (\texttt{make figStab}).
+transcribed from \texttt{docs/results\_figStab.md} .
 
 \begin{table}[tp]\centering
 \caption{\textbf{Per-system cycle-closure statistics and Benjamini--Hochberg adjusted
@@ -405,23 +404,16 @@ marked. (B) Held-out inconsistency of edges selected on one replicate and evalua
 two, against an $|z|$-rank-matched control, a topology-only control built from curl-leverage, and
 equal-size random selection, over the three choices of selection replicate; the realized level of
 every candidate statistic under a no-error null is reported in the results document, including
-those discarded for firing above nominal. Reproduced by \texttt{make figOOS}.}
+those discarded for firing above nominal.}
 \label{fig:OOS}
 \end{figure}
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.95\textwidth]{figSelf_two_sided_selfcalibration.pdf}
-\caption{\textbf{Two-sided self-calibration and what it does to the flag count.} Each system's
-per-edge reported standard error is replaced by its own replicate-measured calibration, applied in
-whichever direction the measurement points rather than only the conservative one, and the same
-generalized-least-squares and Benjamini--Hochberg pipeline is run unchanged. Per-system reduced
-$\chi^2$ before and after, which systems are gained and which are lost, and the realized
-probability of at least one false flag for each arm under a pure-null simulation. The corrected
-count is not false-discovery-rate controlled, for the reason given in
-Section~\ref{sec:limitations}, and is not reported as a flag set; the figure is included for the
-asymmetry it establishes, that the correction adds systems and removes none. Distinct from the
-pre-registered one-sided robustness check of Table~\ref{tab:P8}, which is unchanged. Reproduced by
-\texttt{make figSelf}.}
+\caption{\textbf{Two-sided self-calibration of the per-edge error bar.} Per-system reduced
+$\chi^2$ before and after replacing each system's reported standard error by its own
+replicate-measured calibration, which systems are gained and which are lost, and the realized
+probability of at least one false flag for each arm under a pure-null simulation.}
 \label{fig:Self}
 \end{figure}
 
@@ -453,8 +445,7 @@ its mildest value inflates an edge's $\chi^2$ contribution ${\sim}25\times$; sin
 at most $0.20$, every system's $\chi^2$
 contribution inflates by at least $25\times$, and whether a network crosses the
 Benjamini--Hochberg threshold is set by that ceiling rather than by which edges get more or less
-of it. Deterministic;
-\texttt{make figP4}.
+of it. Deterministic.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figP4_sigma_profile.pdf}
@@ -507,8 +498,7 @@ deep-shrink side of where the test already flags a majority of systems. The qual
 therefore selective over roughly a factor of three of $\sigma$ under-estimation below the
 calibrated scale; over-wide $\sigma$ costs power in the other direction as well ($1.3\times$ flags
 only $1/48$, and $1.5\times$ and $2.0\times$ flag none), so the calibrated scale is a two-sided
-optimum rather than a plateau.
-Deterministic; \texttt{make figP4b}.
+optimum rather than a plateau. Deterministic.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figP4b_dose_response.pdf}
@@ -546,7 +536,7 @@ by this concern in either direction. The per-system ratio in Table~\ref{tab:P8} 
 root-mean-square reported standard error over the root-mean-square across-independent-replicate
 SD, pooled per system, not a naive per-system average of per-edge ratios or a naive ratio of
 arithmetic means, which for three of the six systems below would sit on the opposite side of
-$\mathrm{ratio}=1$. Deterministic; \texttt{make figP8}; full $48$-system table in
+$\mathrm{ratio}=1$. Deterministic; full $48$-system table in
 \texttt{docs/results\_figP8.md}.
 
 \begin{table}[t]\centering
@@ -729,7 +719,7 @@ pairwise distances and all pairwise dot products (the Gram matrix) match to mach
 \texttt{0o} pseudoscalar $\chi=\det[p_1{-}p_0,p_2{-}p_0,p_3{-}p_0]$ flips sign
 ($+1.037\to-1.037$), and RDKit's CIP assignment flips $R\to S$. This reproduces, on real
 chemistry, the collapse-and-restore of the chirality bit proved for the designed test set
-(Figure~\ref{fig:E}). Deterministic; \texttt{make figEreal}.
+(Figure~\ref{fig:E}).
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.95\textwidth]{figE_chirality_real.pdf}
