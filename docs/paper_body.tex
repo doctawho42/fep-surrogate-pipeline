@@ -327,16 +327,19 @@ Section~\ref{sec:methods}),
 gives residuals $r_e$ and the goodness-of-fit statistic $X^2=\sum_e r_e^2/V_e\sim\chi^2(\mathrm{dof})$,
 with $\mathrm{dof}$ the number of independent cycles ($E$ minus the incidence rank). Under
 correctly-sampled physics $\mathbb{E}[X^2/\mathrm{dof}]\approx1$; here it runs \emph{below} one
-(median $0.34$), consistent with the conservative bars of Figure~\ref{fig:Arep} and, since
-systematic error only \emph{raises} $\chi^2_\nu$, bounding them at ${\gtrsim}1.7\times$
-conservative for closure residuals. The closure-implied conservatism ($1.71\times$ over the full
-$48$-system set, $1.67\times$ on the $46$ systems where this diagnostic is estimable) and the
-replicate-validated one ($1.41\times$) do not fully agree. The natural explanation,
-correlation among residuals of edges sharing a ligand endpoint, which the diagonal-$V$ GLS does
-not model, does not account for the gap (excess correlation over the projector-induced
-null $-0.0079$ $[-0.0314,+0.0164]$; correcting for the resulting effective degrees of freedom
-moves the implied factor only to $1.67\times$). The discrepancy therefore remains
-unexplained. The Benjamini--Hochberg flag set is unchanged under this correction. A reduced
+(median $0.34$), qualitatively consistent with the conservative bars of Figure~\ref{fig:Arep}.
+We do not convert that median into a conservatism factor. The quantity the closure statistic
+identifies is not a median: writing the reported variance as $V_e^{\text{rep}}=c_e^2V_e$, whitening
+by the reported errors gives $\mathbb{E}[X^2]=\operatorname{tr}(MD)$ with $D=\mathrm{diag}(c_e^{-2})$,
+so by Theorem~\ref{thm:cons} $\mathbb{E}[\chi^2_\nu]$ is the curl-leverage-weighted \emph{mean} of
+$c_e^{-2}$. Inverting a median recovers a scalar conservatism only when $c_e$ is constant across
+edges, and Figure~\ref{fig:Arep}B shows it is not. A replicate-validated ratio and a
+closure-implied one are therefore different functionals of a heavy-tailed per-edge ratio
+distribution, and no single scalar conservatism factor is identified by these data; the apparent
+disagreement between them is an artefact of comparing different functionals rather than a physical
+discrepancy. Residual correlation among edges sharing a ligand endpoint, which the diagonal-$V$ GLS
+does not model, is separately negligible (excess correlation over the projector-induced
+null $-0.0079$ $[-0.0314,+0.0164]$). The Benjamini--Hochberg flag set is unchanged. A reduced
 $\chi^2$ well above one signals edge-level systematic error. The test is (correctly) blind to
 node-consistent force-field bias, which cancels around a loop.
 
@@ -409,8 +412,8 @@ below are if anything generous to these systems, not the reverse), so a flag cou
 that system's own too-tight bars rather than genuine physical inconsistency; inflating each such
 system's own null by the reciprocal of its own measured (raw) ratio (Supplementary
 Table~\ref{tab:P8}) leaves all six flags in place, each self-calibrated reduced $\chi^2$
-($2.36$--$8.97$) remaining $7$--$26\times$ the ${\approx}0.34$ a sampling-consistent network shows
-under this conservative null.
+($2.36$--$8.97$) remaining far above the level a sampling-consistent network of this size and
+degree-of-freedom profile shows.
 
 \paragraph{Figure~\ref{fig:L}: a deployable detector whose usefulness \emph{is} $\sigma$-calibration.}
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over

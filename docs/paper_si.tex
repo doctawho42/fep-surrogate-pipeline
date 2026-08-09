@@ -244,12 +244,16 @@ pre-registered peer-review checks on the same $1145$ edges. P1: the calibrated p
 $0.865$ scored against edges whose sign and magnitude reproduce across independent replicates)
 does not measurably out-discriminate a
 fixed $1.0$ kcal/mol hysteresis cutoff (AUC $0.575$) or a fixed-$\mathrm{se}$ $\chi^2$ test (AUC
-$0.725$); paired bootstrap difference $+0.140$ $[-0.008,+0.316]$ (VERDICT: TIE). P2: the
-shared-ligand-endpoint residual-correlation hypothesis for the closure-implied ($1.71\times$;
-$1.67\times$ on the $46$-system subset where this diagnostic is estimable) versus
-replicate-validated ($1.41\times$) se-conservatism gap is not confirmed (excess correlation
-$-0.0079$ $[-0.0314,+0.0164]$; corrected factor $1.67\times$, VERDICT: NOT-CONFIRMED); the
-Benjamini--Hochberg flag set is unchanged. The calibrated null flags $6$ of $48$ systems, the
+$0.725$); paired bootstrap difference $+0.140$ $[-0.008,+0.316]$ (VERDICT: TIE). P2 tested whether
+correlation among residuals of edges sharing a ligand endpoint explains the apparent gap between a
+closure-implied se-conservatism ($1.71\times$, obtained as $1/\sqrt{0.34}$ from the median reduced
+$\chi^2$) and the replicate-validated $1.41\times$. It does not (excess correlation $-0.0079$
+$[-0.0314,+0.0164]$, VERDICT: NOT-CONFIRMED), and the Benjamini--Hochberg flag set is unchanged.
+The pre-registered constants and this verdict are recorded here as run. We subsequently established
+that the premise was unsound: by Theorem~\ref{thm:cons} the closure statistic identifies the
+curl-leverage-weighted \emph{mean} of $c_e^{-2}$, not a median, so $1/\sqrt{\mathrm{median}}$ is not
+an estimate of the same functional as the replicate ratio. There was accordingly no physical gap
+for P2 to explain, and we do not revise the pre-registered constants after the fact. The calibrated null flags $6$ of $48$ systems, the
 fixed-$\mathrm{se}$ $\chi^2$ test $11$, and the fixed cutoff $26$; the three flag sets are
 strictly nested (calibrated $\subset$ fixed-$\mathrm{se}$ $\subset$ fixed cutoff), so on this
 benchmark the calibrated null catches no system the fixed cutoff misses and instead removes
