@@ -285,6 +285,117 @@ $\sigma$ scale on each replicate. Reproduced by \texttt{make figStab}.}
 \label{fig:Stab}
 \end{figure}
 
+\paragraph{Per-system test statistics behind the flag sets (Tables~\ref{tab:stab}
+and~\ref{tab:stab2}).} The flag sets summarized in Figure~\ref{fig:Stab} and in
+Section~\ref{sec:stability} are thresholded Benjamini--Hochberg adjusted $p$-values, so the
+underlying continuous quantities are reported in full rather than only their dichotomization.
+For each system, a generalized-least-squares cycle-closure fit under the calibrated per-edge
+null gives a $\chi^2$ on $\nu$ degrees of freedom, $\nu$ being the number of independent cycles
+in that system's edge network; the reduced value $\chi^2_\nu=\chi^2/\nu$ and the raw upper-tail
+probability follow, and those raw $p$-values are corrected for testing $48$ systems by the
+Benjamini--Hochberg procedure at a false-discovery rate of $0.05$, giving the adjusted
+$q$-values tabulated below. The $q\le0.05$ rule reproduces
+\texttt{bar.qc.benjamini\_hochberg} exactly, which the generator asserts on every set it emits.
+Each of the benchmark's three protocol replicates is analysed independently: the fit is rerun
+from scratch on that replicate's edges and the correction is applied within that replicate
+alone, so the three $q$ columns are not a joint error rate across replicates. All values are
+transcribed from \texttt{docs/results\_figStab.md} (\texttt{make figStab}).
+
+\begin{table}[tp]\centering
+\caption{\textbf{Per-system cycle-closure statistics and Benjamini--Hochberg adjusted
+$q$-values, per replicate (part $1$ of $2$).} Reduced $\chi^2$ and Benjamini--Hochberg adjusted
+$q$-value from the calibrated cycle-closure test at a false-discovery rate of $0.05$, computed
+independently on each of the benchmark's three protocol replicates, for the $48$ systems with at
+least one independent cycle; $\nu$ is the number of independent cycles. Bold marks $q\le0.05$,
+the flag; the final column lists the replicates on which the system is flagged, and a dash where
+it never is. Edge and cycle counts are the replicate-0 values, and differ by at most a few edges
+between replicates where a leg failed. Rows are ordered by replicate-0 $q$ ascending, ties broken
+by replicate-0 $\chi^2_\nu$ descending, so the six systems flagged in Section~\ref{sec:qc} head
+the table. These are the values plotted in Figure~\ref{fig:Stab}; the remaining $24$ systems
+continue in Table~\ref{tab:stab2}.}
+\label{tab:stab}
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{@{}lrrrrrrrrc@{}}
+\toprule
+& & & \multicolumn{2}{c}{replicate 0} & \multicolumn{2}{c}{replicate 1} &
+\multicolumn{2}{c}{replicate 2} & \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+system & edges & $\nu$ & $\chi^2_\nu$ & $q$ & $\chi^2_\nu$ & $q$ & $\chi^2_\nu$ & $q$ &
+flagged \\
+\midrule
+\texttt{bace} & $49$ & $14$ & $\mathbf{5.57}$ & $\mathbf{3.2{\times}10^{-9}}$ & $\mathbf{7.33}$ & $\mathbf{7.0{\times}10^{-14}}$ & $\mathbf{7.10}$ & $\mathbf{2.9{\times}10^{-13}}$ & 0, 1, 2 \\
+\texttt{cdk8} & $63$ & $29$ & $\mathbf{2.68}$ & $\mathbf{6.1{\times}10^{-5}}$ & $1.45$ & $2.8{\times}10^{-1}$ & $\mathbf{2.62}$ & $\mathbf{1.1{\times}10^{-4}}$ & 0, 2 \\
+\texttt{brd4} & $8$ & $1$ & $\mathbf{15.40}$ & $\mathbf{1.4{\times}10^{-3}}$ & $\mathbf{8.05}$ & $\mathbf{3.6{\times}10^{-2}}$ & $4.94$ & $1.7{\times}10^{-1}$ & 0, 1 \\
+\texttt{faah} & $31$ & $8$ & $\mathbf{3.71}$ & $\mathbf{2.0{\times}10^{-3}}$ & $0.45$ & $1.0{\times}10^{0}$ & $1.47$ & $7.1{\times}10^{-1}$ & 0 \\
+\texttt{hif2a} & $59$ & $19$ & $\mathbf{2.53}$ & $\mathbf{2.0{\times}10^{-3}}$ & $\mathbf{2.96}$ & $\mathbf{2.4{\times}10^{-4}}$ & $2.05$ & $5.4{\times}10^{-2}$ & 0, 1 \\
+\texttt{p38} & $60$ & $22$ & $\mathbf{2.40}$ & $\mathbf{2.0{\times}10^{-3}}$ & $\mathbf{2.48}$ & $\mathbf{1.7{\times}10^{-3}}$ & $1.81$ & $1.1{\times}10^{-1}$ & 0, 1 \\
+\texttt{mcl1} & $76$ & $24$ & $1.82$ & $5.5{\times}10^{-2}$ & $1.79$ & $6.8{\times}10^{-2}$ & $1.04$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{bace\_p3\_arg368\_in} & $28$ & $8$ & $1.88$ & $3.5{\times}10^{-1}$ & $1.88$ & $2.8{\times}10^{-1}$ & $2.32$ & $1.4{\times}10^{-1}$ & -- \\
+\texttt{taf12} & $8$ & $1$ & $3.21$ & $3.9{\times}10^{-1}$ & $0.15$ & $1.0{\times}10^{0}$ & $0.33$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{liga} & $13$ & $3$ & $2.10$ & $4.7{\times}10^{-1}$ & $0.76$ & $1.0{\times}10^{0}$ & $1.80$ & $6.9{\times}10^{-1}$ & -- \\
+\texttt{thrombin} & $54$ & $19$ & $1.30$ & $7.4{\times}10^{-1}$ & $0.86$ & $1.0{\times}10^{0}$ & $0.61$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{renin} & $42$ & $14$ & $1.29$ & $8.1{\times}10^{-1}$ & $\mathbf{2.81}$ & $\mathbf{3.1{\times}10^{-3}}$ & $\mathbf{3.32}$ & $\mathbf{3.8{\times}10^{-4}}$ & 1, 2 \\
+\texttt{ciordia\_retro} & $45$ & $14$ & $0.89$ & $1.0{\times}10^{0}$ & $\mathbf{3.86}$ & $\mathbf{3.1{\times}10^{-5}}$ & $0.40$ & $1.0{\times}10^{0}$ & 1 \\
+\texttt{tyk2} & $29$ & $11$ & $0.79$ & $1.0{\times}10^{0}$ & $1.06$ & $1.0{\times}10^{0}$ & $0.78$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{ephx2} & $4$ & $1$ & $0.77$ & $1.0{\times}10^{0}$ & $1.67$ & $7.7{\times}10^{-1}$ & $1.33$ & $9.3{\times}10^{-1}$ & -- \\
+\texttt{shp2} & $37$ & $12$ & $0.74$ & $1.0{\times}10^{0}$ & $1.21$ & $8.7{\times}10^{-1}$ & $0.64$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{itk} & $5$ & $2$ & $0.68$ & $1.0{\times}10^{0}$ & $0.08$ & $1.0{\times}10^{0}$ & $0.10$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{tnks2} & $35$ & $9$ & $0.63$ & $1.0{\times}10^{0}$ & $0.43$ & $1.0{\times}10^{0}$ & $2.07$ & $1.7{\times}10^{-1}$ & -- \\
+\texttt{mup1} & $7$ & $2$ & $0.55$ & $1.0{\times}10^{0}$ & $3.05$ & $2.8{\times}10^{-1}$ & $0.29$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{scyt\_dehyd} & $7$ & $1$ & $0.54$ & $1.0{\times}10^{0}$ & $1.34$ & $8.5{\times}10^{-1}$ & $1.23$ & $9.3{\times}10^{-1}$ & -- \\
+\texttt{cdk2} & $27$ & $10$ & $0.48$ & $1.0{\times}10^{0}$ & $1.33$ & $7.7{\times}10^{-1}$ & $1.22$ & $9.3{\times}10^{-1}$ & -- \\
+\texttt{eg5} & $43$ & $16$ & $0.48$ & $1.0{\times}10^{0}$ & $0.40$ & $1.0{\times}10^{0}$ & $0.30$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{galectin} & $36$ & $11$ & $0.37$ & $1.0{\times}10^{0}$ & $0.22$ & $1.0{\times}10^{0}$ & $0.88$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{jak2\_set1} & $14$ & $5$ & $0.35$ & $1.0{\times}10^{0}$ & $0.83$ & $1.0{\times}10^{0}$ & $0.15$ & $1.0{\times}10^{0}$ & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[tp]\centering
+\caption{\textbf{Per-system cycle-closure statistics and Benjamini--Hochberg adjusted
+$q$-values, per replicate (part $2$ of $2$).} Table~\ref{tab:stab} continued: the remaining $24$
+of the $48$ systems, in the same order and with the same conventions. No system in this part is
+flagged on any replicate.}
+\label{tab:stab2}
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{@{}lrrrrrrrrc@{}}
+\toprule
+& & & \multicolumn{2}{c}{replicate 0} & \multicolumn{2}{c}{replicate 1} &
+\multicolumn{2}{c}{replicate 2} & \\
+\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+system & edges & $\nu$ & $\chi^2_\nu$ & $q$ & $\chi^2_\nu$ & $q$ & $\chi^2_\nu$ & $q$ &
+flagged \\
+\midrule
+\texttt{hsp90\_2rings} & $7$ & $2$ & $0.34$ & $1.0{\times}10^{0}$ & $0.29$ & $1.0{\times}10^{0}$ & $0.12$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{factor\_xa} & $3$ & $1$ & $0.31$ & $1.0{\times}10^{0}$ & $0.01$ & $1.0{\times}10^{0}$ & $0.02$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{keranen\_p2} & $17$ & $6$ & $0.29$ & $1.0{\times}10^{0}$ & $0.19$ & $1.0{\times}10^{0}$ & $0.04$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{chk1} & $15$ & $3$ & $0.28$ & $1.0{\times}10^{0}$ & $0.27$ & $1.0{\times}10^{0}$ & $0.69$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{hiv1\_protease} & $19$ & $7$ & $0.28$ & $1.0{\times}10^{0}$ & $0.43$ & $1.0{\times}10^{0}$ & $0.94$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{irak4\_s2} & $7$ & $3$ & $0.25$ & $1.0{\times}10^{0}$ & $0.15$ & $1.0{\times}10^{0}$ & $0.04$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{t4\_lysozyme} & $14$ & $3$ & $0.25$ & $1.0{\times}10^{0}$ & $0.57$ & $1.0{\times}10^{0}$ & $2.14$ & $5.0{\times}10^{-1}$ & -- \\
+\texttt{ptp1b} & $36$ & $12$ & $0.21$ & $1.0{\times}10^{0}$ & $0.20$ & $1.0{\times}10^{0}$ & $0.58$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{btk} & $8$ & $3$ & $0.19$ & $1.0{\times}10^{0}$ & $2.15$ & $4.0{\times}10^{-1}$ & $1.19$ & $9.3{\times}10^{-1}$ & -- \\
+\texttt{hsp90\_kung} & $13$ & $3$ & $0.19$ & $1.0{\times}10^{0}$ & $0.18$ & $1.0{\times}10^{0}$ & $0.83$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{cmet} & $39$ & $16$ & $0.17$ & $1.0{\times}10^{0}$ & $0.36$ & $1.0{\times}10^{0}$ & $0.42$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{hsp90\_single\_ring} & $8$ & $2$ & $0.16$ & $1.0{\times}10^{0}$ & $0.02$ & $1.0{\times}10^{0}$ & $0.24$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{hne} & $23$ & $7$ & $0.13$ & $1.0{\times}10^{0}$ & $0.28$ & $1.0{\times}10^{0}$ & $0.07$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{urokinase} & $4$ & $1$ & $0.13$ & $1.0{\times}10^{0}$ & $0.01$ & $1.0{\times}10^{0}$ & $0.25$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{jnk1} & $29$ & $7$ & $0.12$ & $1.0{\times}10^{0}$ & $0.12$ & $1.0{\times}10^{0}$ & $1.19$ & $9.3{\times}10^{-1}$ & -- \\
+\texttt{syk} & $67$ & $22$ & $0.11$ & $1.0{\times}10^{0}$ & $0.20$ & $1.0{\times}10^{0}$ & $0.25$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{egfr} & $7$ & $3$ & $0.07$ & $1.0{\times}10^{0}$ & $0.01$ & $1.0{\times}10^{0}$ & $0.02$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{irak4\_s3} & $4$ & $1$ & $0.07$ & $1.0{\times}10^{0}$ & $0.07$ & $1.0{\times}10^{0}$ & $0.05$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{jak2\_set2} & $12$ & $5$ & $0.06$ & $1.0{\times}10^{0}$ & $1.02$ & $1.0{\times}10^{0}$ & $0.49$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{bace1} & $3$ & $1$ & $0.05$ & $1.0{\times}10^{0}$ & $1.09$ & $8.9{\times}10^{-1}$ & $0.43$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{dlk} & $6$ & $2$ & $0.02$ & $1.0{\times}10^{0}$ & $0.06$ & $1.0{\times}10^{0}$ & $0.05$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{jak1} & $7$ & $2$ & $0.02$ & $1.0{\times}10^{0}$ & $0.32$ & $1.0{\times}10^{0}$ & $0.10$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{bace\_ciordia\_prospective} & $11$ & $3$ & $0.01$ & $1.0{\times}10^{0}$ & $0.07$ & $1.0{\times}10^{0}$ & $0.04$ & $1.0{\times}10^{0}$ & -- \\
+\texttt{hsp90\_woodhead} & $4$ & $1$ & $0.01$ & $1.0{\times}10^{0}$ & $0.07$ & $1.0{\times}10^{0}$ & $0.15$ & $1.0{\times}10^{0}$ & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \begin{figure}[t]\centering
 \includegraphics[width=0.95\textwidth]{figOOS_out_of_sample.pdf}
 \caption{\textbf{Out-of-sample behaviour of the calibrated null.} (A) Per-system closure
