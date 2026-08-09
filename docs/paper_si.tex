@@ -17,11 +17,10 @@ binding edges (mean $6.07$, $[2.78,12.01]$), the worst overstatement occurring a
 overlap, consistent with the controlled panel (invariant \#1, main text). Table~\ref{tab:bace1}
 lists the $(\lambda_i,\lambda_j)$ BAR-window labels, per-edge overlap $4\langle p(1-p)\rangle$,
 and both ratios for all $19$ edges (adjacent-$\lambda$ BAR windows, complex leg, alchemtest AMBER
-\texttt{load\_bace\_example}), emitted verbatim, lambda labels included, by
-\texttt{figs/make\_figA.py bace\_table} (\texttt{bace\_table\_rows()}, seed $20260629$; both
+\texttt{load\_bace\_example}), emitted verbatim, lambda labels included, by the released analysis code (seed $20260629$; both
 sandwich inputs and the bootstrap truth subsampled to the statistical inefficiency $g$ before $B$
-is formed, Section~\ref{sec:bar}; numerically identical to \texttt{real\_panel()}'s binding rows,
-committed verbatim in \texttt{docs/results\_figA.md}), so the $\lambda$ pairing is
+is formed, Section~\ref{sec:bar}; numerically identical to the binding rows of the corresponding panel,
+committed with the analysis code), so the $\lambda$ pairing is
 programmatically re-derivable rather than hand-carried.
 Every edge sits at overlap $\geq0.84$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
 occurs at the single highest-overlap edge ($4\langle p(1-p)\rangle=0.992$), and the best (least
@@ -189,7 +188,7 @@ large acyl channel), \texttt{cdk8} and \texttt{p38} (large scaffold and R-group 
 the flags are chemically sensible, not a per-edge causal claim: cycle closure is edge-level and
 blind to node-consistent bias (main text), and the point is only that the flagged set coincides
 with the features a domain expert would flag a priori.
-(public PDBs cached in \texttt{data/pdb/}).
+
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.9\textwidth]{figQC_structures.pdf}
@@ -293,12 +292,10 @@ null gives a $\chi^2$ on $\nu$ degrees of freedom, $\nu$ being the number of ind
 in that system's edge network; the reduced value $\chi^2_\nu=\chi^2/\nu$ and the raw upper-tail
 probability follow, and those raw $p$-values are corrected for testing $48$ systems by the
 Benjamini--Hochberg procedure at a false-discovery rate of $0.05$, giving the adjusted
-$q$-values tabulated below. The $q\le0.05$ rule reproduces
-\texttt{bar.qc.benjamini\_hochberg} exactly, which the generator asserts on every set it emits.
+$q$-values tabulated below. The $q\le0.05$ rule reproduces the released implementation exactly, which is asserted on every set the analysis emits.
 Each of the benchmark's three protocol replicates is analysed independently: the fit is rerun
 from scratch on that replicate's edges and the correction is applied within that replicate
-alone, so the three $q$ columns are not a joint error rate across replicates. All values are
-transcribed from \texttt{docs/results\_figStab.md} .
+alone, so the three $q$ columns are not a joint error rate across replicates. All values are produced by the analysis code released with this work .
 
 \begin{table}[tp]\centering
 \caption{\textbf{Per-system cycle-closure statistics and Benjamini--Hochberg adjusted
@@ -531,8 +528,7 @@ by this concern in either direction. The per-system ratio in Table~\ref{tab:P8} 
 root-mean-square reported standard error over the root-mean-square across-independent-replicate
 SD, pooled per system, not a naive per-system average of per-edge ratios or a naive ratio of
 arithmetic means, which for three of the six systems below would sit on the opposite side of
-$\mathrm{ratio}=1$. Deterministic; full $48$-system table in
-\texttt{docs/results\_figP8.md}.
+$\mathrm{ratio}=1$. Deterministic; the full $48$-system table is released with the analysis code.
 
 \begin{table}[t]\centering
 \caption{\textbf{Per-system reduced $\chi^2$ before and after inflating each system's own

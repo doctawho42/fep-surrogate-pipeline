@@ -175,8 +175,7 @@ is not an approximation to the sandwich but the same quantity: $B/I^2=1/I-(1/n_f
 identically, so the $-(1/n_f+1/n_r)$ term is precisely the $O(1/n)$ gap between the naive
 information-equality plug-in $1/I$ and the sandwich. The two \emph{sample} plug-ins differ only
 through the moments they substitute, and that difference shrinks with $n$ (paired
-Monte-Carlo check against \texttt{bar.estimator.bar\_estimate},
-\texttt{tests/test\_estimator.py::test\_mbar\_sandwich\_discrepancy\_shrinks\_with\_n}: the
+Monte-Carlo check against the released implementation: the
 mean paired $|\Var_{\text{MBAR}}-B/I^2|$ falls monotonically and by more than an order of
 magnitude from $n{=}40$ to $n{=}320$, the range this repo verifies; beyond that the paired
 discrepancy is smaller than Monte-Carlo noise at a modest replicate budget, so we do not quote
