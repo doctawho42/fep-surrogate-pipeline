@@ -8,10 +8,10 @@ binding edges and found trustworthy against sampling and convergence noise. Its 
 detection: fitting cycle closure with these calibrated bars turns an ordinary consistency check
 into a quality-control test flagging
 a selective minority of perturbation networks as carrying systematic error. What the test
-identifies reproduces out of sample: miscalibration measured on one set of simulation replicates
-predicts the closure statistic of a replicate it never saw, and edges it selects are more
-inconsistent on held-out repeats than random ones. The specific list of networks flagged at a
-fixed threshold is less stable than the ranking behind it, and we report both. An overconfident learned substitute for that error bar destroys the
+identifies reproduces out of sample: miscalibration measured on one set of replicates predicts the
+closure statistic of a replicate it never saw. The ranking behind the flags is steadier than the
+list of names flagged at a fixed threshold, and we report both. An overconfident learned
+substitute for that error bar destroys the
 test, flagging nearly every network regardless of whether it actually has a problem. The same
 bottleneck yields a differentiable acquisition weight insensitive to gauge-redundant measurement
 directions and a chirality-sensitive readout channel that distinguishes enantiomers. Audited
