@@ -90,8 +90,8 @@ and reward-guided re-ranking, which finds this calibrated uncertainty valuable f
 commit trust and stopping decisions, and for nothing sharper or better ranked.
 \item The same closed form as an autograd primitive whose backward pass costs a single division,
 verified against finite differences, so the variance can be propagated through a surrogate at the
-cost of the point estimate; the experiments here consume it as a number and as a graph weight
-rather than by training through it.
+cost of the point estimate. The experiments reported here consume it as a number and as a
+graph weight.
 \item That per-edge variance as the conductance of a measurement graph, producing an acquisition
 weight whose knowledge gradient is exactly zero along every gauge-redundant direction of that
 graph.
