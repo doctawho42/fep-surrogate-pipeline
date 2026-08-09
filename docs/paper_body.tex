@@ -27,9 +27,9 @@ and quality-control instrument, not a performance multiplier.
 \caption{\textbf{Overview.} Forward and reverse alchemical work samples enter a differentiable
 BAR bottleneck, which returns the closed-form free-energy estimate and variance $(\dFh, B/I^2)$.
 A small perturbation network is shown with one cycle highlighted and one edge marked as flagged.
-Across 1145 real binding edges and 48 systems with a cycle, a calibrated error bar flags 6 of 48
-systems, and an overconfident stand-in built from a learned head's measured miscalibration
-profile flags 42 of 48.}
+Across 1145 real binding edges and 48 systems with a cycle, a calibrated error bar flags 6, 6 and
+3 systems on the benchmark's three protocol repeats, one of them on all three; an overconfident
+stand-in built from a learned head's measured miscalibration profile flags 42.}
 \label{fig:overview}
 \end{figure}
 
@@ -687,8 +687,11 @@ of Section~\ref{sec:qc}, not a sharper or better-ranked prediction.
 relative-binding and benzene sets, from which forward and reverse work samples are available per
 $\lambda$ window. The replicate validation, the cycle-closure test and every experiment on real
 binding data use the OpenFE IndustryBenchmarks2024 release~\citep{baumann2025industrybenchmarks},
-which ships three independent protocol repeats per transformation: $1145$ edges over $34$ targets,
-of which $48$ systems contain at least one cycle and therefore admit the closure test. Grounding
+which ships three independent protocol repeats per transformation: $1145$ edges across $49$
+systems drawn from $34$ protein targets, several targets contributing more than one system. The
+$48$ systems with at least one independent cycle admit the closure test, and each counts as one
+hypothesis in the Benjamini--Hochberg correction; the per-target calibration ratios of
+Figure~\ref{fig:Arep}B pool over the $34$ targets instead. Grounding
 against measured affinity uses public ChEMBL $\mathrm{IC}_{50}$ values. No free-energy simulation
 was run for this work; all alchemical output is taken as published.
 
@@ -700,8 +703,9 @@ not unroll the root-find; gradients are checked against finite differences to ma
 
 \paragraph{Cycle-closure test.} Node potentials are fitted by generalized least squares on the
 signed incidence matrix of the perturbation network, whitened by the per-edge standard errors, so
-that the fit is a weighted least-squares problem with conductances $1/V_e$. The statistic is the
-reduced $\chi^2$ of the residuals with $\mathrm{dof}=E-\operatorname{rank}(B)$; per-system tail
+that the fit is a weighted least-squares problem with conductances $1/V_e$. Writing $N$ for that incidence matrix, to keep $B$ for the sandwich meat of
+Theorem~\ref{thm:sand}, the statistic is the reduced $\chi^2$ of the residuals with
+$\mathrm{dof}=E-\operatorname{rank}(N)$; per-system tail
 probabilities use the exact regularized upper incomplete gamma function rather than a
 Wilson--Hilferty approximation, and systems are flagged by Benjamini--Hochberg control of the
 false discovery rate at $\alpha=0.05$ across systems.
@@ -722,6 +726,20 @@ $10^{-4}$, on inputs standardized by the training mean and standard deviation. E
 seeded independently and fitted to its own bootstrap resample; the epistemic term is the spread
 across members, and the total $\sigma$ combines it in quadrature with the aleatoric floor before a
 conformal rescaling.
+
+\paragraph{Learned-variance foil.} The learned head the calibrated bar is compared against is a
+separate and much smaller model from the amortized predictor above, and it is trained on the
+controlled panel rather than on the benchmark. Each training example is one simulated edge, from
+which six features are formed: the means and standard deviations of the forward and reverse work
+samples, the absolute difference of the two means, and the normalized overlap scalar. The last of
+these is what makes the foil fair, since it gives the head the same overlap information the closed
+form uses. The network is a multilayer perceptron with two hidden layers of $32$ units and SiLU
+activations and two outputs, a mean and a log-variance, trained for $1500$ steps of Adam at
+learning rate $5\times10^{-3}$ on a Gaussian negative log-likelihood, with inputs standardized by
+the training mean and standard deviation. The realistic-budget arm trains on $200$ edges of $20$
+work samples each; the large-budget arm raises the edge count and the corrected arms replace the
+objective by the $\beta$-NLL of \citet{seitzer2022pitfalls} at $\beta=0.5$ or average five
+independently seeded heads.
 
 \paragraph{Software.} Python $\geq3.11$ with numpy $2.5.0$, scipy $1.18.0$, pymbar $4.0.3$, torch
 $2.12.1$, RDKit $2026.3.3$ and matplotlib $3.11.0$. Ensemble training runs on CPU; torch reductions
