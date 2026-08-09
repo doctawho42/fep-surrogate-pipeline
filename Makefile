@@ -2,7 +2,7 @@
 # Uses the project conda env `fluor_screening` by default; override with `PY=...`.
 PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
 
-.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figP4 figP4b figP8 graphical gabs all
+.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figP4 figP4b figP8 figSelf graphical gabs all
 
 help:
 	@echo "make test    - run the pytest suite (theorem invariants)"
@@ -107,6 +107,9 @@ figP4b:  # peer-review P4b: dose-response of the QC to sigma miscalibration
 
 figP8:  # peer-review P8: per-system flag robustness to each system's own calibration error
 	PYTHONPATH=src $(PY) figs/make_figP8.py
+
+figSelf:  # exploratory TWO-SIDED self-calibration of the QC null (P8 = the pre-registered one-sided check)
+	PYTHONPATH=src $(PY) figs/make_figSelf.py
 
 boltzinputs:  # build the Boltz cage cross-check inputs (manifest + 5 screen payloads)
 	PYTHONPATH=scripts $(PY) scripts/boltz_cage_inputs.py
