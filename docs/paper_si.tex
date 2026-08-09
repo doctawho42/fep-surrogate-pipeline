@@ -409,6 +409,22 @@ those discarded for firing above nominal. Reproduced by \texttt{make figOOS}.}
 \label{fig:OOS}
 \end{figure}
 
+\begin{figure}[t]\centering
+\includegraphics[width=0.95\textwidth]{figSelf_two_sided_selfcalibration.pdf}
+\caption{\textbf{Two-sided self-calibration and what it does to the flag count.} Each system's
+per-edge reported standard error is replaced by its own replicate-measured calibration, applied in
+whichever direction the measurement points rather than only the conservative one, and the same
+generalized-least-squares and Benjamini--Hochberg pipeline is run unchanged. Per-system reduced
+$\chi^2$ before and after, which systems are gained and which are lost, and the realized
+probability of at least one false flag for each arm under a pure-null simulation. The corrected
+count is not false-discovery-rate controlled, for the reason given in
+Section~\ref{sec:limitations}, and is not reported as a flag set; the figure is included for the
+asymmetry it establishes, that the correction adds systems and removes none. Distinct from the
+pre-registered one-sided robustness check of Table~\ref{tab:P8}, which is unchanged. Reproduced by
+\texttt{make figSelf}.}
+\label{fig:Self}
+\end{figure}
+
 \paragraph{QC sweep under the real learned-$\sigma$ profile (Figure~\ref{fig:P4}).}
 Figure~\ref{fig:L}B's uniform ${\times}0.15$ shrink is a stress test; here the learned head's
 \emph{measured}, overlap-dependent miscalibration profile (Figure~\ref{fig:A}A: ratio
