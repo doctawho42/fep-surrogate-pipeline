@@ -70,10 +70,10 @@ simulation replicates on a large set of real protein-ligand binding calculations
 the second is a quality-control instrument: fitting the thermodynamic cycle closure of a
 perturbation network with these calibrated bars flags networks whose simulations disagree with
 each other by more than sampling noise can explain, and the same fit says in advance which edges
-of the network can carry evidence at all. That instrument consumes the variance as a plain
-number. Packaging the closed form as a differentiable layer, so that a surrogate can carry it at
-the cost of the point estimate, is the machinery that makes the same quantity usable inside a
-model and inside an acquisition rule; no experiment reported here trains through it.
+of the network can carry evidence at all. The instrument consumes the variance as a plain number.
+Packaging the same closed form as a differentiable layer, at the cost of the point estimate, is
+what carries the quantity into a surrogate and into an acquisition rule; the experiments reported
+here consume it as a number and as a graph weight.
 
 This paper makes the following contributions.
 \begin{itemize}
