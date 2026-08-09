@@ -320,7 +320,10 @@ does not bind a goodness-of-fit test, whose statistic depends on the weights dir
 
 \paragraph{A calibrated cycle-closure test.} A perturbation network must close its cycles: the
 signed sum of $\ddG$ around any loop is zero in expectation. Fitting node potentials by
-generalized least squares with the sandwich conductances $w_e=I_e^2/B_e$ (Theorem~\ref{thm:fr})
+generalized least squares with conductances $w_e=1/V_e$, which Theorem~\ref{thm:fr} identifies
+with the sandwich precision $I_e^2/B_e$ whenever the work samples are available (on this benchmark
+they are not released, so $V_e$ is the reported per-edge variance composed from the two legs,
+Section~\ref{sec:methods}),
 gives residuals $r_e$ and the goodness-of-fit statistic $X^2=\sum_e r_e^2/V_e\sim\chi^2(\mathrm{dof})$,
 with $\mathrm{dof}$ the number of independent cycles ($E$ minus the incidence rank). Under
 correctly-sampled physics $\mathbb{E}[X^2/\mathrm{dof}]\approx1$; here it runs \emph{below} one
@@ -387,10 +390,14 @@ differentiability or $O(1)$ backward of Theorems~\ref{thm:back}--\ref{thm:sand}.
 supply the layer that makes end-to-end propagation possible and bound its cost, but no experiment
 reported here trains through it: what the real-data work consumes is the variance as a number, in
 the detector, and as the acquisition graph weight of Section~\ref{sec:gauge}. The detector's novelty is
-the \emph{calibrated null}, not the differentiable machinery. Because that null is conservative (median reduced $\chi^2=0.34$, so the bars
-are ${\gtrsim}1.7\times$ wide for closure residuals), the nominal Benjamini--Hochberg rate is an
-\emph{upper bound} on the true false-positive rate: the test under-flags rather than over-flags.
-Its validity does not rest on the $\chi^2$ tail at all; the flags are confirmed by the
+the \emph{calibrated null}, not the differentiable machinery. That null is conservative in the bulk (median reduced $\chi^2=0.34$, so the bars
+are ${\gtrsim}1.7\times$ wide for closure residuals), so on a typical system the test under-flags.
+That observation does not bound the realized false-positive rate, and we do not read it as doing
+so: Benjamini--Hochberg controls the false discovery rate through the behaviour of the null
+$p$-values near the rejection threshold, not through the median of the statistic, and the
+per-system calibration of Figure~\ref{fig:Arep} is heterogeneous enough that a conservative bulk
+and an anti-conservative tail can coexist. The nominal level is reported as nominal. The case for
+the flags therefore rests not on the $\chi^2$ tail but on the
 two distribution-free checks below (causal edge-removal and cross-replicate residual correlation),
 which assume no Gaussian null. A subtler concern is that four of the six flagged systems are
 themselves locally overconfident against their own across-replicate spread
@@ -522,8 +529,11 @@ confirmed distribution-free, the sharpest use of the free calibration, and one a
 learned $\sigma$ destroys.
 
 \section{Chirality completeness}\label{sec:chiral}
-An equivariant trunk~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} feeds the
-bottleneck. Which readout channels does it need to distinguish stereoisomers?
+A geometric readout of a ligand, whether the $E(3)$-equivariant networks that are standard for
+this task~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} or the descriptor-based
+predictor used here (Section~\ref{sec:methods}), has to distinguish stereoisomers. Which readout
+channels does that require? The statement below is a property of the readout's symmetry group, so
+it binds any such model, including the one this work uses.
 \begin{theorem}[Chirality completeness]\label{thm:chiral}
 Any $O(3)$-invariant readout (a function of pairwise distances, norms, or dot products) is
 constant on an enantiomer pair $\{M,M^\ast\}$ ($M^\ast$ the mirror image) and is therefore
