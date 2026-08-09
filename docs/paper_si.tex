@@ -302,15 +302,12 @@ transcribed from \texttt{docs/results\_figStab.md} .
 
 \begin{table}[tp]\centering
 \caption{\textbf{Per-system cycle-closure statistics and Benjamini--Hochberg adjusted
-$q$-values, per replicate (part $1$ of $2$).} Reduced $\chi^2$ and Benjamini--Hochberg adjusted
-$q$-value from the calibrated cycle-closure test at a false-discovery rate of $0.05$, computed
-independently on each of the benchmark's three protocol replicates, for the $48$ systems with at
-least one independent cycle; $\nu$ is the number of independent cycles. Bold marks $q\le0.05$,
-the flag; the final column lists the replicates on which the system is flagged, and a dash where
-it never is. Edge and cycle counts are the replicate-0 values, and differ by at most a few edges
-between replicates where a leg failed. Rows are ordered by replicate-0 $q$ ascending, ties broken
-by replicate-0 $\chi^2_\nu$ descending, so the six systems flagged in Section~\ref{sec:qc} head
-the table. These are the values plotted in Figure~\ref{fig:Stab}; the remaining $24$ systems
+$q$-values, per replicate (part $1$ of $2$).} Reduced $\chi^2$ and adjusted $q$-value from the
+calibrated cycle-closure test at a false-discovery rate of $0.05$, computed independently on each
+of the three protocol replicates, for the $48$ systems with at least one independent cycle;
+$\nu$ is the number of independent cycles. Bold marks $q\le0.05$; the final column lists the
+replicates on which the system is flagged, and a dash where it never is. Edge and cycle counts are
+the replicate-0 values. Rows are ordered by replicate-0 $q$ ascending. The remaining $24$ systems
 continue in Table~\ref{tab:stab2}.}
 \label{tab:stab}
 \footnotesize
@@ -398,13 +395,11 @@ flagged \\
 \begin{figure}[t]\centering
 \includegraphics[width=0.95\textwidth]{figOOS_out_of_sample.pdf}
 \caption{\textbf{Out-of-sample behaviour of the calibrated null.} (A) Per-system closure
-$\chi^2_\nu$ predicted from the per-edge miscalibration measured on the two replicates that are
-not being predicted, against the observed value, with the identity line and the flagged systems
-marked. (B) Held-out inconsistency of edges selected on one replicate and evaluated on the other
-two, against an $|z|$-rank-matched control, a topology-only control built from curl-leverage, and
-equal-size random selection, over the three choices of selection replicate; the realized level of
-every candidate statistic under a no-error null is reported in the results document, including
-those discarded for firing above nominal.}
+$\chi^2_\nu$ predicted from the per-edge miscalibration measured on the two replicates not being
+predicted, against the observed value, with the identity line and the flagged systems marked.
+(B) Held-out inconsistency of edges selected on one replicate and evaluated on the other two,
+against an $|z|$-rank-matched control, a topology-only control built from curl-leverage, and
+equal-size random selection, over the three choices of selection replicate.}
 \label{fig:OOS}
 \end{figure}
 
@@ -542,12 +537,10 @@ $\mathrm{ratio}=1$. Deterministic; full $48$-system table in
 \begin{table}[t]\centering
 \caption{\textbf{Per-system reduced $\chi^2$ before and after inflating each system's own
 per-edge standard error by its own measured calibration error.} ``ratio'' is the per-system
-root-mean-square ratio of reported standard error to across-independent-replicate standard
-deviation of binding $\ddG$ (raw $n=3$ ratio; identical definition to
-Figure~\ref{fig:Arep}'s per-target ratio). $\chi^2_{\text{nom}}$ is the nominal reduced
-$\chi^2$; $\chi^2_{\text{self}}$ inflates that system's own standard error by
-$1/\mathrm{ratio}$ where $\mathrm{ratio}<1$ and leaves it unchanged otherwise. Rows are the
-six systems flagged by the cycle-closure test.}
+root-mean-square ratio of reported standard error to across-replicate standard deviation of
+binding $\ddG$, at $n=3$. $\chi^2_{\text{nom}}$ is the nominal reduced $\chi^2$;
+$\chi^2_{\text{self}}$ inflates that system's own standard error by $1/\mathrm{ratio}$ where
+$\mathrm{ratio}<1$ and leaves it unchanged otherwise. Rows are the six flagged systems.}
 \label{tab:P8}
 \small
 \begin{tabular}{@{}lrrrl@{}}
