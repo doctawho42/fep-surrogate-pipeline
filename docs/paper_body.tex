@@ -139,8 +139,7 @@ variance in a Gaussian graphical model~\citep{klein1993resistance}.
 The works cited above use that uncertainty as a reported number or as a separately learned model.
 This work characterises the same sandwich variance against independent replicates, puts it to a
 distinct use as the calibrated null of a real-data cycle-closure quality-control test, and
-supplies it as a differentiable quantity that also serves as the conductance of a gauge-aware
-acquisition graph.
+supplies it as a differentiable quantity that is also the conductance of a gauge-aware acquisition graph.
 
 \section{The per-edge error bar}\label{sec:bar}
 \paragraph{Setup.} For a single alchemical edge, forward and reverse works
@@ -259,9 +258,7 @@ both push our ratio upward relative to theirs. The first is what is being repeat
 resample the full ensemble, whereas the OpenFE repeats used here share starting coordinates and
 differ only in stochastic sampling, so the denominator we divide by is a lower bound on run-to-run
 variability and the resulting ratio is an upper bound on conservatism. The second is which
-functional is quoted. The aggregate $1.41$ is a root-mean-square pooling; the quantity that governs
-the detector, the curl-leverage-weighted mean of the per-edge inverse squared miscalibration
-factors, is $0.85$ $[0.63,1.08]$ on the same edges (Section~\ref{sec:oos}), which is consistent
+functional is quoted. The aggregate $1.41$ is a root-mean-square pooling; the quantity that governs the detector, a mean of the per-edge inverse squared miscalibration factors weighted by how much each edge contributes to the closure test's degrees of freedom, is $0.85$ $[0.63,1.08]$ on the same edges (Section~\ref{sec:oos}), which is consistent
 with correctly scaled bars and much closer to their picture than $1.41$ suggests. We therefore do
 not read our measurement as contradicting theirs, and the question is not settled here: settling it needs replicates that resample preparation and pose, which this benchmark
 does not provide.
@@ -317,8 +314,7 @@ correctly-sampled physics $\mathbb{E}[X^2/\mathrm{dof}]\approx1$; here it runs \
 We do not convert that median into a conservatism factor. The quantity the closure statistic
 identifies is not a median: writing the reported variance as $V_e^{\text{rep}}=c_e^2V_e$, whitening
 by the reported errors gives $\mathbb{E}[X^2]=\operatorname{tr}(MD)$ with $D=\mathrm{diag}(c_e^{-2})$,
-so by Theorem~\ref{thm:cons} $\mathbb{E}[\chi^2_\nu]$ is the curl-leverage-weighted \emph{mean} of
-$c_e^{-2}$. Inverting a median recovers a scalar conservatism only when $c_e$ is constant across
+so, as Theorem~\ref{thm:cons} below establishes, $\mathbb{E}[\chi^2_\nu]$ is the curl-leverage-weighted \emph{mean} of $c_e^{-2}$. Inverting a median recovers a scalar conservatism only when $c_e$ is constant across
 edges, and Figure~\ref{fig:Arep}B shows it is not. A replicate-validated ratio and a
 closure-implied one are therefore different functionals of a heavy-tailed per-edge ratio
 distribution, and no single scalar conservatism factor is identified by these data; the apparent
@@ -756,8 +752,7 @@ predictor carries a parity-odd readout channel because a geometric readout built
 distances, norms or dot products is constant on an enantiomer pair and so cannot distinguish
 stereoisomers at all; that requirement, and the completeness statement behind it, are established
 in Section~\ref{sec:chiral} of the Supporting Information, and nothing the main text claims
-depends on them. Finally, a structure-based (docking) reverse-screen we
-built as a follow-on did not beat a ligand-similarity baseline on this benchmark, so the
+depends on them. Finally, a structure-based docking reverse-screen did not beat a ligand-similarity baseline on this benchmark, so the
 structure-directed regime is not claimed here.
 
 \section{Conclusion}\label{sec:conclusion}
