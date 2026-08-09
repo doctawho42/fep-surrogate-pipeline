@@ -78,5 +78,16 @@ result, with its theorem, its enantiomer-pair readouts and its instantiation on 
 \bibliography{refs}
 
 \clearpage
+
+% --- Supporting Information: restart float, section and theorem numbering with an S prefix,
+% --- as ACS expects, so SI objects read S1, S2, ... rather than continuing the main sequence.
+\setcounter{figure}{0}
+\setcounter{table}{0}
+\setcounter{section}{0}
+\setcounter{theorem}{0}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetheorem}{S\arabic{theorem}}
 \input{paper_si}
 \end{document}
