@@ -274,6 +274,30 @@ the $y{=}x$ line and the $\chi^2_\nu=1$ reference.}
 \label{fig:Cut}
 \end{figure}
 
+\begin{figure}[t]\centering
+\includegraphics[width=0.95\textwidth]{figStab_replicate_stability.pdf}
+\caption{\textbf{Replicate stability of the flag set.} The Benjamini--Hochberg test at
+$\alpha=0.05$ recomputed independently on each of the benchmark's three protocol repeats.
+Per-system adjusted $p$-values, which systems are flagged on which replicate, the pairwise
+Jaccard overlap of the three flag sets against a random-draw reference, the flag set obtained
+from the three replicates pooled, and the selectivity of the test across a swept uniform
+$\sigma$ scale on each replicate. Reproduced by \texttt{make figStab}.}
+\label{fig:Stab}
+\end{figure}
+
+\begin{figure}[t]\centering
+\includegraphics[width=0.95\textwidth]{figOOS_out_of_sample.pdf}
+\caption{\textbf{Out-of-sample behaviour of the calibrated null.} (A) Per-system closure
+$\chi^2_\nu$ predicted from the per-edge miscalibration measured on the two replicates that are
+not being predicted, against the observed value, with the identity line and the flagged systems
+marked. (B) Held-out inconsistency of edges selected on one replicate and evaluated on the other
+two, against an $|z|$-rank-matched control, a topology-only control built from curl-leverage, and
+equal-size random selection, over the three choices of selection replicate; the realized level of
+every candidate statistic under a no-error null is reported in the results document, including
+those discarded for firing above nominal. Reproduced by \texttt{make figOOS}.}
+\label{fig:OOS}
+\end{figure}
+
 \paragraph{QC sweep under the real learned-$\sigma$ profile (Figure~\ref{fig:P4}).}
 Figure~\ref{fig:L}B's uniform ${\times}0.15$ shrink is a stress test; here the learned head's
 \emph{measured}, overlap-dependent miscalibration profile (Figure~\ref{fig:A}A: ratio

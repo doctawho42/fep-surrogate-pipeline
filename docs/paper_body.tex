@@ -419,9 +419,12 @@ degree-of-freedom profile shows.
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over
 $49$ systems, the $48$ with $\geq1$ independent cycle, $3$ replicates), the median reduced
 $\chi^2$ is $0.34$ and a Benjamini--Hochberg false-discovery-rate (FDR)
-test at $0.05$ flags six chemically-sensible systems (\texttt{brd4}, \texttt{bace}, \texttt{faah},
+test at $0.05$ applied to the first replicate flags six chemically-sensible systems
+(\texttt{brd4}, \texttt{bace}, \texttt{faah},
 \texttt{cdk8}, \texttt{hif2a}, \texttt{p38}; Figure~\ref{fig:L}A; \texttt{brd4}'s data set is a
-buried-water set, \texttt{bace} is protonation-sensitive). The detector's value is entirely a
+buried-water set, \texttt{bace} is protonation-sensitive). That particular set of six is a
+single-replicate draw and should not be read as a census; Section~\ref{sec:stability} measures how
+much of it survives the other two replicates. The detector's value is entirely a
 function of calibration (Figure~\ref{fig:L}B): a uniform ${\times}0.15$ shrink standing in for the
 learned head's central overconfidence (Figure~\ref{fig:A}) flags $88\%$ of systems (false-positive rate $\to1$,
 useless), the calibrated sandwich flags $12\%$ (selective), and over-wide bars flag none, the
@@ -534,6 +537,53 @@ model that turns FEP cycle-closure into a quality-control test that separates sy
 sampling error on real networks, with a false-positive rate controlled by the calibrated null and
 confirmed distribution-free, the sharpest use of the free calibration, and one an overconfident
 learned $\sigma$ destroys.
+
+\subsection{What survives a second replicate}\label{sec:stability}
+The benchmark ships three independent repeats, so the flag set can be recomputed rather than
+assumed. It does not hold up as a set. The same pipeline at the same FDR level returns
+$\{$\texttt{bace}, \texttt{brd4}, \texttt{cdk8}, \texttt{faah}, \texttt{hif2a}, \texttt{p38}$\}$ on
+the first replicate, $\{$\texttt{bace}, \texttt{brd4}, \texttt{ciordia\_retro}, \texttt{hif2a},
+\texttt{p38}, \texttt{renin}$\}$ on the second and $\{$\texttt{bace}, \texttt{cdk8},
+\texttt{renin}$\}$ on the third: eight systems are flagged at least once, one
+(\texttt{bace}) is flagged every time, and pairwise Jaccard overlap is $0.50$, $0.29$, $0.29$
+against $0.072$ for a random draw of the same size. The churn is not a threshold artefact and
+persists from $\alpha=0.01$ to $\alpha=0.20$ (Supplementary Figure~\ref{fig:Stab}). Pooling the
+three replicates flags seven systems, the union minus \texttt{faah}.
+
+Two things do survive. The ranking of systems by closure inconsistency reproduces across
+replicates (Spearman $0.649$, $0.644$, $0.723$ over all $48$ systems), and the dependence of
+selectivity on $\sigma$-calibration, which is the claim this section is actually making, is
+essentially unmoved: the $\times0.15$ shrink flags $42$, $41$, $41$ systems, the calibrated bar
+$6$, $6$, $3$, a $\times1.3$ inflation $1$, $1$, $1$, and a $\times2$ inflation none, on the three
+replicates respectively. What a single replicate supports is a ranking and a calibrated operating
+point, not a list of names. Among the published six, \texttt{faah} is the weakest on every
+measure: its reduced $\chi^2$ crosses one in both directions across replicates
+($3.71$, $0.45$, $1.47$), its standardized residuals barely reproduce between replicates
+($r=-0.085$), and it is the one member the pooled fit drops.
+
+\subsection{Out-of-sample behaviour}\label{sec:oos}
+Two checks use one replicate to predict another and so cannot be circular. First, the per-edge
+miscalibration measured from replicates two and three predicts the closure statistic of the
+replicate they exclude: writing $V_e^{\text{rep}}=c_e^2V_e$, Theorem~\ref{thm:cons} makes
+$\mathbb{E}[\chi^2_\nu]$ the curl-leverage-weighted mean of $c_e^{-2}$, and that prediction
+correlates with the observed per-system $\chi^2_\nu$ at Spearman $0.648$
+($p=6\times10^{-7}$, $n=48$; Supplementary Figure~\ref{fig:OOS}A). The aggregate level also
+matches, $\mathbb{E}[\chi^2_\nu]=0.85$ with a system-cluster bootstrap interval $[0.63,1.08]$,
+a bar-width factor of $1.09\times$ $[0.96,1.26]$. This is a quantitative point prediction of a
+per-system statistic from data that do not enter it. The flagged systems sit \emph{above} the
+line, which is what reproducible systematic error should do: it inflates a closure residual
+without inflating the spread between repeats.
+
+Second, edges selected on one replicate are more inconsistent on the two held out than
+equal-size random selections are (mean gain in held-out reduced $\chi^2$, Stouffer
+$p=1.3\times10^{-3}$, $1.3\times10^{-3}$, $4.4\times10^{-3}$ over the three rotations), while a
+topology-only control built from curl-leverage is indistinguishable from random
+($p=0.21$--$0.91$). We calibrated each candidate statistic against a no-error null before using
+it and report the realized level of all of them, including the two we discarded for firing far
+above nominal. Only the consistency-gain statistic is specific to the flagged systems: an
+$|z|$-rank-matched control drawn from unflagged systems reproduces the leverage-normalised
+residual signal but not the consistency gain. The effect is an aggregate one, significant
+individually in two of the five testable systems.
 
 \section{Chirality completeness}\label{sec:chiral}
 A geometric readout of a ligand, whether the $E(3)$-equivariant networks that are standard for
