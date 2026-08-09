@@ -251,6 +251,23 @@ The reported se does not \emph{systematically} under-state real
 reproducibility, the opposite of the learned head's ${\approx}7\times$ overconfidence
 at realistic budget (${\approx}5\times$ even at large budget).
 
+That conclusion points the other way from the closest measurement in the literature.
+\citet{wade2022estimators} compare the analytic MBAR uncertainty against the spread over five
+independent replicas on $54$ protein-ligand transformations across five targets, in two engines,
+and report that MBAR consistently \emph{under}-estimates the error, by up to $0.9$ kcal/mol and
+worse in the complex leg than in the ligand leg. Two differences bear on the disagreement, and
+both push our ratio upward relative to theirs. The first is what is being repeated: their replicas
+resample the full ensemble, whereas the OpenFE repeats used here share starting coordinates and
+differ only in stochastic sampling, so the denominator we divide by is a lower bound on run-to-run
+variability and the resulting ratio is an upper bound on conservatism. The second is which
+functional is quoted. The aggregate $1.41$ is a root-mean-square pooling; the quantity that governs
+the detector, the curl-leverage-weighted mean of the per-edge inverse squared miscalibration
+factors, is $0.85$ $[0.63,1.08]$ on the same edges (Section~\ref{sec:oos}), which is consistent
+with correctly scaled bars and much closer to their picture than $1.41$ suggests. We therefore do
+not read our measurement as contradicting theirs, and we do not claim to have resolved the
+question: settling it needs replicates that resample preparation and pose, which this benchmark
+does not provide.
+
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
 \caption{\textbf{Sandwich variance against learned-variance foils, controlled and real data.}
