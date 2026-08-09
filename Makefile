@@ -93,6 +93,9 @@ figLev:  # D1: per-edge observability map (sum_h==dof, bridges) + pre-registered
 figCut:  # peer-review P1+P2: fixed-cutoff head-to-head + chi^2 reconciliation
 	PYTHONPATH=src $(PY) figs/make_figCut.py
 
+figStab:  # replicate stability of the QC flag set (rep 0 vs 1 vs 2 vs pooled); honest negative
+	PYTHONPATH=src $(PY) figs/make_figStab.py
+
 figP4:  # peer-review P4: QC sweep under the real heterogeneous learned-sigma profile
 	PYTHONPATH=src $(PY) figs/make_figP4.py
 
