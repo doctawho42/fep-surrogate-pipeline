@@ -1,8 +1,8 @@
 \begin{abstract}
 We turn a routine thermodynamic consistency check into a calibrated diagnostic for relative
-binding free energy calculations. At a surrogate's bottleneck sits the Bennett Acceptance Ratio
-estimator's own finite-sampling variance, computed in closed form from the work samples rather
-than learned, with a backward pass no costlier than the forward pass. This per-edge error bar is
+binding free energy calculations. The Bennett Acceptance Ratio estimator that turns simulation
+output into a free energy carries its own finite-sampling variance in closed form, computed from
+the work samples rather than learned, with a backward pass no costlier than the forward pass. This per-edge error bar is
 validated against independent molecular-dynamics replicates on $1145$ real protein-ligand
 binding edges and found trustworthy against sampling and convergence noise. Its sharpest use is
 detection: fitting cycle closure with these calibrated bars turns an ordinary consistency check
@@ -61,9 +61,10 @@ is not a property of the surrogate model; it is a property of the estimator itse
 computed directly from the same simulation output that produces the free-energy estimate,
 without any additional training data.
 
-This work builds a relative-binding-free-energy surrogate around exactly that estimator: its
-bottleneck is the BAR calculation itself, so the finite-sampling part of its uncertainty is
-computed rather than learned, at no extra data cost. The question this raises is not whether
+This work takes that closed form as the uncertainty a screening pipeline should report: the
+finite-sampling part is computed from the same simulation output rather than learned, at no extra
+data cost, and it is packaged as a differentiable layer so that a surrogate can carry it at the
+cost of the point estimate. The question this raises is not whether
 such a computed error bar is theoretically correct, that follows from standard estimation
 theory, but whether it is trustworthy in practice, and where trustworthiness actually matters in
 a real screening workflow. We check the first question directly, against independent simulation
@@ -78,8 +79,10 @@ This paper makes the following contributions.
 \begin{itemize}
 \item This paper reads the finite-sampling uncertainty of a relative binding free energy
 estimate off a closed-form expression, the sandwich variance of the Bennett Acceptance Ratio
-estimator, with a backward pass that costs a single division and trains inside a differentiable
-surrogate at the same cost as the point estimate itself.
+estimator, with a backward pass that costs a single division. It is implemented as an autograd
+primitive and verified against finite differences, so the variance can be propagated through a
+surrogate at the cost of the point estimate; the experiments here consume it as a number and as a
+graph weight rather than by training through it.
 \item This calibrated per-edge error bar, validated against independent simulation replicates on
 real protein-ligand binding data, turns thermodynamic cycle closure into a quality-control test
 that separates systematic simulation error from ordinary sampling noise, with the resulting
@@ -135,8 +138,8 @@ proportion to reward; the resistance distance of a weighted graph Laplacian equa
 variance in a Gaussian graphical model~\citep{klein1993resistance}.
 
 The works cited above use that uncertainty as a reported number or as a separately learned model.
-This work instead propagates the same sandwich variance through the surrogate as a differentiable
-quantity, carries it through a gauge-aware acquisition graph, and puts it to a further, distinct
+This work supplies the same sandwich variance as a differentiable quantity, uses it as the
+conductance of a gauge-aware acquisition graph, and puts it to a further, distinct
 use as the calibrated null of a real-data cycle-closure quality-control test.
 
 \section{The BAR information bottleneck}\label{sec:bar}
@@ -380,9 +383,10 @@ this benchmark. The evidence that the flags are real remains the two distributio
 (causal edge removal and cross-replicate residual correlation), neither of which depends on the
 $\chi^2$ scaling. This retrospective test needs only the calibrated per-edge $se$ as shipped
 with the benchmark; it does \emph{not} require the
-differentiability or $O(1)$ backward of Theorems~\ref{thm:back}--\ref{thm:sand}, which earn their
-place in the training-time propagation, the acquisition graph weight (Section~\ref{sec:gauge}), and
-the simulated stop/commit uses, not in the detector's real-data operation. The detector's novelty is
+differentiability or $O(1)$ backward of Theorems~\ref{thm:back}--\ref{thm:sand}. Those results
+supply the layer that makes end-to-end propagation possible and bound its cost, but no experiment
+reported here trains through it: what the real-data work consumes is the variance as a number, in
+the detector, and as the acquisition graph weight of Section~\ref{sec:gauge}. The detector's novelty is
 the \emph{calibrated null}, not the differentiable machinery. Because that null is conservative (median reduced $\chi^2=0.34$, so the bars
 are ${\gtrsim}1.7\times$ wide for closure residuals), the nominal Benjamini--Hochberg rate is an
 \emph{upper bound} on the true false-positive rate: the test under-flags rather than over-flags.
@@ -712,6 +716,52 @@ weight does not improve ranking. The value of reading the variance off the physi
 calibrated decision and an identifiable acquisition (and the quality-control detector
 of Section~\ref{sec:qc}), not a sharper or better-ranked prediction.
 
+\section{Computational details}\label{sec:methods}
+\paragraph{Data.} The controlled panel of Figure~\ref{fig:A} uses the \texttt{alchemtest} BACE1
+relative-binding and benzene sets, from which forward and reverse work samples are available per
+$\lambda$ window. The replicate validation, the cycle-closure test and every experiment on real
+binding data use the OpenFE IndustryBenchmarks2024 release~\citep{baumann2025industrybenchmarks},
+which ships three independent protocol repeats per transformation: $1145$ edges over $34$ targets,
+of which $48$ systems contain at least one cycle and therefore admit the closure test. Grounding
+against measured affinity uses public ChEMBL $\mathrm{IC}_{50}$ values. No free-energy simulation
+was run for this work; all alchemical output is taken as published.
+
+\paragraph{Per-edge variance.} $\dFh$ is obtained by solving Bennett's estimating equation
+$S(\Delta F)=0$ by scalar root-find, and its variance from the closed form $B/I^2$ of
+Theorem~\ref{thm:sand} evaluated at the root. The backward pass uses the implicit function
+theorem, $\partial\dFh/\partial\theta=(1/I)\,\partial_\theta S$, so it costs one division and does
+not unroll the root-find; gradients are checked against finite differences to machine precision.
+
+\paragraph{Cycle-closure test.} Node potentials are fitted by generalized least squares on the
+signed incidence matrix of the perturbation network, whitened by the per-edge standard errors, so
+that the fit is a weighted least-squares problem with conductances $1/V_e$. The statistic is the
+reduced $\chi^2$ of the residuals with $\mathrm{dof}=E-\operatorname{rank}(B)$; per-system tail
+probabilities use the exact regularized upper incomplete gamma function rather than a
+Wilson--Hilferty approximation, and systems are flagged by Benjamini--Hochberg control of the
+false discovery rate at $\alpha=0.05$ across systems.
+
+\paragraph{Amortized predictor.} The predictor used in the acquisition, stopping and reward
+experiments is deliberately small, and it is not an equivariant network. A ligand is featurized as
+a $1024$-bit ECFP4 Morgan fingerprint (radius $2$, chirality flag off) concatenated with six
+achiral RDKit descriptors: molecular weight, Crippen $\log P$, topological polar surface area, and
+counts of hydrogen-bond donors, hydrogen-bond acceptors and rotatable bonds. An edge is
+represented by the difference of its two endpoint feature vectors. The parity-odd channel of
+Section~\ref{sec:chiral} is a single additional coordinate, the difference of a summed signed
+volume over the assigned stereocentres of an ETKDGv3 embedding, giving $1031$ features per edge;
+every other coordinate is invariant under reflection, so this coordinate is the only carrier of
+chirality. The regressor is a bootstrap deep ensemble of eight multilayer perceptrons, each with
+two hidden layers of $64$ units and SiLU activations and a scalar output, trained for $300$ epochs
+on a squared-error objective with Adam at learning rate $5\times10^{-3}$ and weight decay
+$10^{-4}$, on inputs standardized by the training mean and standard deviation. Each member is
+seeded independently and fitted to its own bootstrap resample; the epistemic term is the spread
+across members, and the total $\sigma$ combines it in quadrature with the aleatoric floor before a
+conformal rescaling.
+
+\paragraph{Software.} Python $\geq3.11$ with numpy $2.5.0$, scipy $1.18.0$, pymbar $4.0.3$, torch
+$2.12.1$, RDKit $2026.3.3$ and matplotlib $3.11.0$. Ensemble training runs on CPU; torch reductions
+on CPU are not bitwise reproducible across builds, so ensemble-dependent figures can move in the
+third decimal between machines while every verdict reported here is unchanged.
+
 \section{Limitations}\label{sec:limitations}
 The sandwich is aleatoric-only and conditional on correctly sampled ensembles; systematic
 force-field bias is outside it, and the out-of-distribution behavior we audit rests on an
@@ -733,13 +783,13 @@ built as a follow-on did not beat a ligand-similarity baseline on this benchmark
 structure-directed regime is left to future work rather than claimed here.
 
 \section{Conclusion}\label{sec:conclusion}
-This paper builds a relative-binding-free-energy surrogate whose uncertainty is computed rather
-than learned: the Bennett Acceptance Ratio estimator's own finite-sampling variance, in closed
+This paper reports a relative binding free energy uncertainty that is computed rather than
+learned: the Bennett Acceptance Ratio estimator's own finite-sampling variance, in closed
 form, with a backward pass that costs a single division rather than an unrolled computation. The
 same variance becomes a conductance on the network of alchemical measurements, giving an
-acquisition weight that is exactly blind to gauge-redundant directions, and the trunk that feeds
-it carries a parity-odd readout channel, without which the readout cannot tell a molecule from
-its mirror image.
+acquisition weight that is exactly blind to gauge-redundant directions, and the predictor that
+feeds it carries a parity-odd readout channel, without which the readout cannot tell a molecule
+from its mirror image.
 
 Validated against independent simulation replicates on real protein-ligand binding data, this
 calibrated error bar turns thermodynamic cycle closure into a quality-control test that
