@@ -159,13 +159,15 @@ backward pass is one division by the curvature; the root-find is not unrolled.
 $\dFh$ is an $M$-estimator; its asymptotic sampling variance is the sandwich
 $\Var(\dFh)=A^{-1}BA^{-1}=B/I^2$, with $A=I$ and $B=n_f\Var_f[p]+n_r\Var_r[p]$
 \citep{huber1967}. Here $A\neq B$ arises from BAR's \emph{stratified two-sample design}, not
-from model misspecification; the sandwich is the sample-computable form and equals the
-Bennett/Shirts--Chodera (MBAR) uncertainty to leading order in $1/n$
+from model misspecification; the sandwich is the sample-computable form and agrees with the
+Bennett/Shirts--Chodera (MBAR) uncertainty
 \citep{bennett1976bar,shirts2008mbar}. Concretely, the plug-in MBAR/Bennett uncertainty is
 $\Var_{\text{MBAR}}=1/I-(1/n_f+1/n_r)$ (identical to \texttt{pymbar}'s \texttt{MBAR}
-uncertainty), and $\Var_{\text{MBAR}}=B/I^2+O(1/n^2)$: the $-(1/n_f+1/n_r)$ correction is
-exactly what removes the $O(1/n)$ discrepancy between the naive information-equality plug-in
-$1/I$ and the sandwich, leaving a residual that shrinks faster than $O(1/n)$ (paired
+uncertainty). Evaluated at the root, with works drawn from the correct pair of ensembles, this
+is not an approximation to the sandwich but the same quantity: $B/I^2=1/I-(1/n_f+1/n_r)$
+identically, so the $-(1/n_f+1/n_r)$ term is precisely the $O(1/n)$ gap between the naive
+information-equality plug-in $1/I$ and the sandwich. The two \emph{sample} plug-ins differ only
+through the moments they substitute, and that difference shrinks with $n$ (paired
 Monte-Carlo check against \texttt{bar.estimator.bar\_estimate},
 \texttt{tests/test\_estimator.py::test\_mbar\_sandwich\_discrepancy\_shrinks\_with\_n}: the
 mean paired $|\Var_{\text{MBAR}}-B/I^2|$ falls monotonically and by more than an order of
@@ -234,11 +236,15 @@ RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); t
 reference reuses the same work samples (an internal consistency check). On those same edges the
 naive $1/I$ overstates the bootstrap se by $2$--$12\times$ (mean $6.07$, $[2.78,12.01]$), with
 every edge sitting at overlap $\geq0.84$ (per-edge values, Supplementary Table~\ref{tab:bace1}).
-The genuine independent-replicate validation is Figure~\ref{fig:Arep}: across $1145$ real
+The genuine independent-replicate validation is Figure~\ref{fig:Arep}. Each edge's reported bar
+is composed in quadrature from the complex-leg and solvent-leg MBAR uncertainties shipped with
+the benchmark, $\mathrm{se}=\sqrt{\mathrm{se}_{\text{complex}}^2+\mathrm{se}_{\text{solvent}}^2}$;
+each leg term is a multistate MBAR uncertainty over that leg's $\lambda$ windows, not the
+two-state BAR quantity of Theorem~\ref{thm:sand}, so what is validated here is the bar as a
+practitioner receives it rather than the two-state identity itself. Across $1145$ real
 binding edges from
 the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} (3 independent replicates
-each), the reported MBAR se (equal to the sandwich $B/I^2$ to leading order, established in
-Fig~\ref{fig:A}A) is calibrated-to-conservative against the across-replicate
+each), the reported MBAR se is calibrated-to-conservative against the across-replicate
 truth (reported/replicate-SD $1.41$, CI $[1.26,1.62]$; conservative on $72\%$
 of edges and $28$ of $34$ targets). Both sides of that ratio pool in quadrature, so the
 $n{=}3$ replicate term is unbiased at the variance level and needs no small-sample
@@ -339,6 +345,13 @@ The QC's blindness to node-consistent force-field bias is therefore a \emph{deri
 an assumption, and $h_e$ is a per-edge observability certificate with detectable-shift resolution
 $\delta^\ast_e=\sqrt{V_e/h_e}$.
 \end{theorem}
+The algebra is standard and we claim none of it: $h_e=M_{ee}$ is the hat-matrix leverage of the
+whitened design, its complement $w_e\Omega_e$ is the classical correspondence between leverage and
+effective resistance~\citep{klein1993resistance}, and $\sum_e h_e=\operatorname{tr}(I-H)=\mathrm{dof}$
+is the trace identity for a projector. What the theorem adds is the reading: $h_e$ is a per-edge
+observability certificate, it makes the test's blindness to node-consistent bias a derived
+consequence rather than a modelling assumption, and it says in advance which edges of a given
+network can carry no evidence at all.
 The resulting observability map lists the structurally un-auditable (bridge) edges per system; on this benchmark the
 curl-leverage does not additionally predict the \emph{location} of reproducible systematic error
 (studentized Spearman $\rho=-0.073$, permutation $p=0.9571$, not significant; Supplementary
@@ -365,8 +378,8 @@ per-edge-adaptive thresholds, a false-positive rate tied to a replicate-validate
 observability map of Theorem~\ref{thm:cons}, rather than a demonstrated gain in discrimination on
 this benchmark. The evidence that the flags are real remains the two distribution-free backstops
 (causal edge removal and cross-replicate residual correlation), neither of which depends on the
-$\chi^2$ scaling. This retrospective test needs only the calibrated per-edge $se$ (the sandwich
-$B/I^2$, equal to the reported MBAR se to leading order); it does \emph{not} require the
+$\chi^2$ scaling. This retrospective test needs only the calibrated per-edge $se$ as shipped
+with the benchmark; it does \emph{not} require the
 differentiability or $O(1)$ backward of Theorems~\ref{thm:back}--\ref{thm:sand}, which earn their
 place in the training-time propagation, the acquisition graph weight (Section~\ref{sec:gauge}), and
 the simulated stop/commit uses, not in the detector's real-data operation. The detector's novelty is
