@@ -253,15 +253,18 @@ That conclusion points the other way from the closest measurement in the literat
 \citet{wade2022estimators} compare the analytic MBAR uncertainty against the spread over five
 independent replicas on $54$ protein-ligand transformations across five targets, in two engines,
 and report that MBAR consistently \emph{under}-estimates the error, by up to $0.9$ kcal/mol and
-worse in the complex leg than in the ligand leg. Two differences bear on the disagreement, and
-both push our ratio upward relative to theirs. The first is what is being repeated: their replicas
-resample the full ensemble, whereas the OpenFE repeats used here share starting coordinates and
-differ only in stochastic sampling, so the denominator we divide by is a lower bound on run-to-run
-variability and the resulting ratio is an upper bound on conservatism. The second is which
-functional is quoted. The aggregate $1.41$ is a root-mean-square pooling; the quantity that governs the detector, a mean of the per-edge inverse squared miscalibration factors weighted by how much each edge contributes to the closure test's degrees of freedom, is $0.85$ $[0.63,1.08]$ on the same edges (Section~\ref{sec:oos}), which is consistent
-with correctly scaled bars and much closer to their picture than $1.41$ suggests. We therefore do
-not read our measurement as contradicting theirs, and the question is not settled here: settling it needs replicates that resample preparation and pose, which this benchmark
-does not provide.
+worse in the complex leg than in the ligand leg. Two things bear on the disagreement, and they point in
+opposite directions. The first is what is being repeated: their replicas resample the full
+ensemble, whereas the OpenFE repeats used here share starting coordinates and differ only in
+stochastic sampling, so the denominator we divide by is a lower bound on run-to-run variability
+and the resulting ratio is an upper bound on conservatism. The second is what happens when their
+comparison is run on these edges rather than ours. They report how often the analytic standard
+error falls below the replicate spread; here that happens on $0.279$ $[0.224,0.332]$ of edges,
+against the $0.368$ that correctly scaled bars produce at three replicates, and the interval
+excludes it. On the functional they actually measure, these bars are conservative rather than
+optimistic, which sharpens the disagreement instead of resolving it. What remains of a
+reconciliation is the first difference alone, and settling the question needs replicates that
+resample preparation and pose, which this benchmark does not provide.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
@@ -359,11 +362,7 @@ and a false-positive rate controlled \emph{to the extent the per-edge null is ca
 hysteresis cutoffs, together with the cross-replicate reproduction check of Figure~\ref{fig:Lval}B and the
 estimation--detection conservation law of Theorem~\ref{thm:cons}, which fixes which edges are
 auditable at all; what is shared with the works above is the weighted least-squares treatment of the
-cycle graph itself. On the same $1145$ edges, flagging by the
-calibrated per-edge null does not measurably out-discriminate a fixed $1.0$ kcal/mol hysteresis
-cutoff or a fixed-$\mathrm{se}$ $\chi^2$ test, scored against edges whose sign and magnitude
-reproduce across independent replicates (AUC
-$0.865$ vs $0.575$ and $0.725$; paired bootstrap difference $+0.140$ $[-0.008,+0.316]$,
+cycle graph itself. On the same $1145$ edges, flagging by the calibrated per-edge null out-discriminates a fixed $1.0$ kcal/mol hysteresis cutoff but not a fixed-$\mathrm{se}$ $\chi^2$ test, scored against edges whose sign and magnitude reproduce across independent replicates (AUC $0.865$ vs $0.575$ and $0.725$; paired bootstrap difference $+0.140$ $[-0.008,+0.316]$,
 Supplementary Figure~\ref{fig:Cut}). The calibrated null's advantages are therefore structural, namely
 per-edge-adaptive thresholds, a false-positive rate tied to a replicate-validated null, and the
 observability map of Theorem~\ref{thm:cons}, rather than a demonstrated gain in discrimination on
@@ -446,9 +445,7 @@ being driven down is $X^2=\sum_e r_e^2/V_e$ and the removal order is descending 
 that sum's own per-edge summand, so a networked world with no localized systematic error whatever
 reproduces the same contrast. The evidential check is the out-of-sample one. Fitting each
 replicate's network separately, the per-edge standardized residuals correlate across independent
-replicates ($r=+0.30$ to $+0.42$, $n=1143$; Figure~\ref{fig:Lval}B), and the correlation is
-concentrated in the flagged systems, so what the flags identify is reproducible across runs rather
-than a property of one draw. Sampling noise would give zero.
+replicates ($r=+0.30$ to $+0.42$, $n=1143$, each interval excluding zero under a bootstrap over systems; Figure~\ref{fig:Lval}B), so what the flags identify is reproducible across runs rather than a property of one draw. Sampling noise would give zero.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figL_validation.pdf}
@@ -505,6 +502,16 @@ against $0.056$ for size-matched random draws, averaged over the three pairs. Th
 persists from $\alpha=0.01$ to $\alpha=0.20$ (Supplementary Figure~\ref{fig:Stab}). Pooling the
 three replicates flags seven systems, the union minus \texttt{faah}.
 
+The churn has a structural source worth stating. The number of independent cycles is small on
+much of this benchmark: nine of the $48$ systems carry exactly one, twenty-three carry three or
+fewer, and the quartiles are $2$, $5$ and $12$. A reduced $\chi^2$ on one or two degrees of
+freedom is an unstable statistic, and the instability is concentrated exactly there: the median
+swing across the three repeats is $14.2\times$ for the single-cycle systems against $3.9\times$
+for the rest. The flags themselves come from the other end of that distribution, seven of the
+eight systems ever flagged and the one flagged on every repeat being well-connected, so the churn
+is largely the low-cycle tail moving in and out rather than the detector disagreeing with itself
+where it has power.
+
 Two things do survive. The ranking of systems by closure inconsistency reproduces across
 replicates (Spearman $0.649$, $0.644$, $0.723$ over all $48$ systems), and the dependence of
 selectivity on $\sigma$-calibration, which is the claim this section is actually making, is
@@ -521,10 +528,7 @@ Two checks use one replicate to predict another and so cannot be circular. First
 miscalibration measured from replicates two and three predicts the closure statistic of the
 replicate they exclude: writing $V_e^{\text{rep}}=c_e^2V_e$, Theorem~\ref{thm:cons} makes
 $\mathbb{E}[\chi^2_\nu]$ the curl-leverage-weighted mean of $c_e^{-2}$, and that prediction
-correlates with the observed per-system $\chi^2_\nu$ at Spearman $0.648$
-($p=6\times10^{-7}$, $n=48$; Supplementary Figure~\ref{fig:OOS}A). The aggregate level also
-matches, $\mathbb{E}[\chi^2_\nu]=0.85$ with a system-cluster bootstrap interval $[0.63,1.08]$,
-a bar-width factor of $1.09\times$ $[0.96,1.26]$. This is a quantitative point prediction of a
+correlates with the observed per-system $\chi^2_\nu$ at Spearman $0.648$ ($n=48$). Both sides divide by the same reported variance, so the reference is not zero: under a simulation with no systematic error anywhere the same statistic returns $0.059$ with a $95\%$ upper limit of $0.364$, and $0.648$ exceeds every one of $200$ draws (Supplementary Figure~\ref{fig:OOS}A). The aggregate level agrees less well: the predicted $\mathbb{E}[\chi^2_\nu]=0.85$ $[0.63,1.08]$ sits below the observed degree-of-freedom-weighted value of $1.32$ $[0.81,1.80]$, and the two intervals overlap without the prediction covering the observation. This is a quantitative point prediction of a
 per-system statistic from data that do not enter it. The flagged systems sit \emph{above} the
 line, which is what reproducible systematic error should do: it inflates a closure residual
 without inflating the spread between repeats.

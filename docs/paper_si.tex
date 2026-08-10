@@ -238,9 +238,7 @@ mean $\Delta$MUE after a size-matched random removal, per system. Systems: \text
 \paragraph{Fixed-cutoff head-to-head and $\chi^2$ reconciliation (Figure~\ref{fig:Cut}).} Two
 pre-registered peer-review checks on the same $1145$ edges. P1: the calibrated per-edge null (AUC
 $0.865$ scored against edges whose sign and magnitude reproduce across independent replicates)
-does not measurably out-discriminate a
-fixed $1.0$ kcal/mol hysteresis cutoff (AUC $0.575$) or a fixed-$\mathrm{se}$ $\chi^2$ test (AUC
-$0.725$); paired bootstrap difference $+0.140$ $[-0.008,+0.316]$, so the three rules are indistinguishable on this benchmark. P2 tested whether
+out-discriminates a fixed $1.0$ kcal/mol hysteresis cutoff (AUC $0.865$ against $0.575$; paired bootstrap difference $+0.290$ $[+0.094,+0.490]$, excluding zero) but not a fixed-$\mathrm{se}$ $\chi^2$ test (AUC $0.725$; $+0.140$ $[-0.008,+0.316]$). The pre-registered criterion required the calibrated null to beat both, so it returns a tie; the gain over the cutoff the field actually uses is nonetheless real. P2 tested whether
 correlation among residuals of edges sharing a ligand endpoint explains the apparent gap between a
 closure-implied se-conservatism ($1.71\times$, obtained as $1/\sqrt{0.34}$ from the median reduced
 $\chi^2$) and the replicate-validated $1.41\times$. It does not: the excess correlation is $-0.0079$ $[-0.0314,+0.0164]$, and the Benjamini--Hochberg flag set is unchanged.
