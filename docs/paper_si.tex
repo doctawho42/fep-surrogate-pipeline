@@ -15,34 +15,42 @@ IndustryBenchmarks2024 replicate set~\citep{baumann2025industrybenchmarks}. Reca
 baselines use temperature scaling~\citep{guo2017calibration} and isotonic
 regression~\citep{zadrozny2002isotonic}.
 
-\paragraph{BACE1 per-edge overlap values (Figure~\ref{fig:A}B).} Figure~\ref{fig:A}B reports
-that naive $1/I$ overstates the real-edge bootstrap se by $2$--$12\times$ on the $19$ BACE1 RBFE
-binding edges (mean $6.07$, $[2.78,12.01]$), the worst overstatement occurring at \emph{high}
-overlap, consistent with the controlled panel (invariant \#1, main text). Table~\ref{tab:bace1}
-lists the $(\lambda_i,\lambda_j)$ BAR-window labels, per-edge overlap $4\langle p(1-p)\rangle$,
-and both ratios for all $19$ edges (adjacent-$\lambda$ BAR windows, complex leg, alchemtest AMBER
-\texttt{load\_bace\_example}), emitted verbatim, lambda labels included, by the released analysis code (seed $20260629$; both
+\paragraph{BACE1 per-window overlap values (Figure~\ref{fig:A}B).} Figure~\ref{fig:A}B reports
+that naive $1/I$ overstates the bootstrap se by $2$--$12\times$ on the $19$ real BACE1
+adjacent-$\lambda$ BAR windows (mean $6.07$, $[2.78,12.01]$), the worst overstatement occurring at
+\emph{high}
+overlap, consistent with the controlled panel (invariant \#1, main text). These $19$ rows are the
+windows of one $\lambda$ schedule, taken from the complex leg of the alchemtest AMBER
+\texttt{load\_bace\_example} relative-binding calculation across its decharge, recharge and van
+der Waals legs; each is a two-state BAR estimate between neighbouring $\lambda$ values, so the set
+tests the closed-form variance against a decorrelated bootstrap on real molecular-dynamics works,
+and it does not test $19$ separate binding free energies or reach beyond the high-overlap band this
+schedule occupies. Table~\ref{tab:bace1}
+lists the $(\lambda_i,\lambda_j)$ window labels, per-window overlap $4\langle p(1-p)\rangle$,
+and both ratios for all $19$, emitted verbatim, lambda labels included, by the released analysis code (seed $20260629$; both
 sandwich inputs and the bootstrap truth subsampled to the statistical inefficiency $g$ before $B$
 is formed, Section~\ref{sec:bar}; numerically identical to the binding rows of the corresponding panel,
 committed with the analysis code), so the $\lambda$ pairing is
 programmatically re-derivable rather than hand-carried.
-Every edge sits at overlap $\geq0.84$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
-occurs at the single highest-overlap edge ($4\langle p(1-p)\rangle=0.992$), and the best (least
-overstated, $2.78\times$) occurs at the lowest-overlap edge in the set ($0.846$), the same
+Every window sits at overlap $\geq0.84$ (mean $0.93$); the worst naive/bootstrap ratio ($12.01\times$)
+occurs at the single highest-overlap window ($4\langle p(1-p)\rangle=0.992$), and the best (least
+overstated, $2.78\times$) occurs at the lowest-overlap window in the set ($0.846$), the same
 high-overlap-is-worst regime as the controlled sweep of Figure~\ref{fig:A}A, not an artifact of
-which real edges happened to be sampled. Across the full $19$-edge set the trend is not an
+which windows happened to be sampled. Across the full $19$-window set the trend is not an
 artifact of the extremes either: the Spearman rank correlation between overlap and the
 naive/bootstrap ratio is $\rho=0.84$ ($n=19$, computed from Table~\ref{tab:bace1}), so the
 relationship holds within the narrow $[0.846,0.992]$ overlap band, not just at its endpoints.
 
 \begin{table}[t]\centering
-\caption{\textbf{Per-edge overlap on $19$ real BACE1 RBFE binding edges.} $\lambda_i,\lambda_j$
+\caption{\textbf{Per-window overlap on the $19$ real BACE1 adjacent-$\lambda$ BAR windows.}
+$\lambda_i,\lambda_j$
 are the BAR window endpoints; $4\langle p(1-p)\rangle$ is the normalized BAR overlap;
 sandwich/boot and naive/boot are the reported-se/bootstrap-se ratios for the sandwich $B/I^2$
 and the naive $1/I$, respectively, against a decorrelated-bootstrap reference standard error.
 Rows are sorted by overlap, ascending; repeated $(\lambda_i,\lambda_j)$ pairs are distinct
-edges from BACE1's decharge, recharge, and van der Waals alchemical legs, which share a
-common $\lambda$ schedule.}
+windows from BACE1's decharge, recharge, and van der Waals alchemical legs, which share a
+common $\lambda$ schedule. Every row is a two-state estimate between neighbouring $\lambda$
+values, not a ligand-to-ligand binding free energy.}
 \label{tab:bace1}
 \small
 \begin{tabular}{@{}rrrrr@{}}
@@ -74,7 +82,8 @@ $0.000$ & $0.048$ & $0.992$ & $1.007$ & $12.007$ \\
 
 \paragraph{Autocorrelation robustness: raw $n$ vs $n_{\mathrm{eff}}=n/g$ (Figure~\ref{fig:gsweep}).}
 The sandwich $B=n_f\Var_f[p]+n_r\Var_r[p]$ (Theorem~\ref{thm:sand}) assumes independent samples,
-whereas real molecular-dynamics works are autocorrelated. On the $19$ real BACE1 RBFE binding edges
+whereas real molecular-dynamics works are autocorrelated. On the $19$ real BACE1
+adjacent-$\lambda$ BAR windows
 of Figure~\ref{fig:A}B (no new MD), we recompute the sandwich se at the raw sample count and again
 after decorrelating each leg to its statistical inefficiency $g$~\citep{shirts2008mbar}
 (geometric-mean $\bar g=1.48$, range $[1.15,2.16]$; median count $n{=}500\to349$). Against the
@@ -91,7 +100,7 @@ panel.
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figAC_gsweep.pdf}
 \caption{\textbf{Sandwich standard error at the raw sample count versus at the effective
-sample count $n_{\mathrm{eff}}=n/g$, on real BACE1 edges.} (A) Sandwich standard error at
+sample count $n_{\mathrm{eff}}=n/g$, on the real BACE1 $\lambda$ windows.} (A) Sandwich standard error at
 $n_{\mathrm{eff}}$ and at raw $n$, plotted against the correlation-aware (decorrelated
 bootstrap) reference standard error, with the $y{=}x$ line. (B) Aggregate ratio of sandwich
 standard error to the reference, at $n_{\mathrm{eff}}$, at raw $n$, and of the sandwich to
@@ -248,7 +257,7 @@ pre-registered peer-review checks on the same $1143$ edges of the $48$ cyclic sy
 is the head-to-head: the calibrated per-edge null, scored by area under the
 receiver-operating-characteristic curve (AUC) against the reproducible-systematic magnitude
 defined in Computational details,
-out-discriminates a fixed $1.0$ kcal/mol hysteresis cutoff (AUC $0.865$ against $0.575$; paired bootstrap difference $+0.290$ $[+0.094,+0.490]$, excluding zero) but not a fixed-$\mathrm{se}$ $\chi^2$ test (AUC $0.725$; $+0.140$ $[-0.008,+0.316]$, straddling zero). The pre-registered criterion required the calibrated null to beat both, so the conjunctive verdict is a tie; the gain over the cutoff the field actually uses is nonetheless real. The second check tested whether
+scores $0.865$ against a fixed $1.0$ kcal/mol hysteresis cutoff's $0.575$ (paired bootstrap difference $+0.290$ $[+0.094,+0.490]$) and against a fixed-$\mathrm{se}$ $\chi^2$ test's $0.725$ ($+0.140$ $[-0.008,+0.316]$, straddling zero). The pre-registered criterion required the calibrated null to beat both, so the verdict is a tie. We withdraw the reading that the ordering within that tie is nonetheless a real gain over the cutoff the field uses: the scored label standardizes each residual by the same per-edge reported variance the calibrated rule weights by, so the AUC ordering is monotone in a rule's proximity to that variance and the comparison ranks nothing. The second check tested whether
 correlation among residuals of edges sharing a ligand endpoint explains the apparent gap between a
 closure-implied se-conservatism ($1.71\times$, obtained as $1/\sqrt{0.34}$ from the median reduced
 $\chi^2$) and the replicate-validated $1.41\times$. It does not: the excess correlation is $-0.0079$ $[-0.0314,+0.0164]$, and the Benjamini--Hochberg flag set is unchanged.
@@ -267,7 +276,8 @@ for P2 to explain, and we do not revise the pre-registered constants after the f
 fixed-$\mathrm{se}$ $\chi^2$ test $11$, and the fixed cutoff $26$; the three flag sets are
 strictly nested (calibrated $\subset$ fixed-$\mathrm{se}$ $\subset$ fixed cutoff), so on this
 benchmark the calibrated null catches no system the fixed cutoff misses and instead removes
-$20$ of its flags at a higher AUC. The $1.0$ kcal/mol cutoff was pre-registered at the
+$20$ of its flags. Whether that removal is an improvement is exactly what the contaminated
+comparison above cannot say. The $1.0$ kcal/mol cutoff was pre-registered at the
 field-standard value before this comparison was run, and no sweep over alternative thresholds
 was performed, so the comparison above is specific to that one fixed rule.
 
@@ -279,7 +289,9 @@ per-system reproducible-systematic magnitude defined in Computational details, f
 per-edge null, a fixed $1.0$
 kcal/mol hysteresis cutoff, and a fixed-standard-error $\chi^2$ test, with the chance level
 ($\mathrm{AUC}=0.5$) marked. The pre-registered criterion required the calibrated null to beat
-both, so the panel records a tie. (B) Per-system reduced $\chi^2$ at the nominal degrees of
+both, so the panel records a tie. The panel is annotated with the reason no ordering inside it is
+read as a discrimination gain: the scored label is standardized by the same per-edge reported
+variance the calibrated rule uses as its weight. (B) Per-system reduced $\chi^2$ at the nominal degrees of
 freedom versus at the shared-node-correlation-corrected effective degrees of freedom, with the $y{=}x$ line and the $\chi^2_\nu=1$ reference. The standard-error factor annotated in panel B is the closure-implied functional whose premise was subsequently found unsound; it is retained as the pre-registered record and is not a conservatism estimate. It reads $1.67\times$ rather than the pre-registered $1.71\times$ because this panel's population is the $46$ systems that admit a shared-node null, two fewer than the $48$ the constant was fixed on.}
 \label{fig:Cut}
 \end{figure}
@@ -468,7 +480,8 @@ whether it is applied only where it loosens a bar (one-sided) or in whichever di
 measurement points (two-sided). ``published six'' counts how many of the flags of
 Figure~\ref{fig:L} the arm retains; ``entering'' lists the systems it adds. The last column is the
 realized probability of at least one false flag over $400$ draws of a perfectly-calibrated
-synthetic null, against the nominal $0.05$. No arm is reported as a flag set.}
+synthetic null, against the nominal $0.05$; that simulation is specified in Computational details
+(Section~\ref{sec:methods} of the main text). No arm is reported as a flag set.}
 \label{tab:selfgrid}
 \small
 \begin{tabular}{@{}llrlp{4.3cm}r@{}}

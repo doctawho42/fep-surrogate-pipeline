@@ -11,9 +11,10 @@ RMS reported se 0.837 kcal/mol vs RMS independent-replicate SD 0.592 kcal/mol ->
 After correcting the n=3 small-sample SD bias (E[s]=c4·σ, c4=0.886) the reported se still
 over-predicts the true run-to-run SD by ~1.25×. The reported se exceeds the replicate
 SD on 72% of edges; per system, 28 of 34 are conservative
-(ratio >= 1) and 6 are below 1 — five of them borderline (0.76–0.99) and one
-protonation-variant outlier (bace\_p3\_arg368\_in, 0.41). The calibration is therefore
-conservative in aggregate but heterogeneous per system.
+(ratio >= 1) and 6 are below 1, ascending: bace\_p3\_arg368\_in 0.41, brd4 0.76, faah 0.90, bace 0.96, hif2a 0.96, t4\_lysozyme 0.99. The lowest is the
+protonation-variant outlier bace\_p3\_arg368\_in at 0.41; the rest are
+marginal.
+The calibration is therefore conservative in aggregate but heterogeneous per system.
 
 ## Honest reading
 On real protein–ligand binding edges the sandwich/MBAR uncertainty is **calibrated-to-conservative

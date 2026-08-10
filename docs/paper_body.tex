@@ -7,11 +7,15 @@ family of estimators is validated against independent molecular-dynamics replica
 protein-ligand binding edges and found trustworthy against sampling and convergence noise. Its sharpest use is
 detection: fitting cycle closure with these calibrated bars turns an ordinary consistency check
 into a quality-control test flagging
-a selective minority of perturbation networks as carrying systematic error. What the test
+a selective minority of perturbation networks as carrying inconsistency that reproduces across
+independent runs. What the test
 identifies reproduces out of sample: miscalibration measured on one set of replicates predicts the
-closure statistic of a replicate it never saw. The ranking behind the flags is steadier than the
-list of names flagged at a fixed threshold, and we report both. An overconfident learned
-substitute for that error bar destroys the
+closure statistic of a replicate it never saw. Those runs share their starting coordinates, so what
+is established is reproducibility beyond sampling noise and not physical error. The ranking behind
+the flags is steadier than the
+list of names flagged at a fixed threshold, and we report both. A stand-in for that error bar,
+built edge by edge from a learned head's measured overconfidence rather than by running that head
+on this benchmark, destroys the
 test: it flags 42 of the 48 networks where the calibrated bar flags 6, so almost nothing is left
 unflagged for a decision to act on. The detector
 consumes the variance as a plain number; the same closed form is also differentiable, at a backward
@@ -25,13 +29,18 @@ and quality-control instrument, not a performance multiplier.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.96\textwidth]{graphical_abstract.pdf}
-\caption{\textbf{Overview.} Forward and reverse alchemical work samples enter a differentiable
-BAR bottleneck, which returns the closed-form free-energy estimate and variance $(\dFh, B/I^2)$.
-A small perturbation network is shown with one cycle highlighted and one edge marked as flagged.
-Across the 1143 real binding edges that lie in the 48 benchmark systems carrying a cycle (of 1145
-edges over 49 systems), a calibrated error bar flags 6, 6 and
-3 systems on the benchmark's three protocol repeats, one of them on all three; an overconfident
-stand-in built from a learned head's measured miscalibration profile flags 42.}
+\caption{\textbf{Overview.} The pipeline this article runs on the benchmark, left to right. Every
+edge arrives with a per-edge standard error the estimator computes rather than learns, composed in
+quadrature from the complex-leg and solvent-leg uncertainties; that bar is validated against the
+benchmark's three independent protocol repeats (reported over replicate spread $1.41$); and it is
+then the null of a generalized-least-squares cycle-closure fit, drawn as a small perturbation
+network with one cycle highlighted and one edge marked as flagged. Across the 1143 real binding
+edges that lie in the 48 benchmark systems carrying a cycle (of 1145 edges over 49 systems), that
+calibrated bar flags 6, 6 and 3 systems on the three repeats, one of them on all three; a stand-in
+built edge by edge from a learned head's measured miscalibration profile, not that head run here,
+flags 42. The work-sample route to the closed form $B/I^2$ of Theorem~\ref{thm:sand} is deliberately
+not drawn: this benchmark releases per-leg uncertainties and no work samples, so that route is
+exercised on the alchemtest windows of Figure~\ref{fig:A} and not on these edges.}
 \label{fig:overview}
 \end{figure}
 
@@ -83,7 +92,8 @@ This paper makes the following contributions.
 the sandwich variance of the Bennett Acceptance Ratio estimator, rather than learned, and
 characterised against independent simulation replicates on real protein-ligand binding data.
 \item A quality-control instrument built on that bar. Fitting thermodynamic cycle closure with
-calibrated per-edge nulls separates systematic simulation error from ordinary sampling noise, and
+calibrated per-edge nulls separates the reproducible part of a network's inconsistency from
+ordinary sampling noise, and
 what it identifies reproduces on replicates it never saw. A conservation law between estimation
 and detection turns the same fit into a per-edge observability map that says, before anything is
 run, which edges of a network can carry evidence at all.
@@ -106,8 +116,9 @@ replicate validation. Section~\ref{sec:qc} presents the calibrated cycle-closure
 test on real binding data, its observability map, and what survives a second replicate.
 Section~\ref{sec:gauge} turns the same variance into a gauge-aware acquisition weight.
 Section~\ref{sec:audit} maps where the calibrated uncertainty helps downstream learning and where
-it does not. Section~\ref{sec:limitations} collects the limitations of the approach, and
-Section~\ref{sec:conclusion} concludes.
+it does not. Section~\ref{sec:methods} gives the data, the estimators, the models and the
+simulations behind every number reported above. Section~\ref{sec:limitations} collects the
+limitations of the approach, and Section~\ref{sec:conclusion} concludes.
 
 \section{Related work}\label{sec:related}
 \paragraph{Free-energy estimators.} BAR~\citep{bennett1976bar} and its multistate
@@ -222,11 +233,19 @@ Gaussian-NLL objective (Supporting Information); the bottleneck \emph{computes} 
 exactly, per edge, at zero label cost, so the comparison is learnable-with-data versus
 exact-and-free. Bare $1/I$ is shown only as the
 information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
-baseline anyone reports. Figure~\ref{fig:A}B checks calibration on real protein--ligand BACE1
-RBFE binding edges (19 edges; sandwich/bootstrap-truth $1.00$, $[0.96,1.07]$); this bootstrap
-reference reuses the same work samples (an internal consistency check). On those same edges the
+baseline anyone reports. Figure~\ref{fig:A}B checks the same calibration on work samples from a
+real protein--ligand system: the $19$ adjacent-$\lambda$ BAR windows of the complex leg of the
+\texttt{alchemtest} BACE1 relative-binding calculation, drawn from its decharge, recharge and van
+der Waals legs, which share one $\lambda$ schedule (sandwich over bootstrap truth $1.00$,
+$[0.96,1.07]$); this bootstrap
+reference reuses the same work samples (an internal consistency check). On those same windows the
 naive $1/I$ overstates the bootstrap se by $2$--$12\times$ (mean $6.07$, $[2.78,12.01]$), with
-every edge sitting at overlap $\geq0.84$ (per-edge values, Supplementary Table~\ref{tab:bace1}).
+every window sitting at overlap $\geq0.84$ (per-window values, Supplementary
+Table~\ref{tab:bace1}). A window is one two-state BAR estimate between neighbouring $\lambda$
+values and not a ligand-to-ligand binding free energy, so what this panel establishes is that the
+closed form matches a decorrelated bootstrap on real molecular-dynamics works, in the
+high-overlap regime this schedule occupies; the low-overlap behaviour is the controlled sweep of
+Figure~\ref{fig:A}A, and the per-transformation binding quantity is Figure~\ref{fig:Arep}.
 
 \paragraph{Figure~\ref{fig:Arep}: the reported bar against independent replicates.} The
 validation that does not reuse its own samples, and the result the detector of
@@ -276,9 +295,12 @@ overlap, for the sandwich $B/I^2$, \texttt{pymbar}-MBAR, the naive information-e
 plug-in $1/I$, a learned mean--variance (MVE) head at a realistic and at a large training
 budget, a $\beta$-NLL head, and a $5$-member deep ensemble, in a controlled Monte-Carlo
 sweep.
-(B) Reported standard error versus decorrelated-bootstrap standard error on real BACE1 RBFE
-binding edges (filled markers) and a benzene solvation edge, for the sandwich $B/I^2$ and
-the naive $1/I$.}
+(B) Reported standard error versus decorrelated-bootstrap standard error on the $19$
+adjacent-$\lambda$ BAR windows of the complex leg of the \texttt{alchemtest} BACE1
+relative-binding calculation (filled circles) and on the $19$ windows of the benzene solvation
+legs (filled diamonds), for the sandwich
+$B/I^2$ and the naive $1/I$. Each point is one two-state BAR estimate between neighbouring
+$\lambda$ values, not a ligand-to-ligand binding free energy.}
 \label{fig:A}
 \end{figure}
 
@@ -297,12 +319,17 @@ least eight edges (Section~\ref{sec:methods}). These are systems, not distinct p
 \end{figure}
 
 \section{Calibrated cycle-closure quality control}\label{sec:qc}
-The capability this paper demonstrates is the separation of \emph{edge-level systematic error},
-that is non-convergence, hysteresis, and charge, water or protonation artifacts, from
-\emph{sampling noise} in a perturbation network, using the bar of Section~\ref{sec:bar} as the
-null of a quality-control (QC) test. The calibration underwriting that null is
+The capability this paper demonstrates is the separation of the \emph{reproducible} part of a
+perturbation network's edge-level inconsistency from its \emph{sampling noise}, using the bar of
+Section~\ref{sec:bar} as the null of a quality-control (QC) test. The candidate physical sources of
+a reproducible part are the usual ones, non-convergence, hysteresis, and charge, water or
+protonation artifacts, but this design does not identify which of them is present, and it does not
+separate them from a fixed consequence of the one starting structure every repeat begins from. The
+calibration underwriting the null is
 validated against seed and velocity replicate spread, a lower bound on full run-to-run
-reproducibility (it excludes pose and system-preparation variance). This is \emph{detection}, not weighting of a fixed
+reproducibility (it excludes pose and system-preparation variance), and the same restriction bounds
+what the detection claims below can mean: an inconsistency that survives repeats sharing their
+starting coordinates is established as more than sampling noise, not as physical error. This is \emph{detection}, not weighting of a fixed
 estimate: the Gauss--Markov ceiling that makes the calibrated variance second-order elsewhere (in a
 connected graph the GLS contrast mean is unbiased for \emph{any} positive weights, so the weight
 \emph{value} cannot improve ranking, Section~\ref{sec:audit})
@@ -338,8 +365,8 @@ disagreement between them is an artefact of comparing different functionals rath
 discrepancy. Residual correlation among edges sharing a ligand endpoint, which the diagonal-$V$ GLS
 does not model, is separately negligible (excess correlation over the projector-induced
 null $-0.0079$ $[-0.0314,+0.0164]$). The Benjamini--Hochberg flag set is unchanged. A reduced
-$\chi^2$ well above one signals edge-level systematic error. The test is (correctly) blind to
-node-consistent force-field bias, which cancels around a loop.
+$\chi^2$ well above one signals edge-level inconsistency in excess of sampling noise. The test is
+(correctly) blind to node-consistent force-field bias, which cancels around a loop.
 
 \begin{theorem}[Estimation--detection conservation law]\label{thm:cons}
 In the whitened GLS fit let $\Pi=\mathbb{I}-H$ be the residual-maker projector onto the cycle
@@ -378,17 +405,22 @@ and a false-positive rate controlled \emph{to the extent the per-edge null is ca
 hysteresis cutoffs, together with the cross-replicate reproduction check of Figure~\ref{fig:Lval}B and the
 estimation--detection conservation law of Theorem~\ref{thm:cons}, which fixes which edges are
 auditable at all; what is shared with the works above is the weighted least-squares treatment of the
-cycle graph itself. On the same $1143$ edges, and scored against the reproducible-systematic
-magnitude of Section~\ref{sec:methods}, flagging by the calibrated per-edge null
-out-discriminates the fixed $1.0$ kcal/mol hysteresis cutoff the field uses (area under the
-receiver-operating-characteristic curve, AUC, $0.865$ against $0.575$; paired bootstrap difference
-$+0.290$ $[+0.094,+0.490]$, excluding zero) but not a fixed-$\mathrm{se}$ $\chi^2$ test built on
-the same statistic (AUC $0.725$; $+0.140$ $[-0.008,+0.316]$, straddling zero; Supplementary
-Figure~\ref{fig:Cut}). The pre-registered criterion required beating both, so the conjunctive
-verdict is a tie. What this benchmark demonstrates is therefore a discrimination gain over the
-fixed cutoff and none over the fixed-$\mathrm{se}$ test, and the calibrated null's remaining
-advantages are structural, namely per-edge-adaptive thresholds, a false-positive rate tied to a
-replicate-validated null, and the observability map of Theorem~\ref{thm:cons}. The evidence that
+cycle graph itself. On the same $1143$ edges we ran a pre-registered head-to-head of the
+calibrated per-edge null against the fixed $1.0$ kcal/mol hysteresis cutoff the field uses and
+against a fixed-$\mathrm{se}$ $\chi^2$ test built on the same statistic, scored by area under the
+receiver-operating-characteristic curve (AUC) against the reproducible-systematic magnitude of
+Section~\ref{sec:methods} (calibrated $0.865$, fixed cutoff $0.575$, fixed $\mathrm{se}$ $0.725$;
+paired bootstrap differences $+0.290$ $[+0.094,+0.490]$ and $+0.140$ $[-0.008,+0.316]$;
+Supplementary Figure~\ref{fig:Cut}). The pre-registered criterion required beating both, so the
+verdict was and remains a tie. We withdraw the further reading we placed on the ordering inside
+it, that the calibrated null discriminates better than the fixed cutoff. The only label these
+data supply divides each residual by the same per-edge reported variance the calibrated rule uses
+as its weight, so a rule scores well here for standing close to that variance, and the AUC
+ordering is monotone in that proximity rather than in detection skill. The comparison is
+contaminated and ranks nothing. What the calibrated null has over the fixed cutoff is accordingly
+structural and not measured by this comparison, namely per-edge-adaptive thresholds, a
+false-positive rate tied to a replicate-validated null, and the observability map of
+Theorem~\ref{thm:cons}. The evidence that
 the flags are real remains the distribution-free cross-replicate
 reproduction check, which does not depend on the
 $\chi^2$ scaling. This retrospective test needs only the calibrated per-edge $se$ as shipped
@@ -418,8 +450,8 @@ work pre-specified for a self-calibrated null. The pre-specified granularity is 
 each edge corrected by its own replicate-measured ratio, and the same one-sided inflation applied
 at that granularity leaves \emph{two} of the six, \texttt{bace} and \texttt{cdk8}. Both
 granularities are reported side by side in Supplementary Table~\ref{tab:selfgrid}, with their
-two-sided counterparts and with each arm's realized probability of a false flag under a
-pure-null simulation; among the arms whose realized level was measured, the pre-specified per-edge
+two-sided counterparts and with each arm's realized probability of a false flag under the
+pure-null simulation of Section~\ref{sec:methods}; among the arms whose realized level was measured, the pre-specified per-edge
 one-sided arm is the only self-calibrated one that holds it ($0.003$ against a nominal $0.05$), so
 its count of two is the conservative answer to how many of the six survive being retested against
 the width their own replicates measure.
@@ -456,14 +488,18 @@ direction, and the calibrated scale is a two-sided optimum rather than a plateau
 demonstration is accordingly scoped to heads as overconfident as the measured one (reported
 $\mathrm{se}$ $5$--$11\times$ too small); it establishes that such heads saturate the test, not the
 shrink magnitude at which selectivity is first lost. The
-three independent replicates confirm the flags are systematic, not sampling: pooling the
+three independent replicates confirm the flagged inconsistency is reproducible rather than
+sampling: pooling the
 replicates shrinks the bars ($\mathrm{se}\to\mathrm{se}/\sqrt3$) yet \emph{increases} the flagged
 systems' reduced $\chi^2$ toward the $3\times$ variance-components ceiling (Figure~\ref{fig:L}C),
-which occurs only for reproducible error (single-replicate
+which occurs only for a component that repeats (single-replicate
 $\chi^2_\nu=1+\sigma^2_{\text{sys}}/V_{\text{samp}}$ vs
-pooled $1+3\sigma^2_{\text{sys}}/V_{\text{samp}}$, with $\sigma^2_{\text{sys}}$ the systematic
+pooled $1+3\sigma^2_{\text{sys}}/V_{\text{samp}}$, with $\sigma^2_{\text{sys}}$ the reproducible
 variance component and $V_{\text{samp}}$ the sampling one; the ratio $\to3$ iff
-systematic-dominated).
+reproducible-dominated). The argument fixes the component's variance, not its origin. It is
+invariant to whether $\sigma^2_{\text{sys}}$ is physical error or a fixed consequence of the one
+starting structure the three repeats share, because both are constant across repeats and both
+therefore survive the average the same way.
 
 \begin{figure}[t]\centering
 \includegraphics[width=\textwidth]{figL_calibrated_cycle_closure.pdf}
@@ -485,7 +521,7 @@ $z_e^2$, which is
 that sum's own per-edge summand, so a networked world with no localized systematic error whatever
 reproduces the same contrast. The evidential check is the out-of-sample one. Fitting each
 replicate's network separately, the per-edge standardized residuals correlate across independent
-replicates ($r=+0.30$ to $+0.42$, $n=1143$, each interval excluding zero under a bootstrap over systems; Figure~\ref{fig:Lval}B), so what the flags identify is reproducible across runs rather than a property of one draw. Sampling noise would give zero.
+replicates ($r=+0.30$ to $+0.42$, $n=1143$, each interval excluding zero under a bootstrap over systems; Figure~\ref{fig:Lval}B), so what the flags identify is reproducible across runs rather than a property of one draw. Sampling noise would give zero. This correlation carries the same restriction as the pooling argument: any per-edge quantity held fixed across the three repeats produces it, and the shared starting structure is such a quantity, so what is established is reproducibility and not a physical origin.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figL_validation.pdf}
@@ -527,8 +563,8 @@ MUE-vs-experiment on real, flagged, multi-system data. The remaining two flagged
 (\texttt{brd4, faah}) did not clear the coverage gate and are not included.
 
 \paragraph{Summary.} The calibrated bar supplies, for free, the null
-model that turns FEP cycle-closure into a quality-control test that separates systematic from sampling error on real networks and whose output reproduces on replicates it never saw, the sharpest use of the free calibration, and one an overconfident
-learned $\sigma$ destroys.
+model that turns FEP cycle-closure into a quality-control test that separates reproducible from sampling inconsistency on real networks and whose output reproduces on replicates it never saw, the sharpest use of the free calibration, and one a bar as overconfident as the
+learned $\sigma$ measured here destroys.
 
 \subsection{What survives a second replicate}\label{sec:stability}
 The benchmark ships three independent repeats, so the flag set can be recomputed rather than
@@ -547,10 +583,16 @@ much of this benchmark: nine of the $48$ systems carry exactly one, twenty-three
 fewer, and the quartiles are $2$, $5$ and $12$. A reduced $\chi^2$ on one or two degrees of
 freedom is an unstable statistic, and the instability is concentrated exactly there: the median
 swing across the three repeats is $14.2\times$ for the single-cycle systems against $3.9\times$
-for the rest. The flags themselves come from the other end of that distribution, seven of the
-eight systems ever flagged and the one flagged on every repeat being well-connected, so the churn
-is largely the low-cycle tail moving in and out rather than the detector disagreeing with itself
-where it has power.
+for the rest. The flags themselves come mostly from the other end of that distribution, seven of
+the eight systems ever flagged and the one flagged on every repeat being well-connected, so the
+churn is largely the low-cycle tail moving in and out rather than the detector disagreeing with
+itself where it has power. The eighth is \texttt{brd4}, the one ever-flagged system carrying a
+single cycle, and low connectivity does not make it a borderline detection. Its reduced $\chi^2$
+of $15.40$ on the first replicate is the largest of the $48$ systems, it is flagged on two of the
+three repeats ($8.05$, then $4.94$ unflagged), and it remains the largest after being retested
+against the bar width its own replicates measure ($8.97$, Supplementary Table~\ref{tab:P8}). One
+degree of freedom costs it the stability of its adjusted $p$-value, not the size of its
+inconsistency.
 
 Two things do survive. The ranking of systems by closure inconsistency reproduces across
 replicates (Spearman $0.649$, $0.644$, $0.723$ over all $48$ systems), and the dependence of
@@ -571,8 +613,9 @@ Theorem~\ref{thm:cons} makes
 $\mathbb{E}[\chi^2_\nu]$ the curl-leverage-weighted mean of $c_e^{-2}$, and that prediction
 correlates with the observed per-system $\chi^2_\nu$ at Spearman $0.648$ ($n=48$). Both sides divide by the same reported variance, so the reference is not zero: under a simulation with no systematic error anywhere the same statistic returns $0.059$ with a $95\%$ upper limit of $0.364$, and $0.648$ exceeds every one of $200$ draws (Supplementary Figure~\ref{fig:OOS}A). The aggregate level agrees less well: the predicted $\mathbb{E}[\chi^2_\nu]=0.85$ $[0.63,1.08]$ sits below the observed degree-of-freedom-weighted value of $1.32$ $[0.81,1.80]$, and the two intervals overlap without the prediction covering the observation. This is a quantitative point prediction of a
 per-system statistic from data that do not enter it. The flagged systems sit \emph{above} the
-line, which is what reproducible systematic error should do: it inflates a closure residual
-without inflating the spread between repeats.
+line, which is what any reproducible offset does: it inflates a closure residual
+without inflating the spread between repeats. Being reproducible across repeats that share a
+starting structure is what places a system above the line, and that is weaker than being in error.
 
 Second, edges selected on one replicate are more inconsistent on the two held out than
 equal-size random selections are (mean gain in held-out reduced $\chi^2$, Stouffer
@@ -620,13 +663,15 @@ where the gauge-aware one reaches $0.01$.
 \section{An applicability map: where this calibration helps, and where it does not}\label{sec:audit}
 The detector of Section~\ref{sec:qc} is a real-data payoff; whether the same free calibration
 improves downstream machine learning is a separate question, and mostly it does not. These
-negatives are the reason to believe the positive result. Four performance tasks (sharpness, edge
-ranking, commit-to-synthesis selection, and reward re-ranking over a measured congeneric set,
-single target \texttt{eg5}) run on the public OpenFF protein--ligand
+negatives are the reason to believe the positive result. Six tasks are audited, four for
+performance and two for decision quality, and Supplementary Table~\ref{tab:audit} collects every
+effect against its baseline. Three of the performance tasks, interval sharpness,
+commit-to-synthesis selection, and reward re-ranking over a measured congeneric set (single
+target \texttt{eg5}), run on the public OpenFF protein--ligand
 benchmark~\citep{hahn2022plbench} (FEP+ and Merck data~\citep{wang2015fep,schindler2020merck};
-experimental $\ddG$ labels, both-endpoint scaffold-disjoint out-of-distribution (OOD) splits);
-two decision tasks run in controlled simulations, and Supplementary Table~\ref{tab:audit}
-collects every effect against its baseline. The amortized $\sigma$ under test (the decomposed
+experimental $\ddG$ labels, both-endpoint scaffold-disjoint out-of-distribution (OOD) splits), as
+does the commit-trust decision task; the fourth performance task, edge ranking in active
+learning, and the stopping decision task both run in controlled simulations. The amortized $\sigma$ under test (the decomposed
 physics $\sigma$) is the trunk's \emph{predictive} uncertainty on unseen $\ddG$ values,
 $\sigma_{\text{total}}=\gamma\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$: deep-ensemble
 epistemic spread and benchmark aleatoric floor, conformally scaled at miscoverage $\alpha=0.1$
@@ -696,10 +741,12 @@ Figure~\ref{fig:A}'s sampling-se foil and reused here only as a numeric shrink f
 twice as early at only $60\%$ correct. This is a controlled simulation, but the lesson of the
 commit panel again.
 
-\paragraph{Synthesis.} Five independent tests agree: a calibrated per-edge $\sigma$ does not
-sharpen intervals on real data, does not re-rank what to compute or commit, and does not steer
+\paragraph{Synthesis.} Six independent tests agree: a calibrated per-edge $\sigma$ does not
+sharpen intervals on real data, does not re-rank what to compute, does not re-rank what to commit,
+and does not steer
 reward re-ranking toward better molecules on this evaluable congeneric set (single target
-\texttt{eg5}); it pays on stopping; and an \emph{overconfident} $\sigma$ silently corrupts the
+\texttt{eg5}); it pays on commit trust and on stopping; and an \emph{overconfident} $\sigma$
+silently corrupts the
 stop/commit decision. Calibration is therefore a \emph{trust/decision instrument}, not a
 performance multiplier: what the physics variance buys is a calibrated decision, an identifiable
 acquisition, and above all the quality-control detector of Section~\ref{sec:qc}, not a sharper or
@@ -745,6 +792,28 @@ false discovery rate at $\alpha=0.05$ across systems. The population for the clo
 $48$ systems that carry at least three replicate-$0$ edges and at least one independent cycle,
 which between them hold $1143$ of the benchmark's $1145$ edges.
 
+\paragraph{The pure-null simulation behind the realized levels.} Every realized level quoted for a
+self-calibrated arm, in Section~\ref{sec:qc}, in Section~\ref{sec:limitations} and in the last
+column of Supplementary Table~\ref{tab:selfgrid}, is measured on a synthetic world in which
+nothing is wrong, so that every flag it produces is a false positive by construction. The
+topologies are the real ones: the same $48$ systems the closure test admits, each with its own
+ligand-pair edge list and its own admission by the same rule ($\geq3$ edges, $\geq1$ independent
+cycle), which depends on topology alone. The variances are the real ones: each edge keeps the
+per-edge reported standard error it ships with, and that value is then \emph{declared} to be the
+edge's true sampling standard deviation, which makes the reported bars perfectly calibrated by
+construction. The draw law is the null: every node potential is exact, so each edge's true
+$\ddG$ is exactly the difference of its endpoints' potentials, and an observation is that value
+plus an independent Gaussian of the edge's own standard deviation. There is no systematic
+component anywhere and no correlation between edges. The replicate structure mirrors the
+benchmark's: three independent draws per edge, of which the first plays the role of replicate $0$
+and is the one the closure statistic is computed on, while all three are read by the arm's own
+calibration formula exactly as that arm reads the real replicates (the held-out arm reads only the
+second and third). Each arm's correction, tail probability and Benjamini--Hochberg step-up at
+$\alpha=0.05$ are then the identical code paths used on the real data. The simulation is run for
+$400$ draws, so a realized probability is measured to a Monte-Carlo standard error of at most
+$\sqrt{0.25/400}=0.025$, and the generator is seeded once for the whole sweep, which makes the
+reported levels reproducible.
+
 \paragraph{The reproducible-systematic magnitude used as ground truth.} Detection comparisons
 need a label that does not come from the detector being scored, and the only one these data
 supply is reproduction across the three protocol repeats. It is defined as follows. Each
@@ -754,9 +823,12 @@ The three \emph{signed} residuals of an edge are averaged, $\bar z_e=\frac13\sum
 that a residual reproducing in sign and magnitude survives the average while sampling noise
 cancels toward zero, and the edge's score is $|\bar z_e|$. A system's score is the median of
 $|\bar z_e|$ over its edges. This is the quantity the detectors of the head-to-head comparison
-are ranked against, by Mann--Whitney AUC of the binary flag against the per-system score; it uses
-only replicate residuals and no detector output, although it shares the standardized-residual
-construction with two of the three rules being compared. ``Edges whose sign and magnitude
+are ranked against, by Mann--Whitney AUC of the binary flag against the per-system score. It uses
+only replicate residuals and no detector output, but it is not independent of the rules being
+scored, and the dependence is the reason no ordering is read out of that comparison
+(Section~\ref{sec:qc}): $z_e^{(k)}$ divides by $V_e^{\mathrm{rep}}$, the same per-edge reported
+variance the calibrated rule uses as its weight, so the label rewards a rule for standing close to
+that variance. ``Edges whose sign and magnitude
 reproduce across independent replicates'', wherever that phrase appears above, means edges with a
 large $|\bar z_e|$ in this sense.
 
@@ -792,9 +864,15 @@ objective by the $\beta$-NLL of \citet{seitzer2022pitfalls} at $\beta=0.5$ or av
 independently seeded heads.
 
 \paragraph{Software.} Python $\geq3.11$ with numpy $2.5.0$, scipy $1.18.0$, pymbar $4.0.3$, torch
-$2.12.1$, RDKit $2026.3.3$ and matplotlib $3.11.0$. Ensemble training runs on CPU; torch reductions
-on CPU are not bitwise reproducible across builds, so ensemble-dependent figures can move in the
-third decimal between machines while every verdict reported here is unchanged.
+$2.12.1$, RDKit $2026.3.3$ and matplotlib $3.11.0$. The pipeline is deterministic: in the
+environment recorded here, re-running a figure's command reproduces that figure's rendered raster
+byte for byte, and this was checked on the figures that depend on ensemble training rather than
+assumed. Their reproducibility has a stated cause. Ensemble training runs on CPU, full batch, for
+a fixed number of epochs; each of the eight members takes its weight initialization and its
+bootstrap resample from its own member index as the seed; and the ligand ordering that reaches the
+featurizer and the sampler is sorted rather than read out of a set, so it does not depend on the
+process-level string hash. Nothing in the training path is left to an unrecorded source of
+variation.
 
 \section{Limitations}\label{sec:limitations}
 The sandwich is aleatoric-only and conditional on correctly sampled ensembles; systematic
@@ -804,12 +882,22 @@ three-way decomposition of the synthetic illustration is not reproduced on real 
 binding-edge se is validated against the three independent replicates of the OpenFE
 IndustryBenchmarks2024 (Figure~\ref{fig:Arep}): in aggregate it is conservative by
 $\sim$$1.4\times$, though calibration is
-heterogeneous per system ($28$ of the $34$ systems with at least eight edges conservative; one
-protonation-variant outlier overconfident). The three replicates are seed/velocity-only repeats from identical starting
+heterogeneous per system: of the $34$ systems carrying at least eight edges, $28$ are conservative
+and the remaining six are overconfident, namely \texttt{t4\_lysozyme} $0.99\times$,
+\texttt{hif2a} $0.96\times$, \texttt{bace} $0.96\times$, \texttt{faah} $0.90\times$, \texttt{brd4}
+$0.76\times$, and the protonation variant \texttt{bace\_p3\_arg368\_in} $0.41\times$, which is the
+only one of the six that is not marginal. The three replicates are seed/velocity-only repeats from identical starting
 coordinates (OpenFE \texttt{protocol\_repeats}), so the across-replicate SD reflects
 sampling/convergence noise and is a lower bound on full reproducibility (excluding pose and
 system-preparation variance); the $\sim$$1.41\times$ conservatism may therefore be
-closer to neutral against real reproducibility. The
+closer to neutral against real reproducibility. That same restriction limits what the
+quality-control test can be said to detect. An inconsistency reproducing across repeats that
+share one starting structure is established as more than sampling noise, but a fixed consequence
+of that structure, a pose or a protonation assignment carried unchanged into all three, would
+reproduce identically; the pooling argument of Figure~\ref{fig:L}C and the cross-replicate
+residual correlation of Figure~\ref{fig:Lval}B are both invariant to which of the two it is, so
+neither establishes physical error, and the flags are reported as reproducible inconsistency
+throughout. The
 gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
 single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
 should be tested across more chemotypes. The single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively against held-out replicates and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: what the QC has been shown to reach is internal edge-level consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, lies outside what public data can support. The distribution-free cross-replicate check establishes that what is flagged reproduces across independent runs, but it is not a quantitative false-positive-rate guarantee: it does not certify the nominal Benjamini--Hochberg rate itself. The detector's \emph{recall} cannot be measured directly, since there are no ground-truth error
@@ -826,15 +914,17 @@ Neither two-sided arm is false-discovery-rate controlled at three replicates, an
 reported as a flag set: rescaling an edge by its own replicate spread multiplies the statistic by
 $\sigma^2/s^2$, whose expectation $\nu_{\text{rep}}/(\nu_{\text{rep}}-2)$ is undefined at the
 $\nu_{\text{rep}}=2$ replicate degrees of freedom that three replicates provide ($\nu_{\text{rep}}$,
-not the cycle count $\nu$ of the closure statistic), and a pure-null simulation puts the probability of at least one false
+not the cycle count $\nu$ of the closure statistic), and the pure-null simulation of
+Section~\ref{sec:methods} puts the probability of at least one false
 flag at $0.59$ for the two-sided per-edge arm and $0.24$ for the two-sided aggregate one, against
-a nominal $0.04$; the one-sided per-edge arm is the only self-calibrated arm that holds its level
+the $0.04$ the uncorrected arm realizes on that same simulation at the same nominal
+$\alpha=0.05$; the one-sided per-edge arm is the only self-calibrated arm that holds its level
 ($0.003$).
 What the experiment establishes is that the flag set is sensitive to calibration error of the size
 actually present, in both directions, which is a limit on how far any single flag list should be
 trusted. Together with the median reduced $\chi^2=0.34$ (Section~\ref{sec:qc}), which implies
 limited single-replicate power, this makes the flagged systems a floor on the systems carrying
-systematic error rather than a prevalence estimate: on the same replicate data, \texttt{renin} is systematic by the pooled-replicate ratio (reduced $\chi^2$ rising to $4.7$ when the three replicates are pooled, from a per-replicate mean of $2.5$, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems; ratio $1.9$, between the sampling-only pole at $1$ and the systematic pole at $3$) yet did not clear FDR on a single replicate, a documented systematic-but-unflagged case. \texttt{ciordia\_retro} is a second such case, flagged on one of the three replicates and retained when they are pooled, and it is not otherwise discussed in this paper. The error runs the other way too, and one member of the published six should be read with more caution than the rest. \texttt{faah} clears FDR on the first replicate alone; its reduced $\chi^2$ crosses one in both directions across the three ($3.71$, $0.45$, $1.47$), its standardized residuals essentially fail to reproduce between replicates ($r=-0.085$, the weakest of the eight systems ever flagged), it is the single system the pooled fit drops, and in the held-out test of Section~\ref{sec:oos} it moves against the direction the other flagged systems move in. We therefore report \texttt{faah} as a flag that a second replicate does not support, rather than as a member of the set on the same footing as \texttt{bace}, which is flagged on every replicate and by every criterion here. The amortized
+reproducible inconsistency rather than a prevalence estimate: on the same replicate data, \texttt{renin} carries the reproducible signature by the pooled-replicate ratio (reduced $\chi^2$ rising to $4.7$ when the three replicates are pooled, from a per-replicate mean of $2.5$, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems; ratio $1.9$, between the sampling-only pole at $1$ and the fully reproducible pole at $3$) yet did not clear FDR on a single replicate, a documented reproducible-but-unflagged case. \texttt{ciordia\_retro} is a second such case, flagged on one of the three replicates and retained when they are pooled, and it is not otherwise discussed in this paper. The error runs the other way too, and one member of the published six should be read with more caution than the rest. \texttt{faah} clears FDR on the first replicate alone; its reduced $\chi^2$ crosses one in both directions across the three ($3.71$, $0.45$, $1.47$), its standardized residuals essentially fail to reproduce between replicates ($r=-0.085$, the weakest of the eight systems ever flagged), it is the single system the pooled fit drops, and in the held-out test of Section~\ref{sec:oos} it moves against the direction the other flagged systems move in. We therefore report \texttt{faah} as a flag that a second replicate does not support, rather than as a member of the set on the same footing as \texttt{bace}, which is flagged on every replicate and by every criterion here. The amortized
 predictor carries a parity-odd readout channel because a geometric readout built only from
 distances, norms or dot products is constant on an enantiomer pair and so cannot distinguish
 stereoisomers at all; that requirement, and the completeness statement behind it, are established
