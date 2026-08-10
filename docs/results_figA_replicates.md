@@ -10,7 +10,7 @@ the across-replicate empirical SD. `make figArep`.
 RMS reported se 0.837 kcal/mol vs RMS independent-replicate SD 0.592 kcal/mol -> **reported/replicate = 1.41**, bootstrap CI [1.26, 1.62].
 After correcting the n=3 small-sample SD bias (E[s]=c4·σ, c4=0.886) the reported se still
 over-predicts the true run-to-run SD by ~1.25×. The reported se exceeds the replicate
-SD on 72% of edges; per target, 28 of 34 are conservative
+SD on 72% of edges; per system, 28 of 34 are conservative
 (ratio >= 1) and 6 are below 1 — five of them borderline (0.76–0.99) and one
 protonation-variant outlier (bace\_p3\_arg368\_in, 0.41). The calibration is therefore
 conservative in aggregate but heterogeneous per system.
@@ -21,9 +21,9 @@ in aggregate** against independent-replicate truth: pooled, it OVER-predicts run
 reproducibility by ~1.4× and is not \emph{systematically} overconfident — the dangerous
 failure mode. This is the opposite of the learned MVE head (≈7× *over*confident at realistic budget / ≈5× at large budget,
 Fig A) and refutes the worry that the sampling sandwich would systematically under-state real
-reproducibility. It is not uniformly conservative (6/34 targets dip below 1,
+reproducibility. It is not uniformly conservative (6/34 systems dip below 1,
 one markedly), so per-system calibration varies; but the aggregate and the vast majority of
-targets are safe to act on, and no learned head matches even that.
+systems are safe to act on, and no learned head matches even that.
 
 ## Scope
 Reported se is OpenFE's pymbar4 MBAR uncertainty, which Fig A panel A establishes equals the
