@@ -14,10 +14,9 @@ behind the flags is steadier than the list of names flagged at a fixed threshold
 stand-in for that error bar, built from a learned head's measured miscalibration rather than by
 running the head here, destroys the test: it flags almost every network, leaving nothing
 unflagged to act on. The detector consumes the variance as a plain number; the same closed form is
-differentiable at a backward pass no costlier than the forward pass and yields an acquisition
-weight insensitive to gauge-redundant directions. Audited further, the calibrated bar sharpens no
-interval, changes no ranking and improves no reward-guided re-ranking; its value is confined to
-detection, commit trust and stopping. Reading uncertainty off the physics is a decision and
+differentiable at negligible cost and weights a gauge-invariant acquisition graph. Audited
+further, the calibrated bar sharpens no interval, changes no ranking and improves no
+reward-guided re-ranking; its value is confined to detection, commit trust and stopping. Reading uncertainty off the physics is a decision and
 quality-control instrument, not a performance multiplier.
 \end{abstract}
 
