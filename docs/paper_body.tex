@@ -570,21 +570,14 @@ against $0.056$ for size-matched random draws, averaged over the three pairs. Th
 persists from $\alpha=0.01$ to $\alpha=0.20$ (Supplementary Figure~\ref{fig:Stab}). Pooling the
 three replicates flags seven systems, the union minus \texttt{faah}.
 
-The churn has a structural source worth stating. The number of independent cycles is small on
-much of this benchmark: nine of the $48$ systems carry exactly one, twenty-three carry three or
-fewer, and the quartiles are $2$, $5$ and $12$. A reduced $\chi^2$ on one or two degrees of
-freedom is an unstable statistic, and the instability is concentrated exactly there: the median
-swing across the three repeats is $14.2\times$ for the single-cycle systems against $3.9\times$
-for the rest. The flags themselves come mostly from the other end of that distribution, seven of
-the eight systems ever flagged and the one flagged on every repeat being well-connected, so the
-churn is largely the low-cycle tail moving in and out rather than the detector disagreeing with
-itself where it has power. The eighth is \texttt{brd4}, the one ever-flagged system carrying a
-single cycle, and low connectivity does not make it a borderline detection. Its reduced $\chi^2$
-of $15.40$ on the first replicate is the largest of the $48$ systems, it is flagged on two of the
-three repeats ($8.05$, then $4.94$ unflagged), and it remains the largest after being retested
-against the bar width its own replicates measure ($8.97$, Supplementary Table~\ref{tab:P8}). One
-degree of freedom costs it the stability of its adjusted $p$-value, not the size of its
-inconsistency.
+The churn is not explained by how cyclic the networks are. Cycle counts on this benchmark are
+low: nine of the $48$ systems carry exactly one independent cycle, twenty-three carry three or
+fewer, and the quartiles are $2$, $5$ and $12$. A reduced $\chi^2$ on one or two degrees of freedom
+is an unstable statistic, and those systems do swing more across repeats. But they are not the
+systems that move in and out of the flag set: seven of the eight ever flagged are well connected,
+and restricting the comparison to the best-connected third of the benchmark leaves the pairwise
+overlap no better than it is over all $48$. The instability sits where the test has power, which
+makes it a property of the measurement rather than of thin networks.
 
 Two things do survive. The ranking of systems by closure inconsistency reproduces across
 replicates (Spearman $0.649$, $0.644$, $0.723$ over all $48$ systems), and the dependence of
@@ -916,7 +909,9 @@ What the experiment establishes is that the flag set is sensitive to calibration
 actually present, in both directions, which is a limit on how far any single flag list should be
 trusted. Together with the median reduced $\chi^2=0.34$ (Section~\ref{sec:qc}), which implies
 limited single-replicate power, this makes the flagged systems a floor on the systems carrying
-reproducible inconsistency rather than a prevalence estimate: on the same replicate data, \texttt{renin} carries the reproducible signature by the pooled-replicate ratio (reduced $\chi^2$ rising to $4.7$ when the three replicates are pooled, from a per-replicate mean of $2.5$, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems; ratio $1.9$, between the sampling-only pole at $1$ and the fully reproducible pole at $3$) yet did not clear FDR on a single replicate, a documented reproducible-but-unflagged case. \texttt{ciordia\_retro} is a second such case, flagged on one of the three replicates and retained when they are pooled, and it is not otherwise discussed in this paper. The error runs the other way too, and one member of the published six should be read with more caution than the rest. \texttt{faah} clears FDR on the first replicate alone; its reduced $\chi^2$ crosses one in both directions across the three ($3.71$, $0.45$, $1.47$), its standardized residuals essentially fail to reproduce between replicates ($r=-0.085$, the weakest of the eight systems ever flagged), it is the single system the pooled fit drops, and in the held-out test of Section~\ref{sec:oos} it moves against the direction the other flagged systems move in. We therefore report \texttt{faah} as a flag that a second replicate does not support, rather than as a member of the set on the same footing as \texttt{bace}, which is flagged on every replicate and by every criterion here. The amortized
+reproducible inconsistency rather than a prevalence estimate: on the same replicate data, \texttt{renin} carries the reproducible signature by the pooled-replicate ratio (reduced $\chi^2$ rising to $4.7$ when the three replicates are pooled, from a per-replicate mean of $2.5$, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems; ratio $1.9$, between the sampling-only pole at $1$ and the fully reproducible pole at $3$) and clears the false-discovery threshold on two of the three replicates, though not on the first,
+which is the one the six-system list is drawn from. It is a system that list misses rather than one
+the test misses. \texttt{ciordia\_retro} is a second such case, flagged on one of the three replicates and retained when they are pooled, and it is not otherwise discussed in this paper. The error runs the other way too, and one member of the published six should be read with more caution than the rest. \texttt{faah} clears FDR on the first replicate alone; its reduced $\chi^2$ crosses one in both directions across the three ($3.71$, $0.45$, $1.47$), its standardized residuals essentially fail to reproduce between replicates ($r=-0.085$, the weakest of the eight systems ever flagged), it is the single system the pooled fit drops, and in the held-out test of Section~\ref{sec:oos} it moves against the direction the other flagged systems move in. We therefore report \texttt{faah} as a flag that a second replicate does not support, rather than as a member of the set on the same footing as \texttt{bace}, which is flagged on every replicate and by every criterion here. The amortized
 predictor carries a parity-odd readout channel because a geometric readout built only from
 distances, norms or dot products is constant on an enantiomer pair and so cannot distinguish
 stereoisomers at all; that requirement, and the completeness statement behind it, are established
