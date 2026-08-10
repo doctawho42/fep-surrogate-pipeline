@@ -3,28 +3,22 @@ We turn a routine thermodynamic consistency check into a calibrated diagnostic f
 binding free energy calculations. The Bennett Acceptance Ratio estimator that turns simulation
 output into a free energy carries its own finite-sampling variance in closed form, computed from
 the work samples rather than learned. The per-edge error bar a practitioner receives from that
-family of estimators is validated against independent molecular-dynamics replicates on a large set of real
-protein-ligand binding edges and found trustworthy against sampling and convergence noise. Its sharpest use is
-detection: fitting cycle closure with these calibrated bars turns an ordinary consistency check
-into a quality-control test flagging
-a selective minority of perturbation networks as carrying inconsistency that reproduces across
-independent runs. What the test
-identifies reproduces out of sample: miscalibration measured on one set of replicates predicts the
-closure statistic of a replicate it never saw. Those runs share their starting coordinates, so what
-is established is reproducibility beyond sampling noise and not physical error. The ranking behind
-the flags is steadier than the
-list of names flagged at a fixed threshold, and we report both. A stand-in for that error bar,
-built edge by edge from a learned head's measured overconfidence rather than by running that head
-on this benchmark, destroys the
-test: it flags 42 of the 48 networks where the calibrated bar flags 6, so almost nothing is left
-unflagged for a decision to act on. The detector
-consumes the variance as a plain number; the same closed form is also differentiable, at a backward
-pass no costlier than the forward pass, and yields an acquisition weight insensitive to
-gauge-redundant measurement directions. Audited
-across further downstream uses, the calibrated bar sharpens no interval, changes no edge or
-candidate ranking, and improves no reward-guided re-ranking; its value is confined to detection,
-commit trust, and stopping decisions. Reading uncertainty off the physics is therefore a decision
-and quality-control instrument, not a performance multiplier.
+family of estimators is validated against independent molecular-dynamics replicates on a large set
+of real protein-ligand binding edges and found trustworthy against sampling and convergence noise.
+Its sharpest use is detection: fitting cycle closure with these calibrated bars turns an ordinary
+consistency check into a quality-control test that flags a selective minority of perturbation
+networks. Miscalibration measured on one set of replicates predicts the closure statistic of a
+replicate it never saw. Those replicates share their starting coordinates, so what is established
+is inconsistency reproducing beyond sampling noise rather than physical error, and the ranking
+behind the flags is steadier than the list of names flagged at a fixed threshold. An overconfident
+stand-in for that error bar, built from a learned head's measured miscalibration rather than by
+running the head here, destroys the test: it flags almost every network, leaving nothing
+unflagged to act on. The detector consumes the variance as a plain number; the same closed form is
+differentiable at a backward pass no costlier than the forward pass and yields an acquisition
+weight insensitive to gauge-redundant directions. Audited further, the calibrated bar sharpens no
+interval, changes no ranking and improves no reward-guided re-ranking; its value is confined to
+detection, commit trust and stopping. Reading uncertainty off the physics is a decision and
+quality-control instrument, not a performance multiplier.
 \end{abstract}
 
 \begin{figure}[t]\centering
