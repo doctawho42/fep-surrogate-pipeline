@@ -75,7 +75,10 @@ def target_ligands(
     ug = g.to_undirected()
     ref = max(ug.nodes, key=lambda n: ug.degree(n))
     true: dict[str, float] = {ref: 0.0}
-    for node in nx.node_connected_component(ug, ref):
+    # sorted(): node_connected_component returns a set, and iterating a set of strings is
+    # ordered by Python's randomized string hash. That order reaches the ligand list, the trie
+    # and the sampler, and made this pipeline irreproducible between runs.
+    for node in sorted(nx.node_connected_component(ug, ref)):
         if node == ref:
             continue
         path = nx.shortest_path(ug, ref, node)

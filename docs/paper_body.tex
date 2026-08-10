@@ -619,119 +619,94 @@ where the gauge-aware one reaches $0.01$.
 
 \section{An applicability map: where this calibration helps, and where it does not}\label{sec:audit}
 The detector of Section~\ref{sec:qc} is a real-data payoff; whether the same free calibration
-improves downstream machine learning is a separate question, and mostly it does not. This section
-maps that boundary, because these negatives are the reason to believe the positive result. Four
-performance tasks (interval sharpness, edge ranking, commit-to-synthesis selection, and reward
-re-ranking over a measured congeneric set, single target \texttt{eg5}) are tested on the public
-OpenFF
-protein--ligand benchmark~\citep{hahn2022plbench}, which aggregates the FEP+ and Merck data
-sets~\citep{wang2015fep,schindler2020merck} (experimental $\ddG$ labels; both-endpoint
-scaffold-disjoint out-of-distribution (OOD) splits), and two decision tasks in controlled
-simulations. The
-amortized $\sigma$ we test (the decomposed physics $\sigma$, written
-$\sigma_{\text{total}}$) is a deep-ensemble trunk's
-$\sigma_{\text{total}}=\gamma\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$: an
-epistemic ensemble spread $\sigma_{\text{ens}}$ and a benchmark aleatoric floor
-$\sigma_{\text{ale}}$, conformally scaled by a scalar $\gamma$ at miscoverage $\alpha=0.1$
-(90\% target coverage; $\gamma$ rather than $q$, which is reserved throughout for a
-Benjamini--Hochberg adjusted $p$-value). It is a different
-quantity from Figure~\ref{fig:A}'s per-edge BAR sampling-se and its learned-variance foil, which
-asks whether a model can learn to
-\emph{predict} the sampling variance of a single BAR $\dFh$ from its own work statistics;
-$\sigma_{\text{total}}$ is the surrogate's downstream
-\emph{predictive} uncertainty on unseen $\ddG$ values, on the OpenFF benchmark rather than the
-controlled work-sampling model of
-Figure~\ref{fig:A}. Any
-bare ``$\sigma$'' below this point refers to $\sigma_{\text{total}}$ unless a figure reference
-says otherwise. Supplementary Table~\ref{tab:audit} collects every effect reported here against
-its baseline: no measurable gain on interval sharpness, edge weighting or commit ranking; a
-measured loss on reward re-ranking over the single evaluable congeneric target (\texttt{eg5});
-and a clear benefit on commit trust and on the stopping decision.
+improves downstream machine learning is a separate question, and mostly it does not. These
+negatives are the reason to believe the positive result. Four performance tasks (sharpness, edge
+ranking, commit-to-synthesis selection, and reward re-ranking over a measured congeneric set,
+single target \texttt{eg5}) run on the public OpenFF protein--ligand
+benchmark~\citep{hahn2022plbench} (FEP+ and Merck data~\citep{wang2015fep,schindler2020merck};
+experimental $\ddG$ labels, both-endpoint scaffold-disjoint out-of-distribution (OOD) splits);
+two decision tasks run in controlled simulations, and Supplementary Table~\ref{tab:audit}
+collects every effect against its baseline. The amortized $\sigma$ under test (the decomposed
+physics $\sigma$) is the trunk's \emph{predictive} uncertainty on unseen $\ddG$ values,
+$\sigma_{\text{total}}=\gamma\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$: deep-ensemble
+epistemic spread and benchmark aleatoric floor, conformally scaled at miscoverage $\alpha=0.1$
+(90\% target coverage; the scalar $\gamma$ rather than $q$, reserved throughout for a
+Benjamini--Hochberg adjusted $p$-value). It is not Figure~\ref{fig:A}'s per-edge BAR sampling-se
+or its learned-variance foil; a bare ``$\sigma$'' below means $\sigma_{\text{total}}$.
 
-\paragraph{Trust: an overconfident $\sigma$ corrupts decisions; this decomposed $\sigma$ does not, and
-calibration is cheap (on the OpenFF benchmark).} Supplementary Figure~\ref{fig:J}B isolates the effect of
-$\sigma$ by holding the (ensemble) mean
-fixed and varying only the uncertainty used to commit a candidate to synthesis (commit iff the
-lower-confidence bound (LCB) $\mu-\kappa\sigma\ge\tau$, with $\kappa=z_{1-\alpha}$ the
-confidence multiplier). An overconfident epistemic-only
-$\sigma$ over-claims badly: its realized-versus-claimed correctness shortfall is $+0.182$
-(CI $[0.132,0.225]$) larger than the decomposed $\sigma$'s, which is calibrated-to-conservative.
-This trust is \emph{not unique} to
-the physics $\sigma$: temperature scaling~\citep{guo2017calibration} or
-split-conformal recalibration of the same overconfident $\sigma$ recovers it
-(temperature$-$ours $+0.034$, CI $[-0.018,0.081]$; conformal$-$ours $-0.029$, CI
-$[-0.077,0.007]$; both indistinguishable from ours). Trustworthy
-decisions therefore require \emph{some} proper calibration, which the physics $\sigma$ supplies at no
-calibration-set cost for the aleatoric term.
+\paragraph{Trust: an overconfident $\sigma$ corrupts decisions; this decomposed $\sigma$ does
+not, and calibration is cheap (on the OpenFF benchmark).} Supplementary Figure~\ref{fig:J}B fixes
+the (ensemble) mean and varies only the uncertainty in the commit rule (commit to synthesis iff
+the lower-confidence bound (LCB) $\mu-\kappa\sigma\ge\tau$, $\kappa=z_{1-\alpha}$). An
+overconfident epistemic-only $\sigma$ over-claims badly: its realized-versus-claimed correctness
+shortfall is $+0.182$ (CI $[0.132,0.225]$) larger than the decomposed $\sigma$'s, which is
+calibrated-to-conservative. The trust is \emph{not unique} to the physics $\sigma$: temperature
+scaling~\citep{guo2017calibration} or split-conformal recalibration of the same overconfident
+$\sigma$ recovers it (temperature$-$ours $+0.034$, CI $[-0.018,0.081]$; conformal$-$ours
+$-0.029$, CI $[-0.077,0.007]$; both indistinguishable from ours). Trustworthy decisions need
+\emph{some} proper calibration; the physics $\sigma$ supplies it at no calibration-set cost for
+the aleatoric term.
 
-\paragraph{Sharpness: this decomposed $\sigma$ is not sharper on real out-of-distribution residuals (OpenFF benchmark).}
-On a controlled 1-D problem whose generative structure the decomposition knows, an adaptive
-$\sigma$ does give tighter intervals at equal coverage (illustration in the supplement). On \emph{real} held-out trunk residuals
-(Supplementary Figure~\ref{fig:Breal}), at matched $\sim$0.90 marginal coverage, it does \emph{not}: the
-decomposed interval is slightly \emph{wider} than flat split-conformal (width ratio
-split/ours $0.92\times$), because the epistemic spread is small relative to the large
-irreducible OOD error (correlation of half-width with $|$residual$|$ only $+0.11$). Its
-conditional calibration is marginally better than a flat band and comparable to a fair
-Mondrian-by-target conformal (per-target max coverage error $0.17$ vs $0.22$ for both split
-and Mondrian), but the advantage is not significant
-(ours$-$split $-0.044$, CI $[-0.121,0.005]$). The synthetic result (up to $2.2\times$ sharper
-than split-conformal, $2.0\times$ sharper than CQR) does not transfer to real data.
+\paragraph{Sharpness: this decomposed $\sigma$ is not sharper on real out-of-distribution
+residuals (OpenFF benchmark).} On \emph{real} held-out trunk residuals (Supplementary
+Figure~\ref{fig:Breal}) at matched $\sim$0.90 marginal coverage, the decomposed interval is
+slightly \emph{wider} than flat split-conformal (width ratio split/ours $0.92\times$): epistemic
+spread is small against the large irreducible OOD error (half-width correlates with
+$|$residual$|$ only $+0.11$). Its conditional calibration is marginally better than a flat band,
+comparable to a fair Mondrian-by-target conformal (per-target max coverage error $0.17$ vs $0.22$
+for split and Mondrian alike), but the advantage is not significant (ours$-$split $-0.044$, CI
+$[-0.121,0.005]$). The supplement's synthetic 1-D illustration, whose generative structure the
+decomposition knows, is up to $2.2\times$ sharper than split-conformal and $2.0\times$ than CQR;
+that does not transfer to real data.
 
-\paragraph{Ranking and selection: the choice of $\sigma$ is second-order at matched budget.}
-For edge ranking in active learning, sandwich versus naive edge weights differ by
-$0.98\times$ $[0.93,1.03]$ on the primary calls-to-top-$k$ metric (24-seed bootstrap CI;
-Figure~\ref{fig:C}, supplement): in a connected measurement graph the GLS contrast mean is
-unbiased for \emph{any} positive weights (Gauss--Markov), so the weight
-choice is second-order
-for ranking. The same holds for commit selection: at matched commit \emph{volume}
-(Supplementary Figure~\ref{fig:J}A, ranking by the standardized margin $(\mu-\tau)/\sigma$ and
-committing the top fraction), the $\sigma$-aware ranking does not beat a raw-$\mu$ ranking
-(precision at a 25\% budget $0.674$ vs $0.680$; trunk$-$raw $-0.006$, CI $[-0.016,0.007]$). A
-calibrated bar says \emph{whether} to act; it does not change \emph{which} action ranks
-first.
+\paragraph{Ranking and selection: the choice of $\sigma$ is second-order at matched budget.} For
+edge ranking in active learning, sandwich versus naive weights differ by $0.98\times$
+$[0.93,1.03]$ on the primary calls-to-top-$k$ metric (24-seed bootstrap CI; Figure~\ref{fig:C},
+supplement): in a connected graph the GLS contrast mean is unbiased for \emph{any} positive
+weights (Gauss--Markov), so the weight choice is second-order for ranking. So too for commit
+selection: at matched commit \emph{volume} (Supplementary Figure~\ref{fig:J}A, ranking by the
+standardized margin $(\mu-\tau)/\sigma$ and committing the top fraction), the $\sigma$-aware
+ranking does not beat a raw-$\mu$ ranking (precision at a 25\% budget $0.674$ vs $0.680$;
+trunk$-$raw $-0.006$, CI $[-0.016,0.007]$). A calibrated bar says \emph{whether} to act, not
+\emph{which} action ranks first.
 
-\paragraph{Reward re-ranking (evaluable congeneric set): this decomposed $\sigma$ does not help, and where $\sigma$ varies it hurts.} We drive
-a trajectory-balance GFlowNet~\citep{bengio2021gflownet,malkin2022tb} over an evaluable ligand
-space (a held-out target's measured congeneric series; trunk trained target-disjoint) with three
-rewards: the calibrated LCB, the raw predicted value, and an overconfident
-MVE reward. On \texttt{eg5}, the on-disk target with the \emph{largest} $\sigma$ spread (so the
-calibrated reward genuinely re-ranks candidates), the calibrated reward \emph{lowers} the true
-hit-rate of the sampled distribution ($0.140$ vs raw $0.250$ and MVE $0.256$; cal$-$raw
-$-0.110$, CI $[-0.151,-0.073]$; Supplementary Figure~\ref{fig:K}). The mechanism is a positive
-correlation between uncertainty and affinity,
-$\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$: the high-$\sigma$ ligands are
-the chemically novel \emph{strong} binders, so the LCB penalty $-\kappa\sigma$ demotes the true
-winners. This is the best case
-available for calibrated reward re-ranking (the most $\sigma$-varying target available), and it
-fails. Because it rests on one evaluable target we draw a \emph{hypothesis}, not a transferable
-diagnostic: an LCB reward may
-help only when $\sigma$ flags \emph{low quality}; whenever $\sigma$ instead flags \emph{novelty},
-as it does on this congeneric series, the bound penalizes exactly the candidates worth making,
-and an uncalibrated reward is the safer default.
+\paragraph{Reward re-ranking (evaluable congeneric set, single target \texttt{eg5}): this
+decomposed $\sigma$ does not help, and where $\sigma$ varies it hurts.} A trajectory-balance
+GFlowNet~\citep{bengio2021gflownet,malkin2022tb} samples a held-out target's measured congeneric
+series (trunk trained target-disjoint) under three rewards: the calibrated LCB, the raw predicted
+value, and an overconfident MVE reward. On \texttt{eg5}, the on-disk target with the
+\emph{largest} $\sigma$ spread, so that the calibrated reward genuinely re-ranks candidates, it
+\emph{lowers} the true hit-rate of the sampled distribution ($0.140$ vs raw $0.250$ and MVE
+$0.256$; cal$-$raw $-0.110$, CI $[-0.151,-0.073]$; Supplementary Figure~\ref{fig:K}). The
+high-$\sigma$ ligands are the chemically novel \emph{strong} binders
+($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), so the LCB penalty
+$-\kappa\sigma$ demotes the true winners. This is the best case available, and it fails. Resting
+on one evaluable target, it is a \emph{hypothesis}, not a transferable diagnostic: an LCB reward
+may help only where $\sigma$ flags \emph{low quality}; where it flags \emph{novelty}, as on this
+congeneric series, the bound penalizes exactly the candidates worth making, and an uncalibrated
+reward is safer.
 
-\paragraph{Where it pays: the stopping decision.} The one place a calibrated bar clearly pays is
-knowing when to \emph{stop} an active-learning loop. Supplementary Figure~\ref{fig:G} runs two learners with
-the same correct (true-precision GLS) posterior mean but different assumed uncertainty (a
-distinct, simulated posterior variance, not $\sigma_{\text{total}}$ above): the calibrated
-learner's claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and stops at
-$30$ calls $82\%$ correct, while an overconfident learner (its assumed posterior se scaled by
-$0.15\times$, the ${\sim}7\times$ central overconfidence \emph{measured} by Figure~\ref{fig:A}'s
-sampling-se foil and reused here only as a numeric shrink factor) stops twice as early at
-only $60\%$ correct. This is a controlled simulation,
-but it is the same lesson as the commit panel: calibration is a trust instrument.
+\paragraph{Where it pays: the stopping decision.} Supplementary Figure~\ref{fig:G} runs two
+active-learning loops sharing a correct (true-precision GLS) posterior mean but differing in
+assumed uncertainty (a simulated posterior variance, not $\sigma_{\text{total}}$ above): the
+calibrated learner's claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and
+stops at $30$ calls $82\%$ correct, while an overconfident learner (its assumed posterior se
+scaled by $0.15\times$, the ${\sim}7\times$ central overconfidence \emph{measured} by
+Figure~\ref{fig:A}'s sampling-se foil and reused here only as a numeric shrink factor) stops
+twice as early at only $60\%$ correct. This is a controlled simulation, but the lesson of the
+commit panel again.
 
-\paragraph{Synthesis.} Five independent tests, namely sharpness, edge weighting, commit ranking,
-reward re-ranking over a measured congeneric set (single target \texttt{eg5}), and (positively) stopping, agree. A calibrated per-edge
-$\sigma$ does not sharpen intervals on real data, does not re-rank what to compute or commit,
-and does not steer reward re-ranking toward better molecules on this evaluable congeneric set; an \emph{overconfident} $\sigma$,
-however, silently corrupts the stop/commit decision. Calibration is therefore a
-\emph{trust/decision instrument}, not a performance multiplier. The graph weight earns its
-place through \emph{structure}, not magnitude: it makes the gauge directions exactly
-unidentifiable (knowledge gradient $=0$) and supplies the trust calculation, even though, by the
-same Gauss--Markov argument that makes weighting second-order, the numerical \emph{value} of the
-weight does not improve ranking. The value of reading the variance off the physics is therefore a
-calibrated decision, an identifiable acquisition, and above all the quality-control detector
-of Section~\ref{sec:qc}, not a sharper or better-ranked prediction.
+\paragraph{Synthesis.} Five independent tests agree: a calibrated per-edge $\sigma$ does not
+sharpen intervals on real data, does not re-rank what to compute or commit, and does not steer
+reward re-ranking toward better molecules on this evaluable congeneric set (single target
+\texttt{eg5}); it pays on stopping; and an \emph{overconfident} $\sigma$ silently corrupts the
+stop/commit decision. Calibration is therefore a \emph{trust/decision instrument}, not a
+performance multiplier: what the physics variance buys is a calibrated decision, an identifiable
+acquisition, and above all the quality-control detector of Section~\ref{sec:qc}, not a sharper or
+better-ranked prediction. The graph weight earns its place through \emph{structure}, not
+magnitude: it makes the gauge directions exactly unidentifiable (knowledge gradient $=0$) and
+supplies the trust calculation, though by Gauss--Markov its numerical \emph{value} does not
+improve ranking.
 
 \section{Computational details}\label{sec:methods}
 \paragraph{Data.} The controlled panel of Figure~\ref{fig:A} uses the \texttt{alchemtest} BACE1
