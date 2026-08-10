@@ -399,7 +399,13 @@ equal-size random selection, over the three choices of selection replicate.}
 \caption{\textbf{Two-sided self-calibration of the per-edge error bar.} Per-system reduced
 $\chi^2$ before and after replacing each system's reported standard error by its own
 replicate-measured calibration, which systems are gained and which are lost, and the realized
-probability of at least one false flag for each arm under a pure-null simulation.}
+probability of at least one false flag for each arm under a pure-null simulation. The arms are:
+the nominal test, which uses the reported standard errors unchanged; the pre-specified primary,
+which corrects each edge by its own ratio; a coarser variant correcting each system by its
+aggregate ratio; a variant clipping the ratio to $[1/3,3]$; a variant dividing the replicate
+standard deviation by $c_4(3)=0.886$, the expectation of the sample standard deviation at three
+draws, which widens the bars; and the one-sided correction of Table~\ref{tab:P8}, which inflates
+only where the measurement says the bar is too tight.}
 \label{fig:Self}
 \end{figure}
 
@@ -638,6 +644,32 @@ Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust
 target (\texttt{eg5}) and is directional: point estimates shift modestly run-to-run under torch
 CPU non-determinism (Section~\ref{sec:limitations}), and it is not yet established as a general
 property of calibrated reward re-ranking across chemotypes.\par}
+\end{table}
+
+
+\paragraph{Provenance of the experimental affinities.} The grounding against measured affinity
+uses one ChEMBL target per system, verified to be a human single-protein target before use, and
+one assay type per system, taken in the order $\mathrm{IC}_{50}$ then $K_i$ and never mixed within
+a system. A system enters the comparison only if at least $60\%$ of its network ligands map to a
+measured value. Table~\ref{tab:chembl} lists what was used.
+
+\begin{table}[t]\centering
+\caption{\textbf{ChEMBL provenance of the experimental affinities.} Target identifier, protein,
+assay type, and the number of network ligands with a measured value, for each system that clears
+the $60\%$ coverage requirement. Affinities are converted at $RT\ln 10 = 1.364$ kcal/mol and
+aggregated per ligand by the median pChEMBL value.}
+\label{tab:chembl}
+\small
+\begin{tabular}{@{}llll r@{}}
+\toprule
+system & ChEMBL target & protein & assay & ligands \\
+\midrule
+\texttt{cdk8}  & CHEMBL5719    & cyclin-dependent kinase 8    & $\mathrm{IC}_{50}$ & $24$ \\
+\texttt{hif2a} & CHEMBL1744522 & endothelial PAS domain protein 1 & $\mathrm{IC}_{50}$ & $41$ \\
+\texttt{p38}   & CHEMBL260     & mitogen-activated protein kinase 14 & $\mathrm{IC}_{50}$ & $35$ \\
+\texttt{bace}  & CHEMBL4822    & beta-secretase 1             & $\mathrm{IC}_{50}$ & $24$ \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \section{Chirality completeness}\label{sec:chiral}
