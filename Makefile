@@ -2,7 +2,7 @@
 # Uses the project conda env `fluor_screening` by default; override with `PY=...`.
 PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
 
-.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figP4 figP4b figP8 figSelf graphical gabs all
+.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figInf figP4 figP4b figP8 figSelf graphical gabs all
 
 help:
 	@echo "make test    - run the pytest suite (theorem invariants)"
@@ -98,6 +98,9 @@ figStab:  # replicate stability of the QC flag set (rep 0 vs 1 vs 2 vs pooled); 
 
 figOOS:  # out-of-sample QC checks: predicted-vs-observed closure chi2 + held-out localization
 	PYTHONPATH=src $(PY) figs/make_figOOS.py
+
+figInf:  # referee round 2: inference for six claims stated without it (cluster CIs, permutation, nulls)
+	PYTHONPATH=src $(PY) figs/make_figInf.py
 
 figP4:  # peer-review P4: QC sweep under the real heterogeneous learned-sigma profile
 	PYTHONPATH=src $(PY) figs/make_figP4.py
