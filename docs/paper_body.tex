@@ -492,7 +492,21 @@ learned head's central overconfidence (Figure~\ref{fig:A}) flags $88\%$ of syste
 $48$), which leaves almost nothing unflagged and so no longer separates anything, the calibrated
 sandwich flags $12\%$ ($6$ of $48$, selective), a $\times1.3$ inflation one system of $48$, and a
 $\times2$ inflation none. We report these as flagged fractions rather than as false-positive
-rates: which of the flags are false is exactly what is not known here (Section~\ref{sec:limitations}). That
+rates: which of the flags are false is exactly what is not known here
+(Section~\ref{sec:limitations}).
+
+The count is not separable from the level, and the level moves first. The scale at which the
+reported bars are correct follows from the functional that governs the statistic rather than
+from a pooled ratio: the curl-leverage-weighted mean of $c_e^{-2}$ is $0.853$, so the bars are
+wide by $1.08\times$ and the calibrated scale is $0.92$, with the bootstrap interval on that mean
+putting it in $[0.79,1.04]$. Across that interval the flag count runs from six to nine. But under
+a simulation in which the reported bar is correct by construction, the probability that the test
+flags anything at all is $0.043$ at scale $1.00$, $0.237$ at $0.92$ and $0.933$ at $0.79$: a
+tightening of eight per cent costs the level a factor of five, and one of twenty per cent
+destroys it. Only the top of the calibration interval is an operating point at which the test
+controls what it claims to control, which is why the six systems are quoted there and why a
+larger count obtained by tightening the bars is not a more sensitive setting but a less valid
+one. That
 uniform shrink is a stress test rather than a realistic head. Applying instead the learned head's
 \emph{measured}, overlap-dependent miscalibration profile per edge (rank-transferred onto each
 edge's own overlap, Supplementary Figure~\ref{fig:P4}) flags $42$ of $48$ systems against the
