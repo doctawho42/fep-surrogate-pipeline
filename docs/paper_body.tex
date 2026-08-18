@@ -140,9 +140,8 @@ temperature/Platt scaling~\citep{guo2017calibration} or isotonic
 regression~\citep{zadrozny2002isotonic}.
 
 \paragraph{Equivariant trunks and chirality.} $E(3)$-equivariant
-networks~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} are the de-facto trunks for
-3D molecular property prediction, and the use of parity-\emph{odd} (pseudoscalar) irreps to
-break achirality is standard in that literature.
+networks~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} are the de-facto trunks for 3D
+molecular property prediction, where parity-\emph{odd} irreps to break achirality are standard.
 
 \paragraph{Acquisition and reward re-ranking.} Acquisition by the knowledge gradient~\citep{frazier2008kg}
 and its Monte-Carlo implementations~\citep{balandat2020botorch,gardner2018gpytorch} drive edge
@@ -518,18 +517,23 @@ $\times2$ inflation none. We report these as flagged fractions rather than as fa
 rates: which of the flags are false is exactly what is not known here
 (Section~\ref{sec:limitations}).
 
-The count is not separable from the level, and the level moves first. The scale at which the
-reported bars are correct follows from the functional that governs the statistic rather than
-from a pooled ratio: the curl-leverage-weighted mean of $c_e^{-2}$ is $0.853$, so the bars are
-wide by $1.08\times$ and the calibrated scale is $0.92$, with the bootstrap interval on that mean
-putting it in $[0.79,1.04]$. Across that interval the flag count runs from six to nine. But under
-a simulation in which the reported bar is correct by construction, the probability that the test
-flags anything at all is $0.043$ at scale $1.00$, $0.237$ at $0.92$ and $0.933$ at $0.79$: a
-tightening of eight per cent costs the level a factor of five, and one of twenty per cent
-destroys it. Only the top of the calibration interval is an operating point at which the test
-controls what it claims to control, which is why the six systems are quoted there and why a
-larger count obtained by tightening the bars is not a more sensitive setting but a less valid
-one. That
+The count is not separable from the level, and the shipped operating point is the conservative
+one. The scale at which the reported bars are correct follows from the functional that governs the
+statistic rather than from a pooled ratio: the curl-leverage-weighted mean of $c_e^{-2}$ is
+$0.853$, so the bars are wide by $1.08\times$ and the calibrated scale is $0.92$, the interval on
+that scale being $[0.79,1.04]$, the square root of the $[0.63,1.08]$ interval on
+$\mathbb{E}[\chi^2_\nu]$ of Section~\ref{sec:oos}. Across it the flag count runs from six to nine.
+Under a simulation that declares each edge's reported standard error to be its true sampling
+deviation, the probability of flagging anything is $0.043$ at scale $1.00$, $0.237$ at $0.92$ and
+$0.933$ at $0.79$. That simulation verifies the Benjamini--Hochberg implementation rather than the
+real-data operating point, which is why the nominal level is reported as nominal above; what it
+does establish is a direction. Since the bars are measured wide, quoting the six systems at scale
+$1.00$ errs conservatively, and $0.237$ is the price of deliberately tightening correct bars by
+eight per cent. The exposure runs the other way, and it is worse for the instrument: at
+$1.3\times$ one system of $48$ flags and at $1.5\times$ and $2\times$ none do, so nothing on this
+benchmark survives a bar widened to cover pose and preparation variance. Widening changes the null
+being tested rather than moving the same test along it, and it is sensitivity, not validity, that
+is fragile on that side. That
 uniform shrink is a stress test rather than a realistic head. Applying instead the learned head's
 \emph{measured}, overlap-dependent miscalibration profile per edge (rank-transferred onto each
 edge's own overlap, Supplementary Figure~\ref{fig:P4}) flags $42$ of $48$ systems against the
@@ -612,11 +616,25 @@ at any magnitude. Half the remaining edges cannot resolve a shift below $0.79$ k
 $27\%$ of all $1143$ can resolve one of $0.5$; the detectable-shift resolution of the median edge is the size of
 the error the field is trying to find (Figure~\ref{fig:Hodge}A).
 
-That is the capacity of the audit. Its reach on real error is smaller. On the four systems grounded
-against experiment below, the fraction of the measured error against experiment that lies in the
-auditable subspace is $0.6\%$ pooled, and between four and $187$ times below the $\mathrm{dof}/E$
-level an unaligned error field would show (Figure~\ref{fig:Hodge}B). Two properties of the
-measurement keep it from being an artefact. It is a near-identity rather than a fit: experimental
+That is the capacity of the audit. Its reach on real error is smaller, and the comparison runs on
+different graphs from the ones just described. Experimental affinities cover part of each ligand
+set, so Figure~\ref{fig:Hodge}B is computed on the grounded sub-network of each system rather than
+on the full networks of Table~\ref{tab:auditability}. As $(N,E,c,\mathrm{dof})$ these are
+$(24,31,2,9)$, $(41,59,1,19)$, $(34,51,1,18)$ and $(23,26,2,5)$ for \texttt{cdk8}, \texttt{hif2a},
+\texttt{p38} and \texttt{bace}, with auditable fractions $0.290$, $0.322$, $0.353$ and $0.192$
+rather than the tabulated ones (\texttt{cdk8} is $0.46$ on its full network); two are disconnected,
+which the fit absorbs into one offset per component.
+
+On those sub-networks the fraction of the measured error against experiment lying in the auditable
+subspace is $0.6\%$ pooled, against those chance levels (Figure~\ref{fig:Hodge}B); per system it is
+$0.0065$, $0.0017$, $0.0086$ and $0.0460$, and dropping any single edge leaves each within a factor
+of three, so no one edge carries it. Both sides are measured in the variance-weighted metric the
+closure statistic lives in, and the margin over chance depends on that choice: under isotropy in
+kcal/mol it narrows to a factor of two on \texttt{bace}, and in the unweighted metric the pooled
+fraction is $5.45\%$ rather than $0.6\%$ (Supporting Information). What these support is therefore
+a bound rather than a point estimate. The auditable share of the error against experiment is small,
+at its weakest a factor of two below chance and not the two orders of magnitude the pooled figure
+alone suggests. Two properties of the measurement keep it from being an artefact. It is a near-identity rather than a fit: experimental
 affinities are per-ligand, so the experimental $\ddG$ vector is a gradient field, $\Pi\varepsilon$
 reduces to the closure residual, and the visible fraction is the closure statistic divided by the
 total squared standardized error. And it survives the obvious contaminants: recomputing it on
@@ -659,14 +677,29 @@ A pre-registered second rule confirms the reading and rules out the obvious esca
 ranking was simply the wrong one. Part (ii) suggests ranking edges by influence rather than by
 residual, $|z_e|\sqrt{(1-h_e)/h_e}$, the classical form that weights an edge by the bias its error
 induces instead of by its visibility. At the same removal counts it performs worse than the rule it
-was meant to replace: better on one system of four, at a pre-registered sign test of $p=0.94$
-against the residual rule's $0.69$ (Figure~\ref{fig:Hodge}C). The pre-registration's other
-combination, a one-sided Stouffer, returns no usable number here, because one system's permutation
-$p$ saturates at the resolution of its own grid and Stouffer maps that to an infinite $z$; clipping
-to the grid's range gives $0.96$, and the residual rule, which has no saturated input, stands at
-$0.48$. Neither rule beats random removal, and neither is shown to be worse than it. The reason is the same measurement: the influence form divides a
-residual by a small curl-leverage to recover the error of a single anomalous edge, and a smooth
-per-ligand field is not concentrated on any edge, so the division returns amplified noise.
+was meant to replace: better on one system of four (per-system $\Delta$MUE $-0.055$, $-0.099$,
+$-0.612$, $+0.140$ kcal/mol at one-sided permutation $p=0.937$, $0.819$, $1.000$, $0.023$;
+Figure~\ref{fig:Hodge}C), at a pre-registered sign test of $p=0.94$ against the residual rule's
+$0.69$. On four systems that test attains only
+$\{1.0000,0.9375,0.6875,0.3125,0.0625\}$, so neither value could reach its own level and the two
+are not an ordering: one system flipping separates them. The
+pre-registration's other combination, a one-sided Stouffer, returns no usable number here, because
+one system's permutation $p$ saturates at the resolution of its own grid and Stouffer maps that to
+an infinite $z$; clipping to the grid's range gives $0.96$, and the residual rule, which has no
+saturated input, stands at $0.48$.
+
+Neither rule beats random removal, and on one system the influence rule is worse rather than merely
+no better: on \texttt{p38} its guided $\Delta$MUE of $-0.612$ kcal/mol falls below every one of the
+$1000$ random draws (minimum $-0.416$, no ties), so the opposite tail is at most $1/1001$. Three
+qualifications belong with it. The tail is post hoc, the pre-registration having asked whether the
+rule helps. It is one system of four, about $0.004$ under a Bonferroni allowance. And the magnitude
+is convention-dependent, $-0.612$ under greedy removal that refits after each edge and $-0.232$
+when the statistic is applied once to the original fit; the sign survives both, and survives the
+strict influence form, which changes the removal set on two of the four systems but not here. The
+two edges removed carry $h_e=0.099$ and $0.388$, so this is not the degenerate branch where a
+near-bridge is divided by its own vanishing leverage. The rule fails for the reason measured above: the influence form divides a residual by a small
+curl-leverage to recover the error of a single anomalous edge, and a smooth per-ligand field is not
+concentrated on any edge, so the division returns amplified noise.
 
 The consequence for practice is a change of use rather than an abandonment. A flag remains a
 system-level signal that a protocol has produced results inconsistent beyond sampling, and that
@@ -677,13 +710,10 @@ network, and by part (iv) the arithmetic of doing so with absolute measurements 
 one anchor per component fixes only an arbitrary offset, and every dimension after that costs one
 more measured ligand.
 
-\paragraph{Summary.} The calibrated bar supplies, for free, the null model that turns FEP
-cycle-closure into a quality-control test separating reproducible from sampling inconsistency on
-real networks, whose output reproduces on replicates it never saw and which a bar as overconfident
-as the learned $\sigma$ measured here destroys. Theorem~\ref{thm:hodge} bounds what that test, or
-any other of its kind, can be asked for: it reads a third of the error space and, on the systems
-where the comparison can be made, under one per cent of the error. The bound is the reason the
-instrument is worth calibrating and the reason its flags are not a repair list.
+\paragraph{Summary.} The calibrated bar supplies, for free, the null that turns cycle closure into
+a test separating reproducible from sampling inconsistency, and a bar as overconfident as the
+learned $\sigma$ measured here destroys it. Theorem~\ref{thm:hodge} bounds what that test, or any
+other of its kind, can be asked for, which is why its flags are not a repair list.
 
 \subsection{What survives a second replicate}\label{sec:stability}
 The benchmark ships three independent repeats, so the flag set can be recomputed rather than
@@ -888,8 +918,8 @@ is, so the flags are reported as reproducible inconsistency throughout.
 
 The test detects only \emph{edge-level} inconsistency, and neither removal rule improves accuracy
 against experiment: guided removal ties random on the four grounded systems (Stouffer $p=0.48$;
-Figure~\ref{fig:Lcausal}) and the influence rule does no better (sign test $p=0.94$;
-Figure~\ref{fig:Hodge}C).
+Figure~\ref{fig:Lcausal}) and the influence rule does no better overall and, on \texttt{p38},
+measurably worse than random removal (Section~\ref{sec:hodge}; Figure~\ref{fig:Hodge}C).
 Theorem~\ref{thm:hodge} makes both nulls structural rather than underpowered and
 Section~\ref{sec:hodge} measures the margin, but three restrictions attach to that measurement. It
 rests on four systems, all of them flagged, so it characterises the systems the test selects rather
@@ -946,23 +976,20 @@ Figure~\ref{fig:F} and $0.10$ for random, raw docking scores not being comparabl
 so the structure-directed regime is not claimed here.
 
 \section{Conclusion}\label{sec:conclusion}
-The error of a perturbation network splits in two, and the split is not a matter of degree. One
-part lives in the cycles and can be audited; the other is a difference of per-ligand offsets and is
-invisible to anything computed from the network's own numbers, at any magnitude. The two parts are
-orthogonal complements, and the division falls in an awkward place: the part that biases the
-answer is exactly the part that cannot be seen, and the part that can be seen biases nothing. On
-the public benchmark examined here the auditable part spans a third of the error space, and on the
-systems where the comparison against experiment can be made it carries under one per cent of what
-is actually wrong.
+The error of a perturbation network splits in two. One part lives in the cycles and can be audited;
+the other is a difference of per-ligand offsets and is invisible to anything computed from the
+network's own edge values, at any magnitude. The two are orthogonal complements, and the division
+falls awkwardly: the part that biases the answer is the part that cannot be seen, and the part that
+can be seen biases nothing. The splitting is not ours, but that reading of it is, and so is the
+measurement. On the public benchmark examined here it spans a third of the error space, and on
+systems grounded against experiment the auditable share of the error falls well below chance.
 
-That measurement fixes what the audit is for. Fitting a network's cycle closure against per-edge
-precisions the estimator already reports turns a descriptive consistency check into a test with a
-stated null, an operating point whose level can be measured, and an ordering of networks by how
-far their own calculations disagree with each other. The same fit says before any simulation is
-run which edges could carry evidence of an error and how large that error would have to be. What
-the test does not deliver is a repair list: removing the edges it names does not recover accuracy
-against experiment, and neither does removing the edges a rule built from the theorem itself
-prefers. Closing the remaining gap requires information the network does not contain, and paying
-for it in absolute measurements costs one ligand per dimension. Reading uncertainty off the physics
-rather than learning it is what makes the audit free; knowing what the audit cannot reach is what
-makes it honest.
+Fitting cycle closure against precisions the estimator already
+reports turns a descriptive check into a test with a stated null and an ordering of networks by how
+far their own calculations disagree, and it names beforehand the edges that lie in no cycle and so
+can carry no evidence at all. It does not deliver a repair list: removing the edges it names does not recover accuracy against
+experiment, and a rule built from the theorem does no better and on one system does harm.
+Closing that gap needs information the network does not contain, and in absolute measurements the
+worst case costs one ligand per dimension. That is a worst case: a bias smooth in chemical space
+is a far smaller object, and a noisy anchor resolves only to its own precision. Reading uncertainty
+off the physics makes the audit free; knowing its blind spot makes it honest.

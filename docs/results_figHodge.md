@@ -59,11 +59,17 @@ the permutation grid speaking, not a combined p-value, and it is reported here a
 computable rather than as a result. Clipping the inputs to the grid's own range gives
 0.962 as a sensitivity, which is not extreme in either
 direction. The residual-ranked arm has no saturated input and its Stouffer combination
-stands unchanged at 0.484. Neither rule beats random removal, and
-nothing here says the influence rule is actively harmful; the decision rule is unaffected,
-since a value that cannot be computed fails the same threshold the degenerate one did.
+stands unchanged at 0.484. The decision rule is unaffected, since a
+value that cannot be computed fails the same threshold the degenerate one did. What the
+saturation hides is read off directly below rather than through a combined p-value.
 
-This is a null, and no better than the rule it was meant to improve on. H1 explains it.
+On `p38` the influence rule is not merely null: its guided change of -0.6120 falls below every one of the 1000 random draws, so the opposite tail is at most 1/1001. That
+tail is post hoc, it is one system of four, and the magnitude is convention-dependent
+(-0.612 greedy, -0.232 one-shot); the sign survives both. The two edges removed there
+carry curl-leverage 0.099 and 0.388, so this is not the near-bridge degenerate branch.
+
+This is a null overall, and no better than the rule it was meant to improve on. H1
+explains it.
 A repair rule reads the visible part of the error, and the visible part carries a few per
 cent of what is wrong; dividing the residual by a small curl-leverage, which is what the
 influence form does, amplifies noise wherever the error is not concentrated on a single

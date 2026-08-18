@@ -245,6 +245,36 @@ Section~\ref{sec:stability} places on it. Rows are ordered by auditable fraction
 marks are recomputed from the three replicates by the same code that draws
 Figure~\ref{fig:Hodge}, not transcribed from the main text.
 
+\paragraph{The visible fraction is metric-dependent (Section~\ref{sec:hodge}).} The auditable share
+of the error against experiment is a ratio of squared norms, so it depends on the metric those
+norms are taken in, and the main text quotes it in the variance-weighted metric the closure
+statistic itself uses. Three readings of the same four sub-networks are collected here. In the
+whitened metric the visible fractions are $0.0065$, $0.0017$, $0.0086$ and $0.0460$ for
+\texttt{cdk8}, \texttt{hif2a}, \texttt{p38} and \texttt{bace}, against the $\mathrm{dof}/E$ chance
+levels $0.290$, $0.322$, $0.353$ and $0.192$. Under isotropy in kcal/mol the chance level is
+$\mathrm{tr}(\Pi W)/\mathrm{tr}(W)$ instead, giving $0.127$, $0.051$, $0.124$ and $0.092$, so the
+margins narrow to roughly $20$, $30$, $14$ and $2$ times, the last being the weakest and the one
+the main text quotes. Measured in the unweighted metric the pooled fraction rises from $0.6\%$ to
+$5.45\%$, with \texttt{p38} at $0.137$ against its $0.353$, a factor of $2.6$. Leaving out one edge
+at a time moves the per-system whitened values within $0.003$--$0.011$, $0.001$--$0.003$,
+$0.003$--$0.013$ and $0.003$--$0.063$. Every reading puts the auditable share below its own chance
+level; what changes is by how much, and the conclusion the main text draws is the weakest of them.
+
+The component column is not decorative. Six of the $48$ systems are disconnected
+(\texttt{cdk2}, \texttt{jnk1}, \texttt{mcl1}, \texttt{p38}, \texttt{ptp1b}, \texttt{thrombin}),
+each into two pieces, so the components sum to $54$: the benchmark's edge lists join congeneric
+series that share a target without joining them to each other. Nothing in the closure statistic is
+affected, since $\mathrm{dof}$ is computed as $E$ minus the incidence rank throughout and that
+rank already accounts for the extra kernel direction. Two things do change. The offset that
+Theorem~\ref{thm:hodge}(iv) says the first anchor removes is one offset \emph{per component}, so a
+disconnected system needs one anchor in each piece before any further anchor buys a dimension. And
+the grounded networks of Section~\ref{sec:hodge} inherit the same structure, \texttt{cdk8} and
+\texttt{bace} being disconnected once restricted to ligands carrying affinities. Their mean
+unsigned error against experiment is reported after a single global mean alignment, which is the
+conservative convention: aligning each component to its own experimental mean instead, which uses
+more experimental information than a prediction is entitled to, lowers the error by $0.067$ and
+$0.014$ kcal/mol respectively and leaves the two connected systems unchanged.
+
 \input{tab_auditability}
 
 \begin{figure}[t]\centering
