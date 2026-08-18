@@ -1,22 +1,22 @@
 \begin{abstract}
 A perturbation network's per-edge error splits into two orthogonal parts, and the split decides
-what any consistency check can do. One part lives in the network's cycles and can be audited; the
-other is a difference of per-ligand offsets and cannot be told from no error at all by any
-statistic computed from the network's own values, at any magnitude. The division is unfortunate
-rather than neutral: the invisible part is exactly what biases the estimated affinities, and the
-auditable part biases nothing. We give the decomposition, the per-edge share of auditability it
-implies, and the resolution below which an edge of a planned network can carry no evidence.
-Judging the audit quantitatively needs a scale. The Bennett Acceptance Ratio carries its
-finite-sampling variance in closed form, and the per-edge error bar a practitioner already
-receives is checked here against independent molecular-dynamics replicates on a large set of real
-protein-ligand binding edges. Used as the null of a cycle-closure fit it makes the check a test
-that flags a selective minority of networks, whose flags reproduce on replicates they never saw,
-where an overconfident stand-in flags almost everything. On the public benchmark examined here the
-auditable subspace spans a third of the error space, and on systems grounded against public
-affinity data it carries under one per cent of the error present. Removing the edges the test
-names does not recover accuracy against experiment, nor does removing those a rule derived from
-the decomposition prefers. The audit costs nothing beyond the calculation already under way, and
-its limits can be stated in advance.
+what any consistency check can do. One part lives in the network's cycles; the other is a
+difference of per-ligand offsets, and no statistic computed from the network's own edge values can
+tell it from no error at all. The splitting itself is a known decomposition of edge flows on a
+graph. What is not is where its two halves fall: the invisible part is exactly what biases the
+estimated affinities, and the auditable part biases nothing, so a closure test is blind where an
+error would matter and sighted where it would not. Resolving it needs measurements from outside
+the network, and we price that in ligands. Judging the audit quantitatively needs a scale. The
+Bennett Acceptance Ratio carries its finite-sampling variance in closed form, and the per-edge bar
+a practitioner already receives is checked here against independent molecular-dynamics replicates
+on many real protein-ligand binding edges. As the null of a cycle-closure fit it makes the check a
+test with a stated level, where an overconfident stand-in flags almost everything. On the public
+benchmark examined here the auditable subspace spans a third of the error space. On systems
+grounded against public affinity data it carries, as an upper bound in the variance-weighted
+metric, under one per cent of the error present, at a weakest margin over chance of two. Per-edge
+selections and the ranking of systems reproduce on replicates they never saw; the flagged list
+does not. Removing flagged edges does not recover accuracy against experiment, and on one system a
+rule derived from the split does measurable harm.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -432,13 +432,26 @@ them: the first anchor in a component removes only that component's arbitrary of
 identifiability, each further anchor buys exactly one dimension, and resolving a per-ligand bias in
 full requires an absolute measurement on every ligand.
 \end{theorem}
-The decomposition is the two-term discrete Hodge splitting of an edge field into gradient and cycle
-parts; splitting the cycle space further into curl and harmonic components would require a choice
-of two-cells and is not needed here. Part (i) is the reparametrisation invariance of the model and
-part (iii) is $\operatorname{tr}(\Pi)/E$. What the theorem contributes is not the algebra but its
-reach: the blindness is a property of the data rather than of one statistic, so it binds fixed
-hysteresis cutoffs, weighted cycle closure and any future closure-based diagnostic alike, and part
-(ii) says that blindness is aligned with harm rather than incidental to it.
+The decomposition is not new and we claim none of it. Splitting an edge field on a graph into a
+gradient part and a divergence-free part, and reading the size of the second as whether the first
+is meaningful at all, is HodgeRank~\citep{jiang2011hodgerank}, where the gradient component
+\emph{is} the global ranking being estimated and the cyclic component certifies it; a third,
+harmonic term appears there under a choice of two-cells and is not needed here. The hat-matrix and
+leverage machinery of part (ii) is likewise standard on networks of relative comparisons, where it
+already locates inconsistency in network meta-analysis~\citep{krahn2013graphical}. That the closure
+check sees only cycles is in this sense a restatement, and it matches the field's own long-standing
+reading of cycle closure as necessary and not sufficient~\citep{mey2020alchem}.
+
+Three things are added here. The first is the reading: HodgeRank estimates the gradient component,
+so it has no reason to ask what an error lying along that component does to the estimate. Part (ii)
+asks and answers it, and the answer is not the neutral one a reader might assume: the bias and the
+detectability are carried by complementary halves exactly, so a closure test is blind precisely
+where it would matter and sighted precisely where it would not. The second is part (iv), which
+prices the escape in measurements rather than leaving it qualitative. The third is the measurement
+of where a real perturbation network's error actually falls between the two halves, which is
+Section~\ref{sec:hodge} and is what the rest of this paper rests on. Parts (i) and (iii) are
+restatements in the vocabulary of alchemical networks, and we report them as such because the
+measurement is not interpretable without them.
 
 Network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as a
