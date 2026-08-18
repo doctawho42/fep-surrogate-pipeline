@@ -391,8 +391,9 @@ on edge $e$ is $h_e\mu^2/V_e^{\mathrm{rep}}$. A bridge edge (in no cycle) has $h
 undetectable at any
 $\mu$; a node-consistent (gradient) bias lies in $\mathrm{range}(H)$ and is annihilated by $\Pi$.
 The QC's blindness to node-consistent force-field bias is therefore a \emph{derived} property, not
-an assumption, and $h_e$ is a per-edge observability certificate with detectable-shift resolution
-$\delta^\ast_e=\sqrt{V_e^{\mathrm{rep}}/h_e}$.
+an assumption, and $h_e$ is a per-edge observability certificate with resolution
+$\delta^\ast_e=\sqrt{V_e^{\mathrm{rep}}/h_e}$, the shift at which the closure statistic carries
+unit noncentrality.
 \end{theorem}
 The algebra is standard and we claim none of it: $h_e=\Pi_{ee}$ is the hat-matrix leverage of the
 whitened design, its complement $w_e\Omega_e$ is the classical correspondence between leverage and
@@ -595,8 +596,8 @@ the Pearson correlation between each pair of replicates.}
 \begin{figure}[t]\centering
 \includegraphics[width=\textwidth]{figHodge_where_the_error_lives.pdf}
 \caption{\textbf{What the audit covers, and what the error does.} (A) Cumulative fraction of the
-$1143$ benchmark edges against the shift $\delta^\ast_e$ each could detect, with the bridge edges
-marked as the ceiling they impose. (B) Fraction of a system's error against experiment lying in the
+$1143$ benchmark edges against $\delta^\ast_e$, the shift at unit noncentrality, with the bridge
+edges marked as the ceiling they impose. (B) Fraction of a system's error against experiment lying in the
 auditable subspace, against the fraction an error field with no preferential alignment would show,
 on the four systems with public affinities. (C) Change in mean unsigned error against experiment
 after removing the same number of edges chosen by influence, by standardized residual, and at
@@ -613,34 +614,36 @@ Of the $1143$ edge dimensions carried by the $48$ systems with a cycle, $372$ li
 space. Two-thirds of the error space is node-consistent and therefore invisible to every
 closure-based diagnostic, this one included. Forty-eight edges are bridges, carrying no evidence
 at any magnitude. Half the remaining edges cannot resolve a shift below $0.79$ kcal/mol, and only
-$27\%$ of all $1143$ can resolve one of $0.5$; the detectable-shift resolution of the median edge is the size of
-the error the field is trying to find (Figure~\ref{fig:Hodge}A).
+$27\%$ of all $1143$ can resolve one of $0.5$ (Figure~\ref{fig:Hodge}A). Both figures flatter the
+instrument. $\delta^\ast$ is the shift at unit noncentrality and not a detection threshold: power
+there runs from $0.170$ to $0.070$ across the degrees of freedom present, and $80\%$ at
+$\alpha=0.05$ needs $2.8$ to $4.7$ times it, moving the median resolution to roughly $2.2$--$3.7$
+kcal/mol. It is also carried on the raw reported standard errors, where Section~\ref{sec:qc} puts
+the closure-relevant scale at $0.92$ of them.
 
-That is the capacity of the audit. Its reach on real error is smaller, and the comparison runs on
-different graphs from the ones just described. Experimental affinities cover part of each ligand
-set, so Figure~\ref{fig:Hodge}B is computed on the grounded sub-network of each system rather than
-on the full networks of Table~\ref{tab:auditability}. As $(N,E,c,\mathrm{dof})$ these are
+That is the capacity of the audit; its reach on real error is smaller, and measured on different
+graphs. Affinities cover part of each ligand set, so Figure~\ref{fig:Hodge}B runs on each system's
+grounded sub-network rather than on the full networks of Table~\ref{tab:auditability}. As
+$(N,E,c,\mathrm{dof})$ these are
 $(24,31,2,9)$, $(41,59,1,19)$, $(34,51,1,18)$ and $(23,26,2,5)$ for \texttt{cdk8}, \texttt{hif2a},
 \texttt{p38} and \texttt{bace}, with auditable fractions $0.290$, $0.322$, $0.353$ and $0.192$
 rather than the tabulated ones (\texttt{cdk8} is $0.46$ on its full network); two are disconnected,
 which the fit absorbs into one offset per component.
 
-On those sub-networks the fraction of the measured error against experiment lying in the auditable
-subspace is $0.6\%$ pooled, against those chance levels (Figure~\ref{fig:Hodge}B); per system it is
-$0.0065$, $0.0017$, $0.0086$ and $0.0460$, and dropping any single edge leaves each within a factor
-of three, so no one edge carries it. Both sides are measured in the variance-weighted metric the
-closure statistic lives in, and the margin over chance depends on that choice: under isotropy in
-kcal/mol it narrows to a factor of two on \texttt{bace}, and in the unweighted metric the pooled
-fraction is $5.45\%$ rather than $0.6\%$ (Supporting Information). What these support is therefore
-a bound rather than a point estimate. The auditable share of the error against experiment is small,
-at its weakest a factor of two below chance and not the two orders of magnitude the pooled figure
-alone suggests. Two properties of the measurement keep it from being an artefact. It is a near-identity rather than a fit: experimental
-affinities are per-ligand, so the experimental $\ddG$ vector is a gradient field, $\Pi\varepsilon$
-reduces to the closure residual, and the visible fraction is the closure statistic divided by the
-total squared standardized error. And it survives the obvious contaminants: recomputing it on
-medians rather than sums moves it to $0.15$--$0.68\%$, so it is not carried by a few large
-residuals, and \texttt{bace}, whose ligand set contains no enantiomer pair collapsed by the
-stereo-blind affinity join, shows it as plainly as the rest. Per-edge error against experiment runs
+On those sub-networks the auditable share of the measured error against experiment is $0.6\%$
+pooled, against those chance levels (Figure~\ref{fig:Hodge}B); per system $0.0065$, $0.0017$,
+$0.0086$ and $0.0460$, each stable to within a factor of three under leaving out any one edge. Both
+sides are measured in the variance-weighted metric the closure statistic lives in, and the margin
+over chance depends on that choice, narrowing to a factor of two on \texttt{bace} under isotropy in
+kcal/mol and the pooled fraction rising to $5.45\%$ in the unweighted metric (Supporting
+Information). What these support is a bound and not a point estimate: the auditable share is small,
+at its weakest a factor of two below chance rather than the two orders of magnitude the pooled
+figure alone suggests. Two properties keep the measurement from being an artefact. It is a near-identity rather than a
+fit: per-ligand affinities make the experimental $\ddG$ vector a gradient field, so
+$\Pi\varepsilon$ reduces to the closure residual and the visible fraction is the closure statistic
+over the total squared standardized error. And it survives the obvious contaminants, holding on
+medians rather than sums and holding on \texttt{bace}, whose ligands carry no enantiomer pair
+collapsed by the stereo-blind join (Supporting Information). Per-edge error against experiment runs
 $1.06$--$1.45$ kcal/mol at the median against reported standard errors of $0.14$--$0.40$: these
 networks are wrong by several standard errors while closing their cycles, in the one direction
 closure cannot look. What the design does not license is attribution. Experimental measurement
@@ -665,8 +668,9 @@ typical-magnitude FEP error, confirming the grounding itself is sound. On these 
 removal of the flagged high-$|z|$ edges (the same repair order as Figure~\ref{fig:Lval}A, fixing a
 removal count $K=1$--$3$ per system) does \emph{not} reduce MUE-vs-experiment more than an
 equal-size random removal (Supplementary Figure~\ref{fig:Lcausal}; per-system one-sided permutation
-$p=0.905,0.136,0.880,0.071$; combined Stouffer $p=0.48$, sign test $p=0.69$, pre-registered success
-required Stouffer $p<0.05$): two systems improve slightly over their random-null mean and two
+$p=0.905,0.136,0.880,0.071$; combined Stouffer $p=0.48$, sign test $p=0.69$; the frozen criterion
+is conjunctive, requiring Stouffer $p<0.05$ \emph{and} a guided $\Delta$MUE above the $95$th
+percentile of its own random null in a majority of grounded systems, and neither conjunct is met): two systems improve slightly over their random-null mean and two
 worsen slightly, a wash with no system individually significant. The remaining two flagged systems
 (\texttt{brd4, faah}) did not clear the coverage gate and are not included.
 
@@ -677,7 +681,8 @@ A pre-registered second rule confirms the reading and rules out the obvious esca
 ranking was simply the wrong one. Part (ii) suggests ranking edges by influence rather than by
 residual, $|z_e|\sqrt{(1-h_e)/h_e}$, the classical form that weights an edge by the bias its error
 induces instead of by its visibility. At the same removal counts it performs worse than the rule it
-was meant to replace: better on one system of four (per-system $\Delta$MUE $-0.055$, $-0.099$,
+was meant to replace, against the same conjunctive criterion: better on one system of four
+(per-system $\Delta$MUE $-0.055$, $-0.099$,
 $-0.612$, $+0.140$ kcal/mol at one-sided permutation $p=0.937$, $0.819$, $1.000$, $0.023$;
 Figure~\ref{fig:Hodge}C), at a pre-registered sign test of $p=0.94$ against the residual rule's
 $0.69$. On four systems that test attains only

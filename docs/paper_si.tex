@@ -245,6 +245,20 @@ Section~\ref{sec:stability} places on it. Rows are ordered by auditable fraction
 marks are recomputed from the three replicates by the same code that draws
 Figure~\ref{fig:Hodge}, not transcribed from the main text.
 
+\paragraph{The pre-registration, in full.} Four separate arguments in this article turn on what was
+frozen before the computation rather than chosen after it, so the file is reproduced below rather
+than described. It was committed to the article's repository before the commit that computes any of
+the quantities it governs, and it is anchored by the SHA-256 digest
+\texttt{16279af73d90e1e9b39f33046ba6ee432b80ad750a6e5687a0e05b3e54b01585}, which the test suite
+asserts on every run so that an edit after the fact fails the build. Note in particular that both
+success criteria are conjunctive, that H1 is labelled a quantification rather than a gamble and
+says why, that the confound the design cannot resolve is declared in it, and that H2 is declared a
+second look at data which had already produced one null. The quantities H3 lists as descriptive
+carry no threshold and no verdict.
+\scriptsize
+\verbatiminput{../data/openfe_replicates/hodge_prereg.yaml}
+\normalsize
+
 \paragraph{The visible fraction is metric-dependent (Section~\ref{sec:hodge}).} The auditable share
 of the error against experiment is a ratio of squared norms, so it depends on the metric those
 norms are taken in, and the main text quotes it in the variance-weighted metric the closure
@@ -257,7 +271,11 @@ margins narrow to roughly $20$, $30$, $14$ and $2$ times, the last being the wea
 the main text quotes. Measured in the unweighted metric the pooled fraction rises from $0.6\%$ to
 $5.45\%$, with \texttt{p38} at $0.137$ against its $0.353$, a factor of $2.6$. Leaving out one edge
 at a time moves the per-system whitened values within $0.003$--$0.011$, $0.001$--$0.003$,
-$0.003$--$0.013$ and $0.003$--$0.063$. Every reading puts the auditable share below its own chance
+$0.003$--$0.013$ and $0.003$--$0.063$. Recomputing the ratio on medians rather than sums, which
+removes any dependence on a few large residuals, gives $0.0034$, $0.0068$, $0.0052$ and $0.0015$,
+the same order throughout; and \texttt{bace}, the one grounded system whose ligand set contains no
+enantiomer pair collapsed by the stereo-blind affinity join, shows the effect as plainly as the
+three that do. Every reading puts the auditable share below its own chance
 level; what changes is by how much, and the conclusion the main text draws is the weakest of them.
 
 The component column is not decorative. Six of the $48$ systems are disconnected
