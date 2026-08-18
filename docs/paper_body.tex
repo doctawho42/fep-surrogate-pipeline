@@ -1,22 +1,22 @@
 \begin{abstract}
-A thermodynamic cycle in a perturbation network must close, and how far it fails to close is
-routinely reported as a diagnostic without a scale to judge it against. We supply that scale from
-the calculation itself. The Bennett Acceptance Ratio estimator that turns simulation output into a
-free energy carries its own finite-sampling variance in closed form, and the per-edge error bar a
-practitioner already receives from that family of estimators is checked here against independent
-molecular-dynamics replicates on a large set of real protein-ligand binding edges. Used as the
-null for cycle closure, it converts the check into a test that flags a selective minority of
-networks. Those replicates share their starting coordinates, so a flag establishes inconsistency
-reproducing beyond sampling noise rather than physical error, and the ranking behind the flags is
-steadier than the list of names flagged at any fixed threshold. Miscalibration measured on one set
-of replicates predicts the closure statistic of a replicate it never saw, which shows how much of
-that statistic is a readout of how well the bars are scaled. An overconfident stand-in for the
-error bar destroys the test, flagging almost every network. The same fit says in advance which
-edges of a planned network can carry evidence at all and how large an error each would need before
-closure could see it. Audited across further uses, the calibrated bar sharpens no interval,
-changes no ranking and improves no reward-guided re-ranking. Its demonstrated value on real data
-is detection; trust and stopping pay in controlled simulation that does not consume the physics
-variance.
+A perturbation network's per-edge error splits into two orthogonal parts, and the split decides
+what any consistency check can do. One part lives in the network's cycles and can be audited; the
+other is a difference of per-ligand offsets and cannot be told from no error at all by any
+statistic computed from the network's own values, at any magnitude. The division is unfortunate
+rather than neutral: the invisible part is exactly what biases the estimated affinities, and the
+auditable part biases nothing. We give the decomposition, the per-edge share of auditability it
+implies, and the resolution below which an edge of a planned network can carry no evidence.
+Judging the audit quantitatively needs a scale. The Bennett Acceptance Ratio carries its
+finite-sampling variance in closed form, and the per-edge error bar a practitioner already
+receives is checked here against independent molecular-dynamics replicates on a large set of real
+protein-ligand binding edges. Used as the null of a cycle-closure fit it makes the check a test
+that flags a selective minority of networks, whose flags reproduce on replicates they never saw,
+where an overconfident stand-in flags almost everything. On the public benchmark examined here the
+auditable subspace spans a third of the error space, and on systems grounded against public
+affinity data it carries under one per cent of the error present. Removing the edges the test
+names does not recover accuracy against experiment, nor does removing those a rule derived from
+the decomposition prefers. The audit costs nothing beyond the calculation already under way, and
+its limits can be stated in advance.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -65,48 +65,57 @@ statistical estimator whose finite-sampling variance has a closed-form expressio
 is a property of the estimator, not of the surrogate, and is computed from the same simulation
 output that produces the free-energy estimate, with no additional training data.
 
-This work takes that closed form as the uncertainty a screening pipeline should report. The
-question that raises is not whether such a computed error bar is theoretically correct, which
-follows from standard estimation theory, but whether it is trustworthy in practice, and where
-that trustworthiness changes a decision. We check the first directly, against independent
-simulation replicates on a large set of real protein-ligand binding calculations. The answer to
-the second is a quality-control instrument: fitting the thermodynamic cycle closure of a
-perturbation network with these calibrated bars flags networks whose simulations disagree with
-each other by more than sampling noise can explain, and the same fit says in advance which edges
-of the network can carry evidence at all. The instrument consumes the variance as a plain number.
-Packaging the same closed form as a differentiable layer, at the cost of the point estimate, is
-what carries the quantity into a surrogate and into an acquisition rule; the experiments reported
-here consume it as a number and as a graph weight.
+This work takes that closed form as the uncertainty a screening pipeline should report, and checks
+it against independent simulation replicates on a large set of real protein-ligand binding
+calculations. What the calibrated bar then buys is a quality-control instrument. A perturbation
+network must close its thermodynamic cycles, and how far it fails to close them is already
+reported as a diagnostic; fitting that closure against per-edge precisions turns the diagnostic
+into a test with a stated null, one that flags networks whose simulations disagree with each other
+by more than sampling noise can explain.
+
+The instrument raises a question that has not been asked of the diagnostic it replaces: what can a
+cycle see. The answer is a decomposition. Per-edge error decomposes uniquely into a part carried by
+the network's cycles and a part that is a difference of per-ligand offsets, the two are orthogonal,
+and only the first is identifiable from the network's own values. The second is invisible to every
+diagnostic of this kind, at any magnitude, and it is the part that biases the estimated
+affinities. That result bounds the instrument, explains which of its uses pay and which do not, and
+is measurable: we report how much of the benchmark is auditable, and how much of the error real
+networks make against experiment falls where an audit could act on it.
 
 This paper makes the following contributions.
 \begin{itemize}
+\item A decomposition of a perturbation network's per-edge error into an auditable part carried by
+its cycles and a part that is a difference of per-ligand offsets. The second is unidentifiable from
+the network's own values at any magnitude, and it is the part that biases the estimated affinities,
+while the first biases nothing. The per-edge share of auditability, the shift each edge would need
+before a closure test could see it, and the number of absolute measurements needed to resolve the
+rest all follow from the same algebra.
+\item A measurement of both quantities on a public replicate benchmark. The auditable subspace
+spans a third of the error space; on the systems that can be grounded against public affinity data
+it carries under one per cent of the error present. Two removal rules fail to improve accuracy
+against experiment, the second of them derived from the decomposition itself.
 \item A per-edge error bar for a relative binding free energy read off a closed-form expression,
 the sandwich variance of the Bennett Acceptance Ratio estimator, rather than learned, and
 characterised against independent simulation replicates on real protein-ligand binding data.
 \item A quality-control instrument built on that bar. Fitting thermodynamic cycle closure with
 calibrated per-edge nulls separates the reproducible part of a network's inconsistency from
-ordinary sampling noise, and
-what it identifies reproduces on replicates it never saw. A conservation law between estimation
-and detection turns the same fit into a per-edge observability map that says, before anything is
-run, which edges of a network can carry evidence at all.
+ordinary sampling noise, what it identifies reproduces on replicates it never saw, and a bar as
+overconfident as a learned one destroys the separation.
 \item An applicability map across interval sharpness, edge ranking, synthesis-commit selection
 and reward-guided re-ranking, which finds this calibrated uncertainty valuable for detection,
 and, in controlled simulation only, for trust in a commit decision and for a
 stopping rule; and for nothing sharper or better ranked.
 \item The same closed form as an autograd primitive whose backward pass costs a single division,
-verified against finite differences, so the variance can be propagated through a surrogate at the
-cost of the point estimate. The experiments reported here consume it as a number and as a
-graph weight.
-\item That per-edge variance as the conductance of a measurement graph, producing an acquisition
-weight whose knowledge gradient is exactly zero along every gauge-redundant direction of that
-graph.
+and as the conductance of a measurement graph whose knowledge gradient is exactly zero along every
+gauge-redundant direction.
 \end{itemize}
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} places this
 work against prior free-energy estimators, learned uncertainty, equivariant trunks, and
 acquisition methods. Section~\ref{sec:bar} gives the closed-form sandwich variance and its
 replicate validation. Section~\ref{sec:qc} presents the calibrated cycle-closure quality-control
-test on real binding data, its observability map, and what survives a second replicate.
+test on real binding data, the decomposition that bounds it, the measurement of where real error
+falls against that bound, and what survives a second replicate.
 Section~\ref{sec:audit} maps where the calibrated uncertainty helps downstream learning and where
 it does not. Section~\ref{sec:methods} gives the data, the estimators, the models and the
 simulations behind every number reported above. Section~\ref{sec:limitations} collects the
@@ -412,6 +421,39 @@ curl-leverage does not additionally predict the \emph{location} of reproducible 
 (studentized Spearman $\rho=-0.073$, permutation $p=0.9571$, not significant; Supplementary
 Figure~\ref{fig:Lev}), so we claim only the structural certificate.
 
+Theorem~\ref{thm:cons} is the diagonal of a statement about the whole error space, and the whole
+statement is what bounds the method. Write the per-edge systematic error as a vector $\mu$ over the
+$E$ edges. Whitening and projecting splits it, orthogonally and uniquely, into a part that lies in
+the cycle space and a part that is a difference of per-ligand offsets.
+
+\begin{theorem}[Auditable and unauditable error]\label{thm:hodge}
+In the model $y=A\varphi+\mu+\varepsilon$ with $A$ the signed incidence matrix of a network of $N$
+ligands, $E$ edges and $c$ components, and $\varphi$ unknown:
+\emph{(i)} for every $\delta$, the parameter pairs $(\varphi,\mu)$ and $(\varphi+\delta,\mu-A\delta)$
+induce the same distribution of $y$, so $\mu$ is identifiable only through $\Pi\tilde\mu$. The
+auditable subspace has dimension $\mathrm{dof}=E-N+c$ and its orthogonal complement, the gradient
+fields $\mu_e=b_j-b_i$, has dimension $N-c$ and is unidentifiable: no statistic computed from a
+network's own edge values distinguishes a per-ligand bias from no bias, at any magnitude.
+\emph{(ii)} The bias such an error induces in the fitted potentials, $(\tilde A^\top\tilde
+A)^{+}\tilde A^\top\tilde\mu$, depends only on the gradient part, while the closure noncentrality
+$\|\Pi\tilde\mu\|^2$ depends only on the cycle part. What the test can see and what corrupts the
+answer are exact orthogonal complements.
+\emph{(iii)} For an error field with no preferential alignment, the expected visible fraction
+$\|\Pi\tilde\mu\|^2/\|\tilde\mu\|^2$ is $\mathrm{dof}/E$.
+\emph{(iv)} Given absolute measurements on a set $S$ of ligands, the unidentifiable dimension is
+$(N-|S|)-c_{\mathrm{free}}(S)$, with $c_{\mathrm{free}}$ the number of components holding none of
+them: the first anchor in a component removes only that component's arbitrary offset and buys no
+identifiability, each further anchor buys exactly one dimension, and resolving a per-ligand bias in
+full requires an absolute measurement on every ligand.
+\end{theorem}
+The decomposition is the two-term discrete Hodge splitting of an edge field into gradient and cycle
+parts; splitting the cycle space further into curl and harmonic components would require a choice
+of two-cells and is not needed here. Part (i) is the reparametrisation invariance of the model and
+part (iii) is $\operatorname{tr}(\Pi)/E$. What the theorem contributes is not the algebra but its
+reach: the blindness is a property of the data rather than of one statistic, so it binds fixed
+hysteresis cutoffs, weighted cycle closure and any future closure-based diagnostic alike, and part
+(ii) says that blindness is aligned with harm rather than incidental to it.
+
 Network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as a
 diagnostic~\citep{wang2015fep,cui2020hysteresis}, weighted cycle closure~\citep{li2023wcc}, and the
@@ -565,7 +607,48 @@ the Pearson correlation between each pair of replicates.}
 \label{fig:Lval}
 \end{figure}
 
-\paragraph{Grounding against experiment, and where the flags stop helping.} On \texttt{eg5}, whose ligands
+\begin{figure}[t]\centering
+\includegraphics[width=\textwidth]{figHodge_where_the_error_lives.pdf}
+\caption{\textbf{What the audit covers, and what the error does.} (A) Cumulative fraction of the
+$1143$ benchmark edges against the shift $\delta^\ast_e$ each could detect, with the bridge edges
+marked as the ceiling they impose. (B) Fraction of a system's error against experiment lying in the
+auditable subspace, against the fraction an error field with no preferential alignment would show,
+on the four systems with public affinities. (C) Change in mean unsigned error against experiment
+after removing the same number of edges chosen by influence, by standardized residual, and at
+random.}
+\label{fig:Hodge}
+\end{figure}
+
+\subsection{Where the error is, and why removing edges cannot reach it}\label{sec:hodge}
+Theorem~\ref{thm:hodge} makes two quantities measurable that were previously matters of
+assumption: how much of a network is auditable at all, and how much of its real error the audit
+can reach. Both are answered on this benchmark in Figure~\ref{fig:Hodge}.
+
+Of the $1143$ edge dimensions carried by the $48$ systems with a cycle, $372$ lie in the cycle
+space. Two-thirds of the error space is node-consistent and therefore invisible to every
+closure-based diagnostic, this one included. Forty-eight edges are bridges, carrying no evidence
+at any magnitude. Half the remaining edges cannot resolve a shift below $0.79$ kcal/mol, and only
+$27\%$ can resolve one of $0.5$; the detectable-shift resolution of the median edge is the size of
+the error the field is trying to find (Figure~\ref{fig:Hodge}A).
+
+That is the capacity of the audit. Its reach on real error is smaller. On the four systems grounded
+against experiment below, the fraction of the measured error against experiment that lies in the
+auditable subspace is $0.6\%$ pooled, and between four and $187$ times below the $\mathrm{dof}/E$
+level an unaligned error field would show (Figure~\ref{fig:Hodge}B). Two properties of the
+measurement keep it from being an artefact. It is a near-identity rather than a fit: experimental
+affinities are per-ligand, so the experimental $\ddG$ vector is a gradient field, $\Pi\varepsilon$
+reduces to the closure residual, and the visible fraction is the closure statistic divided by the
+total squared standardized error. And it survives the obvious contaminants: recomputing it on
+medians rather than sums moves it to $0.15$--$0.68\%$, so it is not carried by a few large
+residuals, and \texttt{bace}, whose ligand set contains no enantiomer pair collapsed by the
+stereo-blind affinity join, shows it as plainly as the rest. Per-edge error against experiment runs
+$1.06$--$1.45$ kcal/mol at the median against reported standard errors of $0.14$--$0.40$: these
+networks are wrong by several standard errors while closing their cycles, in the one direction
+closure cannot look. What the design does not license is attribution. Experimental measurement
+error and the annotation join are per-ligand, hence gradient fields too, so what is established is
+that the dominant part of the error is node-consistent, not that it is force-field bias.
+
+On \texttt{eg5}, whose ligands
 carry ChEMBL identifiers, the network $\ddG$ (from the same GLS fit) agrees with real KIF11
 experimental affinity~\citep{zdrazil2024chembl} at a mean unsigned error (MUE) of $0.79$ kcal/mol ($95\%$ bootstrap CI
 $[0.59,0.97]$, conditional on the fitted network; Pearson $R=0.65$ $[0.30,0.83]$, $p{\approx}2{\times}10^{-4}$, $n=28$), and its clean cycle-closure reduced
@@ -585,17 +668,37 @@ removal count $K=1$--$3$ per system) does \emph{not} reduce MUE-vs-experiment mo
 equal-size random removal (Supplementary Figure~\ref{fig:Lcausal}; per-system one-sided permutation
 $p=0.905,0.136,0.880,0.071$; combined Stouffer $p=0.48$, sign test $p=0.69$, pre-registered success
 required Stouffer $p<0.05$): two systems improve slightly over their random-null mean and two
-worsen slightly, a wash with no system individually significant. This is the now
-experiment-grounded, multi-system generalization of the \texttt{eg5} result above, not a
-contradiction of the QC's value: cycle closure tests \emph{edge-level} consistency and is
-blind to node-consistent force-field bias, which a smooth
-per-ligand offset cancels around any cycle, and it is exactly that bias that dominates residual
-MUE-vs-experiment on real, flagged, multi-system data. The remaining two flagged systems
+worsen slightly, a wash with no system individually significant. The remaining two flagged systems
 (\texttt{brd4, faah}) did not clear the coverage gate and are not included.
 
-\paragraph{Summary.} The calibrated bar supplies, for free, the null
-model that turns FEP cycle-closure into a quality-control test that separates reproducible from sampling inconsistency on real networks and whose output reproduces on replicates it never saw, the sharpest use of the free calibration, and one a bar as overconfident as the
-learned $\sigma$ measured here destroys.
+That null is what Theorem~\ref{thm:hodge} predicts and what the paragraph above measures. A removal
+rule reads the visible part of the error; the visible part carries under one per cent of what is
+wrong with these networks, and by part (ii) it is the part that biases the fitted potentials least.
+A pre-registered second rule confirms the reading and rules out the obvious escape, that the
+ranking was simply the wrong one. Part (ii) suggests ranking edges by influence rather than by
+residual, $|z_e|\sqrt{(1-h_e)/h_e}$, the classical form that weights an edge by the bias its error
+induces instead of by its visibility. At the same removal counts it performs worse than the rule it
+was meant to replace (Stouffer $p=1.00$ against $0.48$; better on one system of four; paired sign
+$p=0.94$; Figure~\ref{fig:Hodge}C). The reason is the same measurement: the influence form divides a
+residual by a small curl-leverage to recover the error of a single anomalous edge, and a smooth
+per-ligand field is not concentrated on any edge, so the division returns amplified noise.
+
+The consequence for practice is a change of use rather than an abandonment. A flag remains a
+system-level signal that a protocol has produced results inconsistent beyond sampling, and that
+signal reproduces across replicates. It is not a repair target: deleting the edges it names cannot
+recover accuracy against experiment, because accuracy against experiment is set by a component the
+audit is blind to by construction. Reaching that component needs information from outside the
+network, and by part (iv) the arithmetic of doing so with absolute measurements is unforgiving:
+one anchor per component fixes only an arbitrary offset, and every dimension after that costs one
+more measured ligand.
+
+\paragraph{Summary.} The calibrated bar supplies, for free, the null model that turns FEP
+cycle-closure into a quality-control test separating reproducible from sampling inconsistency on
+real networks, whose output reproduces on replicates it never saw and which a bar as overconfident
+as the learned $\sigma$ measured here destroys. Theorem~\ref{thm:hodge} bounds what that test, or
+any other of its kind, can be asked for: it reads a third of the error space and, on the systems
+where the comparison can be made, under one per cent of the error. The bound is the reason the
+instrument is worth calibrating and the reason its flags are not a repair list.
 
 \subsection{What survives a second replicate}\label{sec:stability}
 The benchmark ships three independent repeats, so the flag set can be recomputed rather than
@@ -895,7 +998,7 @@ neither establishes physical error, and the flags are reported as reproducible i
 throughout. The
 gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
 single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
-should be tested across more chemotypes. The single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively against held-out replicates and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), confirming the same scope boundary on real, flagged, multi-system data: what the QC has been shown to reach is internal edge-level consistency, not force-field-limited absolute accuracy. This retrospective test is powered only by $K=1$--$3$ guided removals per system and by a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity); a real but small effect could be underpowered at this $n=4$. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, lies outside what public data can support. The distribution-free cross-replicate check establishes that what is flagged reproduces across independent runs, but it is not a quantitative false-positive-rate guarantee: it does not certify the nominal Benjamini--Hochberg rate itself. The detector's \emph{recall} cannot be measured directly, since there are no ground-truth error
+should be tested across more chemotypes. The single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively against held-out replicates and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), and where a pre-registered second rule ranking edges by influence rather than by residual does worse still ($p=1.00$; Figure~\ref{fig:Hodge}C). Theorem~\ref{thm:hodge} says both nulls are structural rather than underpowered, and Section~\ref{sec:hodge} measures the margin: under one per cent of the error against experiment lies where a removal rule could act on it. Three restrictions attach to that measurement. It rests on four systems, all of them flagged, so it characterises the systems the test selects rather than the benchmark. It runs on a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity), and the experimental and annotation errors it carries are per-ligand quantities that enter the same unauditable subspace as force-field bias, so the measurement locates the error without attributing it. And the influence rule is a second pre-registered hypothesis on the data that returned the first null, reported as a second look rather than as independent confirmation. The theorem itself bounds only what a network's own edge values can support, and says nothing against methods that bring in information from outside the network. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, lies outside what public data can support. The distribution-free cross-replicate check establishes that what is flagged reproduces across independent runs, but it is not a quantitative false-positive-rate guarantee: it does not certify the nominal Benjamini--Hochberg rate itself. The detector's \emph{recall} cannot be measured directly, since there are no ground-truth error
 labels. Replacing each system's reported standard error by its own replicate-measured
 calibration, applied in whichever direction the measurement points rather than only the
 conservative one, changes the flag set in both directions and by an amount that depends on the
@@ -934,20 +1037,23 @@ raw docking scores not being comparable across pockets; the structure-directed r
 accordingly not claimed here.
 
 \section{Conclusion}\label{sec:conclusion}
-A perturbation network can be audited with numbers its own protocol already produces. The
-estimator that converts simulation output into a free energy also reports how precise that
-conversion was, and fitting a network's cycle closure against those per-edge precisions turns a
-descriptive consistency check into a test with a stated null. The same fit answers a question that
-belongs before any simulation is run rather than after: which edges of a planned network could
-carry evidence of an error at all, and how large an error each would have to carry before the
-check could see it. Edges lying in no cycle are invisible to it at any magnitude, and the
-resolution of the rest follows from the topology and the reported precisions together.
+The error of a perturbation network splits in two, and the split is not a matter of degree. One
+part lives in the cycles and can be audited; the other is a difference of per-ligand offsets and is
+invisible to anything computed from the network's own numbers, at any magnitude. The two parts are
+orthogonal complements, and the division falls in an awkward place: the part that biases the
+answer is exactly the part that cannot be seen, and the part that can be seen biases nothing. On
+the public benchmark examined here the auditable part spans a third of the error space, and on the
+systems where the comparison against experiment can be made it carries under one per cent of what
+is actually wrong.
 
-The instrument measures internal consistency, which is not agreement with experiment; acting on
-its flags repairs the first and leaves the second where it was. What it delivers on real data is
-an ordering of networks by how far their own calculations disagree with each other, together with
-a stated operating point and a map of what that operating point cannot reach. Trust in a commit
-decision and a stopping rule for an acquisition loop both pay in simulation, and neither is
-exercised here on the variance the rest of this paper is about. The ordering costs nothing beyond
-the calculation already being run, which is the argument for reading uncertainty off the physics
-instead of learning it.
+That measurement fixes what the audit is for. Fitting a network's cycle closure against per-edge
+precisions the estimator already reports turns a descriptive consistency check into a test with a
+stated null, an operating point whose level can be measured, and an ordering of networks by how
+far their own calculations disagree with each other. The same fit says before any simulation is
+run which edges could carry evidence of an error and how large that error would have to be. What
+the test does not deliver is a repair list: removing the edges it names does not recover accuracy
+against experiment, and neither does removing the edges a rule built from the theorem itself
+prefers. Closing the remaining gap requires information the network does not contain, and paying
+for it in absolute measurements costs one ligand per dimension. Reading uncertainty off the physics
+rather than learning it is what makes the audit free; knowing what the audit cannot reach is what
+makes it honest.
