@@ -160,7 +160,14 @@ bars, for the same four policies.}
 \label{fig:C}
 \end{figure}
 
-\paragraph{Gauge-aware acquisition (Figure~\ref{fig:D}).} The Fisher--resistance Laplacian
+\paragraph{Gauge-aware acquisition (Figure~\ref{fig:D}).} A controlled simulation
+(Supplementary Figure~\ref{fig:D}) shows the knowledge gradient on the all-ones gauge contrast is
+$10^{-21}$ (exact zero, an identifiability statement that transfers structurally to multi-target
+networks), and that a gauge-\emph{unaware} acquisition wastes budget resolving a
+decision-irrelevant cross-cluster offset, reaching the within-target top-$k$ at regret $0.27$
+where the gauge-aware one reaches $0.01$.
+
+ The Fisher--resistance Laplacian
 (Theorem~\ref{thm:fr}) makes the knowledge gradient exactly zero on gauge (all-ones) contrasts; a
 controlled simulation confirms $\mathrm{KG}=10^{-21}$ there and shows a gauge-\emph{unaware}
 acquisition wastes budget resolving a decision-irrelevant cross-cluster offset (within-target

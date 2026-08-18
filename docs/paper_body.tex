@@ -1,23 +1,22 @@
 \begin{abstract}
-We turn a routine thermodynamic consistency check into a calibrated diagnostic for relative
-binding free energy calculations. The Bennett Acceptance Ratio estimator that turns simulation
-output into a free energy carries its own finite-sampling variance in closed form, computed from
-the work samples rather than learned. The per-edge error bar a practitioner receives from that
-family of estimators is validated against independent molecular-dynamics replicates on a large set
-of real protein-ligand binding edges and found trustworthy against sampling and convergence noise.
-Its sharpest use is detection: fitting cycle closure with these calibrated bars turns an ordinary
-consistency check into a quality-control test that flags a selective minority of perturbation
-networks. Miscalibration measured on one set of replicates predicts the closure statistic of a
-replicate it never saw. Those replicates share their starting coordinates, so what is established
-is inconsistency reproducing beyond sampling noise rather than physical error, and the ranking
-behind the flags is steadier than the list of names flagged at a fixed threshold. An overconfident
-stand-in for that error bar, built from a learned head's measured miscalibration rather than by
-running the head here, destroys the test: it flags almost every network, leaving nothing
-unflagged to act on. The detector consumes the variance as a plain number; the same closed form is
-differentiable at negligible cost and weights a gauge-invariant acquisition graph. Audited
-further, the calibrated bar sharpens no interval, changes no ranking and improves no
-reward-guided re-ranking; its value is confined to detection, commit trust and stopping. Reading uncertainty off the physics is a decision and
-quality-control instrument, not a performance multiplier.
+A thermodynamic cycle in a perturbation network must close, and how far it fails to close is
+routinely reported as a diagnostic without a scale to judge it against. We supply that scale from
+the calculation itself. The Bennett Acceptance Ratio estimator that turns simulation output into a
+free energy carries its own finite-sampling variance in closed form, and the per-edge error bar a
+practitioner already receives from that family of estimators is checked here against independent
+molecular-dynamics replicates on a large set of real protein-ligand binding edges. Used as the
+null for cycle closure, it converts the check into a test that flags a selective minority of
+networks. Those replicates share their starting coordinates, so a flag establishes inconsistency
+reproducing beyond sampling noise rather than physical error, and the ranking behind the flags is
+steadier than the list of names flagged at any fixed threshold. Miscalibration measured on one set
+of replicates predicts the closure statistic of a replicate it never saw, which shows how much of
+that statistic is a readout of how well the bars are scaled. An overconfident stand-in for the
+error bar destroys the test, flagging almost every network. The same fit says in advance which
+edges of a planned network can carry evidence at all and how large an error each would need before
+closure could see it. Audited across further uses, the calibrated bar sharpens no interval,
+changes no ranking and improves no reward-guided re-ranking. Its demonstrated value on real data
+is detection; trust and stopping pay in controlled simulation that does not consume the physics
+variance.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -92,7 +91,8 @@ and detection turns the same fit into a per-edge observability map that says, be
 run, which edges of a network can carry evidence at all.
 \item An applicability map across interval sharpness, edge ranking, synthesis-commit selection
 and reward-guided re-ranking, which finds this calibrated uncertainty valuable for detection,
-commit trust and stopping decisions, and for nothing sharper or better ranked.
+and, in controlled simulation only, for trust in a commit decision and for a
+stopping rule; and for nothing sharper or better ranked.
 \item The same closed form as an autograd primitive whose backward pass costs a single division,
 verified against finite differences, so the variance can be propagated through a surrogate at the
 cost of the point estimate. The experiments reported here consume it as a number and as a
@@ -107,7 +107,6 @@ work against prior free-energy estimators, learned uncertainty, equivariant trun
 acquisition methods. Section~\ref{sec:bar} gives the closed-form sandwich variance and its
 replicate validation. Section~\ref{sec:qc} presents the calibrated cycle-closure quality-control
 test on real binding data, its observability map, and what survives a second replicate.
-Section~\ref{sec:gauge} turns the same variance into a gauge-aware acquisition weight.
 Section~\ref{sec:audit} maps where the calibrated uncertainty helps downstream learning and where
 it does not. Section~\ref{sec:methods} gives the data, the estimators, the models and the
 simulations behind every number reported above. Section~\ref{sec:limitations} collects the
@@ -311,6 +310,32 @@ least eight edges (Section~\ref{sec:methods}). These are systems, not distinct p
 \label{fig:Arep}
 \end{figure}
 
+\begin{theorem}[Fisher--resistance correspondence]\label{thm:fr}
+For relative measurements $y_e=(\varphi_j-\varphi_i)+\varepsilon_e$,
+$\varepsilon_e\sim\mathcal N(0,V_e^{\mathrm{true}})$ with $V_e^{\mathrm{true}}=B_e/I_e^2$, the
+Gaussian posterior precision of
+the node potentials is the weighted Laplacian $L=\sum_e w_e(e_i-e_j)(e_i-e_j)^\top$ with
+conductances $w_e=1/V_e^{\mathrm{true}}=I_e^2/B_e$. Contrast variance equals effective
+resistance~\citep{klein1993resistance}, a single edge recovers $V_e^{\mathrm{true}}$,
+Sherman--Morrison gives
+$O(1)$ acquisition updates, and $\ker L\supseteq\mathrm{span}\{\mathbf 1\}$, so the knowledge
+gradient (KG)~\citep{frazier2008kg} is exactly zero on gauge/redundant directions: the acquisition is
+automatically gauge-invariant.
+\end{theorem}
+The edge weights are the inverse sandwich variances, the readout of Section~\ref{sec:bar}
+entering the decision layer; the acquisition model identifies the reported variance with the true
+one ($c_e=1$), which is the assumption the replicate validation of Section~\ref{sec:bar} tests
+rather than one this section adds. The gauge-zero property is structural: KG$=0$ on gauge directions
+follows from the kernel inclusion alone, so it does not depend on the weight \emph{value}, and by
+Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). For a \emph{connected}
+network the inclusion is an equality, $\ker L=\mathrm{span}\{\mathbf 1\}$, for any positive
+conductances, and the overall additive offset is then the only unidentifiable direction; a network
+with $k$ components has a $k$-dimensional kernel, one offset per component. The
+Laplacian-precision and resistance-distance machinery is classical generalized least squares (GLS)
+on graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the
+\emph{sandwich} precision $I_e^2/B_e$ as the conductance, not raw overlap, and the automatic
+gauge-invariance of the acquisition.
+
 \section{Calibrated cycle-closure quality control}\label{sec:qc}
 The capability this paper demonstrates is the separation of the \emph{reproducible} part of a
 perturbation network's edge-level inconsistency from its \emph{sampling noise}, using the bar of
@@ -331,7 +356,7 @@ does not bind a goodness-of-fit test, whose statistic depends on the weights dir
 \paragraph{A calibrated cycle-closure test.} A perturbation network must close its cycles: the
 signed sum of $\ddG$ around any loop is zero in expectation. Fitting node potentials by
 generalized least squares with conductances $w_e=1/V_e^{\mathrm{rep}}$, which
-Theorem~\ref{thm:fr} (Section~\ref{sec:gauge}) identifies
+Theorem~\ref{thm:fr} identifies
 with the sandwich precision $I_e^2/B_e$ whenever the work samples are available (on this benchmark
 they are not released, so $V_e^{\mathrm{rep}}$ is the reported per-edge variance composed from the
 two legs, Section~\ref{sec:methods}),
@@ -596,10 +621,12 @@ miscalibration measured from replicates two and three predicts the closure stati
 replicate they exclude: with $V_e^{\mathrm{rep}}=c_e^2V_e^{\mathrm{true}}$ as above,
 Theorem~\ref{thm:cons} makes
 $\mathbb{E}[\chi^2_\nu]$ the curl-leverage-weighted mean of $c_e^{-2}$, and that prediction
-correlates with the observed per-system $\chi^2_\nu$ at Spearman $0.648$ ($n=48$). Both sides divide by the same reported variance, so the reference is not zero: under a simulation with no systematic error anywhere the same statistic returns $0.059$ with a $95\%$ upper limit of $0.364$, and $0.648$ exceeds every one of $200$ draws (Supplementary Figure~\ref{fig:OOS}A). The aggregate level agrees less well: the predicted $\mathbb{E}[\chi^2_\nu]=0.85$ $[0.63,1.08]$ sits below the observed degree-of-freedom-weighted value of $1.32$ $[0.81,1.80]$, and the two intervals overlap without the prediction covering the observation. This is a quantitative point prediction of a
-per-system statistic from data that do not enter it. The flagged systems sit \emph{above} the
-line, which is what any reproducible offset does: it inflates a closure residual
-without inflating the spread between repeats. Being reproducible across repeats that share a
+correlates with the observed per-system $\chi^2_\nu$ at Spearman $0.648$ ($n=48$). Both sides divide by the same reported variance, so the reference is not zero: under a simulation with no systematic error anywhere the same statistic returns $0.059$ with a $95\%$ upper limit of $0.364$, and $0.648$ exceeds every one of $200$ draws (Supplementary Figure~\ref{fig:OOS}A). The aggregate level agrees less well: the predicted $\mathbb{E}[\chi^2_\nu]=0.85$ $[0.63,1.08]$ sits below the observed degree-of-freedom-weighted value of $1.32$ $[0.81,1.80]$, and the two intervals overlap without the prediction covering the observation. What this establishes is narrower than it first reads. The prediction is built entirely from
+measured miscalibration, so a rank agreement of this size says that the closure statistic largely
+reads out how well each system's bars are scaled. It is a statement about what the test responds
+to, not evidence that the flagged systems are in error. The flagged systems do sit \emph{above}
+the line, which is what any reproducible offset does: it inflates a closure residual without
+inflating the spread between repeats. Being reproducible across repeats that share a
 starting structure is what places a system above the line, and that is weaker than being in error.
 
 Second, edges selected on one replicate are more inconsistent on the two held out than
@@ -612,38 +639,6 @@ above nominal. Only the consistency-gain statistic is specific to the flagged sy
 $|z|$-rank-matched control drawn from unflagged systems reproduces the leverage-normalised
 residual signal but not the consistency gain. The effect is an aggregate one, significant
 individually in two of the five testable systems.
-
-\section{Gauge-aware acquisition}\label{sec:gauge}
-\begin{theorem}[Fisher--resistance correspondence]\label{thm:fr}
-For relative measurements $y_e=(\varphi_j-\varphi_i)+\varepsilon_e$,
-$\varepsilon_e\sim\mathcal N(0,V_e^{\mathrm{true}})$ with $V_e^{\mathrm{true}}=B_e/I_e^2$, the
-Gaussian posterior precision of
-the node potentials is the weighted Laplacian $L=\sum_e w_e(e_i-e_j)(e_i-e_j)^\top$ with
-conductances $w_e=1/V_e^{\mathrm{true}}=I_e^2/B_e$. Contrast variance equals effective
-resistance~\citep{klein1993resistance}, a single edge recovers $V_e^{\mathrm{true}}$,
-Sherman--Morrison gives
-$O(1)$ acquisition updates, and $\ker L\supseteq\mathrm{span}\{\mathbf 1\}$, so the knowledge
-gradient (KG)~\citep{frazier2008kg} is exactly zero on gauge/redundant directions: the acquisition is
-automatically gauge-invariant.
-\end{theorem}
-The edge weights are the inverse sandwich variances, the readout of Section~\ref{sec:bar}
-entering the decision layer; the acquisition model identifies the reported variance with the true
-one ($c_e=1$), which is the assumption the replicate validation of Section~\ref{sec:bar} tests
-rather than one this section adds. The gauge-zero property is structural: KG$=0$ on gauge directions
-follows from the kernel inclusion alone, so it does not depend on the weight \emph{value}, and by
-Gauss--Markov the value does not improve ranking (Section~\ref{sec:audit}). For a \emph{connected}
-network the inclusion is an equality, $\ker L=\mathrm{span}\{\mathbf 1\}$, for any positive
-conductances, and the overall additive offset is then the only unidentifiable direction; a network
-with $k$ components has a $k$-dimensional kernel, one offset per component. The
-Laplacian-precision and resistance-distance machinery is classical generalized least squares (GLS)
-on graphs and the resistance distance of \citet{klein1993resistance}; what is specific here is the
-\emph{sandwich} precision $I_e^2/B_e$ as the conductance, not raw overlap, and the automatic
-gauge-invariance of the acquisition. A controlled simulation
-(Supplementary Figure~\ref{fig:D}) shows the knowledge gradient on the all-ones gauge contrast is
-$10^{-21}$ (exact zero, an identifiability statement that transfers structurally to multi-target
-networks), and that a gauge-\emph{unaware} acquisition wastes budget resolving a
-decision-irrelevant cross-cluster offset, reaching the within-target top-$k$ at regret $0.27$
-where the gauge-aware one reaches $0.01$.
 
 \section{An applicability map: where this calibration helps, and where it does not}\label{sec:audit}
 The detector of Section~\ref{sec:qc} is a real-data payoff; whether the same free calibration
@@ -730,7 +725,8 @@ commit panel again.
 sharpen intervals on real data, does not re-rank what to compute, does not re-rank what to commit,
 and does not steer
 reward re-ranking toward better molecules on this evaluable congeneric set (single target
-\texttt{eg5}); it pays on commit trust and on stopping; and an \emph{overconfident} $\sigma$
+\texttt{eg5}); it pays on commit trust and on stopping in simulations that do not consume the
+physics variance; and an \emph{overconfident} $\sigma$
 silently corrupts the
 stop/commit decision. Calibration is therefore a \emph{trust/decision instrument}, not a
 performance multiplier: what the physics variance buys is a calibrated decision, an identifiable
@@ -933,9 +929,11 @@ carry evidence of an error at all, and how large an error each would have to car
 check could see it. Edges lying in no cycle are invisible to it at any magnitude, and the
 resolution of the rest follows from the topology and the reported precisions together.
 
-What the instrument measures is internal consistency, which is not the same quantity as agreement
-with experiment; acting on its flags repairs the first and leaves the second where it was. Its
-value lies in decisions rather than in predictions: which networks to re-examine, when to stop
-acquiring data, and when a candidate is safe to commit to synthesis. Those decisions consume an
-uncertainty that costs nothing beyond the calculation already being run, which is the argument for
-reading it off the physics instead of learning it.
+The instrument measures internal consistency, which is not agreement with experiment; acting on
+its flags repairs the first and leaves the second where it was. What it delivers on real data is
+an ordering of networks by how far their own calculations disagree with each other, together with
+a stated operating point and a map of what that operating point cannot reach. Trust in a commit
+decision and a stopping rule for an acquisition loop both pay in simulation, and neither is
+exercised here on the variance the rest of this paper is about. The ordering costs nothing beyond
+the calculation already being run, which is the argument for reading uncertainty off the physics
+instead of learning it.
