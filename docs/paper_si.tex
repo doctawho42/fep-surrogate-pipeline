@@ -458,6 +458,83 @@ Table~\ref{tab:selfgrid} tabulates the four granularity-by-direction combination
 \label{fig:Self}
 \end{figure}
 
+\paragraph{Simulation protocols.} The two protocols the main text names are specified here.
+
+\paragraph{The pure-null simulation behind the realized levels.} Every realized level quoted for a
+self-calibrated arm, in Section~\ref{sec:qc}, in Section~\ref{sec:limitations} and in the last
+column of Supplementary Table~\ref{tab:selfgrid}, is measured on a synthetic world in which
+nothing is wrong, so that every flag it produces is a false positive by construction. The
+topologies are the real ones: the same $48$ systems the closure test admits, each with its own
+ligand-pair edge list and its own admission by the same rule ($\geq3$ edges, $\geq1$ independent
+cycle), which depends on topology alone. The variances are the real ones: each edge keeps the
+per-edge reported standard error it ships with, and that value is then \emph{declared} to be the
+edge's true sampling standard deviation, which makes the reported bars perfectly calibrated by
+construction. The draw law is the null: every node potential is exact, so each edge's true
+$\ddG$ is exactly the difference of its endpoints' potentials, and an observation is that value
+plus an independent Gaussian of the edge's own standard deviation. There is no systematic
+component anywhere and no correlation between edges. The replicate structure mirrors the
+benchmark's: three independent draws per edge, of which the first plays the role of replicate $0$
+and is the one the closure statistic is computed on, while all three are read by the arm's own
+calibration formula exactly as that arm reads the real replicates (the held-out arm reads only the
+second and third). Each arm's correction, tail probability and Benjamini--Hochberg step-up at
+$\alpha=0.05$ are then the identical code paths used on the real data. The simulation is run for
+$400$ draws, so a realized probability is measured to a Monte-Carlo standard error of at most
+$\sqrt{0.25/400}=0.025$, and the generator is seeded once for the whole sweep, which makes the
+reported levels reproducible.
+
+\paragraph{The reproducible-systematic magnitude used as ground truth.} Detection comparisons
+need a label that does not come from the detector being scored, and the only one these data
+supply is reproduction across the three protocol repeats. It is defined as follows. Each
+replicate's network is fitted separately by the same generalized least squares, giving for
+replicate $k$ and edge $e$ a standardized residual $z_e^{(k)}=r_e^{(k)}/\sqrt{V_e^{\mathrm{rep}}}$.
+The three \emph{signed} residuals of an edge are averaged, $\bar z_e=\frac13\sum_k z_e^{(k)}$, so
+that a residual reproducing in sign and magnitude survives the average while sampling noise
+cancels toward zero, and the edge's score is $|\bar z_e|$. A system's score is the median of
+$|\bar z_e|$ over its edges. This is the quantity the detectors of the head-to-head comparison
+are ranked against, by Mann--Whitney AUC of the binary flag against the per-system score. It uses
+only replicate residuals and no detector output, but it is not independent of the rules being
+scored, and the dependence is the reason no ordering is read out of that comparison
+(Section~\ref{sec:qc}): $z_e^{(k)}$ divides by $V_e^{\mathrm{rep}}$, the same per-edge reported
+variance the calibrated rule uses as its weight, so the label rewards a rule for standing close to
+that variance. ``Edges whose sign and magnitude
+reproduce across independent replicates'', wherever that phrase appears above, means edges with a
+large $|\bar z_e|$ in this sense.
+
+\paragraph{Model architectures.} The two learned models the main text compares against or
+uses as an amortized predictor are specified here in full.
+
+\paragraph{Amortized predictor.} The predictor used in the acquisition, stopping and reward
+experiments is deliberately small, and it is not an equivariant network. A ligand is featurized as
+a $1024$-bit ECFP4 Morgan fingerprint (radius $2$, chirality flag off) concatenated with six
+achiral RDKit descriptors: molecular weight, Crippen $\log P$, topological polar surface area, and
+counts of hydrogen-bond donors, hydrogen-bond acceptors and rotatable bonds. An edge is
+represented by the difference of its two endpoint feature vectors. The parity-odd channel of
+Section~\ref{sec:chiral} is a single additional coordinate, the difference of a summed signed
+volume over the assigned stereocentres of an ETKDGv3 embedding, giving $1031$ features per edge;
+every other coordinate is invariant under reflection, so this coordinate is the only carrier of
+chirality. The regressor is a bootstrap deep ensemble of eight multilayer perceptrons, each with
+two hidden layers of $64$ units and SiLU activations and a scalar output, trained for $300$ epochs
+on a squared-error objective with Adam at learning rate $5\times10^{-3}$ and weight decay
+$10^{-4}$, on inputs standardized by the training mean and standard deviation. Each member is
+seeded independently and fitted to its own bootstrap resample; the epistemic term is the spread
+across members, and the total $\sigma$ combines it in quadrature with the aleatoric floor before a
+conformal rescaling.
+
+\paragraph{Learned-variance foil.} The learned head the calibrated bar is compared against is a
+separate and much smaller model from the amortized predictor above, and it is trained on the
+controlled panel rather than on the benchmark. Each training example is one simulated edge, from
+which six features are formed: the means and standard deviations of the forward and reverse work
+samples, the absolute difference of the two means, and the normalized overlap scalar. The last of
+these is what makes the foil fair, since it gives the head the same overlap information the closed
+form uses. The network is a multilayer perceptron with two hidden layers of $32$ units and SiLU
+activations and two outputs, a mean and a log-variance, trained for $1500$ steps of Adam at
+learning rate $5\times10^{-3}$ on a Gaussian negative log-likelihood, with inputs standardized by
+the training mean and standard deviation. The realistic-budget arm trains on $200$ edges of $20$
+work samples each; the large-budget arm raises that to $4000$ edges, twenty times larger, and the
+corrected arms replace the
+objective by the $\beta$-NLL of \citet{seitzer2022pitfalls} at $\beta=0.5$ or average five
+independently seeded heads.
+
 \paragraph{Granularity and direction of the self-calibrated null (Table~\ref{tab:selfgrid}).}
 The self-calibrated null has two independent design choices, and the flag count depends on both.
 The \emph{granularity} is whether an edge is corrected by its own replicate-measured ratio or by
@@ -640,7 +717,12 @@ by this concern in either direction. The per-system ratio in Table~\ref{tab:P8} 
 root-mean-square reported standard error over the root-mean-square across-independent-replicate
 SD, pooled per system, not a naive per-system average of per-edge ratios or a naive ratio of
 arithmetic means, which for three of the six systems below would sit on the opposite side of
-$\mathrm{ratio}=1$. Deterministic; the full $48$-system table is released with the analysis code.
+$\mathrm{ratio}=1$. The ratios are raw $n{=}3$ SD ratios. Their residual small-sample bias is
+upward and target-specific, of order the reciprocal of the edge count, so debiasing would move all
+four of the locally overconfident flagged systems (\texttt{brd4} $0.76\times$, \texttt{faah}
+$0.90\times$, \texttt{bace} and \texttt{hif2a} $0.96\times$) further below one rather than toward
+it: the raw ratios used here are if anything generous to those systems, not the reverse.
+Deterministic; the full $48$-system table is released with the analysis code.
 
 \begin{table}[t]\centering
 \caption{\textbf{Per-system reduced $\chi^2$ before and after inflating each system's own

@@ -214,39 +214,29 @@ regime (at extreme low overlap, $n{=}20$, the bias-corrected plug-in runs $\sim$
 MBAR, both $\approx1$).
 The sandwich is derived for independent samples; on real FEP works both the sandwich inputs and the bootstrap truth are subsampled to the statistical inefficiency $g$~\citep{shirts2008mbar} before $B$ is formed, so the reported panel-B ratios use effective $n$.
 
-\paragraph{Figure~\ref{fig:A}: the readout is correct; the learned foil is not (at any budget we tested).}
-Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with
-MBAR and Monte-Carlo truth across the range (reported/true se $\approx1$), with no Monte-Carlo.
-We tested a \emph{fair} learned MVE head trained by Gaussian NLL, now fed work-summary
-moments \emph{and} the overlap scalar $I$ (6-dim feature) at a realistic budget of
-$\sim$200 edges and also at a large-budget oracle of 4000 training edges, twenty times larger.
-The fair foil is still ${\approx}7\times$ overconfident at realistic budget (reported se
-${\approx}0.15\times$ the truth; range $0.09$--$0.20\times$ across the overlap sweep), and
-${\approx}5\times$ overconfident even at the large-budget oracle (se ${\approx}0.20\times$).
-A seed sweep and two corrected foils (Supporting Information) leave that picture
-unchanged: the plain and oracle heads' overconfidence is robust across independent retrains, an
-objective fix does not recover calibration, and an ensemble is unreliable in \emph{both}
-directions at this budget,
-so a learned per-edge variance is not a trustworthy substitute for the closed-form sandwich either
-way. That residual overconfidence is a \emph{data-efficiency} limit of a per-edge
-\emph{learned} variance rather than an identifiability barrier, and is not specific to the
-Gaussian-NLL objective (Supporting Information); the bottleneck \emph{computes} the variance
-exactly, per edge, at zero label cost, so the comparison is learnable-with-data versus
-exact-and-free. Bare $1/I$ is shown only as the
-information-equality plug-in it corrects ($1.08$--$2.65\times$, worst at high overlap), not as a
-baseline anyone reports. Figure~\ref{fig:A}B checks the same calibration on work samples from a
-real protein--ligand system: the $19$ adjacent-$\lambda$ BAR windows of the complex leg of the
-\texttt{alchemtest} BACE1 relative-binding calculation, drawn from its decharge, recharge and van
-der Waals legs, which share one $\lambda$ schedule (sandwich over bootstrap truth $1.00$,
-$[0.96,1.07]$); this bootstrap
-reference reuses the same work samples (an internal consistency check). On those same windows the
-naive $1/I$ overstates the bootstrap se by $2$--$12\times$ (mean $6.07$, $[2.78,12.01]$), with
-every window sitting at overlap $\geq0.84$ (per-window values, Supplementary
-Table~\ref{tab:bace1}). A window is one two-state BAR estimate between neighbouring $\lambda$
-values and not a ligand-to-ligand binding free energy, so what this panel establishes is that the
-closed form matches a decorrelated bootstrap on real molecular-dynamics works, in the
-high-overlap regime this schedule occupies; the low-overlap behaviour is the controlled sweep of
-Figure~\ref{fig:A}A, and the per-transformation binding quantity is Figure~\ref{fig:Arep}.
+\paragraph{Figure~\ref{fig:A}: the readout is correct; the learned foil is not.}
+Figure~\ref{fig:A}A sweeps the work-distribution overlap. The sandwich $B/I^2$ coincides with MBAR
+and Monte-Carlo truth across the range (reported/true se $\approx1$), with no Monte-Carlo. A
+\emph{fair} learned mean--variance head, trained by Gaussian NLL on work-summary moments
+\emph{and} the overlap scalar $I$, is ${\approx}7\times$ overconfident at a realistic budget of
+$\sim$$200$ edges (reported se ${\approx}0.15\times$ the truth, range $0.09$--$0.20\times$) and
+${\approx}5\times$ overconfident at a twenty-fold larger oracle budget. A seed sweep and two
+corrected foils leave that unchanged: an objective fix does not recover calibration and an
+ensemble is unreliable in both directions at this budget (Supporting Information). The residual
+overconfidence is a \emph{data-efficiency} limit of a learned per-edge variance rather than an
+identifiability barrier or an artifact of the Gaussian-NLL objective, and the bottleneck
+\emph{computes} the variance exactly at zero label cost, so the comparison is learnable-with-data
+against exact-and-free. Bare $1/I$ appears only as the information-equality plug-in it corrects
+($1.08$--$2.65\times$, worst at high overlap), not as a baseline anyone reports.
+Figure~\ref{fig:A}B checks the same calibration on work samples from a real protein--ligand
+system, the $19$ adjacent-$\lambda$ BAR windows of the complex leg of the \texttt{alchemtest} BACE1
+relative-binding calculation (sandwich over decorrelated-bootstrap truth $1.00$, $[0.96,1.07]$;
+naive $1/I$ over the same reference $2$--$12\times$, mean $6.07$, every window at overlap
+$\geq0.84$; per-window values, Supplementary Table~\ref{tab:bace1}). That reference reuses the same
+work samples, so the panel establishes agreement with a decorrelated bootstrap on real molecular
+dynamics in the high-overlap regime this schedule occupies, not a ligand-to-ligand binding
+quantity; the low-overlap behaviour is the controlled sweep of panel A and the per-transformation
+quantity is Figure~\ref{fig:Arep}.
 
 \paragraph{Figure~\ref{fig:Arep}: the reported bar against independent replicates.} The
 validation that does not reuse its own samples, and the result the detector of
@@ -274,19 +264,15 @@ at realistic budget (${\approx}5\times$ even at large budget).
 That conclusion points the other way from the closest measurement in the literature.
 \citet{wade2022estimators} compare the analytic MBAR uncertainty against the spread over five
 independent replicas on $54$ protein-ligand transformations across five targets, in two engines,
-and report that MBAR consistently \emph{under}-estimates the error, by up to $0.9$ kcal/mol and
-worse in the complex leg than in the ligand leg. Two things bear on the disagreement, and they point in
-opposite directions. The first is what is being repeated: their replicas resample the full
-ensemble, whereas the OpenFE repeats used here share starting coordinates and differ only in
-stochastic sampling, so the denominator we divide by is a lower bound on run-to-run variability
-and the resulting ratio is an upper bound on conservatism. The second is what happens when their
-comparison is run on these edges rather than ours. They report how often the analytic standard
-error falls below the replicate spread; here that happens on $0.279$ $[0.224,0.332]$ of edges,
-against the $0.368$ that correctly scaled bars produce at three replicates, and the interval
-excludes it. On the functional they actually measure, these bars are conservative rather than
-optimistic, which sharpens the disagreement instead of resolving it. What remains of a
-reconciliation is the first difference alone, and settling the question needs replicates that
-resample preparation and pose, which this benchmark does not provide.
+and report that MBAR consistently \emph{under}-estimates the error, by up to $0.9$ kcal/mol. Two
+differences bear on the disagreement and they point opposite ways. Their replicas resample the
+full ensemble, whereas the OpenFE repeats share starting coordinates, so our denominator is a
+lower bound on run-to-run variability and our ratio an upper bound on conservatism. But running
+their own functional on these edges sharpens the disagreement rather than resolving it: the
+analytic standard error falls below the replicate spread on $0.279$ $[0.224,0.332]$ of edges,
+against the $0.368$ correctly scaled bars produce at three replicates, and the interval excludes
+it. Settling the question needs replicates that resample preparation and pose, which this
+benchmark does not provide.
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figA_target_the_sandwich.pdf}
@@ -465,27 +451,20 @@ and a false-positive rate controlled \emph{to the extent the per-edge null is ca
 hysteresis cutoffs, together with the cross-replicate reproduction check of Figure~\ref{fig:Lval}B and the
 estimation--detection conservation law of Theorem~\ref{thm:cons}, which fixes which edges are
 auditable at all; what is shared with the works above is the weighted least-squares treatment of the
-cycle graph itself. On the same $1143$ edges a pre-registered head-to-head compared the calibrated per-edge null against the fixed $1.0$ kcal/mol hysteresis cutoff the field uses and
-against a fixed-$\mathrm{se}$ $\chi^2$ test built on the same statistic, scored by area under the
-receiver-operating-characteristic curve (AUC) against the reproducible-systematic magnitude of
-Section~\ref{sec:methods} (calibrated $0.865$, fixed cutoff $0.575$, fixed $\mathrm{se}$ $0.725$;
-paired bootstrap differences $+0.290$ $[+0.094,+0.490]$ and $+0.140$ $[-0.008,+0.316]$;
-Supplementary Figure~\ref{fig:Cut}). The pre-registered criterion required beating both, so the
-verdict was and remains a tie. We withdraw the further reading we placed on the ordering inside
-it, that the calibrated null discriminates better than the fixed cutoff. The only label these
-data supply divides each residual by the same per-edge reported variance the calibrated rule uses
-as its weight, so a rule scores well here for standing close to that variance, and the AUC
-ordering is monotone in that proximity rather than in detection skill. The comparison is
-contaminated and ranks nothing. What the calibrated null has over the fixed cutoff is accordingly
-structural and not measured by this comparison, namely per-edge-adaptive thresholds, a
-false-positive rate tied to a replicate-validated null, and the observability map of
-Theorem~\ref{thm:cons}. The evidence that
-the flags are real remains the distribution-free cross-replicate
-reproduction check, which does not depend on the
-$\chi^2$ scaling. This retrospective test needs only the calibrated per-edge $se$ as shipped
-with the benchmark, not the differentiability or $O(1)$ backward of
-Theorems~\ref{thm:back}--\ref{thm:sand}: the detector's novelty is
-the \emph{calibrated null}, not the differentiable machinery. That null is conservative in the bulk, with a median reduced $\chi^2$ of $0.34$, so on a typical system the test under-flags.
+cycle graph itself. On the same $1143$ edges a pre-registered head-to-head scored the calibrated per-edge null against
+the fixed $1.0$ kcal/mol hysteresis cutoff the field uses and against a fixed-$\mathrm{se}$
+$\chi^2$ test, by area under the receiver-operating-characteristic curve; the criterion required
+beating both, and the verdict was a tie (Supplementary Figure~\ref{fig:Cut}). We withdraw the
+further reading we placed on the ordering inside it. The only label these data supply divides each
+residual by the same per-edge variance the calibrated rule uses as its weight, so the ordering is
+monotone in proximity to that variance rather than in detection skill, and the comparison ranks
+nothing. What the calibrated null has over a fixed cutoff is accordingly structural: per-edge
+adaptive thresholds, a false-positive rate tied to a replicate-validated null, and the
+observability map of Theorem~\ref{thm:cons}. The evidence that the flags are real remains the
+distribution-free cross-replicate reproduction check, which does not depend on the $\chi^2$
+scaling, and it needs only the per-edge $se$ the benchmark ships: the detector's novelty is the
+calibrated null, not the differentiable machinery.
+That null is conservative in the bulk, with a median reduced $\chi^2$ of $0.34$, so on a typical system the test under-flags.
 That observation does not bound the realized false-positive rate, and we do not read it as doing
 so: Benjamini--Hochberg controls the false discovery rate through the behaviour of the null
 $p$-values near the rejection threshold, not through the median of the statistic, and the
@@ -493,27 +472,16 @@ per-system calibration of Figure~\ref{fig:Arep} is heterogeneous enough that a c
 and an anti-conservative tail can coexist. The nominal level is reported as nominal. The case for
 the flags therefore rests not on the $\chi^2$ tail but on the
 distribution-free cross-replicate reproduction check below,
-which assumes no Gaussian null. A subtler concern is that four of the six flagged systems are
-themselves locally overconfident against their own across-replicate spread
-(Figure~\ref{fig:Arep}: \texttt{brd4} $0.76\times$, \texttt{faah} $0.90\times$, \texttt{bace}
-$0.96\times$, \texttt{hif2a} $0.96\times$; raw $n{=}3$ SD ratios, whose residual small-sample
-bias is upward and target-specific, of order the reciprocal of the edge count, so that debiasing
-moves all four \emph{further} below one rather than toward it, and the raw ratios used
-below are if anything generous to these systems, not the reverse), so a flag could partly reflect
-that system's own too-tight bars rather than genuine physical inconsistency. Inflating each such
-system's own null by the reciprocal of its own measured (raw) ratio, one pooled ratio per system
-(Supplementary Table~\ref{tab:P8}), leaves all six flags in place, each self-calibrated reduced
-$\chi^2$ ($2.36$--$8.97$) remaining far above the level a sampling-consistent network of this size
-and degree-of-freedom profile shows. That per-system pooling is not, however, the granularity this
-work pre-specified for a self-calibrated null. The pre-specified granularity is \emph{per edge},
-each edge corrected by its own replicate-measured ratio, and the same one-sided inflation applied
-at that granularity leaves \emph{two} of the six, \texttt{bace} and \texttt{cdk8}. Both
-granularities are reported side by side in Supplementary Table~\ref{tab:selfgrid}, with their
-two-sided counterparts and with each arm's realized probability of a false flag under the
-pure-null simulation of Section~\ref{sec:methods}; among the arms whose realized level was measured, the pre-specified per-edge
-one-sided arm is the only self-calibrated one that holds it ($0.003$ against a nominal $0.05$), so
-its count of two is the conservative answer to how many of the six survive being retested against
-the width their own replicates measure.
+which assumes no Gaussian null. A subtler concern is that four of the six flagged systems are themselves locally overconfident
+against their own across-replicate spread (Figure~\ref{fig:Arep}: \texttt{brd4} $0.76\times$,
+\texttt{faah} $0.90\times$, \texttt{bace} and \texttt{hif2a} $0.96\times$), so a flag could partly
+reflect that system's own too-tight bars. Retesting each against the width its own replicates
+measure keeps all six at the per-system granularity and \emph{two} of them, \texttt{bace} and
+\texttt{cdk8}, at the per-edge granularity this work pre-specified. Supplementary
+Table~\ref{tab:selfgrid} reports both arms with their two-sided counterparts and each arm's
+realized false-flag probability under the pure-null simulation of Section~\ref{sec:methods}; the
+pre-specified per-edge one-sided arm is the only self-calibrated arm that holds its level ($0.003$
+against a nominal $0.05$), so its count of two is the conservative answer.
 
 \paragraph{Figure~\ref{fig:L}: a deployable detector whose usefulness \emph{is} $\sigma$-calibration.}
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over
@@ -762,96 +730,65 @@ The detector of Section~\ref{sec:qc} is a real-data payoff; whether the same fre
 improves downstream machine learning is a separate question, and mostly it does not. These
 negatives are the reason to believe the positive result. Six tasks are audited, four for
 performance and two for decision quality, and Supplementary Table~\ref{tab:audit} collects every
-effect against its baseline. Three of the performance tasks, interval sharpness,
-commit-to-synthesis selection, and reward re-ranking over a measured congeneric set (single
-target \texttt{eg5}), run on the public OpenFF protein--ligand
-benchmark~\citep{hahn2022plbench} (FEP+ and Merck data~\citep{wang2015fep,schindler2020merck};
-experimental $\ddG$ labels, both-endpoint scaffold-disjoint out-of-distribution (OOD) splits), as
-does the commit-trust decision task; the fourth performance task, edge ranking in active
-learning, and the stopping decision task both run in controlled simulations. The amortized $\sigma$ under test (the decomposed
-physics $\sigma$) is the trunk's \emph{predictive} uncertainty on unseen $\ddG$ values,
+effect against its baseline. Three performance tasks, interval sharpness, commit-to-synthesis
+selection and reward re-ranking over a measured congeneric set, run with the commit-trust decision
+task on the public OpenFF protein--ligand benchmark~\citep{hahn2022plbench} (FEP+ and Merck
+data~\citep{wang2015fep,schindler2020merck}, experimental $\ddG$ labels, both-endpoint
+scaffold-disjoint out-of-distribution splits); edge ranking in active learning and the stopping
+decision run in controlled simulations. The amortized $\sigma$ under test is the trunk's
+predictive uncertainty on unseen $\ddG$,
 $\sigma_{\text{total}}=\gamma\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$: deep-ensemble
-epistemic spread and benchmark aleatoric floor, conformally scaled at miscoverage $\alpha=0.1$
-(90\% target coverage; the scalar $\gamma$ rather than $q$, reserved throughout for a
-Benjamini--Hochberg adjusted $p$-value). It is not Figure~\ref{fig:A}'s per-edge BAR sampling-se
-or its learned-variance foil; a bare ``$\sigma$'' below means $\sigma_{\text{total}}$.
+epistemic spread and benchmark aleatoric floor, conformally scaled at miscoverage $\alpha=0.1$. It
+is not Figure~\ref{fig:A}'s per-edge BAR sampling-se or its learned foil; a bare ``$\sigma$'' below
+means $\sigma_{\text{total}}$.
 
-\paragraph{Trust: an overconfident $\sigma$ corrupts decisions; this decomposed $\sigma$ does
-not, and calibration is cheap (on the OpenFF benchmark).} Supplementary Figure~\ref{fig:J}B fixes
-the (ensemble) mean and varies only the uncertainty in the commit rule (commit to synthesis iff
-the lower-confidence bound (LCB) $\mu-\kappa\sigma\ge\tau$, $\kappa=z_{1-\alpha}$). An
-overconfident epistemic-only $\sigma$ over-claims badly: its realized-versus-claimed correctness
-shortfall is $+0.182$ (CI $[0.132,0.225]$) larger than the decomposed $\sigma$'s, which is
-calibrated-to-conservative. The trust is \emph{not unique} to the physics $\sigma$: temperature
+\paragraph{Trust, where it pays.} Fixing the ensemble mean and varying only the uncertainty in a
+commit rule (commit iff the lower-confidence bound $\mu-\kappa\sigma\ge\tau$), an overconfident
+epistemic-only $\sigma$ over-claims badly: its realized-versus-claimed correctness shortfall is
+$+0.182$ $[0.132,0.225]$ larger than the decomposed $\sigma$'s, which is calibrated-to-conservative
+(Supplementary Figure~\ref{fig:J}B). The trust is not unique to the physics $\sigma$: temperature
 scaling~\citep{guo2017calibration} or split-conformal recalibration of the same overconfident
-$\sigma$ recovers it (temperature$-$ours $+0.034$, CI $[-0.018,0.081]$; conformal$-$ours
-$-0.029$, CI $[-0.077,0.007]$; both indistinguishable from ours). Trustworthy decisions need
-\emph{some} proper calibration; the physics $\sigma$ supplies it at no calibration-set cost for
-the aleatoric term.
+$\sigma$ recovers it (both differences from ours indistinguishable from zero). Trustworthy
+decisions need \emph{some} proper calibration; the physics $\sigma$ supplies it at no
+calibration-set cost for the aleatoric term. The same lesson appears in a controlled
+active-learning simulation, where a calibrated learner's claimed confidence tracks actual top-$k$
+correctness ($|\Delta|=0.022$) and stops at $30$ calls $82\%$ correct, while an overconfident one,
+its assumed posterior se scaled by the $0.15\times$ measured in Figure~\ref{fig:A}, stops twice as
+early at only $60\%$ correct (Supplementary Figure~\ref{fig:G}).
 
-\paragraph{Sharpness: this decomposed $\sigma$ is not sharper on real out-of-distribution
-residuals (OpenFF benchmark).} On \emph{real} held-out trunk residuals (Supplementary
-Figure~\ref{fig:Breal}) at matched $\sim$0.90 marginal coverage, the decomposed interval is
-slightly \emph{wider} than flat split-conformal (width ratio split/ours $0.92\times$): epistemic
-spread is small against the large irreducible OOD error (half-width correlates with
-$|$residual$|$ only $+0.11$). Its conditional calibration is marginally better than a flat band,
-comparable to a fair Mondrian-by-target conformal (per-target max coverage error $0.17$ vs $0.22$
-for split and Mondrian alike), but the advantage is not significant (ours$-$split $-0.044$, CI
-$[-0.121,0.005]$). The supplement's synthetic 1-D illustration, whose generative structure the
-decomposition knows, is up to $2.2\times$ sharper than split-conformal and $2.0\times$ than CQR;
-that does not transfer to real data.
+\paragraph{Sharpness, ranking and selection, where it does not.} On real held-out trunk residuals
+at matched $\sim$$0.90$ marginal coverage the decomposed interval is slightly \emph{wider} than
+flat split-conformal (width ratio $0.92\times$), because epistemic spread is small against the
+large irreducible out-of-distribution error; its conditional calibration is comparable to a fair
+Mondrian-by-target conformal and the advantage is not significant (ours$-$split $-0.044$
+$[-0.121,0.005]$; Supplementary Figure~\ref{fig:Breal}). The supplement's synthetic illustration,
+whose generative structure the decomposition knows, is up to $2.2\times$ sharper than
+split-conformal; that does not transfer. For edge ranking, sandwich against naive weights differ by
+$0.98\times$ $[0.93,1.03]$ on calls-to-top-$k$: in a connected graph the GLS contrast mean is
+unbiased for \emph{any} positive weights, so the weight value is second-order for ranking. So too
+for commit selection at matched volume, where the $\sigma$-aware ranking does not beat a raw-$\mu$
+ranking ($-0.006$ $[-0.016,0.007]$). A calibrated bar says \emph{whether} to act, not \emph{which}
+action ranks first.
 
-\paragraph{Ranking and selection: the choice of $\sigma$ is second-order at matched budget.} For
-edge ranking in active learning, sandwich versus naive weights differ by $0.98\times$
-$[0.93,1.03]$ on the primary calls-to-top-$k$ metric (24-seed bootstrap CI; Figure~\ref{fig:C},
-supplement): in a connected graph the GLS contrast mean is unbiased for \emph{any} positive
-weights (Gauss--Markov), so the weight choice is second-order for ranking. So too for commit
-selection: at matched commit \emph{volume} (Supplementary Figure~\ref{fig:J}A, ranking by the
-standardized margin $(\mu-\tau)/\sigma$ and committing the top fraction), the $\sigma$-aware
-ranking does not beat a raw-$\mu$ ranking (precision at a 25\% budget $0.674$ vs $0.680$;
-trunk$-$raw $-0.006$, CI $[-0.016,0.007]$). A calibrated bar says \emph{whether} to act, not
-\emph{which} action ranks first.
-
-\paragraph{Reward re-ranking (evaluable congeneric set, single target \texttt{eg5}): this
-decomposed $\sigma$ does not help, and where $\sigma$ varies it hurts.} A trajectory-balance
+\paragraph{Reward re-ranking, where it hurts.} A trajectory-balance
 GFlowNet~\citep{bengio2021gflownet,malkin2022tb} samples a held-out target's measured congeneric
-series (trunk trained target-disjoint) under three rewards: the calibrated LCB, the raw predicted
-value, and an overconfident MVE reward. On \texttt{eg5}, the on-disk target with the
-\emph{largest} $\sigma$ spread, so that the calibrated reward genuinely re-ranks candidates, it
-\emph{lowers} the true hit-rate of the sampled distribution ($0.140$ vs raw $0.249$ and MVE
-$0.255$; cal$-$raw $-0.109$, CI $[-0.150,-0.072]$; Supplementary Figure~\ref{fig:K}). The
-high-$\sigma$ ligands are the chemically novel \emph{strong} binders
-($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), so the LCB penalty
-$-\kappa\sigma$ demotes the true winners. This is the best case available, and it fails. Resting
-on one evaluable target, it is a \emph{hypothesis}, not a transferable diagnostic: an LCB reward
-may help only where $\sigma$ flags \emph{low quality}; where it flags \emph{novelty}, as on this
-congeneric series, the bound penalizes exactly the candidates worth making, and an uncalibrated
-reward is safer.
+series under three rewards. On \texttt{eg5}, the on-disk target with the largest $\sigma$ spread and
+so the one where a calibrated reward genuinely re-ranks candidates, the calibrated lower bound
+\emph{lowers} the true hit-rate ($0.140$ against raw $0.249$; cal$-$raw $-0.109$
+$[-0.150,-0.072]$; Supplementary Figure~\ref{fig:K}). The high-$\sigma$ ligands are the chemically
+novel \emph{strong} binders ($\mathrm{corr}(\sigma_{\text{total}},\text{affinity})=+0.42$), so the
+penalty $-\kappa\sigma$ demotes the true winners. Resting on one evaluable target this is a
+hypothesis rather than a transferable diagnostic: where $\sigma$ flags novelty rather than quality,
+an uncalibrated reward is safer.
 
-\paragraph{Where it pays: the stopping decision.} Supplementary Figure~\ref{fig:G} runs two
-active-learning loops sharing a correct (true-precision GLS) posterior mean but differing in
-assumed uncertainty (a simulated posterior variance, not $\sigma_{\text{total}}$ above): the
-calibrated learner's claimed confidence tracks actual top-$k$ correctness ($|\Delta|=0.022$) and
-stops at $30$ calls $82\%$ correct, while an overconfident learner (its assumed posterior se
-scaled by $0.15\times$, the ${\sim}7\times$ central overconfidence \emph{measured} by
-Figure~\ref{fig:A}'s sampling-se foil and reused here only as a numeric shrink factor) stops
-twice as early at only $60\%$ correct. This is a controlled simulation, but the lesson of the
-commit panel again.
-
-\paragraph{Synthesis.} Six independent tests agree: a calibrated per-edge $\sigma$ does not
-sharpen intervals on real data, does not re-rank what to compute, does not re-rank what to commit,
-and does not steer
-reward re-ranking toward better molecules on this evaluable congeneric set (single target
-\texttt{eg5}); it pays on commit trust and on stopping in simulations that do not consume the
-physics variance; and an \emph{overconfident} $\sigma$
-silently corrupts the
-stop/commit decision. Calibration is therefore a \emph{trust/decision instrument}, not a
-performance multiplier: what the physics variance buys is a calibrated decision, an identifiable
-acquisition, and above all the quality-control detector of Section~\ref{sec:qc}, not a sharper or
-better-ranked prediction. The graph weight earns its place through \emph{structure}, not
-magnitude: it makes the gauge directions exactly unidentifiable (knowledge gradient $=0$) and
-supplies the trust calculation, though by Gauss--Markov its numerical \emph{value} does not
-improve ranking.
+\paragraph{Synthesis.} A calibrated per-edge $\sigma$ does not sharpen intervals on real data, does
+not re-rank what to compute or what to commit, and does not steer reward re-ranking toward better
+molecules on the one evaluable congeneric set; it pays on commit trust and on stopping in
+simulations that do not consume the physics variance; and an \emph{overconfident} $\sigma$ silently
+corrupts the stop and commit decisions. Calibration is a trust and decision instrument, not a
+performance multiplier. The graph weight earns its place through \emph{structure} rather than
+magnitude: it makes the gauge directions exactly unidentifiable, and by Gauss--Markov its numerical
+value does not improve ranking.
 
 \section{Computational details}\label{sec:methods}
 \paragraph{Data.} The controlled panel of Figure~\ref{fig:A} uses the \texttt{alchemtest} BACE1
@@ -890,76 +827,14 @@ false discovery rate at $\alpha=0.05$ across systems. The population for the clo
 $48$ systems that carry at least three replicate-$0$ edges and at least one independent cycle,
 which between them hold $1143$ of the benchmark's $1145$ edges.
 
-\paragraph{The pure-null simulation behind the realized levels.} Every realized level quoted for a
-self-calibrated arm, in Section~\ref{sec:qc}, in Section~\ref{sec:limitations} and in the last
-column of Supplementary Table~\ref{tab:selfgrid}, is measured on a synthetic world in which
-nothing is wrong, so that every flag it produces is a false positive by construction. The
-topologies are the real ones: the same $48$ systems the closure test admits, each with its own
-ligand-pair edge list and its own admission by the same rule ($\geq3$ edges, $\geq1$ independent
-cycle), which depends on topology alone. The variances are the real ones: each edge keeps the
-per-edge reported standard error it ships with, and that value is then \emph{declared} to be the
-edge's true sampling standard deviation, which makes the reported bars perfectly calibrated by
-construction. The draw law is the null: every node potential is exact, so each edge's true
-$\ddG$ is exactly the difference of its endpoints' potentials, and an observation is that value
-plus an independent Gaussian of the edge's own standard deviation. There is no systematic
-component anywhere and no correlation between edges. The replicate structure mirrors the
-benchmark's: three independent draws per edge, of which the first plays the role of replicate $0$
-and is the one the closure statistic is computed on, while all three are read by the arm's own
-calibration formula exactly as that arm reads the real replicates (the held-out arm reads only the
-second and third). Each arm's correction, tail probability and Benjamini--Hochberg step-up at
-$\alpha=0.05$ are then the identical code paths used on the real data. The simulation is run for
-$400$ draws, so a realized probability is measured to a Monte-Carlo standard error of at most
-$\sqrt{0.25/400}=0.025$, and the generator is seeded once for the whole sweep, which makes the
-reported levels reproducible.
+\paragraph{Simulation protocols.} Two protocols underwrite numbers quoted above: the pure-null
+simulation that supplies every realized false-flag level, and the reproducible-systematic magnitude
+used as the label in detection comparisons. Both are specified in the Supporting Information.
 
-\paragraph{The reproducible-systematic magnitude used as ground truth.} Detection comparisons
-need a label that does not come from the detector being scored, and the only one these data
-supply is reproduction across the three protocol repeats. It is defined as follows. Each
-replicate's network is fitted separately by the same generalized least squares, giving for
-replicate $k$ and edge $e$ a standardized residual $z_e^{(k)}=r_e^{(k)}/\sqrt{V_e^{\mathrm{rep}}}$.
-The three \emph{signed} residuals of an edge are averaged, $\bar z_e=\frac13\sum_k z_e^{(k)}$, so
-that a residual reproducing in sign and magnitude survives the average while sampling noise
-cancels toward zero, and the edge's score is $|\bar z_e|$. A system's score is the median of
-$|\bar z_e|$ over its edges. This is the quantity the detectors of the head-to-head comparison
-are ranked against, by Mann--Whitney AUC of the binary flag against the per-system score. It uses
-only replicate residuals and no detector output, but it is not independent of the rules being
-scored, and the dependence is the reason no ordering is read out of that comparison
-(Section~\ref{sec:qc}): $z_e^{(k)}$ divides by $V_e^{\mathrm{rep}}$, the same per-edge reported
-variance the calibrated rule uses as its weight, so the label rewards a rule for standing close to
-that variance. ``Edges whose sign and magnitude
-reproduce across independent replicates'', wherever that phrase appears above, means edges with a
-large $|\bar z_e|$ in this sense.
-
-\paragraph{Amortized predictor.} The predictor used in the acquisition, stopping and reward
-experiments is deliberately small, and it is not an equivariant network. A ligand is featurized as
-a $1024$-bit ECFP4 Morgan fingerprint (radius $2$, chirality flag off) concatenated with six
-achiral RDKit descriptors: molecular weight, Crippen $\log P$, topological polar surface area, and
-counts of hydrogen-bond donors, hydrogen-bond acceptors and rotatable bonds. An edge is
-represented by the difference of its two endpoint feature vectors. The parity-odd channel of
-Section~\ref{sec:chiral} is a single additional coordinate, the difference of a summed signed
-volume over the assigned stereocentres of an ETKDGv3 embedding, giving $1031$ features per edge;
-every other coordinate is invariant under reflection, so this coordinate is the only carrier of
-chirality. The regressor is a bootstrap deep ensemble of eight multilayer perceptrons, each with
-two hidden layers of $64$ units and SiLU activations and a scalar output, trained for $300$ epochs
-on a squared-error objective with Adam at learning rate $5\times10^{-3}$ and weight decay
-$10^{-4}$, on inputs standardized by the training mean and standard deviation. Each member is
-seeded independently and fitted to its own bootstrap resample; the epistemic term is the spread
-across members, and the total $\sigma$ combines it in quadrature with the aleatoric floor before a
-conformal rescaling.
-
-\paragraph{Learned-variance foil.} The learned head the calibrated bar is compared against is a
-separate and much smaller model from the amortized predictor above, and it is trained on the
-controlled panel rather than on the benchmark. Each training example is one simulated edge, from
-which six features are formed: the means and standard deviations of the forward and reverse work
-samples, the absolute difference of the two means, and the normalized overlap scalar. The last of
-these is what makes the foil fair, since it gives the head the same overlap information the closed
-form uses. The network is a multilayer perceptron with two hidden layers of $32$ units and SiLU
-activations and two outputs, a mean and a log-variance, trained for $1500$ steps of Adam at
-learning rate $5\times10^{-3}$ on a Gaussian negative log-likelihood, with inputs standardized by
-the training mean and standard deviation. The realistic-budget arm trains on $200$ edges of $20$
-work samples each; the large-budget arm raises the edge count and the corrected arms replace the
-objective by the $\beta$-NLL of \citet{seitzer2022pitfalls} at $\beta=0.5$ or average five
-independently seeded heads.
+\paragraph{Model architectures.} The amortized predictor used in the acquisition, stopping and
+reward experiments and the learned-variance foil of Figure~\ref{fig:A} are separate and much
+smaller models; their features, layer sizes, objectives and training budgets are specified in the
+Supporting Information.
 
 \paragraph{Software.} Python $\geq3.11$ with numpy $2.5.0$, scipy $1.18.0$, pymbar $4.0.3$, torch
 $2.12.1$, RDKit $2026.3.3$ and matplotlib $3.11.0$. The pipeline is deterministic: in the
@@ -973,68 +848,84 @@ process-level string hash. Nothing in the training path is left to an unrecorded
 variation.
 
 \section{Limitations}\label{sec:limitations}
-The sandwich is aleatoric-only and conditional on correctly sampled ensembles; systematic
-force-field bias is outside it, and the out-of-distribution behavior we audit rests on an
-ensemble plus a scalar aleatoric floor (there is no learned force-field-correction head, so the
-three-way decomposition of the synthetic illustration is not reproduced on real data). The
-binding-edge se is validated against the three independent replicates of the OpenFE
-IndustryBenchmarks2024 (Figure~\ref{fig:Arep}): in aggregate it is conservative by
-$\sim$$1.4\times$, though calibration is
-heterogeneous per system: of the $34$ systems carrying at least eight edges, $28$ are conservative
-and the remaining six are overconfident, namely \texttt{t4\_lysozyme} $0.99\times$,
-\texttt{hif2a} $0.96\times$, \texttt{bace} $0.96\times$, \texttt{faah} $0.90\times$, \texttt{brd4}
-$0.76\times$, and the protonation variant \texttt{bace\_p3\_arg368\_in} $0.41\times$, which is the
-only one of the six that is not marginal. The three replicates are seed/velocity-only repeats from identical starting
-coordinates (OpenFE \texttt{protocol\_repeats}), so the across-replicate SD reflects
-sampling/convergence noise and is a lower bound on full reproducibility (excluding pose and
-system-preparation variance); the $\sim$$1.41\times$ conservatism may therefore be
-closer to neutral against real reproducibility. That same restriction limits what the
-quality-control test can be said to detect. An inconsistency reproducing across repeats that
-share one starting structure is established as more than sampling noise, but a fixed consequence
-of that structure, a pose or a protonation assignment carried unchanged into all three, would
-reproduce identically; the pooling argument of Figure~\ref{fig:L}C and the cross-replicate
-residual correlation of Figure~\ref{fig:Lval}B are both invariant to which of the two it is, so
-neither establishes physical error, and the flags are reported as reproducible inconsistency
-throughout. The
-gauge-acquisition and stopping experiments are controlled simulations. The reward re-ranking audit is a
-single $\sigma$-varying target (\texttt{eg5}); the conclusion that $\sigma$ tracks novelty rather than quality
-should be tested across more chemotypes. The single-target re-ranking result is directional. The cycle-closure quality-control test (Section~\ref{sec:qc}) detects only \emph{edge-level} inconsistency (node-consistent force-field bias cancels around a loop and is invisible to it), and its flags are validated retrospectively against held-out replicates and against experiment both on one clean system (\texttt{eg5}, where acting on the flags neither helps nor harms) and, now, on four flagged systems grounded against public ChEMBL affinity (\texttt{cdk8, hif2a, p38, bace}), where guided QC-edge removal ties random removal on MUE-vs-experiment (combined Stouffer $p=0.48$; Figure~\ref{fig:Lcausal}), and where a pre-registered second rule ranking edges by influence rather than by residual does worse still ($p=1.00$; Figure~\ref{fig:Hodge}C). Theorem~\ref{thm:hodge} says both nulls are structural rather than underpowered, and Section~\ref{sec:hodge} measures the margin: under one per cent of the error against experiment lies where a removal rule could act on it. Three restrictions attach to that measurement. It rests on four systems, all of them flagged, so it characterises the systems the test selects rather than the benchmark. It runs on a connectivity-based ChEMBL join (stereo-blind, so enantiomer pairs sharing a 2D graph collapse to one experimental value, inflating absolute MUE but canceling in the guided-vs-random contrast since both arms read the identical cached affinity), and the experimental and annotation errors it carries are per-ligand quantities that enter the same unauditable subspace as force-field bias, so the measurement locates the error without attributing it. And the influence rule is a second pre-registered hypothesis on the data that returned the first null, reported as a second look rather than as independent confirmation. The theorem itself bounds only what a network's own edge values can support, and says nothing against methods that bring in information from outside the network. The fully prospective flag$\to$repair$\to$remeasure test on a flagged system, with new MD rather than a retrospective affinity join, lies outside what public data can support. The distribution-free cross-replicate check establishes that what is flagged reproduces across independent runs, but it is not a quantitative false-positive-rate guarantee: it does not certify the nominal Benjamini--Hochberg rate itself. The detector's \emph{recall} cannot be measured directly, since there are no ground-truth error
-labels. Replacing each system's reported standard error by its own replicate-measured
-calibration, applied in whichever direction the measurement points rather than only the
-conservative one, changes the flag set in both directions and by an amount that depends on the
-granularity of the correction. Applied two-sided at the pre-specified per-edge granularity the
-count goes from six to seven, three systems entering and two leaving; correcting instead by each
-system's aggregate ratio takes it to sixteen with none leaving (Supplementary
-Figure~\ref{fig:Self}); applied one-sided, the direction the circularity concern of
-Section~\ref{sec:qc} calls for, the per-edge arm retains two of the six and the per-system arm all
-six (Supplementary Table~\ref{tab:selfgrid}).
-Neither two-sided arm is false-discovery-rate controlled at three replicates, and no arm is
-reported as a flag set: rescaling an edge by its own replicate spread multiplies the statistic by
-$\sigma^2/s^2$, whose expectation $\nu_{\text{rep}}/(\nu_{\text{rep}}-2)$ is undefined at the
-$\nu_{\text{rep}}=2$ replicate degrees of freedom that three replicates provide ($\nu_{\text{rep}}$,
-not the cycle count $\nu$ of the closure statistic), and the pure-null simulation of
-Section~\ref{sec:methods} puts the probability of at least one false
-flag at $0.59$ for the two-sided per-edge arm and $0.24$ for the two-sided aggregate one, against
-the $0.04$ the uncorrected arm realizes on that same simulation at the same nominal
-$\alpha=0.05$; the one-sided per-edge arm is the only self-calibrated arm that holds its level
-($0.003$).
-What the experiment establishes is that the flag set is sensitive to calibration error of the size
-actually present, in both directions, which is a limit on how far any single flag list should be
-trusted. Together with the median reduced $\chi^2=0.34$ (Section~\ref{sec:qc}), which implies
-limited single-replicate power, this makes the flagged systems a floor on the systems carrying
-reproducible inconsistency rather than a prevalence estimate: on the same replicate data, \texttt{renin} carries the reproducible signature by the pooled-replicate ratio (reduced $\chi^2$ rising to $4.7$ when the three replicates are pooled, from a per-replicate mean of $2.5$, the same pooled-ratio signature Panel~C uses to confirm the six flagged systems; ratio $1.9$, between the sampling-only pole at $1$ and the fully reproducible pole at $3$) and clears the false-discovery threshold on two of the three replicates, though not on the first,
-which is the one the six-system list is drawn from. It is a system that list misses rather than one
-the test misses. \texttt{ciordia\_retro} is a second such case, flagged on one of the three replicates and retained when they are pooled, and it is not otherwise discussed in this paper. The error runs the other way too, and one member of the published six should be read with more caution than the rest. \texttt{faah} clears FDR on the first replicate alone; its reduced $\chi^2$ crosses one in both directions across the three ($3.71$, $0.45$, $1.47$), its standardized residuals essentially fail to reproduce between replicates ($r=-0.085$, the weakest of the eight systems ever flagged), it is the single system the pooled fit drops, and in the held-out test of Section~\ref{sec:oos} it moves against the direction the other flagged systems move in. We therefore report \texttt{faah} as a flag that a second replicate does not support, rather than as a member of the set on the same footing as \texttt{bace}, which is flagged on every replicate and by every criterion here. The amortized
-predictor carries a parity-odd readout channel because a geometric readout built only from
-distances, norms or dot products is constant on an enantiomer pair and so cannot distinguish
-stereoisomers at all; that requirement, and the completeness statement behind it, are established
-in Section~\ref{sec:chiral} of the Supporting Information, and nothing the main text claims
-depends on them. Finally, a structure-based reverse screen was tried on a separate ten-target diverse-fold panel,
-docking each scaffold-disjoint held-out ligand into all ten pockets and ranking targets by score.
-It recovers the true target at top-$1$ $0.16$ (area under the curve $0.62$), against $0.95$
-($0.99$) for the ligand-shape baseline of Supplementary Figure~\ref{fig:F} and $0.10$ for random,
-raw docking scores not being comparable across pockets; the structure-directed regime is
-accordingly not claimed here.
+The sandwich is aleatoric-only and conditional on correctly sampled ensembles. Systematic
+force-field bias lies outside it, and the out-of-distribution behaviour audited here rests on an
+ensemble plus a scalar aleatoric floor: there is no learned force-field-correction head, so the
+three-way decomposition of the synthetic illustration is not reproduced on real data.
+
+The binding-edge se is validated against three independent replicates (Figure~\ref{fig:Arep}). In
+aggregate it is conservative by $\sim$$1.41\times$, but calibration is heterogeneous: of the $34$
+systems carrying at least eight edges, $28$ are conservative and six overconfident, namely
+\texttt{t4\_lysozyme} $0.99\times$, \texttt{hif2a} and \texttt{bace} $0.96\times$, \texttt{faah}
+$0.90\times$, \texttt{brd4} $0.76\times$, and the protonation variant
+\texttt{bace\_p3\_arg368\_in} $0.41\times$, the only one of the six that is not marginal. Those
+replicates are seed and velocity repeats from identical starting coordinates, so the
+across-replicate SD is a lower bound on full reproducibility, excluding pose and preparation
+variance, and the measured conservatism may be closer to neutral against real reproducibility.
+The same restriction limits what the quality-control test can be said to detect. An inconsistency
+reproducing across repeats that share one starting structure is more than sampling noise, but a
+fixed consequence of that structure, a pose or a protonation assignment carried unchanged into all
+three, would reproduce identically; the pooling argument of Figure~\ref{fig:L}C and the
+cross-replicate residual correlation of Figure~\ref{fig:Lval}B are invariant to which of the two it
+is, so the flags are reported as reproducible inconsistency throughout.
+
+The test detects only \emph{edge-level} inconsistency, and neither removal rule improves accuracy
+against experiment: guided removal ties random on the four grounded systems (Stouffer $p=0.48$;
+Figure~\ref{fig:Lcausal}) and the influence rule does worse ($p=1.00$; Figure~\ref{fig:Hodge}C).
+Theorem~\ref{thm:hodge} makes both nulls structural rather than underpowered and
+Section~\ref{sec:hodge} measures the margin, but three restrictions attach to that measurement. It
+rests on four systems, all of them flagged, so it characterises the systems the test selects rather
+than the benchmark. It runs on a connectivity-based ChEMBL join, stereo-blind, so enantiomer pairs
+sharing a 2D graph collapse to one experimental value, inflating absolute MUE while cancelling in
+the guided-versus-random contrast since both arms read the identical cached affinity; the
+experimental and annotation errors it carries are per-ligand quantities entering the same
+unauditable subspace as force-field bias, so the measurement locates the error without attributing
+it. And the influence rule is a second pre-registered hypothesis on the data that returned the
+first null, reported as a second look rather than as independent confirmation. The theorem bounds
+what a network's own edge values can support and says nothing against methods bringing information
+from outside the network. A prospective flag, repair and remeasure test with new molecular
+dynamics lies outside what public data can support.
+
+The cross-replicate check shows that what is flagged reproduces across independent runs; it is not
+a false-positive-rate guarantee and does not certify the nominal Benjamini--Hochberg rate. Recall
+cannot be measured at all, there being no ground-truth error labels. Replacing each system's
+reported standard error by its own replicate-measured calibration changes the flag set in both
+directions and by an amount depending on the granularity: applied two-sided per edge the count goes
+from six to seven, three systems entering and two leaving, and by each system's aggregate ratio to
+sixteen with none leaving (Supplementary Figure~\ref{fig:Self}); applied one-sided, the direction
+the circularity concern calls for, the per-edge arm retains two and the per-system arm all six
+(Supplementary Table~\ref{tab:selfgrid}). Neither two-sided arm is false-discovery-rate controlled
+at three replicates and no arm is reported as a flag set: under the pure-null simulation of
+Section~\ref{sec:methods} their probability of at least one false flag is $0.59$ and $0.24$ against
+the $0.04$ the uncorrected arm realizes at the same nominal level, and only the one-sided per-edge
+arm holds it ($0.003$). What this establishes is that the flag set is sensitive to calibration
+error of the size actually present, in both directions, which limits how far any single flag list
+should be trusted.
+
+Together with the median reduced $\chi^2$ of $0.34$, which implies limited single-replicate power,
+that makes the flagged systems a floor rather than a prevalence estimate. \texttt{renin} carries
+the reproducible signature by the pooled-replicate ratio, its reduced $\chi^2$ rising to $4.7$
+pooled from a per-replicate mean of $2.5$, and clears the false-discovery threshold on two of the
+three replicates though not on the first, which is the one the published list is drawn from; it is
+a system that list misses rather than one the test misses, and \texttt{ciordia\_retro} is a second
+such case. The error runs the other way too. \texttt{faah} clears the threshold on the first
+replicate alone, its reduced $\chi^2$ crosses one in both directions across the three ($3.71$,
+$0.45$, $1.47$), its standardized residuals essentially fail to reproduce between replicates
+($r=-0.085$, the weakest of the eight systems ever flagged), and the pooled fit drops it, so we
+report it as a flag a second replicate does not support rather than a member of the set on the
+footing of \texttt{bace}, which is flagged on every replicate and by every criterion here.
+
+The gauge-acquisition and stopping experiments are controlled simulations, and the reward
+re-ranking audit rests on a single $\sigma$-varying target, so its conclusion that $\sigma$ tracks
+novelty rather than quality is directional and should be tested across more chemotypes. The
+amortized predictor carries a parity-odd readout channel because a geometric readout built only
+from distances, norms or dot products is constant on an enantiomer pair; that requirement and the
+completeness statement behind it are established in the Supporting Information, and nothing the
+main text claims depends on them. Finally, a structure-based reverse screen on a separate
+ten-target diverse-fold panel recovers the true target at top-$1$ $0.16$ (area under the curve
+$0.62$) against $0.95$ ($0.99$) for the ligand-shape baseline of Supplementary
+Figure~\ref{fig:F} and $0.10$ for random, raw docking scores not being comparable across pockets,
+so the structure-directed regime is not claimed here.
 
 \section{Conclusion}\label{sec:conclusion}
 The error of a perturbation network splits in two, and the split is not a matter of degree. One
