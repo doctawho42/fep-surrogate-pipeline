@@ -1,0 +1,90 @@
+version: 1
+description: >
+  Immutable pre-registration for the Hodge-decomposition increment (frozen BEFORE any
+  decomposition, adjusted R^2 or influence-ranked repair is computed on experimental data;
+  immutability anchored by an external SHA-256 pinned in tests/test_hodge.py). Tests where the
+  measured error of a perturbation network against experiment lives relative to the auditable
+  subspace of cycle closure, and whether a repair rule derived from the theorem beats random
+  removal where the |z|-ranked rule did not. NO new MD; reuses the cached ChEMBL affinities
+  already frozen by closeloop_prereg.yaml.
+
+systems: [cdk8, hif2a, p38, bace]      # the four grounded systems of closeloop_prereg.yaml
+reuse_affinity_from: closeloop_prereg.yaml
+
+# ---------------------------------------------------------------------------
+# H1 -- where does the real error live?
+# ---------------------------------------------------------------------------
+h1:
+  status: quantification                # NOT a gamble; see identity_note
+  identity_note: >
+    Experimental affinities are per-ligand, so the experimental ddG vector is a gradient field and
+    Pi*eps = Pi*y exactly. The auditable part of the error against experiment is therefore the
+    closure residual itself, and the visible fraction equals X^2 / ||eps_tilde||^2 identically.
+    H1 is consequently a quantification backed by an identity, not a risky test. What IS at risk
+    is the comparison against the chance level: an error field with no preferential alignment
+    would put a fraction dof/E in the auditable subspace, and the claim is that the measured
+    fraction is materially below it.
+  statistic: >
+    Per grounded system, on the sub-network whose both endpoints carry experimental affinity:
+    eps_e = ddG_calc,e - (exp_dg[b] - exp_dg[a]); eps_tilde = eps / se_e;
+    visible_fraction f = ||Pi eps_tilde||^2 / ||eps_tilde||^2;
+    gradient-model R^2 = 1 - f; adjusted R2_adj = 1 - (1 - R^2) * E / (E - rank),
+    the no-intercept adjustment, whose expectation is 0 under an unaligned error field.
+  chance_level: dof/E                   # exact expectation of f for a whitened-isotropic error
+  success: >
+    pooled R2_adj >= 0.50 AND R2_adj > 0 in at least 3 of the 4 grounded systems.
+  confound_declared: >
+    Experimental measurement error and the stereo-blind ChEMBL join collapse are BOTH per-ligand
+    and therefore also gradient fields. This design cannot separate per-ligand force-field bias
+    from per-ligand experimental/annotation error. The conclusion licensed is "the dominant part
+    of the error against experiment is node-consistent and therefore invisible to closure",
+    NOT "the dominant part is force-field bias".
+  null_is_publishable: >
+    f at or above dof/E would mean the error against experiment is not preferentially
+    node-consistent, which would leave the observed guided-vs-random null of closeloop
+    unexplained and would be reported as such. The theorem is algebra and stands either way.
+
+# ---------------------------------------------------------------------------
+# H2 -- does the theorem-derived repair rule work where the |z| rule did not?
+# ---------------------------------------------------------------------------
+h2:
+  status: secondary_second_look
+  multiplicity_declaration: >
+    This is a SECOND pre-registered hypothesis on the SAME four systems and the SAME cached
+    affinities that already returned a null for the |z|-ranked rule (closeloop, Stouffer p=0.48).
+    It is reported as a second look at one data set, not as independent confirmation, and alpha
+    is not spent twice: a success here is reported as "a theory-derived rule succeeds where the
+    naive rule failed on the same data", with the second-look status stated in the text.
+  rule: >
+    Rank edges for removal by the influence statistic |z_e| * sqrt((1 - h_e) / h_e), the DFFITS
+    form that Theorem 5 identifies with the bias-relevant half of the conserved budget, instead of
+    by |z_e|. Bridges (h_e = 0) are excluded from the ranking, being unauditable.
+  k_per_system: match_closeloop        # identical removal count K per system, so the contrast is
+                                       # the RANKING only, never the budget
+  n_perm: 1000
+  primary_statistic: >
+    Identical to closeloop_prereg.yaml: per-system one-sided permutation p against equal-size
+    random removal, combined by one-sided Stouffer + a sign test.
+  success: >
+    combined Stouffer p < 0.05 AND per-system guided deltaMUE above the 95th percentile of its
+    random null in a majority of grounded systems.
+  head_to_head: >
+    Report deltaMUE(influence-ranked) - deltaMUE(|z|-ranked) at the same K per system, with a
+    paired sign test, as a secondary read.
+  null_is_publishable: >
+    A null would mean the bias-relevant ranking is no more actionable than the residual-relevant
+    one on public retrospective data, bounding the practical reach of Theorem 5(i') to
+    explanation rather than repair. That is the modal outcome and is reported as measured.
+
+# ---------------------------------------------------------------------------
+# H3 -- auditability map (descriptive; frozen to prevent later tuning)
+# ---------------------------------------------------------------------------
+h3:
+  status: descriptive_no_threshold
+  quantities: >
+    Per system over all 48 cyclic benchmark systems: E, N, components, rank, dof, dof/E; per edge:
+    curl-leverage h_e, bridge indicator, resolution delta*_e = sqrt(V_e / h_e); and the fraction of
+    edges auditable at 0.5 and at 1.0 kcal/mol. Reported as computed, with no threshold and no
+    verdict attached.
+
+decision_constants_frozen_at: 2026-08-18
