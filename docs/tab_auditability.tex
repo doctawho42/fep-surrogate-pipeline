@@ -1,0 +1,36 @@
+\begin{table}[tp]\centering
+\caption{\textbf{What each benchmark system can be audited for.} For the $48$ systems carrying at least one independent cycle: $N$ ligands, $E$ edges, $\nu$ independent cycles, the auditable fraction $\nu/E$ of that system's error space, the number of bridge edges (br), which lie in no cycle and carry no evidence at any magnitude, and the median detectable shift $\tilde\delta^\ast$ in kcal/mol over that system's auditable edges. Rows are ordered by auditable fraction ascending. A dagger marks the eight systems the Benjamini--Hochberg test flags on at least one of the three replicates. Values are replicate-0 and are produced by the same run of the released analysis code that draws Figure~\ref{fig:Hodge}.}
+\label{tab:auditability}
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}lrrrrrr@{\hspace{10pt}}lrrrrrr@{}}
+\toprule
+system & $N$ & $E$ & $\nu$ & $\nu/E$ & br & $\tilde\delta^\ast$ & system & $N$ & $E$ & $\nu$ & $\nu/E$ & br & $\tilde\delta^\ast$ \\
+\midrule
+\texttt{brd4}$^\dagger$ & $8$ & $8$ & $1$ & $0.12$ & $0$ & $0.49$ & \texttt{mcl1} & $54$ & $76$ & $24$ & $0.32$ & $1$ & $0.91$ \\
+\texttt{taf12} & $8$ & $8$ & $1$ & $0.12$ & $0$ & $0.48$ & \texttt{hif2a}$^\dagger$ & $41$ & $59$ & $19$ & $0.32$ & $1$ & $0.78$ \\
+\texttt{scyt\_dehyd} & $7$ & $7$ & $1$ & $0.14$ & $0$ & $0.43$ & \texttt{shp2} & $26$ & $37$ & $12$ & $0.32$ & $2$ & $1.14$ \\
+\texttt{chk1} & $13$ & $15$ & $3$ & $0.20$ & $1$ & $1.29$ & \texttt{syk} & $46$ & $67$ & $22$ & $0.33$ & $5$ & $1.25$ \\
+\texttt{t4\_lysozyme} & $12$ & $14$ & $3$ & $0.21$ & $0$ & $0.39$ & \texttt{bace1} & $3$ & $3$ & $1$ & $0.33$ & $0$ & $0.64$ \\
+\texttt{hsp90\_kung} & $11$ & $13$ & $3$ & $0.23$ & $0$ & $0.56$ & \texttt{dlk} & $5$ & $6$ & $2$ & $0.33$ & $0$ & $2.09$ \\
+\texttt{liga} & $11$ & $13$ & $3$ & $0.23$ & $1$ & $0.95$ & \texttt{factor\_xa} & $3$ & $3$ & $1$ & $0.33$ & $0$ & $2.46$ \\
+\texttt{jnk1} & $24$ & $29$ & $7$ & $0.24$ & $3$ & $0.93$ & \texttt{ptp1b} & $26$ & $36$ & $12$ & $0.33$ & $5$ & $1.39$ \\
+\texttt{ephx2} & $4$ & $4$ & $1$ & $0.25$ & $0$ & $3.85$ & \texttt{renin}$^\dagger$ & $29$ & $42$ & $14$ & $0.33$ & $0$ & $0.64$ \\
+\texttt{hsp90\_single\_ring} & $7$ & $8$ & $2$ & $0.25$ & $0$ & $0.53$ & \texttt{thrombin} & $37$ & $54$ & $19$ & $0.35$ & $0$ & $0.55$ \\
+\texttt{hsp90\_woodhead} & $4$ & $4$ & $1$ & $0.25$ & $1$ & $0.37$ & \texttt{keranen\_p2} & $12$ & $17$ & $6$ & $0.35$ & $0$ & $1.27$ \\
+\texttt{irak4\_s3} & $4$ & $4$ & $1$ & $0.25$ & $1$ & $1.60$ & \texttt{jak2\_set1} & $10$ & $14$ & $5$ & $0.36$ & $1$ & $0.74$ \\
+\texttt{urokinase} & $4$ & $4$ & $1$ & $0.25$ & $0$ & $0.41$ & \texttt{p38}$^\dagger$ & $40$ & $60$ & $22$ & $0.37$ & $5$ & $1.02$ \\
+\texttt{tnks2} & $27$ & $35$ & $9$ & $0.26$ & $0$ & $0.47$ & \texttt{hiv1\_protease} & $13$ & $19$ & $7$ & $0.37$ & $0$ & $0.46$ \\
+\texttt{faah}$^\dagger$ & $24$ & $31$ & $8$ & $0.26$ & $3$ & $0.88$ & \texttt{cdk2} & $19$ & $27$ & $10$ & $0.37$ & $0$ & $0.92$ \\
+\texttt{bace\_ciordia\_prospective} & $9$ & $11$ & $3$ & $0.27$ & $0$ & $0.68$ & \texttt{eg5} & $28$ & $43$ & $16$ & $0.37$ & $3$ & $1.51$ \\
+\texttt{bace}$^\dagger$ & $36$ & $49$ & $14$ & $0.29$ & $2$ & $0.57$ & \texttt{btk} & $6$ & $8$ & $3$ & $0.38$ & $0$ & $1.63$ \\
+\texttt{bace\_p3\_arg368\_in} & $21$ & $28$ & $8$ & $0.29$ & $8$ & $0.71$ & \texttt{tyk2} & $19$ & $29$ & $11$ & $0.38$ & $1$ & $0.68$ \\
+\texttt{hsp90\_2rings} & $6$ & $7$ & $2$ & $0.29$ & $0$ & $0.13$ & \texttt{itk} & $4$ & $5$ & $2$ & $0.40$ & $0$ & $1.24$ \\
+\texttt{jak1} & $6$ & $7$ & $2$ & $0.29$ & $1$ & $1.60$ & \texttt{cmet} & $24$ & $39$ & $16$ & $0.41$ & $0$ & $1.12$ \\
+\texttt{mup1} & $6$ & $7$ & $2$ & $0.29$ & $0$ & $0.28$ & \texttt{jak2\_set2} & $8$ & $12$ & $5$ & $0.42$ & $0$ & $1.71$ \\
+\texttt{hne} & $17$ & $23$ & $7$ & $0.30$ & $0$ & $1.25$ & \texttt{egfr} & $5$ & $7$ & $3$ & $0.43$ & $0$ & $2.90$ \\
+\texttt{galectin} & $26$ & $36$ & $11$ & $0.31$ & $0$ & $0.61$ & \texttt{irak4\_s2} & $5$ & $7$ & $3$ & $0.43$ & $0$ & $0.98$ \\
+\texttt{ciordia\_retro}$^\dagger$ & $32$ & $45$ & $14$ & $0.31$ & $0$ & $0.68$ & \texttt{cdk8}$^\dagger$ & $35$ & $63$ & $29$ & $0.46$ & $3$ & $0.98$ \\
+\bottomrule
+\end{tabular}
+\end{table}

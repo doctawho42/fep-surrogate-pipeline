@@ -228,6 +228,25 @@ pre-registered test of whether the curl-leverage \emph{additionally} predicts th
 reproducible systematic error, run on $934$ pooled edges over $45$ systems against the rule
 confirmed iff $\rho>0$ and $p<0.05$ ($10^4$ within-system block permutations), is negative (studentized Spearman $\rho=-0.073$, $p=0.9571$), so only the structural certificate is claimed.
 
+\paragraph{Per-system auditability (Table~\ref{tab:auditability}).} Theorem~\ref{thm:hodge} makes
+a network's auditable fraction a property of its topology and its reported precisions alone, so it
+can be tabulated for every benchmark system before any question of what that system's error turns
+out to be. Table~\ref{tab:auditability} gives, per system, the ligand and edge counts, the number
+of independent cycles $\nu$, the auditable fraction $\nu/E$, the bridge count, and the median
+detectable shift over that system's auditable edges. Three readings are worth making explicit.
+The auditable fraction is exactly $1-(N-c)/E$ and so is small wherever a network is sparse: it
+runs from $0.12$ to $0.46$ with a median of $0.31$, and no benchmark system exposes more than half
+of its own error space to the test. The eight flagged systems span essentially that whole range,
+from $0.12$ to $0.46$, rather than sitting at the auditable end, as they should: a system is
+flagged for the error it carries, not for how much of that error is in view. And \texttt{brd4}, flagged on two of the three replicates, sits
+at the bottom of the table with a single independent cycle: its reduced $\chi^2$ is a
+one-degree-of-freedom statistic, which is the quantitative form of the caution
+Section~\ref{sec:stability} places on it. Rows are ordered by auditable fraction, and the flag
+marks are recomputed from the three replicates by the same code that draws
+Figure~\ref{fig:Hodge}, not transcribed from the main text.
+
+\input{tab_auditability}
+
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figLev_observability.pdf}
 \caption{\textbf{Per-system curl-leverage, and curl-leverage versus reproducible residual
