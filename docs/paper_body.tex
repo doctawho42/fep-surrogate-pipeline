@@ -84,27 +84,30 @@ networks make against experiment falls where an audit could act on it.
 
 This paper makes the following contributions.
 \begin{itemize}
-\item A decomposition of a perturbation network's per-edge error into an auditable part carried by
-its cycles and a part that is a difference of per-ligand offsets. The second is unidentifiable from
-the network's own values at any magnitude, and it is the part that biases the estimated affinities,
-while the first biases nothing. The per-edge share of auditability, the shift each edge would need
-before a closure test could see it, and the number of absolute measurements needed to resolve the
-rest all follow from the same algebra.
+\item A reading of the gradient--cycle decomposition of edge flows from the error side. The
+gradient part of a perturbation network's per-edge error is unidentifiable from the network's own
+edge values at any magnitude, and it is the part that biases the estimated affinities, while the
+auditable cycle part biases nothing. The per-edge share of auditability and the number of absolute
+measurements needed to resolve the rest follow from the same algebra. The decomposition itself is
+not new and is attributed.
 \item A measurement of both quantities on a public replicate benchmark. The auditable subspace
-spans a third of the error space; on the systems that can be grounded against public affinity data
-it carries under one per cent of the error present. Two removal rules fail to improve accuracy
-against experiment, the second of them derived from the decomposition itself.
-\item A per-edge error bar for a relative binding free energy read off a closed-form expression,
-the sandwich variance of the Bennett Acceptance Ratio estimator, rather than learned, and
-characterised against independent simulation replicates on real protein-ligand binding data.
-\item A quality-control instrument built on that bar. Fitting thermodynamic cycle closure with
-calibrated per-edge nulls separates the reproducible part of a network's inconsistency from
-ordinary sampling noise, what it identifies reproduces on replicates it never saw, and a bar as
-overconfident as a learned one destroys the separation.
-\item An applicability map across interval sharpness, edge ranking, synthesis-commit selection
-and reward-guided re-ranking, which finds this calibrated uncertainty valuable for detection,
-and, in controlled simulation only, for trust in a commit decision and for a
-stopping rule; and for nothing sharper or better ranked.
+spans a third of the error space; on systems grounded against public affinity data it bounds the
+auditable share of the error against experiment well below chance. Two removal rules fail to
+improve accuracy against experiment, the second of them derived from the decomposition itself, and
+one of them does measurable harm on one system.
+\item A characterisation of the per-edge error bar a practitioner receives. The multistate MBAR
+standard error composed from the two legs is checked against three independent protocol repeats on
+$1145$ real binding edges; the two-state closed form behind it, the sandwich variance of the
+Bennett Acceptance Ratio estimator, is checked separately against decorrelated bootstraps on
+alchemtest windows.
+\item A quality-control instrument built on that bar. Fitting cycle closure with calibrated
+per-edge nulls separates the reproducible part of a network's inconsistency from sampling noise;
+the per-edge residuals and the ranking of systems reproduce across independent repeats, the list of
+flagged systems does not, and a bar as overconfident as a learned one destroys the separation.
+\item An applicability map across interval sharpness, edge ranking, synthesis-commit selection and
+reward-guided re-ranking. The calibrated uncertainty is valuable for detection and for trust in a
+commit decision on real out-of-distribution benchmark edges, and for a stopping rule in simulation;
+for nothing sharper or better ranked.
 \item The same closed form as an autograd primitive whose backward pass costs a single division,
 and as the conductance of a measurement graph whose knowledge gradient is exactly zero along every
 gauge-redundant direction.
@@ -426,7 +429,8 @@ $\|\Pi\tilde\mu\|^2$ depends only on the cycle part. What the test can see and w
 answer are exact orthogonal complements.
 \emph{(iii)} For an error field with no preferential alignment, the expected visible fraction
 $\|\Pi\tilde\mu\|^2/\|\tilde\mu\|^2$ is $\mathrm{dof}/E$.
-\emph{(iv)} Given absolute measurements on a set $S$ of ligands, the unidentifiable dimension is
+\emph{(iv)} Given unbiased absolute measurements on a set $S$ of ligands, the unidentifiable
+dimension is
 $(N-|S|)-c_{\mathrm{free}}(S)$, with $c_{\mathrm{free}}$ the number of components holding none of
 them: the first anchor in a component removes only that component's arbitrary offset and buys no
 identifiability, each further anchor buys exactly one dimension, and resolving a per-ligand bias in
@@ -471,9 +475,14 @@ beating both, and the verdict was a tie (Supplementary Figure~\ref{fig:Cut}). We
 further reading we placed on the ordering inside it. The only label these data supply divides each
 residual by the same per-edge variance the calibrated rule uses as its weight, so the ordering is
 monotone in proximity to that variance rather than in detection skill, and the comparison ranks
-nothing. What the calibrated null has over a fixed cutoff is accordingly structural: per-edge
-adaptive thresholds, a false-positive rate tied to a replicate-validated null, and the
-observability map of Theorem~\ref{thm:cons}. The evidence that the flags are real remains the
+nothing. Nor are the two rules independent: on this benchmark the flag sets are strictly nested,
+the calibrated null flagging $6$ systems, the fixed-$\mathrm{se}$ test $11$ and the $1.0$ kcal/mol
+cutoff $26$, so the calibrated null catches nothing the field's cutoff misses and instead removes
+$20$ of its flags. Whether that removal is an improvement is what the contaminated label cannot
+say, and adjudicating those $20$ needs new sampling or new experiment, which public retrospective
+data cannot supply. What the calibrated null has over a fixed cutoff is accordingly structural and
+not demonstrated here: per-edge adaptive thresholds, a false-positive rate tied to a
+replicate-validated null, and the observability map of Theorem~\ref{thm:cons}. The evidence that the flags are real remains the
 distribution-free cross-replicate reproduction check, which does not depend on the $\chi^2$
 scaling, and it needs only the per-edge $se$ the benchmark ships: the detector's novelty is the
 calibrated null, not the differentiable machinery.
@@ -482,7 +491,11 @@ That observation does not bound the realized false-positive rate, and we do not 
 so: Benjamini--Hochberg controls the false discovery rate through the behaviour of the null
 $p$-values near the rejection threshold, not through the median of the statistic, and the
 per-system calibration of Figure~\ref{fig:Arep} is heterogeneous enough that a conservative bulk
-and an anti-conservative tail can coexist. The nominal level is reported as nominal. The case for
+and an anti-conservative tail can coexist. The correction is applied across systems, which are
+fitted separately and share no edges, so the independence Benjamini--Hochberg needs is plausible
+between them even though residuals within a system are dependent by construction; the procedure
+also holds under positive regression dependence, which is the direction any residual between-system
+coupling would take. The nominal level is reported as nominal. The case for
 the flags therefore rests not on the $\chi^2$ tail but on the
 distribution-free cross-replicate reproduction check below,
 which assumes no Gaussian null. A subtler concern is that four of the six flagged systems are themselves locally overconfident
@@ -677,10 +690,14 @@ worsen slightly, a wash with no system individually significant. The remaining t
 That null is what Theorem~\ref{thm:hodge} predicts and what the paragraph above measures. A removal
 rule reads the visible part of the error; the visible part carries under one per cent of what is
 wrong with these networks, and by part (ii) it is the part that biases the fitted potentials least.
-A pre-registered second rule confirms the reading and rules out the obvious escape, that the
-ranking was simply the wrong one. Part (ii) suggests ranking edges by influence rather than by
-residual, $|z_e|\sqrt{(1-h_e)/h_e}$, the classical form that weights an edge by the bias its error
-induces instead of by its visibility. At the same removal counts it performs worse than the rule it
+A second pre-registered rule tests the obvious escape, that the ranking was simply the wrong one,
+and fails to find it; a second failure to reject is weaker evidence than a rejection would be, and
+is reported as such. Part (ii) suggests ranking edges by influence rather than by residual. The
+statistic used is $|z_e|\sqrt{(1-h_e)/h_e}$ with $z_e=r_e/\sqrt{V^{\mathrm{rep}}_e}$ the raw
+standardized residual, which is the classical influence form scaled by $\sqrt{h_e}$ rather than
+that form itself; edges with $h_e$ below $10^{-9}$ are treated as bridges and given influence
+zero. Writing it in the unscaled form changes the removal set on two of the four systems and is
+reported with the outcome below. At the same removal counts it performs worse than the rule it
 was meant to replace, against the same conjunctive criterion: better on one system of four
 (per-system $\Delta$MUE $-0.055$, $-0.099$,
 $-0.612$, $+0.140$ kcal/mol at one-sided permutation $p=0.937$, $0.819$, $1.000$, $0.023$;
@@ -710,8 +727,11 @@ The consequence for practice is a change of use rather than an abandonment. A fl
 system-level signal that a protocol has produced results inconsistent beyond sampling, and that
 signal reproduces across replicates. It is not a repair target: deleting the edges it names cannot
 recover accuracy against experiment, because accuracy against experiment is set by a component the
-audit is blind to by construction. Reaching that component needs information from outside the
-network, and by part (iv) the arithmetic of doing so with absolute measurements is unforgiving:
+audit is blind to by construction. Reaching that component needs information from outside the network, and it has to be information
+the network does not already contain: an absolute binding free energy calculation carries exactly
+the per-ligand systematic error part (i) is about and resolves none of it, while a measured anchor
+resolves its dimension only to its own precision. By part (iv) the arithmetic is unforgiving even
+when the anchors are unbiased:
 one anchor per component fixes only an arbitrary offset, and every dimension after that costs one
 more measured ligand.
 
@@ -722,7 +742,12 @@ other of its kind, can be asked for, which is why its flags are not a repair lis
 
 \subsection{What survives a second replicate}\label{sec:stability}
 The benchmark ships three independent repeats, so the flag set can be recomputed rather than
-assumed. It does not hold up as a set. The same pipeline at the same FDR level returns
+assumed. It does not hold up as a set. The eight-system union below is descriptive and carries no
+controlled error rate: three independent tests each holding a nominal $0.05$ put the chance of at
+least one false flag among them at $1-0.96^3=0.115$ if they were independent, which they are not.
+The counts are also per system and not per target, the benchmark's $49$ systems carrying $41$
+protein labels, with \texttt{bace} contributing four and \texttt{hsp90} four; the six flagged
+systems are six different proteins, so that count at least is not inflated by system splitting. The same pipeline at the same FDR level returns
 $\{$\texttt{bace}, \texttt{brd4}, \texttt{cdk8}, \texttt{faah}, \texttt{hif2a}, \texttt{p38}$\}$ on
 the first replicate, $\{$\texttt{bace}, \texttt{brd4}, \texttt{ciordia\_retro}, \texttt{hif2a},
 \texttt{p38}, \texttt{renin}$\}$ on the second and $\{$\texttt{bace}, \texttt{cdk8},
@@ -925,8 +950,11 @@ The test detects only \emph{edge-level} inconsistency, and neither removal rule 
 against experiment: guided removal ties random on the four grounded systems (Stouffer $p=0.48$;
 Figure~\ref{fig:Lcausal}) and the influence rule does no better overall and, on \texttt{p38},
 measurably worse than random removal (Section~\ref{sec:hodge}; Figure~\ref{fig:Hodge}C).
-Theorem~\ref{thm:hodge} makes both nulls structural rather than underpowered and
-Section~\ref{sec:hodge} measures the margin, but three restrictions attach to that measurement. It
+Theorem~\ref{thm:hodge} offers a structural reading of both nulls, bounded by the margin
+Section~\ref{sec:hodge} measures rather than established independently of it. The pre-registration
+names what would have counted against that reading: a guided removal beating its random null in a
+majority of grounded systems at a combined $p$ below $0.05$ would have shown the visible part
+actionable after all. Three restrictions attach to the measurement. It
 rests on four systems, all of them flagged, so it characterises the systems the test selects rather
 than the benchmark. It runs on a connectivity-based ChEMBL join, stereo-blind, so enantiomer pairs
 sharing a 2D graph collapse to one experimental value, inflating absolute MUE while cancelling in

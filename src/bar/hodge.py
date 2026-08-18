@@ -18,9 +18,10 @@ corrupts the answer are exact orthogonal complements.
 
 The practical consequence is the ranking. Closure ranks edges by ``|z_e|``, which is powered by the
 curl-leverage ``h_e``; the bias an edge's error induces scales with ``1 - h_e``. Ranking by
-``|z_e| * sqrt((1 - h_e) / h_e)`` -- the classical DFFITS influence statistic, which the
-conservation law ``h_e + w_e Omega_e = 1`` identifies with the un-auditable half of the budget --
-targets harm rather than visibility.
+``|z_e| * sqrt((1 - h_e) / h_e)`` targets harm rather than visibility. With ``z_e`` the raw
+standardized residual ``r_e / sqrt(V_e)`` this is the classical influence form scaled by
+``sqrt(h_e)`` rather than that form itself; the conservation law ``h_e + w_e Omega_e = 1`` is what
+identifies the ``1 - h_e`` factor with the un-auditable half of the budget.
 
 Pure NumPy. Reuses ``bar.qc`` for the incidence and the GLS fit and ``bar.leverage`` for ``h_e``.
 """
@@ -105,7 +106,7 @@ def gradient_r2(edges: list[Edge], field: NDArray) -> tuple[float, float, float]
 def influence_rank(edges: list[Edge], z: NDArray | None = None) -> NDArray:
     """Per-edge influence ``|z_e| * sqrt((1 - h_e) / h_e)``; zero on un-auditable (bridge) edges.
 
-    ``z`` defaults to the standardized residuals of the network's own GLS fit. An edge with
+    ``z`` defaults to the raw standardized residuals of the network's own GLS fit. An edge with
     ``h_e = 0`` carries no evidence at any magnitude, so it is given influence zero rather than the
     infinity the formula would otherwise produce: there is nothing to act on, not everything.
     """
