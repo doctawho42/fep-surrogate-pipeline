@@ -646,8 +646,12 @@ A pre-registered second rule confirms the reading and rules out the obvious esca
 ranking was simply the wrong one. Part (ii) suggests ranking edges by influence rather than by
 residual, $|z_e|\sqrt{(1-h_e)/h_e}$, the classical form that weights an edge by the bias its error
 induces instead of by its visibility. At the same removal counts it performs worse than the rule it
-was meant to replace (Stouffer $p=1.00$ against $0.48$; better on one system of four; paired sign
-$p=0.94$; Figure~\ref{fig:Hodge}C). The reason is the same measurement: the influence form divides a
+was meant to replace: better on one system of four, at a pre-registered sign test of $p=0.94$
+against the residual rule's $0.69$ (Figure~\ref{fig:Hodge}C). The pre-registration's other
+combination, a one-sided Stouffer, returns no usable number here, because one system's permutation
+$p$ saturates at the resolution of its own grid and Stouffer maps that to an infinite $z$; clipping
+to the grid's range gives $0.96$, and the residual rule, which has no saturated input, stands at
+$0.48$. Neither rule beats random removal, and neither is shown to be worse than it. The reason is the same measurement: the influence form divides a
 residual by a small curl-leverage to recover the error of a single anomalous edge, and a smooth
 per-ligand field is not concentrated on any edge, so the division returns amplified noise.
 
@@ -871,7 +875,8 @@ is, so the flags are reported as reproducible inconsistency throughout.
 
 The test detects only \emph{edge-level} inconsistency, and neither removal rule improves accuracy
 against experiment: guided removal ties random on the four grounded systems (Stouffer $p=0.48$;
-Figure~\ref{fig:Lcausal}) and the influence rule does worse ($p=1.00$; Figure~\ref{fig:Hodge}C).
+Figure~\ref{fig:Lcausal}) and the influence rule does no better (sign test $p=0.94$;
+Figure~\ref{fig:Hodge}C).
 Theorem~\ref{thm:hodge} makes both nulls structural rather than underpowered and
 Section~\ref{sec:hodge} measures the margin, but three restrictions attach to that measurement. It
 rests on four systems, all of them flagged, so it characterises the systems the test selects rather

@@ -1,6 +1,7 @@
 """Unit tests for the close-the-loop accuracy race (src/bar/closeloop.py)."""
 from __future__ import annotations
 
+import math
 import pathlib
 
 import numpy as np
@@ -97,3 +98,35 @@ def test_combine_drops_nan_p_consistently():
     assert out["sign_p"] == 0.25          # 2/2 successes over n=2 -> comb(2,2)/2**2 = 0.25
     assert out["verdict"] == "SUCCESS"
     assert C.combine([{"p": float("nan"), "guided": 0.0, "random_mean": 0.1}])["verdict"] == "NULL"
+
+
+def test_combine_refuses_to_report_a_saturated_stouffer():
+    """A permutation p of exactly 1 drives Stouffer to exactly 1 whatever the other systems say.
+
+    That is the resolution of the permutation grid speaking, not a combined p-value, so the
+    function reports NaN and names the saturated input instead of emitting the artefact.
+    """
+    effs = [
+        {"p": 0.937, "guided": -0.05, "random_mean": 0.0, "below_5pct": False},
+        {"p": 0.819, "guided": -0.10, "random_mean": 0.0, "below_5pct": False},
+        {"p": 1.000, "guided": -0.61, "random_mean": 0.0, "below_5pct": False},
+        {"p": 0.023, "guided": +0.14, "random_mean": 0.0, "below_5pct": True},
+    ]
+    out = C.combine(effs, n_perm=1000)
+    assert math.isnan(out["stouffer_p"])
+    assert out["stouffer_saturated"] == [1.0]
+    # the clipped sensitivity is finite, and says the same thing the raw artefact hid: not extreme
+    assert 0.9 < out["stouffer_p_clipped"] < 1.0
+    # the pre-registered decision is unchanged by the NaN, and the sign test still works
+    assert out["verdict"] == "NULL"
+    assert out["sign_p"] == pytest.approx(15 / 16)
+
+
+def test_combine_is_unchanged_when_no_p_saturates():
+    """The published close-the-loop numbers must not move: none of their p-values saturate."""
+    effs = [{"p": p, "guided": 0.0, "random_mean": 0.1, "below_5pct": False}
+            for p in (0.905, 0.136, 0.880, 0.071)]
+    out = C.combine(effs, n_perm=1000)
+    assert out["stouffer_saturated"] == []
+    assert out["stouffer_p"] == pytest.approx(0.4838, abs=1e-3)
+    assert out["stouffer_p_clipped"] == pytest.approx(out["stouffer_p"], abs=1e-9)

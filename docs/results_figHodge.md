@@ -47,10 +47,23 @@ shows the dominant part of the error is node-consistent, not that it is force-fi
 | `p38` | 2 | -0.6120 | -0.0852 | -0.0223 | 1.000 |
 | `bace` | 3 | +0.1399 | +0.1130 | -0.0116 | 0.023 |
 
-Combined Stouffer p = 1.000 for the influence-ranked rule against 0.484 for the
-residual-ranked one; the influence rule wins on 1 of 4 systems (paired sign p = 0.938). Verdict: NULL.
+Pre-registered sign test: p = 0.938 for the influence-ranked rule and 0.688 for the
+residual-ranked one. The influence rule wins on 1 of 4 systems (paired sign p = 0.938). Verdict: NULL.
 
-This is a null, and a harder one than the rule it was meant to improve on. H1 explains it.
+The pre-registration also names a one-sided Stouffer combination, and for the
+influence-ranked arm it does not return a usable number. A permutation p is bounded by the
+number of draws, and `p38` lands on exactly 1.000: all 1000 random removals did at
+least as well as the guided one. Stouffer maps that to an infinite z, so the combination
+returns exactly 1.000 whatever the other three systems say. That value is the resolution of
+the permutation grid speaking, not a combined p-value, and it is reported here as not
+computable rather than as a result. Clipping the inputs to the grid's own range gives
+0.962 as a sensitivity, which is not extreme in either
+direction. The residual-ranked arm has no saturated input and its Stouffer combination
+stands unchanged at 0.484. Neither rule beats random removal, and
+nothing here says the influence rule is actively harmful; the decision rule is unaffected,
+since a value that cannot be computed fails the same threshold the degenerate one did.
+
+This is a null, and no better than the rule it was meant to improve on. H1 explains it.
 A repair rule reads the visible part of the error, and the visible part carries a few per
 cent of what is wrong; dividing the residual by a small curl-leverage, which is what the
 influence form does, amplifies noise wherever the error is not concentrated on a single

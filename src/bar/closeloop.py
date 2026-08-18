@@ -130,19 +130,39 @@ def system_effect(edges: list, exp: dict, n_perm: int, target_rchi2: float, seed
             "curve": {"guided_removed": K, "n_edges": E}}
 
 
-def combine(effects: list) -> dict:
+def combine(effects: list, n_perm: int | None = None) -> dict:
     """One-sided Stouffer on per-system p + a sign test on the per-system effect (guided-random).
+
     Systems with a NaN p (degenerate networks where every permutation draw was NaN) are dropped
     from ALL three sub-statistics consistently, so Stouffer, the sign test, and the majority-below
-    count share one effective sample size."""
+    count share one effective sample size.
+
+    A permutation p is bounded by the number of draws, so it can land exactly on 0 or 1. Stouffer
+    maps those to an infinite z and returns exactly 0 or exactly 1 whatever the other systems say,
+    which is an artefact of the resolution rather than a combined p-value. When that happens
+    ``stouffer_p`` is NaN, ``stouffer_saturated`` names the offending p-values, and (given
+    ``n_perm``) ``stouffer_p_clipped`` reports the same statistic on p clipped to
+    ``[1/(n_perm+1), n_perm/(n_perm+1)]`` as a sensitivity. The pre-registered decision rule is
+    untouched: a NaN fails ``< 0.05`` exactly as the degenerate 1.0 did, and the sign test, which
+    the pre-registration names alongside Stouffer, is unaffected by saturation.
+    """
     valid = [e for e in effects if not math.isnan(e["p"])]
     n = len(valid)
     if n == 0:
-        return {"stouffer_p": math.nan, "sign_p": math.nan, "verdict": "NULL"}
-    z = norm.isf(np.array([e["p"] for e in valid]))  # one-sided: small p -> large z
-    stouffer = float(norm.sf(z.sum() / math.sqrt(n)))
+        return {"stouffer_p": math.nan, "sign_p": math.nan, "stouffer_saturated": [],
+                "stouffer_p_clipped": math.nan, "verdict": "NULL"}
+    pvals = np.array([e["p"] for e in valid])
+    saturated = [float(v) for v in pvals if v <= 0.0 or v >= 1.0]
+    stouffer = math.nan
+    if not saturated:
+        stouffer = float(norm.sf(norm.isf(pvals).sum() / math.sqrt(n)))
+    clipped = math.nan
+    if n_perm:
+        lo, hi = 1.0 / (n_perm + 1), n_perm / (n_perm + 1)
+        clipped = float(norm.sf(norm.isf(np.clip(pvals, lo, hi)).sum() / math.sqrt(n)))
     signs = sum(1 for e in valid if e["guided"] > e["random_mean"])
     sign_p = float(sum(math.comb(n, i) for i in range(signs, n + 1)) / (2 ** n))
     majority_below = sum(bool(e.get("below_5pct")) for e in valid) > n / 2
     verdict = "SUCCESS" if (stouffer < 0.05 and majority_below) else "NULL"
-    return {"stouffer_p": stouffer, "sign_p": sign_p, "verdict": verdict}
+    return {"stouffer_p": stouffer, "sign_p": sign_p, "stouffer_saturated": saturated,
+            "stouffer_p_clipped": clipped, "verdict": verdict}
