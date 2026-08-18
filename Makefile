@@ -90,6 +90,9 @@ figLcausal:  # close-the-loop: does acting on the QC flag improve accuracy vs ex
 figLev:  # D1: per-edge observability map (sum_h==dof, bridges) + pre-registered predictive falsifier
 	PYTHONPATH=src $(PY) figs/make_figLev.py
 
+figHodge:  # Theorem 5: auditability map + where the error against experiment lives + repair race
+	PYTHONPATH=src $(PY) figs/make_figHodge.py
+
 figCut:  # peer-review P1+P2: fixed-cutoff head-to-head + chi^2 reconciliation
 	PYTHONPATH=src $(PY) figs/make_figCut.py
 
