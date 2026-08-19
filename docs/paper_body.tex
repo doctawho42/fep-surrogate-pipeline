@@ -1,19 +1,17 @@
 \begin{abstract}
-The per-edge error bar a relative-binding-free-energy pipeline already reports, checked here
-against seed and velocity repeats on $1145$ real protein-ligand binding edges, is conservative on
-aggregate and heterogeneous by system; used as the null of a cycle-closure fit it turns a
-descriptive consistency check into a test with a stated null. What that test can reach is fixed by
-the gradient--cycle decomposition of edge flows, which is not ours and is attributed: the cycle
-part of a network's error is identifiable from its own edge values and biases nothing, while the
-gradient part biases the estimated affinities and is invisible to any statistic computed from those
-values, at any magnitude. Measured on this benchmark the auditable subspace spans a third of the
-error space and carries under one per cent of the error against experiment on the systems grounded
-against public affinity data, below chance on every one of them. The test is accordingly not a
-repair list: on the first replicate its flags lie strictly inside the fixed $1.0$ kcal/mol
-hysteresis cutoff the field uses, catching nothing that cutoff misses while removing $20$ of its
-$26$, a difference retrospective data cannot adjudicate, and removing the edges it names does not
-recover accuracy against experiment. Resolving the invisible part needs measurements from outside
-the network, priced here in ligands.
+A relative-binding-free-energy network's per-edge error bar, checked here against seed and velocity
+repeats on $1145$ real binding edges, can serve as the null of a cycle-closure fit, turning a
+descriptive consistency check into a test with a stated null. What such a test can reach is fixed
+by the gradient--cycle decomposition of edge flows, which is not ours: the cycle part of a network's
+error is auditable and biases nothing, while the gradient part biases the estimated affinities and
+is invisible to any statistic computed from the network's own values, at any magnitude. On this
+benchmark the auditable subspace spans a third of the error space and, in the variance-weighted
+metric the closure statistic uses, carries under one per cent of the error against experiment,
+still a factor of $1.36$ below chance at the weakest reading tried. The test is correspondingly
+narrow: on the first replicate its flags sit inside the field's fixed $1.0$ kcal/mol hysteresis
+cutoff and remove $20$ of its $26$, removing the edges it names does not recover accuracy against
+experiment, and widening every reported error by thirty per cent leaves one system flagged.
+Resolving the invisible part needs measurements from outside the network, priced here in ligands.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -100,8 +98,10 @@ alchemtest windows, all of which sit at overlap $\geq0.84$, so its real-data che
 the low-overlap regime and that regime rests on the controlled sweep.
 \item A quality-control instrument built on that bar. Fitting cycle closure with calibrated
 per-edge nulls separates the reproducible part of a network's inconsistency from sampling noise;
-the per-edge residuals and the ranking of systems reproduce across independent repeats, the list of
-flagged systems does not, and a bar as overconfident as a learned one destroys the separation.
+the per-edge residuals and the ranking of systems reproduce across independent repeats and the list
+of flagged systems does not. A counterfactual bar as overconfident as a trained per-edge head
+destroys the separation, while the six per cent miscalibration a same-budget pooled estimator
+reaches leaves it intact, so what the separation is scoped to is heads of that kind.
 \item An applicability map across interval sharpness, edge ranking, synthesis-commit selection,
 reward-guided re-ranking and two decision tasks. None of the six puts the calibrated uncertainty
 ahead of a fair baseline: commit trust on real out-of-distribution benchmark edges ties two
@@ -942,6 +942,8 @@ hypothesis rather than a transferable diagnostic: where $\sigma$ flags novelty r
 an uncalibrated reward is safer.
 
 \paragraph{Synthesis.} None of the six tasks puts the calibrated $\sigma$ ahead of a fair baseline.
+On commit trust the physics $\sigma$ matches post-hoc recalibration rather than beating it, and the
+stopping separation is absent at the six per cent a same-budget pooled estimator produces.
 What the audit establishes is a precondition rather than an advantage: decisions of this kind need
 some proper calibration, an overconfident $\sigma$ silently corrupts them, and the place the
 calibration demonstrably pays on real data is inside the network, as the null of
