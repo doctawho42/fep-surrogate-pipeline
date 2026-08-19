@@ -235,12 +235,18 @@ Section~\ref{sec:stability} places on it. Rows are ordered by auditable fraction
 marks are recomputed from the three replicates by the same code that draws
 Figure~\ref{fig:Hodge}, not transcribed from the main text.
 
-\paragraph{The pre-registration, in full.} Four separate arguments in this article turn on what was
+\paragraph{The pre-registration, in full.} Several arguments in this article turn on what was
 frozen before the computation rather than chosen after it, so the file is reproduced below rather
 than described. It was committed to the article's repository before the commit that computes any of
 the quantities it governs, and it is anchored by the SHA-256 digest
 \texttt{16279af73d90e1e9b39f33046ba6ee432b80ad750a6e5687a0e05b3e54b01585}, which the test suite
-asserts on every run so that an edit after the fact fails the build. Note in particular that both
+asserts on every run. That digest lives in the same repository as the file, so it detects
+accidental drift and not backdating; we claim the former and not the latter. The file below governs
+H1, H2 and H3 only. The other pre-specified constants this article invokes, the $|z|$-rule
+conjunctive criterion, the curl-leverage falsifier rule, the fixed-cutoff head-to-head criterion,
+the $1.0$ kcal/mol cutoff itself, the swept scale grid with its two frozen readouts, the per-edge
+granularity of the self-calibrated null, and the close-the-loop criterion, are recorded in the
+released analysis code and its accompanying pre-registration for that experiment, not here. Note in particular that both
 success criteria are conjunctive, that H1 is labelled a quantification rather than a gamble and
 says why, that the confound the design cannot resolve is declared in it, and that H2 is declared a
 second look at data which had already produced one null. The quantities H3 lists as descriptive

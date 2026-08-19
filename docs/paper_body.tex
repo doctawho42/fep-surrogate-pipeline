@@ -1,24 +1,23 @@
 \begin{abstract}
-A perturbation network's per-edge error splits into two orthogonal parts, and the split decides
-what any consistency check can do. One part lives in the network's cycles; the other is a
-difference of per-ligand offsets that no statistic computed from the network's own edge values can
-tell from no error at all. The splitting itself is a known decomposition of edge flows on a
-graph. What is not is where its halves fall: the invisible part biases the
-estimated affinities and the auditable part biases nothing, so a closure test is blind where an
-error would matter. Resolving it needs measurements from outside the network, priced here in
-ligands. Judging it quantitatively needs a scale. The Bennett
-Acceptance Ratio carries its finite-sampling variance in closed form, and the per-edge bar a
-practitioner already receives is checked here against seed and velocity repeats on many real
-protein-ligand binding edges. As the null of a cycle-closure fit it makes the check a
-test with a stated null. A stand-in bar several times too small destroys it; a same-budget
-estimator pooling by overlap does not. On the public
-benchmark examined here the auditable subspace spans a third of the error space. On systems grounded
-against public affinity data it carries, in the variance-weighted metric, under one per cent of
-the error present. The share sits below chance on every system and in
-every metric tried, by a margin ranging from wide to slim. Per-edge
-selections and the ranking of systems reproduce on replicates they never saw; the flagged list
-does not. Removing flagged edges does not recover accuracy against experiment, and on one system a
-rule derived from the split does measurable harm.
+The per-edge error bar a relative-binding-free-energy pipeline already reports is checked here
+against seed and velocity repeats on more than a thousand real protein-ligand binding edges, and is
+conservative on aggregate, heterogeneous by system. Used as the null of a cycle-closure
+fit it turns a descriptive consistency check into a test with a stated null. A stand-in bar several
+times too small destroys that test; a same-budget estimator pooling by overlap does not. Against the
+fixed hysteresis cutoff the field uses, the flag sets are strictly nested: the calibrated null
+catches nothing that cutoff misses and only removes a fifth of its flags, which retrospective data
+cannot adjudicate. What the test can reach is fixed by a
+decomposition of edge flows into gradient and cycle parts, which is not ours and is attributed. Its
+halves fall awkwardly: no statistic computed from the network's own edge values can tell the
+gradient part from no error at all, and that is the part biasing the estimated affinities, while
+the auditable cycle part biases nothing. We measure where a real
+network's error falls between them. The auditable subspace spans a third of the error space, and on
+systems grounded against public affinity data it carries under one per cent of the error against
+experiment, below chance on every system and in every metric tried by a margin ranging from wide to
+slim. Removing the edges the test names does not recover accuracy against experiment, nor does
+removing those a rule derived from the decomposition prefers, which on one system does measurable
+harm. Resolving the invisible part needs measurements from outside the network, priced here in
+ligands.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -101,7 +100,8 @@ one of them does measurable harm on one system.
 standard error composed from the two legs is checked against three independent protocol repeats on
 $1145$ real binding edges; the two-state closed form behind it, the sandwich variance of the
 Bennett Acceptance Ratio estimator, is checked separately against decorrelated bootstraps on
-alchemtest windows.
+alchemtest windows, all of which sit at overlap $\geq0.84$, so its real-data check does not reach
+the low-overlap regime and that regime rests on the controlled sweep.
 \item A quality-control instrument built on that bar. Fitting cycle closure with calibrated
 per-edge nulls separates the reproducible part of a network's inconsistency from sampling noise;
 the per-edge residuals and the ranking of systems reproduce across independent repeats, the list of
@@ -432,8 +432,10 @@ $\|\Pi\tilde\mu\|^2$ depends only on the cycle part. What the test can see and w
 answer are exact orthogonal complements.
 \emph{(iii)} For an error field with no preferential alignment, the expected visible fraction
 $\|\Pi\tilde\mu\|^2/\|\tilde\mu\|^2$ is $\mathrm{dof}/E$.
-\emph{(iv)} Given unbiased absolute measurements on a set $S$ of ligands, the unidentifiable
-dimension is
+\emph{(iv)} Network estimation of $\ddG$ under loop closure, with and without experimental
+constraints, is established~\citep{xu2019diffnet,giese2021variational}; what the rank counting adds
+is the price of the constraints. Given unbiased absolute measurements on a set $S$ of ligands, the
+unidentifiable dimension is
 $(N-|S|)-c_{\mathrm{free}}(S)$, with $c_{\mathrm{free}}$ the number of components holding none of
 them: the first anchor in a component removes only that component's arbitrary offset and buys no
 identifiability, each further anchor buys exactly one dimension, and resolving a per-ligand bias in
@@ -449,16 +451,25 @@ already locates inconsistency in network meta-analysis~\citep{krahn2013graphical
 check sees only cycles is in this sense a restatement, and it matches the field's own long-standing
 reading of cycle closure as necessary and not sufficient~\citep{mey2020alchem}.
 
-Three things are added here. The first is the reading: HodgeRank estimates the gradient component,
-so it has no reason to ask what an error lying along that component does to the estimate. Part (ii)
-asks and answers it, and the answer is not the neutral one a reader might assume: the bias and the
-detectability are carried by complementary halves exactly, so a closure test is blind precisely
-where it would matter and sighted precisely where it would not. The second is part (iv), which
-prices the escape in measurements rather than leaving it qualitative. The third is the measurement
-of where a real perturbation network's error actually falls between the two halves, which is
-Section~\ref{sec:hodge} and is what the rest of this paper rests on. Parts (i) and (iii) are
-restatements in the vocabulary of alchemical networks, and we report them as such because the
-measurement is not interpretable without them.
+The count in part (iii) is older still and closer to this setting than HodgeRank is. A network of
+relative comparisons under a consistency assumption has, in the language of mixed treatment
+comparisons, inconsistency degrees of freedom equal to the number of independent
+loops~\citep{lu2006inconsistency}, which is $\mathrm{dof}$ here; the modern treatment of that model
+and its multi-arm complications is \citet{higgins2012inconsistency}. We searched that literature
+for the specific statement of part (i), that a bias common to every comparison involving one node
+is absorbed into that node's effect and is invisible to any inconsistency test, and did not locate
+it stated in those terms, but we report the search as inconclusive rather than as a negative: the
+fact is immediate in that framework and may well be folklore in it, as the corresponding fact is in
+this one.
+
+Part (ii) follows from part (i) in two lines. The bias in the fitted potentials is
+$(\tilde A^\top\tilde A)^{+}\tilde A^\top\tilde\mu$ and $\tilde A^\top\Pi=0$, so the gradient part
+alone determines it while $\|\Pi\tilde\mu\|^2$ alone determines the noncentrality; it is the
+defining property of an orthogonal projector, read on the error rather than on the signal. What is
+left to this paper is that reading for alchemical networks, part (iv), which prices the escape in
+measurements rather than leaving it qualitative, and above all the measurement of where a real
+network's error falls between the two halves, which is Section~\ref{sec:hodge} and what the rest of
+this paper rests on.
 
 Network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as a
@@ -677,7 +688,10 @@ figure is stable, the per-system ones are not equally so. Both
 sides are measured in the variance-weighted metric the closure statistic lives in, and the margin
 over chance depends on that choice, narrowing to a factor of two on \texttt{bace} under isotropy in
 kcal/mol and the pooled fraction rising to $5.45\%$ in the unweighted metric (Supporting
-Information). What these support is a bound and not a point estimate: the auditable share is small,
+Information). Against the frozen H1 criterion, a pooled degrees-of-freedom-adjusted gradient-model
+$R^2$ of at least $0.50$ and positive on three of the four systems, the measured values are $0.978$,
+$0.995$, $0.976$ and $0.761$ and the criterion is met. What these support is a bound and not a point
+estimate: the auditable share is small,
 at its weakest a factor of two below chance rather than the two orders of magnitude the pooled
 figure alone suggests. Two properties keep the measurement from being an artefact. It is a near-identity rather than a
 fit: per-ligand affinities make the experimental $\ddG$ vector a gradient field, so
@@ -695,8 +709,13 @@ On \texttt{eg5}, whose ligands
 carry ChEMBL identifiers, the network $\ddG$ (from the same GLS fit) agrees with real KIF11
 experimental affinity~\citep{zdrazil2024chembl} at a mean unsigned error (MUE) of $0.79$ kcal/mol ($95\%$ bootstrap CI
 $[0.59,0.97]$, conditional on the fitted network; Pearson $R=0.65$ $[0.30,0.83]$, $p{\approx}2{\times}10^{-4}$, $n=28$), and its clean cycle-closure reduced
-$\chi^2=0.64$ is consistent: a QC-clean system is
-indeed accurate. Acting on the QC does \emph{not} improve accuracy here (internal $|z|$ vs
+$\chi^2=0.64$ is consistent. That is not evidence that a clean
+system is accurate: across the five grounded systems the flag does not separate accuracy against
+experiment, \texttt{eg5} at $0.79$ kcal/mol tying the flagged \texttt{p38} at $0.79$ and beating
+only two of the four flagged systems (\texttt{cdk8} $0.91$, \texttt{bace} $0.88$, \texttt{hif2a}
+$1.47$). The comparison is also not at matched grounding: \texttt{eg5} comes from a single named
+ChEMBL assay while the four flagged systems come from a target-wide connectivity search under the
+coverage rule. Acting on the QC does \emph{not} improve accuracy here (internal $|z|$ vs
 error-against-experiment: $r=+0.13$), exactly as the scope predicts: on a clean system the
 residual error against experiment is dominated by node-consistent force-field bias, which cycle
 closure cannot see. The complementary test, that repairing a \emph{flagged} system improves its
@@ -901,7 +920,11 @@ magnitude: it makes the gauge directions exactly unidentifiable, and by Gauss--M
 value does not improve ranking.
 
 \section{Computational details}\label{sec:methods}
-\paragraph{Data.} The controlled panel of Figure~\ref{fig:A} uses the \texttt{alchemtest} BACE1
+\paragraph{Data.} Every closure fit consumes the release's combined per-replicate table directly,
+taking the per-leg complex and solvent $\Delta G$ and $\mathrm{d}\Delta G$ columns and composing
+the edge value and its standard error from them; no network-level or cycle-closure correction is
+applied to an edge before it enters the fit. The controlled panel of Figure~\ref{fig:A} uses the
+\texttt{alchemtest} BACE1
 relative-binding and benzene sets, from which forward and reverse work samples are available per
 $\lambda$ window. The replicate validation, the cycle-closure test and every experiment on real
 binding data use the OpenFE IndustryBenchmarks2024 release~\citep{baumann2025industrybenchmarks},
@@ -1050,7 +1073,10 @@ systems grounded against experiment the auditable share of the error falls well 
 Fitting cycle closure against precisions the estimator already
 reports turns a descriptive check into a test with a stated null and an ordering of networks by how
 far their own calculations disagree, and it names beforehand the edges that lie in no cycle and so
-can carry no evidence at all. It does not deliver a repair list: removing the edges it names does not recover accuracy against
+can carry no evidence at all. What it does not do on these data is catch anything the field's fixed
+cutoff misses: the two flag sets are nested and the head-to-head between them is a tie, so the
+advantage claimed here is structural, being per-edge adaptive thresholds, a null tied to
+replicate-measured calibration, and the observability map. It does not deliver a repair list: removing the edges it names does not recover accuracy against
 experiment, and a rule built from the theorem does no better and on one system does harm.
 Closing that gap needs information the network does not contain, and in absolute measurements the
 worst case costs one ligand per dimension. That is a worst case: a bias smooth in chemical space
