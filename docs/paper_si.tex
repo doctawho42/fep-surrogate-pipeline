@@ -667,7 +667,8 @@ whether it is applied only where it loosens a bar (one-sided) or in whichever di
 measurement points (two-sided). ``published six'' counts how many of the flags of
 Figure~\ref{fig:L} the arm retains; ``entering'' lists the systems it adds. The last column is the
 realized probability of at least one false flag over $400$ draws of a perfectly-calibrated
-synthetic null, against the nominal $0.05$; that simulation is specified in Computational details
+synthetic null, against the nominal $0.05$, with its exact binomial interval, since at this draw
+count a realized $0.003$ is one flag and is not resolved from zero; that simulation is specified in Computational details
 (Section~\ref{sec:methods} of the main text). No arm is reported as a flag set.}
 \label{tab:selfgrid}
 \small
@@ -675,14 +676,14 @@ synthetic null, against the nominal $0.05$; that simulation is specified in Comp
 \toprule
 granularity & direction & flagged & published six & entering & null $P(\geq1)$ \\
 \midrule
-\multicolumn{2}{@{}l}{reported se, uncorrected} & $6$ & all six & none & $0.040$ \\
+\multicolumn{2}{@{}l}{reported se, uncorrected} & $6$ & all six & none & $0.040$ $[0.023,0.064]$ \\
 \midrule
-per edge & one-sided & $2$ & \texttt{bace}, \texttt{cdk8} & none & $0.003$ \\
-per edge & two-sided & $7$ & $4$ of $6$ & \texttt{irak4\_s2}, \texttt{thrombin}, \texttt{tyk2} & $0.588$ \\
+per edge & one-sided & $2$ & \texttt{bace}, \texttt{cdk8} & none & $0.003$ $[0.000,0.014]$ \\
+per edge & two-sided & $7$ & $4$ of $6$ & \texttt{irak4\_s2}, \texttt{thrombin}, \texttt{tyk2} & $0.588$ $[0.538,0.636]$ \\
 per system & one-sided & $6$ & all six & none & not measured \\
 per system & two-sided & $16$ & all six & \texttt{ciordia\_retro}, \texttt{cmet},
 \texttt{galectin}, \texttt{irak4\_s2}, \texttt{keranen\_p2}, \texttt{mcl1}, \texttt{renin},
-\texttt{thrombin}, \texttt{tnks2}, \texttt{tyk2} & $0.240$ \\
+\texttt{thrombin}, \texttt{tnks2}, \texttt{tyk2} & $0.240$ $[0.199,0.285]$ \\
 \bottomrule
 \end{tabular}
 

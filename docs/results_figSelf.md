@@ -83,13 +83,13 @@ at α = 0.05 that should be ≈ 0.05. `null mean #flagged` is how many of the 48
 
 | arm | systems flagged | median χ²ᵥ | null P(≥1 flag) | null mean #flagged | null median χ²ᵥ | flag set |
 |---|---:|---:|---:|---:|---:|---|
-| nominal (reported se) = Fig L | 6 | 0.343 | 0.040 | 0.04 | 0.860 | `bace, brd4, cdk8, faah, hif2a, p38` |
-| pre-specified primary: per-edge, two-sided | 7 | 1.313 | 0.588 | 1.12 | 1.053 | `bace, brd4, cdk8, irak4_s2, p38, thrombin, tyk2` |
-| granularity sensitivity: per-system aggregate, two-sided | 16 | 1.572 | 0.240 | 0.33 | 0.916 | `bace, brd4, cdk8, ciordia_retro, cmet, faah, galectin, hif2a, irak4_s2, keranen_p2, mcl1, p38, renin, thrombin, tnks2, tyk2` |
-| per-edge, ratio capped to [1/3, 3] | 6 | 0.868 | 0.380 | 0.54 | 1.019 | `bace, brd4, cdk8, p38, thrombin, tyk2` |
-| per-edge, c4(3)-corrected SD | 6 | 1.031 | 0.230 | 0.28 | 0.827 | `bace, brd4, cdk8, p38, thrombin, tyk2` |
-| per-edge, one-sided (P8's direction) | 2 | 0.308 | 0.003 | 0.00 | 0.635 | `bace, cdk8` |
-| per-edge, held-out ratio (replicates 1+2 only) | 21 | 1.923 | 1.000 | 18.50 | 1.807 | `bace, brd4, cdk2, cdk8, eg5, egfr, faah, factor_xa, hif2a, irak4_s2, itk, keranen_p2, liga, mcl1, p38, ptp1b, renin, shp2, syk, thrombin, tyk2` |
+| nominal (reported se) = Fig L | 6 | 0.343 | 0.040 (16/400, CP [0.0230, 0.0641]) | 0.04 | 0.860 | `bace, brd4, cdk8, faah, hif2a, p38` |
+| pre-specified primary: per-edge, two-sided | 7 | 1.313 | 0.588 (235/400, CP [0.5375, 0.6362]) | 1.12 | 1.053 | `bace, brd4, cdk8, irak4_s2, p38, thrombin, tyk2` |
+| granularity sensitivity: per-system aggregate, two-sided | 16 | 1.572 | 0.240 (96/400, CP [0.1990, 0.2849]) | 0.33 | 0.916 | `bace, brd4, cdk8, ciordia_retro, cmet, faah, galectin, hif2a, irak4_s2, keranen_p2, mcl1, p38, renin, thrombin, tnks2, tyk2` |
+| per-edge, ratio capped to [1/3, 3] | 6 | 0.868 | 0.380 (152/400, CP [0.3322, 0.4296]) | 0.54 | 1.019 | `bace, brd4, cdk8, p38, thrombin, tyk2` |
+| per-edge, c4(3)-corrected SD | 6 | 1.031 | 0.230 (92/400, CP [0.1896, 0.2744]) | 0.28 | 0.827 | `bace, brd4, cdk8, p38, thrombin, tyk2` |
+| per-edge, one-sided (P8's direction) | 2 | 0.308 | 0.003 (1/400, CP [0.0001, 0.0138]) | 0.00 | 0.635 | `bace, cdk8` |
+| per-edge, held-out ratio (replicates 1+2 only) | 21 | 1.923 | 1.000 (400/400, CP [0.9908, 1.0000]) | 18.50 | 1.807 | `bace, brd4, cdk2, cdk8, eg5, egfr, faah, factor_xa, hif2a, irak4_s2, itk, keranen_p2, liga, mcl1, p38, ptp1b, renin, shp2, syk, thrombin, tyk2` |
 
 The nominal (published) test comes out at P(≥1) = 0.040, mean 0.04 false flags — it controls its own
 false-positive rate, as the paper claims. **Every self-calibrated arm inflates it**, in the order the
@@ -232,13 +232,16 @@ Same seed, same 400 draws and the same graphs as the arm table above.
 The truth is drawn from the reported bars; the test then divides by a uniform
 scale times those bars, so scale 1 is the shipped test.
 
-| calibration scale (true/reported) | P(any false flag) |
-|---|---|
-| 1.04 | 0.100 |
-| 1.00 | 0.045 |
-| 0.92 | 0.003 |
-| 0.79 | 0.000 |
+| calibration scale (true/reported) | false flags / draws | P(any false flag) | 95% Clopper-Pearson | flags on the real data |
+|---|---:|---:|---|---:|
+| 1.04 | 40/400 | 0.100 | [0.0724, 0.1337] | 6 |
+| 1.00 | 18/400 | 0.045 | [0.0269, 0.0702] | 6 |
+| 0.92 | 1/400 | 0.003 | [0.0001, 0.0138] | 7 |
+| 0.79 | 0/400 | 0.000 | [0.0000, 0.0092] | 9 |
 
 Scale 1.00 estimates the same quantity as the uncorrected arm of the table
 above, by a different path, and the two agree within Monte-Carlo error at this
-draw count.
+draw count. The interval is what 400 draws support: the two smallest points are
+not resolved from each other, or from zero, at this draw count. The last column
+is the real-data companion, the flag count when every reported bar is corrected
+to that scale, and it is not a simulation.

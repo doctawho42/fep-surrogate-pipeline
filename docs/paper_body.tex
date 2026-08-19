@@ -403,8 +403,10 @@ $\delta^\ast_e=\sqrt{V_e^{\mathrm{rep}}/h_e}$, the shift at which the closure st
 unit noncentrality.
 \end{theorem}
 The algebra is standard and we claim none of it: $h_e=\Pi_{ee}$ is the hat-matrix leverage of the
-whitened design, its complement $w_e\Omega_e$ is the classical correspondence between leverage and
-effective resistance~\citep{klein1993resistance}, and $\sum_e h_e=\operatorname{tr}(I-H)=\mathrm{dof}$
+whitened design~\citep{hoaglin1978hat}, its complement $w_e\Omega_e$ is the correspondence between
+leverage and effective resistance that graph sparsification
+uses~\citep{spielman2011sparsification}, with the resistance distance itself
+that of \citet{klein1993resistance}, and $\sum_e h_e=\operatorname{tr}(I-H)=\mathrm{dof}$
 is the trace identity for a projector. What the theorem adds is the reading of $h_e$ as a per-edge
 observability certificate, which turns the test's blindness to node-consistent bias from a
 modelling assumption into a consequence and names, before any simulation is run, the edges that
@@ -530,8 +532,8 @@ against their own across-replicate spread (Figure~\ref{fig:Arep}: \texttt{brd4} 
 reflect that system's own too-tight bars. Retesting each against the width its own replicates
 measure keeps all six at the per-system granularity and \emph{two}, \texttt{bace} and
 \texttt{cdk8}, at the per-edge granularity this work pre-specified, which is the only
-self-calibrated arm holding its level ($0.003$ against a nominal $0.05$) and so the conservative
-answer (Supplementary Table~\ref{tab:selfgrid}).
+self-calibrated arm holding its level ($1/400$, that is $0.003$ with an exact binomial interval
+$[0.000,0.014]$, against a nominal $0.05$) and so the conservative answer (Supplementary Table~\ref{tab:selfgrid}).
 
 \paragraph{Figure~\ref{fig:L}: a deployable detector whose usefulness \emph{is} $\sigma$-calibration.}
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over
@@ -583,15 +585,21 @@ one. The scale at which the reported bars are correct follows from the functiona
 statistic rather than from a pooled ratio: the curl-leverage-weighted mean of $c_e^{-2}$ is
 $0.853$, so the bars are wide by $1.08\times$ and the calibrated scale is $0.92$, the interval on
 that scale being $[0.79,1.04]$, the square root of the $[0.63,1.08]$ interval on
-$\mathbb{E}[\chi^2_\nu]$ of Section~\ref{sec:oos}. Across it the flag count runs from six to nine.
+$\mathbb{E}[\chi^2_\nu]$ of Section~\ref{sec:oos}. Correcting every reported bar to a scale in that
+interval and re-running the test on the real data gives six flags at $1.04$ and at $1.00$, seven at
+$0.92$ and nine at $0.79$ (\texttt{make figSelf}).
 Two scales have to be kept apart here, and they are reciprocal. The calibration scale is
 $c=\mathrm{se}^{\mathrm{true}}/\mathrm{se}^{\mathrm{rep}}$, the quantity measured above as $0.92$;
 a simulation that keeps the test on the reported bars must therefore draw its truth at $c$ times
 them, which is a null $1/c$ times the truth. Quoted in $c$, the realized probability that the test
-flags anything when nothing is wrong is $0.000$ at $0.79$, $0.003$ at $0.92$, $0.045$ at $1.00$ and
-$0.100$ at $1.04$ (seeded, $400$ draws, released with the analysis code; the value at $c=1$ is the
-quantity the uncorrected arm of Supplementary Table~\ref{tab:selfgrid} reports as $0.040$ by a
-different path, the two agreeing within Monte-Carlo error at this draw count). That simulation verifies the Benjamini--Hochberg implementation rather than the
+flags anything when nothing is wrong is $0/400$ at $0.79$, $1/400$ at $0.92$, $18/400$ at $1.00$
+and $40/400$ at $1.04$: as levels with exact binomial intervals, $0.000$ $[0,0.009]$, $0.003$
+$[0.000,0.014]$, $0.045$ $[0.027,0.070]$ and $0.100$ $[0.072,0.134]$ (seeded, released with the
+analysis code; the value at $c=1$ is the quantity the uncorrected arm of Supplementary
+Table~\ref{tab:selfgrid} reports as $0.040$ by a different path, the two agreeing within
+Monte-Carlo error at this draw count). Four hundred draws do not separate the two lower points from
+each other or from zero, so nothing is read from their ordering; what the grid supports is the
+upper end, where the interval clears the nominal level, and the direction between the ends. That simulation verifies the Benjamini--Hochberg implementation rather than the
 real-data operating point, which is why the nominal level is reported as nominal above; what it
 does establish is a direction, and the direction runs in the instrument's favour at the measured
 calibration and against it at the other end. Because the bars are measured wide, the level across
