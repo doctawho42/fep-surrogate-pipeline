@@ -144,10 +144,6 @@ CQR~\citep{romano2019cqr}. A predicted $\sigma$ can also be \emph{recalibrated} 
 temperature/Platt scaling~\citep{guo2017calibration} or isotonic
 regression~\citep{zadrozny2002isotonic}.
 
-\paragraph{Equivariant trunks and chirality.} $E(3)$-equivariant
-networks~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} are the de-facto trunks for 3D
-molecular property prediction, where parity-\emph{odd} irreps to break achirality are standard.
-
 \paragraph{Acquisition and reward re-ranking.} Acquisition by the knowledge gradient~\citep{frazier2008kg}
 and its Monte-Carlo implementations~\citep{balandat2020botorch,gardner2018gpytorch} drive edge
 selection, while GFlowNets~\citep{bengio2021gflownet,malkin2022tb} sample candidates in
@@ -1040,15 +1036,7 @@ footing of \texttt{bace}, which is flagged on every replicate and by every crite
 
 The gauge-acquisition and stopping experiments are controlled simulations, and the reward
 re-ranking audit rests on a single $\sigma$-varying target, so its conclusion that $\sigma$ tracks
-novelty rather than quality is directional and should be tested across more chemotypes. The
-amortized predictor carries a parity-odd readout channel because a geometric readout built only
-from distances, norms or dot products is constant on an enantiomer pair; that requirement and the
-completeness statement behind it are established in the Supporting Information, and nothing the
-main text claims depends on them. Finally, a structure-based reverse screen on a separate
-ten-target diverse-fold panel recovers the true target at top-$1$ $0.16$ (area under the curve
-$0.62$) against $0.95$ ($0.99$) for the ligand-shape baseline of Supplementary
-Figure~\ref{fig:F} and $0.10$ for random, raw docking scores not being comparable across pockets,
-so the structure-directed regime is not claimed here.
+novelty rather than quality is directional and should be tested across more chemotypes.
 
 \section{Conclusion}\label{sec:conclusion}
 The error of a perturbation network splits in two. One part lives in the cycles and can be audited;

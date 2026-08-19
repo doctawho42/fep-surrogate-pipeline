@@ -148,11 +148,6 @@ mechanism, not evidence on real data (Figure~\ref{fig:Breal} is the real test).
 ($2.2\times$), but sandwich-vs-naive edge \emph{weighting} barely moves calls-to-top-$k$
 ($0.98\times$ $[0.93,1.03]$, 24-seed bootstrap CI): the Gauss--Markov ceiling.
 
-\paragraph{Ligand-only target identification (Figure~\ref{fig:F}).} On real ChEMBL reverse
-screening, a fingerprint model ties, but does not beat, a Tanimoto baseline (top-1
-$0.84$--$0.97$ vs $0.86$--$0.96$), though $P(\text{binds})$ is well calibrated (ECE $0.008$).
-Beating similarity needs orthogonal 3D/pocket information.
-
 \begin{figure}[t]\centering
 \includegraphics[width=0.7\textwidth]{figC_active_learning.pdf}
 \caption{\textbf{Simulated active-learning acquisition policies.} (A) Simple regret versus
@@ -187,15 +182,6 @@ gauge-unaware acquisition policy, averaged over seeds with $95\%$ confidence ban
 \label{fig:D}
 \end{figure}
 
-\begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figF_target_id.pdf}
-\caption{\textbf{Ligand-only reverse target screening on real ChEMBL data.} (A) Top-1 target
-recovery for a fingerprint model and a Tanimoto shape baseline, on a diverse target set and
-on a within-family aminergic GPCR target set, with the random baseline marked. (B)
-Reliability diagram of predicted $P(\text{binds chosen target})$ versus empirical accuracy,
-pooled across both sets, with the $y{=}x$ line and the expected calibration error (ECE).}
-\label{fig:F}
-\end{figure}
 
 \paragraph{Structural context of the flagged systems (Figure~\ref{fig:qcstruct}).}
 Two of the systems the cycle-closure test flags (Figure~\ref{fig:L}) carry an
@@ -581,11 +567,10 @@ experiments is deliberately small, and it is not an equivariant network. A ligan
 a $1024$-bit ECFP4 Morgan fingerprint (radius $2$, chirality flag off) concatenated with six
 achiral RDKit descriptors: molecular weight, Crippen $\log P$, topological polar surface area, and
 counts of hydrogen-bond donors, hydrogen-bond acceptors and rotatable bonds. An edge is
-represented by the difference of its two endpoint feature vectors. The parity-odd channel of
-Section~\ref{sec:chiral} is a single additional coordinate, the difference of a summed signed
-volume over the assigned stereocentres of an ETKDGv3 embedding, giving $1031$ features per edge;
-every other coordinate is invariant under reflection, so this coordinate is the only carrier of
-chirality. The regressor is a bootstrap deep ensemble of eight multilayer perceptrons, each with
+represented by the difference of its two endpoint feature vectors. A single parity-odd coordinate is appended, the difference of a
+summed signed volume over the assigned stereocentres of an ETKDGv3 embedding, giving $1031$
+features per edge; every other coordinate is invariant under reflection, so a readout without it
+would be constant on an enantiomer pair. The regressor is a bootstrap deep ensemble of eight multilayer perceptrons, each with
 two hidden layers of $64$ units and SiLU activations and a scalar output, trained for $300$ epochs
 on a squared-error objective with Adam at learning rate $5\times10^{-3}$ and weight decay
 $10^{-4}$, on inputs standardized by the training mean and standard deviation. Each member is
@@ -952,76 +937,3 @@ $\mathrm{IC}_{50}$ assay, identifier CHEMBL1101849, queried per ligand; the othe
 from a target-wide connectivity-based structure search under the $60\%$ coverage rule, for which
 no single assay identifier applies.\par}
 \end{table}
-
-\section{Chirality completeness}\label{sec:chiral}
-A geometric readout of a ligand, whether the $E(3)$-equivariant networks that are standard for
-this task~\citep{geiger2022e3nn,batzner2022nequip,batatia2022mace} or the descriptor-based
-predictor used here (Section~\ref{sec:methods}), has to distinguish stereoisomers. Which readout
-channels does that require? The statement below is a property of the readout's symmetry group, so
-it binds any such model, including the one this work uses.
-\begin{theorem}[Chirality completeness]\label{thm:chiral}
-Any $O(3)$-invariant readout (a function of pairwise distances, norms, or dot products) is
-constant on an enantiomer pair $\{M,M^\ast\}$ ($M^\ast$ the mirror image) and is therefore
-enantiomer-blind, so \emph{some} parity-odd channel is necessary. The pseudoscalar
-$\chi(M)=\det[\mathbf r_2{-}\mathbf r_1,\mathbf r_3{-}\mathbf r_1,\mathbf r_4{-}\mathbf r_1]$
-(the $\texttt{0o}$ triple product of four readout points $\mathbf r_i$) satisfies
-$\chi(AM)=\det(A)\chi(M)$ for $A\in O(3)$, so it is $SO(3)$-invariant and flips sign under
-reflection; $(\{\|\mathbf r_i{-}\mathbf r_j\|\},\,\mathrm{sgn}\,\chi)$ is a complete $SO(3)$
-invariant (complete for distinguishing the enantiomer pair $\{M,\sigma M\}$ once the full distance set fixes the cloud up to $O(3)$; fully characterizing the chirality of a many-atom molecule needs a consistent set of pseudoscalars),
-\textbf{provided the four readout points $\mathbf r_1,\ldots,\mathbf r_4$ are non-coplanar}: $\chi$
-is the (signed) volume of the parallelepiped they span (six times the tetrahedron volume), so it
-vanishes identically whenever the points are coplanar (the three difference vectors become
-linearly dependent), and a vanishing
-$\chi$ carries no sign, hence no chirality bit, regardless of the underlying molecule's true
-handedness. Thus, for a non-coplanar readout quadruple, a single
-$\texttt{0o}$ triple-product channel is a \emph{sufficient} minimal addition that restores the
-chirality bit; the trunk's readout must select (or the architecture must guarantee) such a
-non-degenerate quadruple for the completeness statement to apply.
-\end{theorem}
-Consistent with the paper's principle, the chirality bit is \emph{read off} the geometry (a
-pseudoscalar), not learned; this makes precise a fact familiar from the equivariant-network
-literature (the role of odd irreps), stated here as an architectural-completeness requirement on
-the trunk that feeds the bottleneck rather than as a central result. Supplementary
-Figure~\ref{fig:E} realizes it: an even readout gives bit-identical outputs on every
-enantiomer pair (collapse $=0$ to machine precision), so its best possible chiral $\ddG$
-prediction is zero; adding the $\texttt{0o}$ channel cuts enantiomer $\ddG$ MAE $11.7\times$
-($1.67\to0.14$ kcal/mol).
-
-\paragraph{Chirality completeness on the designed set (Figure~\ref{fig:E}).} An even
-$O(3)$-invariant readout collapses every enantiomer pair exactly (collapse $=0$ to machine
-precision, so its best possible chiral $\ddG$ prediction is zero); adding one parity-odd
-$\texttt{0o}$ triple-product channel cuts enantiomer $\ddG$ MAE $11.7\times$ ($1.67\to0.14$
-kcal/mol), realizing Theorem~\ref{thm:chiral}.
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figE_chirality_completeness.pdf}
-\caption{\textbf{Even and parity-odd readout values on enantiomer pairs, and their effect on
-predicted binding free energy.} (A) Readout value on a molecule $M$ versus on its mirror
-image $M'$, for an even ($O(3)$-invariant) readout and for the $\texttt{0o}$ triple-product
-channel, over $120$ randomly sampled point quadruples, with the $y{=}x$ line. (B) Enantiomer
-$\ddG$ mean absolute error, over $5$ training seeds, for a trunk with an even-only readout
-and for the same trunk with the $\texttt{0o}$ channel added.}
-\label{fig:E}
-\end{figure}
-
-\paragraph{Chirality completeness on a real molecule (Figure~\ref{fig:Ereal}).}
-Theorem~\ref{thm:chiral} is instantiated on thalidomide, the textbook case where the two
-enantiomers differ in biological activity. We embed one enantiomer in 3D (RDKit) and reflect it
-to the exact mirror geometry. Every O(3)-invariant readout is identical on the pair: all $171$
-pairwise distances and all pairwise dot products (the Gram matrix) match to machine precision
-($\max|\Delta|=0$), so a norm-and-dot-product readout is enantiomer-blind. The parity-odd
-\texttt{0o} pseudoscalar $\chi=\det[p_1{-}p_0,p_2{-}p_0,p_3{-}p_0]$ flips sign
-($+1.037\to-1.037$), and RDKit's CIP assignment flips $R\to S$. This reproduces, on real
-chemistry, the collapse-and-restore of the chirality bit proved for the designed test set
-(Figure~\ref{fig:E}).
-
-\begin{figure}[t]\centering
-\includegraphics[width=0.95\textwidth]{figE_chirality_real.pdf}
-\caption{\textbf{Chirality readout on a real drug molecule (thalidomide).} Left and center:
-2D structure of one enantiomer and of its exact mirror image, generated from a 3D embedding,
-each labeled with its RDKit CIP descriptor and the parity-odd pseudoscalar $\chi$. Right: the
-maximum absolute difference between the two enantiomers' $O(3)$-invariant readouts (all
-pairwise distances, all pairwise dot products) and the pseudoscalar value on each
-enantiomer. The solid versus hashed wedge at the stereocentre marks the enantiomer.}
-\label{fig:Ereal}
-\end{figure}
