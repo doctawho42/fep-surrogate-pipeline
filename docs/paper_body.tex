@@ -551,8 +551,11 @@ ligands the union carries cycles present in neither release alone, and the cycle
 orthogonally inside the union's, so the closure statistic splits exactly. On \texttt{cdk8} the split
 is decisive: the union gives $\chi^2=77.7$ on $29$ degrees of freedom, of which the two releases
 carry $31.1$ on $23$ between them, leaving $46.6$ on the six cycles that span them, a reduced
-$\chi^2$ of $7.8$ at $p=2.3\times10^{-8}$. Neither release is inconsistent on its own
-(\texttt{merck\_cdk8} $p=0.218$, $0.865$, $0.189$ on the three replicates). \texttt{cdk8} is
+$\chi^2$ of $7.8$ at $p=2.3\times10^{-8}$. Neither release is inconsistent on its own:
+\texttt{merck\_cdk8} ($51$ edges, $20$ degrees of freedom) gives $p=0.218$, $0.865$ and $0.189$ on
+the three replicates, and \texttt{misc\_cdk8} ($12$ edges, $3$ degrees of freedom) gives $0.091$,
+$0.992$ and $0.985$, the first being the smallest of the six and still well short of any threshold
+used here. The two share seven ligands, which is where the spanning cycles come from. \texttt{cdk8} is
 flagged because two independently prepared releases of the same target disagree where they meet,
 which is edge-level inconsistency beyond sampling and so is what the test is for, but it is not a
 statement about either release's simulations. No other system carries across-release cycles that
@@ -737,12 +740,15 @@ carry ChEMBL identifiers, the network $\ddG$ (from the same GLS fit) agrees with
 experimental affinity~\citep{zdrazil2024chembl} at a mean unsigned error (MUE) of $0.79$ kcal/mol ($95\%$ bootstrap CI
 $[0.59,0.97]$, conditional on the fitted network; Pearson $R=0.65$ $[0.30,0.83]$, $p{\approx}2{\times}10^{-4}$, $n=28$), and its clean cycle-closure reduced
 $\chi^2=0.64$ is consistent. That is not evidence that a clean
-system is accurate: across the five grounded systems the flag does not separate accuracy against
-experiment, \texttt{eg5} at $0.79$ kcal/mol tying the flagged \texttt{p38} at $0.79$ and beating
-only two of the four flagged systems (\texttt{cdk8} $0.91$, \texttt{bace} $0.88$, \texttt{hif2a}
-$1.47$). The comparison is also not at matched grounding: \texttt{eg5} comes from a single named
-ChEMBL assay while the four flagged systems come from a target-wide connectivity search under the
-coverage rule. Acting on the QC does \emph{not} improve accuracy here (internal $|z|$ vs
+system is accurate, and the five grounded systems cannot settle the question in either direction.
+The ordering by mean unsigned error is \texttt{eg5} $0.79$ $=$ \texttt{p38} $0.79$ $<$
+\texttt{bace} $0.88$ $<$ \texttt{cdk8} $0.91$ $<$ \texttt{hif2a} $1.47$, so the one unflagged
+system ties the best flagged one and is below the other three. That direction favours the flag,
+but it is a single unflagged system against four and it is not at matched grounding:
+\texttt{eg5} comes from a single named ChEMBL assay while the four flagged systems come from a
+target-wide connectivity search under the coverage rule. We draw no separation claim from it in
+either direction; the previous statement that the flag does not separate accuracy rested on a
+miscount of this same ordering. Acting on the QC does \emph{not} improve accuracy here (internal $|z|$ vs
 error-against-experiment: $r=+0.13$), exactly as the scope predicts: on a clean system the
 residual error against experiment is dominated by node-consistent force-field bias, which cycle
 closure cannot see. The complementary test, that repairing a \emph{flagged} system improves its
