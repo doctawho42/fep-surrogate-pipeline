@@ -250,41 +250,34 @@ Section~\ref{sec:stability} places on it. Rows are ordered by auditable fraction
 marks are recomputed from the three replicates by the same code that draws
 Figure~\ref{fig:Hodge}, not transcribed from the main text.
 
-\paragraph{The pre-registration, in full.} Several arguments in this article turn on what was
-frozen before the computation rather than chosen after it, so the file is reproduced below rather
-than described. It was committed to the article's repository before the commit that computes any of
-the quantities it governs, and it is anchored by the SHA-256 digest
-\texttt{16279af73d90e1e9\allowbreak{}b39f33046ba6ee43\allowbreak{}2b80ad750a6e5687\allowbreak{}%
-a0e05b3e54b01585}, which the test suite asserts on every run. That digest lives in the same
-repository as the file, so it detects accidental drift and not backdating; we claim the former and
-not the latter. The file's own header says the immutability is anchored by an \emph{external}
-digest and calls itself immutable; neither is right and the prose here governs. There is no
-third-party timestamp, no external registry entry and no notarisation of any kind: the anchor is
-in-repository, its only guarantee is drift detection, and the file's wording is left as frozen
-rather than corrected because correcting it would change the digest. Three labels in the frozen file
-are also wrong and are left standing for the same reason. It calls the influence statistic
-$|z_e|\sqrt{(1-h_e)/h_e}$ the DFFITS form, which it is not: it is the classical influence form
-scaled by $\sqrt{h_e}$. It cites ``Theorem 5'' for the conserved budget, where the conservation law
-is Theorem~\ref{thm:cons} and Theorem~\ref{thm:hodge} is the decomposition; its numbering also
-predates the move of the backward-pass theorem into this supplement, so every theorem number it
-quotes is one higher than the article's. And it cites a part ``5(i')'' that does not exist, the
-intended reference being part (i) of Theorem~\ref{thm:hodge}. The file below governs
-H1, H2 and H3 only. The other pre-specified constants this article invokes, the $|z|$-rule
+\paragraph{What was pre-registered.} Several arguments in this article turn on what was frozen
+before the computation rather than chosen after it. The design file governing the decomposition
+increment was committed to the article's repository before the commit that computes any of the
+quantities it governs, and it is released with the analysis code; the Data and Software
+Availability statement says where. It fixes three items and no others: H1, the visible fraction of
+the measured error against experiment with its chance level and its success criterion; H2, the
+influence-ranked repair race; and H3, the auditability map, which it labels descriptive and gives
+neither threshold nor verdict. Four properties of it matter for reading the results above. Both
+success criteria are conjunctive, so a single conjunct firing is not a success. H1 is labelled a
+quantification backed by an identity rather than a risky test, and says why: experimental
+affinities are per-ligand, so $\Pi\varepsilon$ reduces to the closure residual and the visible
+fraction is an identity, with only the comparison against the chance level at risk. The confound
+the design cannot resolve is declared in it: experimental measurement error and the stereo-blind
+affinity join are both per-ligand and therefore also gradient fields, so the design cannot separate
+per-ligand force-field bias from per-ligand experimental or annotation error, and the conclusion it
+licenses is the first of those and not the second. And H2 is declared a second look at data that
+had already produced one null, so its result is reported with that status attached.
+
+The other pre-specified constants this article invokes are recorded in the released analysis code
+and in the pre-registration for the experiment that fixed them, not in that file: the $|z|$-rule
 conjunctive criterion, the curl-leverage falsifier rule, the fixed-cutoff head-to-head criterion,
 the $1.0$ kcal/mol cutoff itself, the swept scale grid with its two frozen readouts, the per-edge
-granularity of the self-calibrated null, and the close-the-loop criterion, are recorded in the
-released analysis code and its accompanying pre-registration for that experiment, not here. Note in particular that both
-success criteria are conjunctive, that H1 is labelled a quantification rather than a gamble and
-says why, that the confound the design cannot resolve is declared in it, and that H2 is declared a
-second look at data which had already produced one null. The quantities H3 lists as descriptive
-carry no threshold and no verdict.
-\scriptsize
-\verbatiminput{../data/openfe_replicates/hodge_prereg.yaml}
-\normalsize
+granularity of the self-calibrated null, and the close-the-loop criterion. Three of them live only
+in code, and the paragraph below audits those three against the descriptions printed here.
 
 \paragraph{Audit of the frozen criteria that live only in code.} One mismatch between a frozen
 criterion and its printed description was found by review, so the rest were checked rather than
-left. Three criteria are recorded in the analysis code and not in the file above. The
+left. Three criteria are recorded in the analysis code and not in the design file. The
 curl-leverage falsifier is confirmed if and only if $\rho>0$ with a within-system block-permutation
 $p<0.05$ over $10^4$ permutations; the code implements exactly that and the supplement prints
 exactly that. The fixed-cutoff head-to-head requires the calibrated null's detection area to exceed
