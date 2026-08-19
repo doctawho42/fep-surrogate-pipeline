@@ -287,6 +287,13 @@ noise alone would require that noise to carry almost all of the total squared st
 which these agreements make implausible; \texttt{bace}'s margin is the exception and is why that
 number does not appear in the abstract.
 
+The system column carries the benchmark's own name for a target's edge network, which is not a
+protein: the $49$ names span $41$ protein labels, \texttt{bace} contributing four and
+\texttt{hsp90} four, so a count of flagged systems is not a count of flagged targets. Nor is a name
+always one released data set: eight of them union two or more, which the paragraph below takes up.
+\texttt{ciordia\_retro} is released under the \texttt{asap\_mix} group and we do not assert a target
+for it beyond what the release states.
+
 The component column is not decorative. Six of the $48$ systems are disconnected
 (\texttt{cdk2}, \texttt{jnk1}, \texttt{mcl1}, \texttt{p38}, \texttt{ptp1b}, \texttt{thrombin}),
 each into two pieces, so the components sum to $54$: the benchmark's edge lists join congeneric
@@ -923,7 +930,11 @@ property of calibrated reward re-ranking across chemotypes.\par}
 uses one ChEMBL target per system, verified to be a human single-protein target before use, and
 one assay type per system, taken in the order $\mathrm{IC}_{50}$ then $K_i$ and never mixed within
 a system. A flagged system enters the guided-versus-random comparison only if at least $60\%$ of
-its network ligands map to a measured value. The \texttt{eg5} grounding of Section~\ref{sec:qc}
+its network ligands map to a measured value. The counts here are grounded ligands, which for two
+systems exceed the ligand count of the sub-network the measurement runs on by one: an edge enters
+only when both its endpoints carry an affinity, so a ligand all of whose partners are ungrounded
+drops out. That is \texttt{1\_1W7H} on \texttt{p38} ($35$ grounded, $34$ in the sub-network) and
+\texttt{CAT-4j} on \texttt{bace} ($24$ and $23$); \texttt{cdk8} and \texttt{hif2a} lose none. The \texttt{eg5} grounding of Section~\ref{sec:qc}
 predates that coverage-gated join and was assembled differently, per ligand from one named ChEMBL
 assay rather than by a target-wide structure search, so its row records the assay as well as the
 target. Table~\ref{tab:chembl} lists what was used.
