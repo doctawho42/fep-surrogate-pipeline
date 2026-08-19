@@ -38,6 +38,36 @@ claimed confidence ≥ 0.90.
 - **Panel B** — the overconfident learner stops **2× earlier** (14 vs 30 calls) but is
   far **less likely to be correct** (0.60 vs 0.82). Calibration buys a *trustworthy stop*.
 
+## What the assumed-se sweep says about that contrast
+
+The 0.15× arm is one point on a curve, so `make figG` now prints the whole curve: the same
+experiment at eight assumed-se scales, with the two starred rows the figure's own arms (the
+sweep scales draw from a separate Monte-Carlo stream, so adding them leaves the figure
+bit-identical).
+
+| assumed se / true se | stop budget | top-k correct at stop | mean \|claimed − actual\| |
+|---|---|---|---|
+| 1.06× (conservative) | 30.8 | 0.83 | 0.027 |
+| 1.00× (calibrated) * | 29.6 | 0.82 | 0.022 |
+| 0.94× | 28.4 | 0.82 | 0.020 |
+| 0.80× | 25.4 | 0.82 | 0.029 |
+| 0.60× | 21.1 | 0.77 | 0.059 |
+| 0.40× | 17.9 | 0.68 | 0.093 |
+| 0.20× | 14.9 | 0.60 | 0.127 |
+| 0.15× (stand-in) * | 14.4 | 0.60 | 0.137 |
+
+**This is a null against a fair baseline.** 0.94× is the 6% under-estimate a same-budget
+estimator pooling single-label edges by overlap reaches on the identical labels (Fig A). At
+that scale the stopping decision is indistinguishable from the calibrated one: 28.4 against
+29.6 calls at the same 0.82 correctness. Correctness at the stop first moves at 0.60×, and
+the halved budget the figure shows needs 0.20×. So the figure's contrast is **a counterfactual
+stand-in against a calibrated learner**, not a comparison against any estimator built here or
+reported by anyone: it says what a 5–11× under-estimate would cost, and the honest reading of
+the sweep is that nothing a realistic same-budget estimator produces costs anything at all.
+
+The one effect that survives the fair comparison is on the safe side: 1.06× spends 30.8 calls
+for the same 0.83 correctness, the conservative bar's decision cost measured in Fig J.
+
 ## The point
 This is calibration (Fig A) paying off in the active-learning loop — through the
 **stopping decision**, which depends on the *uncertainty*, not on the edge weights. It
@@ -49,7 +79,8 @@ with **Fig D** (gauge-aware routing) it is the paper's honest AL narrative:
 
 ## Honest scope
 Controlled simulation; the overconfidence factor is taken from Fig A's measured
-learned-variance head, not tuned here. The MC confidence is an estimate of
+learned-variance head, not tuned here, and the sweep above prices what it would take to
+matter. The MC confidence is an estimate of
 `P(top-k correct)`; for the correct posterior it is calibrated by construction, which is
 the very property being demonstrated. A real-FEP-network version is the natural next step.
 
