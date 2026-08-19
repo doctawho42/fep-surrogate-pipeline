@@ -113,7 +113,14 @@ def delta_mue(edges: list, removed: list, exp: dict) -> float:
 
 
 def system_effect(edges: list, exp: dict, n_perm: int, target_rchi2: float, seed: int = 0) -> dict:
-    """guided (repair_order top-|z|) vs random ΔMUE at the trajectory endpoint K; per-system p."""
+    """guided (repair_order top-|z|) vs random ΔMUE at the trajectory endpoint K; per-system p.
+
+    ``delta_mue`` is MUE(full) - MUE(after), so an improvement is POSITIVE and the one-sided test
+    is on the upper tail: ``p = P(random >= guided)`` and the conjunct fires when the guided value
+    exceeds the 95th percentile of the random null. The returned key ``below_5pct`` is named after
+    the frozen pre-registration's wording, which describes the same event in the opposite sign
+    convention; the key is kept so the frozen text and the code stay traceable to each other.
+    """
     removed, _ = repair_order(edges, target_reduced_chi2=target_rchi2)
     K = len(removed)
     guided = delta_mue(edges, removed, exp)

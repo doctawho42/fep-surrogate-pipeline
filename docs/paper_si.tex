@@ -265,6 +265,25 @@ carry no threshold and no verdict.
 \verbatiminput{../data/openfe_replicates/hodge_prereg.yaml}
 \normalsize
 
+\paragraph{Audit of the frozen criteria that live only in code.} One mismatch between a frozen
+criterion and its printed description was found by review, so the rest were checked rather than
+left. Three criteria are recorded in the analysis code and not in the file above. The
+curl-leverage falsifier is confirmed if and only if $\rho>0$ with a within-system block-permutation
+$p<0.05$ over $10^4$ permutations; the code implements exactly that and the supplement prints
+exactly that. The fixed-cutoff head-to-head requires the calibrated null's detection area to exceed
+\emph{both} baselines, implemented as a paired bootstrap of
+$\mathrm{AUC}(A)-\max(\mathrm{AUC}(B),\mathrm{AUC}(C))$ with a win declared only when the point
+difference is positive and the lower confidence bound excludes zero; the printed description
+matches, and the tie follows from the $+0.140$ $[-0.008,0.316]$ against the stronger baseline. The
+$|z|$-rule conjunctive criterion matches the code as printed here, requiring Stouffer $p<0.05$ and
+a guided $\Delta$MUE above the $95$th percentile of its own random null in a majority of grounded
+systems, and that is the upper tail because $\Delta$MUE is defined as
+$\mathrm{MUE}(\text{full})-\mathrm{MUE}(\text{after})$, so an improvement is positive. Its frozen
+file names the lower tail, ``below the 5th percentile'', which is the same event stated in the
+opposite sign convention; the code's variable name follows the file rather than the statistic. No
+result depends on the discrepancy, the file is left frozen, and the description printed in this
+article is the one the code implements.
+
 \paragraph{The visible fraction is metric-dependent (Section~\ref{sec:hodge}).} The auditable share
 of the error against experiment is a ratio of squared norms, so it depends on the metric those
 norms are taken in, and the main text quotes it in the variance-weighted metric the closure
