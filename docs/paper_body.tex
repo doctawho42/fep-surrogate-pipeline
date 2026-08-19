@@ -572,12 +572,17 @@ $0.853$, so the bars are wide by $1.08\times$ and the calibrated scale is $0.92$
 that scale being $[0.79,1.04]$, the square root of the $[0.63,1.08]$ interval on
 $\mathbb{E}[\chi^2_\nu]$ of Section~\ref{sec:oos}. Across it the flag count runs from six to nine.
 Under a simulation that declares each edge's reported standard error to be its true sampling
-deviation, the probability of flagging anything is $0.043$ at scale $1.00$, $0.237$ at $0.92$ and
-$0.933$ at $0.79$. That simulation verifies the Benjamini--Hochberg implementation rather than the
+deviation, the probability of flagging anything is $0.045$ at scale $1.00$, $0.215$ at $0.92$ and
+$0.912$ at $0.79$, and $0.022$ at $1.04$ (seeded, $400$ draws, released with the analysis code;
+the value at scale $1.00$ is the same quantity the uncorrected arm of Supplementary
+Table~\ref{tab:selfgrid} reports as $0.040$ by a different path, the two agreeing within
+Monte-Carlo error at this draw count). That simulation verifies the Benjamini--Hochberg implementation rather than the
 real-data operating point, which is why the nominal level is reported as nominal above; what it
 does establish is a direction. Since the bars are measured wide, quoting the six systems at scale
-$1.00$ errs conservatively, and $0.237$ is the price of deliberately tightening correct bars by
-eight per cent. The exposure runs the other way, and it is worse for the instrument: at
+$1.00$ errs conservatively, and $0.215$ is the price of deliberately tightening correct bars by
+eight per cent. The anti-conservative end of the measured interval belongs beside them: at
+$1.04$ the level is $0.022$, so across the interval the exposure runs from about two to twenty-two
+per cent rather than sitting at the nominal five. The exposure runs the other way, and it is worse for the instrument: at
 $1.3\times$ one system of $48$ flags and at $1.5\times$ and $2\times$ none do, so nothing on this
 benchmark survives a bar widened to cover pose and preparation variance. Widening changes the null
 being tested rather than moving the same test along it, and it is sensitivity, not validity, that

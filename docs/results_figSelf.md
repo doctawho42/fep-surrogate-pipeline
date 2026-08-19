@@ -225,3 +225,20 @@ the section above they are **not** a detection count.
   fixed and written into the script's docstring before the first run; the synthetic-null diagnostic was
   added afterwards on the strength of the `ν/(ν−2)` argument, and it changes no design choice.
 
+
+## Realized level of the shipped test under a rescaled null
+
+Same seed, same 400 draws and the same graphs as the arm table above.
+The truth is drawn from the reported bars; the test then divides by a uniform
+scale times those bars, so scale 1 is the shipped test.
+
+| scale | P(any false flag) |
+|---|---|
+| 1.04 | 0.022 |
+| 1.00 | 0.045 |
+| 0.92 | 0.215 |
+| 0.79 | 0.912 |
+
+Scale 1.00 estimates the same quantity as the uncorrected arm of the table
+above, by a different path, and the two agree within Monte-Carlo error at this
+draw count.
