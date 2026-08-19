@@ -1,20 +1,21 @@
 \begin{abstract}
 A perturbation network's per-edge error splits into two orthogonal parts, and the split decides
 what any consistency check can do. One part lives in the network's cycles; the other is a
-difference of per-ligand offsets, and no statistic computed from the network's own edge values can
-tell it from no error at all. The splitting itself is a known decomposition of edge flows on a
-graph. What is not is where its two halves fall: the invisible part is exactly what biases the
-estimated affinities, and the auditable part biases nothing, so a closure test is blind where an
-error would matter and sighted where it would not. Resolving it needs measurements from outside
-the network, and we price that in ligands. Judging the audit quantitatively needs a scale. The
-Bennett Acceptance Ratio carries its finite-sampling variance in closed form, and the per-edge bar
-a practitioner already receives is checked here against independent molecular-dynamics replicates
-on many real protein-ligand binding edges. As the null of a cycle-closure fit it makes the check a
-test with a stated level, where an overconfident stand-in flags almost everything. On the public
-benchmark examined here the auditable subspace spans a third of the error space. On systems
-grounded against public affinity data it carries, as an upper bound in the variance-weighted
-metric, under one per cent of the error present. The share sits below chance on every system and
-in every metric tried, by a margin that ranges from wide to slim. Per-edge
+difference of per-ligand offsets that no statistic computed from the network's own edge values can
+tell from no error at all. The splitting itself is a known decomposition of edge flows on a
+graph. What is not is where its halves fall: the invisible part biases the
+estimated affinities and the auditable part biases nothing, so a closure test is blind where an
+error would matter. Resolving it needs measurements from outside the network, priced here in
+ligands. Judging it quantitatively needs a scale. The Bennett
+Acceptance Ratio carries its finite-sampling variance in closed form, and the per-edge bar a
+practitioner already receives is checked here against seed and velocity repeats on many real
+protein-ligand binding edges. As the null of a cycle-closure fit it makes the check a
+test with a stated null. A stand-in bar several times too small destroys it; a same-budget
+estimator pooling by overlap does not. On the public
+benchmark examined here the auditable subspace spans a third of the error space. On systems grounded
+against public affinity data it carries, in the variance-weighted metric, under one per cent of
+the error present. The share sits below chance on every system and in
+every metric tried, by a margin ranging from wide to slim. Per-edge
 selections and the ranking of systems reproduce on replicates they never saw; the flagged list
 does not. Removing flagged edges does not recover accuracy against experiment, and on one system a
 rule derived from the split does measurable harm.
@@ -226,8 +227,13 @@ $\sim$$200$ edges (reported se ${\approx}0.15\times$ the truth, range $0.09$--$0
 ${\approx}5\times$ overconfident at a twenty-fold larger oracle budget. A seed sweep and two
 corrected foils leave that unchanged: an objective fix does not recover calibration and an
 ensemble is unreliable in both directions at this budget (Supporting Information). The residual
-overconfidence is a \emph{data-efficiency} limit of a learned per-edge variance rather than an
-identifiability barrier or an artifact of the Gaussian-NLL objective, and the bottleneck
+overconfidence is a property of \emph{this head's per-edge parameterisation} rather than of
+learning from labels: on the identical labels, pooling single-label edges by overlap recovers the
+sandwich to $6\%$, and a null miscalibrated by that much leaves the quality-control test intact,
+flagging seven systems of $48$ against the shipped six. What the closed form buys over a learned
+per-edge $\sigma$ is therefore not that the quantity cannot be learned, since the conditional
+$se(\text{overlap})$ is identifiable from single labels, but that the obvious per-edge
+parameterisation is badly conditioned where an analytic pooling is not. The bottleneck
 \emph{computes} the variance exactly at zero label cost, so the comparison is learnable-with-data
 against exact-and-free. Bare $1/I$ appears only as the information-equality plug-in it corrects
 ($1.08$--$2.65\times$, worst at high overlap), not as a baseline anyone reports.
@@ -569,7 +575,10 @@ $1.3\times$ one system of $48$ flags and at $1.5\times$ and $2\times$ none do, s
 benchmark survives a bar widened to cover pose and preparation variance. Widening changes the null
 being tested rather than moving the same test along it, and it is sensitivity, not validity, that
 is fragile on that side. That
-uniform shrink is a stress test rather than a realistic head. Applying instead the learned head's
+uniform shrink is a stress test rather than a realistic head, and the comparison is a counterfactual
+in a further sense: we are aware of no deployed or published relative-binding-free-energy pipeline
+that feeds a learned per-edge $\sigma$ into a network consistency check, so what the contrast
+measures is what would happen if one did. Applying instead the learned head's
 \emph{measured}, overlap-dependent miscalibration profile per edge (rank-transferred onto each
 edge's own overlap, Supplementary Figure~\ref{fig:P4}) flags $42$ of $48$ systems against the
 calibrated sandwich's $6$ ($7.00\times$), so the degradation survives a heterogeneous, non-uniform

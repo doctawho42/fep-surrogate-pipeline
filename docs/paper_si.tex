@@ -117,12 +117,16 @@ $0.15\times$), and at this training seed a $5$-member deep
 ensemble~\citep{lakshminarayanan2017ensembles} reaches only the large-budget floor
 (se ${\approx}0.20\times$, the same ${\approx}5\times$ overconfidence a $20\times$-larger-budget
 plain head reaches).
-The residual $\sim$5$\times$ overconfidence of the plain, oracle, and $\beta$-NLL heads is
-therefore a
-\emph{data-efficiency} limit of a per-edge \emph{learned} variance, not an identifiability barrier
-and not specific to the Gaussian-NLL objective: the conditional variance $se(\text{overlap})$ is
-itself identifiable from single labels, pooling single-label edges by overlap recovering the
-sandwich to $\sim$6\% at $4000$ edges ($\sim$4\% at $40000$).
+The residual $\sim$5$\times$ overconfidence of the plain, oracle and $\beta$-NLL heads is
+therefore a property of the per-edge \emph{parameterisation} rather than of the label budget or of
+the Gaussian-NLL objective. The conditional variance $se(\text{overlap})$ is identifiable from
+single labels, and pooling single-label edges by overlap recovers the sandwich to $\sim$6\% at
+$4000$ edges ($\sim$4\% at $40000$) on the same labels the heads were given. That matters for what
+the quality-control comparison can be read to show. Placing a $6\%$ miscalibration on the frozen
+scale grid of Figure~\ref{fig:P4b} gives seven flagged systems of $48$ against the shipped six, and
+a $6\%$ over-estimate gives six; the test is unchanged. The collapse to $42$ of $48$ requires the
+$5$--$11\times$ under-estimate the trained per-edge heads produce, so the contrast is scoped to
+heads of that kind and is not evidence that a same-budget learned estimator must break the test.
 
 \paragraph{Seed stability of the learned-variance foils (Figure~\ref{fig:A}A).}
 These ratios are stable across independent training seeds for the plain and
