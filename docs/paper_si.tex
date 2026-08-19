@@ -258,21 +258,30 @@ carry no threshold and no verdict.
 \paragraph{The visible fraction is metric-dependent (Section~\ref{sec:hodge}).} The auditable share
 of the error against experiment is a ratio of squared norms, so it depends on the metric those
 norms are taken in, and the main text quotes it in the variance-weighted metric the closure
-statistic itself uses. Three readings of the same four sub-networks are collected here. In the
-whitened metric the visible fractions are $0.0065$, $0.0017$, $0.0086$ and $0.0460$ for
-\texttt{cdk8}, \texttt{hif2a}, \texttt{p38} and \texttt{bace}, against the $\mathrm{dof}/E$ chance
-levels $0.290$, $0.322$, $0.353$ and $0.192$. Under isotropy in kcal/mol the chance level is
-$\mathrm{tr}(\Pi W)/\mathrm{tr}(W)$ instead, giving $0.127$, $0.051$, $0.124$ and $0.092$, so the
-margins narrow to roughly $20$, $30$, $14$ and $2$ times, the last being the weakest and the one
-the main text quotes. Measured in the unweighted metric the pooled fraction rises from $0.6\%$ to
-$5.45\%$, with \texttt{p38} at $0.137$ against its $0.353$, a factor of $2.6$. Leaving out one edge
-at a time moves the per-system whitened values within $0.003$--$0.011$, $0.001$--$0.003$,
-$0.003$--$0.013$ and $0.003$--$0.063$. Recomputing the ratio on medians rather than sums, which
+statistic itself uses. Three readings of the same four sub-networks are collected in
+Table~\ref{tab:metrics}, each with its own chance level and with the range the fraction takes when
+one edge is deleted at a time. The whitened reading takes both quantities in the variance-weighted
+metric the closure statistic lives in, against $\mathrm{dof}/E$. The isotropic reading keeps that
+fraction and measures it against $\mathrm{tr}(\Pi W)/\mathrm{tr}(W)$, the chance level an error
+isotropic in kcal/mol would produce under the same projector; it gives the weakest margins, and it
+is the reading the abstract and the main text quote. The unweighted reading recomputes the
+projector itself in the unweighted metric, $\Pi=I-A(A^{\top}A)^{+}A^{\top}$ on the raw incidence
+matrix $A$, so neither the fraction nor its chance level carries any variance weighting; there the
+pooled fraction rises from $0.6\%$ to $5.45\%$. The worst single cell in the whole table is
+\texttt{bace} under the isotropic reading with one edge deleted, at a factor of $1.36$ below its
+chance level. Both the fraction and the chance level are recomputed on every deletion, since
+deleting an edge moves the projector as well; \texttt{make figHodge} produces the table.
+\texttt{cdk8}'s flag is a cross-release join rather than a statement about either release's
+simulations (Section~\ref{sec:qc}), so the pooled figure is given both ways: $0.0060$ whitened and
+$0.0545$ unweighted over the four systems, $0.0060$ and $0.0610$ with \texttt{cdk8} dropped, so the
+whitened headline does not depend on it. Recomputing the ratio on medians rather than sums, which
 removes any dependence on a few large residuals, gives $0.0034$, $0.0068$, $0.0052$ and $0.0015$,
 the same order throughout; and \texttt{bace}, the one grounded system whose ligand set contains no
 enantiomer pair collapsed by the stereo-blind affinity join, shows the effect as plainly as the
 three that do. Every reading puts the auditable share below its own chance
 level; what changes is by how much, and the conclusion the main text draws is the weakest of them.
+
+\input{tab_metrics}
 
 The label source can also be changed. The measurement uses a stereo-blind, target-wide ChEMBL
 search under the coverage rule, and the benchmark of Section~\ref{sec:audit} carries curated

@@ -1,0 +1,27 @@
+\begin{table}[tp]\centering
+\caption{\textbf{The visible fraction under three metric conventions.} For each grounded system: edges $E$, independent cycles $\nu$, the auditable share of that system's error against experiment, the chance level it is measured against, their ratio, the range the fraction takes when one edge is deleted at a time, and the worst margin over those deletions with both the fraction and the chance level recomputed on each. \emph{Whitened} takes both in the variance-weighted metric the closure statistic lives in, against $\nu/E$. \emph{Isotropic} keeps that fraction and measures it against the chance level an error isotropic in kcal/mol would produce under the same projector, $\mathrm{tr}(\Pi W)/\mathrm{tr}(W)$. \emph{Unweighted} recomputes the projector in the unweighted metric, so neither the fraction nor its $\nu/E$ chance level carries any variance weighting. Every cell of every convention, and every single-edge deletion, sits below its own chance level; the weakest is \texttt{bace} isotropic under deletion. Pooled over the four systems the fraction is $0.0060$ whitened and $0.0545$ unweighted, and $0.0060$ and $0.0610$ with \texttt{cdk8} dropped. Produced by \texttt{make figHodge}.}
+\label{tab:metrics}
+\small
+\begin{tabular}{@{}lrrlrrrlr@{}}
+\toprule
+system & $E$ & $\nu$ & metric & visible & chance & margin & leave-one-out & worst \\
+\midrule
+\texttt{cdk8} & $31$ & $9$ & whitened & $0.0065$ & $0.2903$ & $44.8\times$ & $[0.0034,0.0113]$ & $23.60\times$ \\
+& & & isotropic, kcal/mol & $0.0065$ & $0.1273$ & $19.6\times$ & $[0.0034,0.0113]$ & $7.36\times$ \\
+& & & unweighted & $0.0286$ & $0.2903$ & $10.2\times$ & $[0.0178,0.0324]$ & $8.22\times$ \\
+\addlinespace[2pt]
+\texttt{hif2a} & $59$ & $19$ & whitened & $0.0017$ & $0.3220$ & $187.2\times$ & $[0.0010,0.0029]$ & $106.60\times$ \\
+& & & isotropic, kcal/mol & $0.0017$ & $0.0510$ & $29.6\times$ & $[0.0010,0.0029]$ & $13.21\times$ \\
+& & & unweighted & $0.0172$ & $0.3220$ & $18.7\times$ & $[0.0127,0.0188]$ & $16.53\times$ \\
+\addlinespace[2pt]
+\texttt{p38} & $51$ & $18$ & whitened & $0.0086$ & $0.3529$ & $41.0\times$ & $[0.0033,0.0132]$ & $25.81\times$ \\
+& & & isotropic, kcal/mol & $0.0086$ & $0.1240$ & $14.4\times$ & $[0.0033,0.0132]$ & $1.46\times$ \\
+& & & unweighted & $0.1371$ & $0.3529$ & $2.6\times$ & $[0.0285,0.1499]$ & $2.31\times$ \\
+\addlinespace[2pt]
+\texttt{bace} & $26$ & $5$ & whitened & $0.0460$ & $0.1923$ & $4.2\times$ & $[0.0027,0.0628]$ & $2.55\times$ \\
+& & & isotropic, kcal/mol & $0.0460$ & $0.0919$ & $2.0\times$ & $[0.0027,0.0628]$ & $1.36\times$ \\
+& & & unweighted & $0.0564$ & $0.1923$ & $3.4\times$ & $[0.0033,0.0707]$ & $2.26\times$ \\
+\addlinespace[2pt]
+\bottomrule
+\end{tabular}
+\end{table}

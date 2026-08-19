@@ -674,8 +674,12 @@ $1143$ benchmark edges against $\delta^\ast_e$, the shift at unit noncentrality,
 edges marked as the ceiling they impose. (B) Fraction of a system's error against experiment lying in the
 auditable subspace, against the fraction an unaligned error field would show under two conventions:
 whitened-isotropic ($\mathrm{dof}/E$) and isotropic in kcal/mol. The abstract quotes the
-variance-weighted measurement against the second, which is the narrower margin. All four systems
-were selected by the test, so the panel characterises flagged networks and not the benchmark. (C) Change in mean unsigned error against experiment
+variance-weighted measurement against the second, which is the narrower margin, and quotes it at
+its weakest single-edge deletion; Supplementary Table~\ref{tab:metrics} carries all three
+conventions with their deletion ranges. All four systems
+were selected by the test, so the panel characterises flagged networks and not the benchmark, and
+\texttt{cdk8} is flagged by a cross-release join: pooled over the four the fraction is $0.0060$,
+and $0.0060$ with \texttt{cdk8} dropped. (C) Change in mean unsigned error against experiment
 after removing the same number of edges chosen by influence, by standardized residual, and at
 random.}
 \label{fig:Hodge}
@@ -715,16 +719,21 @@ rather than the tabulated ones (\texttt{cdk8} is $0.46$ on its full network); tw
 which the fit absorbs into one offset per component.
 
 All four were selected by the test, so what follows characterises the networks the test flags and
-not the benchmark. On those sub-networks the auditable share of the measured error against
-experiment is $0.6\%$
+not the benchmark, and one of the four, \texttt{cdk8}, is flagged by a cross-release join rather
+than by either release's simulations. On those sub-networks the auditable share of the measured
+error against experiment is $0.6\%$
 pooled, against those chance levels (Figure~\ref{fig:Hodge}B); per system $0.0065$, $0.0017$,
-$0.0086$ and $0.0460$. Leaving out one edge at a time moves them by $1.9$, $1.7$ and $2.6$ times
+$0.0086$ and $0.0460$. Dropping \texttt{cdk8} leaves the pooled figure at $0.6\%$ ($0.0060$ against
+$0.0060$), so the headline does not rest on it; in the unweighted metric it moves from $5.45\%$ to
+$6.10\%$. Leaving out one edge at a time moves them by $1.9$, $1.7$ and $2.6$ times
 on the first three and by $17$ on \texttt{bace}, whose range spans a factor of $23$; the pooled
 figure is stable, the per-system ones are not equally so. Both
 sides are measured in the variance-weighted metric the closure statistic lives in, and the margin
 over chance depends on that choice, narrowing to a factor of two on \texttt{bace} under isotropy in
-kcal/mol and the pooled fraction rising to $5.45\%$ in the unweighted metric (Supporting
-Information). Against the frozen H1 criterion, a pooled degrees-of-freedom-adjusted gradient-model
+kcal/mol and the pooled fraction rising to $5.45\%$ in the unweighted metric, which recomputes the
+projector without variance weighting. Supplementary Table~\ref{tab:metrics} gives all three
+conventions for all four systems with their own chance levels and their single-edge-deletion
+ranges; the weakest cell in it is \texttt{bace} isotropic under deletion, at $1.36$ below chance. Against the frozen H1 criterion, a pooled degrees-of-freedom-adjusted gradient-model
 $R^2$ of at least $0.50$ and positive on three of the four systems, the measured values are $0.978$,
 $0.995$, $0.976$ and $0.761$ and the criterion is met. What these support is a bound and not a point
 estimate: the auditable share is small,
