@@ -8,8 +8,8 @@ invisible to any statistic computed from the network's own values, at any magnit
 auditable subspace spans a third of the error space and, in the variance-weighted metric the
 closure statistic uses, carries under one per cent of the error against experiment, still a factor
 of $1.36$ below chance at the weakest reading tried. The test is correspondingly
-narrow: on the first replicate its flags sit inside the field's fixed $1.0$ kcal/mol hysteresis
-cutoff and remove $20$ of its $26$, removing the edges it names does not recover accuracy against
+narrow: its flags sit inside the field's fixed $1.0$ kcal/mol hysteresis cutoff on every replicate
+and remove $20$ of its $26$ on the first, removing the edges it names does not recover accuracy against
 experiment, and widening every reported error by half, enough to cover the pose and preparation
 variance those repeats hold fixed, leaves nothing flagged.
 Resolving the invisible part needs measurements from outside the network, priced here in ligands.
@@ -492,10 +492,15 @@ beating both, and the verdict was a tie (Supplementary Figure~\ref{fig:Cut}). We
 further reading we placed on the ordering inside it. The only label these data supply divides each
 residual by the same per-edge variance the calibrated rule uses as its weight, so the ordering is
 monotone in proximity to that variance rather than in detection skill, and the comparison ranks
-nothing. Nor are the two rules independent: on this benchmark the flag sets are strictly nested,
-the calibrated null flagging $6$ systems, the fixed-$\mathrm{se}$ test $11$ and the $1.0$ kcal/mol
-cutoff $26$, so the calibrated null catches nothing the field's cutoff misses and instead removes
-$20$ of its flags. Whether that removal is an improvement is what the contaminated label cannot
+nothing. Nor are the two rules independent. On replicate $0$ the three flag sets are strictly
+nested, the calibrated null flagging $6$ systems, the fixed-$\mathrm{se}$ test $11$ and the $1.0$
+kcal/mol cutoff $26$, so the calibrated null catches nothing the field's cutoff misses and instead
+removes $20$ of its flags. The chain does not survive the other repeats intact: on replicate $1$
+the calibrated null flags $6$, the fixed-$\mathrm{se}$ test $13$ and the cutoff $24$, and two
+systems break the strict chain, \texttt{ciordia\_retro} flagged by the calibrated null but not by
+the fixed-$\mathrm{se}$ test and \texttt{mup1} flagged by that test but not by the cutoff. On
+replicate $2$ the chain holds again at $3$, $11$ and $24$. What holds on all three is the
+containment that matters here, the calibrated set inside the cutoff's. Whether that removal is an improvement is what the contaminated label cannot
 say, and adjudicating those $20$ needs new sampling or new experiment, which public retrospective
 data cannot supply. What the calibrated null has over a fixed cutoff is accordingly structural and
 not demonstrated here: per-edge adaptive thresholds, a null measured against seed and velocity
@@ -996,6 +1001,17 @@ false discovery rate at $\alpha=0.05$ across systems. The population for the clo
 $48$ systems that carry at least three replicate-$0$ edges and at least one independent cycle,
 which between them hold $1143$ of the benchmark's $1145$ edges.
 
+\paragraph{The two baseline detectors.} The fixed hysteresis cutoff flags a system when the largest
+absolute closure sum over a fundamental cycle basis exceeds $1.0$ kcal/mol. That basis is the
+cotree of a spanning tree of the perturbation network, so it holds one cycle per degree of freedom
+of the closure fit, and the aggregation over them is a maximum. The rule consumes no per-edge
+uncertainty and applies no multiplicity correction. The fixed-$\mathrm{se}$ test is the closure fit
+above with one standard error per system, the median of that system's per-edge reported values,
+substituted for every edge; its per-system tail probabilities pass through the same
+Benjamini--Hochberg control at $\alpha=0.05$. The three detectors accordingly differ only in what
+they do with the per-edge bar: the cutoff ignores it, the fixed-$\mathrm{se}$ test replaces it by
+one number per system, and the calibrated null uses all of them.
+
 \paragraph{Simulation protocols.} Two protocols underwrite numbers quoted above: the pure-null
 simulation that supplies every realized false-flag level, and the reproducible-systematic magnitude
 used as the label in detection comparisons. Both are specified in the Supporting Information.
@@ -1106,8 +1122,8 @@ reports turns a descriptive check into a test with a stated null and an ordering
 far their own calculations disagree, and it names beforehand the edges that lie in no cycle and so
 can carry no evidence at all. What it does not do on these data is catch anything the field's fixed
 cutoff misses: the two flag sets are nested and the head-to-head between them is a tie, so the
-advantage claimed here is structural, being per-edge adaptive thresholds, a null tied to
-replicate-measured calibration, and the observability map. It does not deliver a repair list: removing the edges it names does not recover accuracy against
+advantage claimed here is structural, being per-edge adaptive thresholds, a null measured against
+seed and velocity repeats, and the observability map. It does not deliver a repair list: removing the edges it names does not recover accuracy against
 experiment, and a rule built from the theorem does no better and on one system does harm.
 Closing that gap needs information the network does not contain, and in absolute measurements the
 worst case costs one ligand per dimension. That is a worst case: a bias smooth in chemical space

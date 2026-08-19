@@ -364,11 +364,18 @@ The pre-registered constants and this verdict are recorded here as run. We subse
 that the premise was unsound: by Theorem~\ref{thm:cons} the closure statistic identifies the
 curl-leverage-weighted \emph{mean} of $c_e^{-2}$, not a median, so $1/\sqrt{\mathrm{median}}$ is not
 an estimate of the same functional as the replicate ratio. There was accordingly no physical gap
-for P2 to explain, and we do not revise the pre-registered constants after the fact. The calibrated null flags $6$ of $48$ systems, the
-fixed-$\mathrm{se}$ $\chi^2$ test $11$, and the fixed cutoff $26$; the three flag sets are
-strictly nested (calibrated $\subset$ fixed-$\mathrm{se}$ $\subset$ fixed cutoff), so on this
-benchmark the calibrated null catches no system the fixed cutoff misses and instead removes
-$20$ of its flags. Whether that removal is an improvement is exactly what the contaminated
+for P2 to explain, and we do not revise the pre-registered constants after the fact. On replicate $0$ the calibrated null flags $6$ of $48$
+systems, the fixed-$\mathrm{se}$ $\chi^2$ test $11$, and the fixed cutoff $26$, and the three flag
+sets are strictly nested (calibrated $\subset$ fixed-$\mathrm{se}$ $\subset$ fixed cutoff), so on
+that replicate the calibrated null catches no system the fixed cutoff misses and instead removes
+$20$ of its flags. The strict chain is a property of that replicate and not of the benchmark. On
+replicate $1$ the counts are $6$, $13$ and $24$ and two links fail: \texttt{ciordia\_retro} is
+flagged by the calibrated null and not by the fixed-$\mathrm{se}$ test, and \texttt{mup1} by the
+fixed-$\mathrm{se}$ test and not by the cutoff. On replicate $2$ the counts are $3$, $11$ and $24$
+and the chain holds. The calibrated set lies inside the cutoff's on all three, which is the only
+containment any claim here rests on. Under the release's own blocks rather than the by-target
+grouping, the same replicate-$0$ test over $56$ testable blocks gives $6$, $10$ and $29$, the chain
+nests, and the calibrated null removes $23$ of the cutoff's flags. Whether that removal is an improvement is exactly what the contaminated
 comparison above cannot say. The $1.0$ kcal/mol cutoff was pre-registered at the
 field-standard value before this comparison was run, and no sweep over alternative thresholds
 was performed, so the comparison above is specific to that one fixed rule.
