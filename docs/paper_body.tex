@@ -111,8 +111,10 @@ reward-guided re-ranking. The calibrated uncertainty is valuable for detection a
 commit decision on real out-of-distribution benchmark edges, and for a stopping rule in simulation;
 for nothing sharper or better ranked.
 \item The same closed form as an autograd primitive whose backward pass costs a single division,
-and as the conductance of a measurement graph whose knowledge gradient is exactly zero along every
-gauge-redundant direction.
+proved and verified against finite differences but not exercised by any experiment here, and as the
+conductance of a measurement graph. The knowledge gradient is exactly zero along every
+gauge-redundant direction of that graph, which follows from the Laplacian's kernel and so holds for
+any positive conductances rather than from the sandwich weighting.
 \end{itemize}
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} places this
@@ -507,9 +509,7 @@ $p$-values near the rejection threshold, not through the median of the statistic
 per-system calibration of Figure~\ref{fig:Arep} is heterogeneous enough that a conservative bulk
 and an anti-conservative tail can coexist. The correction is applied across systems, which are
 fitted separately and share no edges, so the independence Benjamini--Hochberg needs is plausible
-between them even though residuals within a system are dependent by construction; the procedure
-also holds under positive regression dependence, which is the direction any residual between-system
-coupling would take. The nominal level is reported as nominal. The case for
+between them even though residuals within a system are dependent by construction; The nominal level is reported as nominal. The case for
 the flags therefore rests not on the $\chi^2$ tail but on the
 distribution-free cross-replicate reproduction check below,
 which assumes no Gaussian null. A subtler concern is that four of the six flagged systems are themselves locally overconfident
@@ -560,7 +560,7 @@ The detector's value is entirely a
 function of calibration (Figure~\ref{fig:L}B): a uniform ${\times}0.15$ shrink standing in for the
 learned head's central overconfidence (Figure~\ref{fig:A}) flags $88\%$ of systems ($42$ of
 $48$), which leaves almost nothing unflagged and so no longer separates anything, the calibrated
-sandwich flags $12\%$ ($6$ of $48$, selective), a $\times1.3$ inflation one system of $48$, and a
+sandwich flags $12\%$ ($6$ of $48$), a $\times1.3$ inflation one system of $48$, and a
 $\times2$ inflation none. We report these as flagged fractions rather than as false-positive
 rates: which of the flags are false is exactly what is not known here
 (Section~\ref{sec:limitations}).
@@ -620,8 +620,10 @@ therefore survive the average the same way.
 \caption{\textbf{Calibrated cycle-closure quality control.} (A) Per-system reduced $\chi^2$
 from a generalized-least-squares cycle-closure fit, ranked, with shading below $\chi^2_\nu=1$ and
 the flagged systems marked. (B) Percentage of systems flagged under four $\sigma$ models, in
-plotted order: a uniform $\times0.15$ shrink, the calibrated sandwich, a $\times1.3$ inflation and
-a $\times2$ inflation. (C) Reduced $\chi^2$ from a single replicate against the value from the
+plotted order: a uniform $\times0.15$ shrink, the reported bar as shipped, a $\times1.3$ inflation
+and a $\times2$ inflation. The shipped bar is the tick marked $\times1$; the scale at which those
+bars are correct is measured as $0.92$ of them (Section~\ref{sec:qc}), which is a different
+quantity from the tick. (C) Reduced $\chi^2$ from a single replicate against the value from the
 three replicates pooled, with reference lines at pooled/single $=1$ and $=3$.}
 \label{fig:L}
 \end{figure}
@@ -798,8 +800,10 @@ signal reproduces across replicates. It is not a repair target: deleting the edg
 recover accuracy against experiment, because accuracy against experiment is set by a component the
 audit is blind to by construction. Reaching that component needs information from outside the network, and it has to be information
 the network does not already contain: an absolute binding free energy calculation carries exactly
-the per-ligand systematic error part (i) is about and resolves none of it, while a measured anchor
-resolves its dimension only to its own precision. By part (iv) the arithmetic is unforgiving even
+the force-field component of the per-ligand systematic error part (i) is about, so it resolves that
+component not at all; the mapping, soft-core, dummy-atom, schedule and restraint contributions are
+protocol-specific and would not transfer. A measured anchor resolves its dimension only to its own
+precision. By part (iv) the arithmetic is unforgiving even
 when the anchors are unbiased:
 one anchor per component fixes only an arbitrary offset, and every dimension after that costs one
 more measured ligand.
@@ -813,7 +817,9 @@ other of its kind, can be asked for, which is why its flags are not a repair lis
 The benchmark ships three independent repeats, so the flag set can be recomputed rather than
 assumed. It does not hold up as a set. The eight-system union below is descriptive and carries no
 controlled error rate: three independent tests each holding a nominal $0.05$ put the chance of at
-least one false flag among them at $1-0.96^3=0.115$ if they were independent, which they are not.
+least one false flag among them at $1-0.95^3=0.143$ were they independent, which they are not; the
+figure is illustrative in a second way too, since Benjamini--Hochberg controls the false discovery
+rate rather than the probability of any false flag.
 The counts are also per system and not per target, the benchmark's $49$ systems carrying $41$
 protein labels, with \texttt{bace} contributing four and \texttt{hsp90} four; the six flagged
 systems are six different proteins, so that count at least is not inflated by system splitting. The same pipeline at the same FDR level returns
