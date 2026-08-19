@@ -113,7 +113,7 @@ therefore robust to autocorrelation once $n_{\mathrm{eff}}$ is used, as it is in
 panel.
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figAC_gsweep.pdf}
+\includegraphics[width=\textwidth]{figAC_gsweep.pdf}
 \caption{\textbf{Sandwich standard error at the raw sample count versus at the effective
 sample count $n_{\mathrm{eff}}=n/g$, on the real BACE1 $\lambda$ windows.} (A) Sandwich standard error at
 $n_{\mathrm{eff}}$ and at raw $n$, plotted against the correlation-aware (decorrelated
@@ -164,7 +164,7 @@ mechanism, not evidence on real data (Figure~\ref{fig:Breal} is the real test).
 ($0.98\times$ $[0.93,1.03]$, 24-seed bootstrap CI): the Gauss--Markov ceiling.
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.7\textwidth]{figC_active_learning.pdf}
+\includegraphics[width=\textwidth]{figC_active_learning.pdf}
 \caption{\textbf{Simulated active-learning acquisition policies.} (A) Simple regret versus
 oracle calls (simulated FEP edges evaluated), for a sandwich-weighted knowledge-gradient
 policy, a naive-weighted knowledge-gradient policy, an uncertainty-only policy, and random
@@ -188,7 +188,7 @@ acquisition wastes budget resolving a decision-irrelevant cross-cluster offset (
 top-$k$ regret $0.27$ vs $0.01$).
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figD_gauge_identifiability.pdf}
+\includegraphics[width=\textwidth]{figD_gauge_identifiability.pdf}
 \caption{\textbf{Knowledge-gradient score on gauge and decision-relevant contrasts
 (simulation).} (A) Knowledge gradient for the within-cluster decision contrast and for the
 gauge (all-ones) contrast, by edge type (within-cluster-A, within-cluster-B, bridge). (B)
@@ -216,12 +216,13 @@ with the features a domain expert would flag a priori.
 
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.9\textwidth]{figQC_structures.pdf}
+\includegraphics[width=\textwidth]{figQC_structures.pdf}
 \caption{\textbf{Structural context of two flagged systems, from public co-crystal
-structures.} Heavy-atom coordinates. (A) BACE1 (PDB 4DJW): the catalytic aspartic-acid dyad
-(Asp93/Asp289, red) and the bound inhibitor (grey). (B) BRD4 BD1 (PDB 3MXF, in complex with
-JQ1): crystallographic waters within $4.5$\,\AA\ of the ligand (blue) and the recognition
-residue Asn140 (green).}
+structures.} Heavy-atom coordinates. Colours here annotate structural objects, not methods.
+(A) BACE1 (PDB 4DJW): the catalytic aspartic-acid dyad (Asp93/Asp289, red circles) and the bound
+inhibitor (grey). (B) BRD4 BD1 (PDB 3MXF, in complex with JQ1): crystallographic waters within
+$4.5$\,\AA\ of the ligand (blue circles), the recognition residue Asn140 (green squares), and
+the ligand (grey).}
 \label{fig:qcstruct}
 \end{figure}
 
@@ -360,7 +361,7 @@ $0.014$ kcal/mol respectively and leaves the two connected systems unchanged.
 \input{tab_auditability}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figLev_observability.pdf}
+\includegraphics[width=\textwidth]{figLev_observability.pdf}
 \caption{\textbf{Per-system curl-leverage, and curl-leverage versus reproducible residual
 magnitude.} (A) Median curl-leverage $h_e$ per system, ranked, across the $48$ systems with
 at least one independent cycle; the six cycle-closure-flagged systems are labeled with their
@@ -381,7 +382,7 @@ internal edge-level consistency and does not extend to force-field-limited absol
 same scope boundary as the clean \texttt{eg5} system.
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figLcausal_guided_vs_random.pdf}
+\includegraphics[width=0.7\textwidth]{figLcausal_guided_vs_random.pdf}
 \caption{\textbf{Change in mean unsigned error against experimental affinity after guided
 versus random QC-edge removal.} Bars: change in mean unsigned error against experiment
 ($\Delta$MUE) after guided removal of the QC-flagged high-$|z|$ edges, per system. Points:
@@ -429,22 +430,22 @@ field-standard value before this comparison was run, and no sweep over alternati
 was performed, so the comparison above is specific to that one fixed rule.
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figCut_cutoff_benchmark.pdf}
+\includegraphics[width=\textwidth]{figCut_cutoff_benchmark.pdf}
 \caption{\textbf{Detection AUC of three flagging rules, and nominal versus
 correlation-corrected reduced $\chi^2$.} (A) Area under the ROC curve (AUC) scored against the
 per-system reproducible-systematic magnitude defined in Computational details, for the calibrated
 per-edge null, a fixed $1.0$
 kcal/mol hysteresis cutoff, and a fixed-standard-error $\chi^2$ test, with the chance level
 ($\mathrm{AUC}=0.5$) marked. The pre-registered criterion required the calibrated null to beat
-both, so the panel records a tie. The panel is annotated with the reason no ordering inside it is
-read as a discrimination gain: the scored label is standardized by the same per-edge reported
-variance the calibrated rule uses as its weight. (B) Per-system reduced $\chi^2$ at the nominal degrees of
+both, so the panel records a tie. No ordering inside the panel may be read as a discrimination
+gain: the scored label is standardized by the same per-edge reported variance the calibrated rule
+uses as its weight, so the comparison is contaminated. (B) Per-system reduced $\chi^2$ at the nominal degrees of
 freedom versus at the shared-node-correlation-corrected effective degrees of freedom, with the $y{=}x$ line and the $\chi^2_\nu=1$ reference. The standard-error factor annotated in panel B is the closure-implied functional whose premise was subsequently found unsound; it is retained as the pre-registered record and is not a conservatism estimate. It reads $1.67\times$ rather than the pre-registered $1.71\times$ because this panel's population is the $46$ systems that admit a shared-node null, two fewer than the $48$ the constant was fixed on.}
 \label{fig:Cut}
 \end{figure}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.95\textwidth]{figStab_replicate_stability.pdf}
+\includegraphics[width=\textwidth]{figStab_replicate_stability.pdf}
 \caption{\textbf{Replicate stability of the flag set.} The Benjamini--Hochberg test at
 $\alpha=0.05$ recomputed independently on each of the benchmark's three protocol repeats.
 Per-system adjusted $p$-values, which systems are flagged on which replicate, the pairwise
@@ -575,7 +576,7 @@ flagged \\
 \end{table}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.95\textwidth]{figOOS_out_of_sample.pdf}
+\includegraphics[width=\textwidth]{figOOS_out_of_sample.pdf}
 \caption{\textbf{Out-of-sample behaviour of the calibrated null.} (A) Per-system closure
 $\chi^2_\nu$ predicted from the per-edge miscalibration measured on the two replicates not being
 predicted, against the observed value, with the identity line and the flagged systems marked.
@@ -592,7 +593,7 @@ control drawn from unflagged systems, with the $\alpha=0.05$ line marked.}
 \end{figure}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.95\textwidth]{figSelf_two_sided_selfcalibration.pdf}
+\includegraphics[width=\textwidth]{figSelf_two_sided_selfcalibration.pdf}
 \caption{\textbf{Two-sided self-calibration of the per-edge error bar.} Per-system reduced
 $\chi^2$ before and after replacing each system's reported standard error by its own
 replicate-measured calibration, which systems are gained and which are lost, and the realized
@@ -779,7 +780,7 @@ and the fit at each arm is a closed-form recomputation, so re-running reproduces
 counts exactly.
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figP4_sigma_profile.pdf}
+\includegraphics[width=\textwidth]{figP4_sigma_profile.pdf}
 \caption{\textbf{Cycle-closure flagging under four per-edge $\sigma$ assignments, and the
 distribution of the real-profile ratios.} (Left) Percentage of the $48$-system OpenFE
 network flagged, for the calibrated sandwich, the learned head's measured overlap-dependent
@@ -834,7 +835,7 @@ grid and the test at each of them is a closed-form recomputation on fixed inputs
 reproduces the entire curve exactly.
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figP4b_dose_response.pdf}
+\includegraphics[width=0.7\textwidth]{figP4b_dose_response.pdf}
 \caption{\textbf{Fraction of the OpenFE network flagged across a swept uniform $\sigma$ scale
 factor.} Percentage of the $48$-system network flagged by the cycle-closure test, across a
 frozen grid of $16$ uniform standard-error scale factors from $2.0\times$ to $0.10\times$
@@ -916,7 +917,7 @@ an overconfident MVE-uncertainty reward, on the \texttt{eg5} congeneric ligand s
 \end{figure}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figB_real_decomposition.pdf}
+\includegraphics[width=\textwidth]{figB_real_decomposition.pdf}
 \caption{\textbf{Conditional calibration and interval sharpness on real out-of-distribution
 trunk residuals.} (A) Maximum conditional coverage error, computed per target and per
 $|\ddG|$ bin, for the decomposed physics $\sigma$, a Mondrian-by-target conformal interval,
@@ -926,7 +927,7 @@ and a flat split-conformal interval, each at approximately $90\%$ marginal cover
 \end{figure}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figJ_amortized_reward.pdf}
+\includegraphics[width=\textwidth]{figJ_amortized_reward.pdf}
 \caption{\textbf{Commit-to-synthesis ranking and calibration on real out-of-distribution
 edges.} (A) Commit precision (fraction of committed candidates with true value at or above a
 threshold $\tau$) versus commit volume (fraction of edges committed), for candidates ranked
@@ -939,7 +940,7 @@ recalibration, with the ideal (actual = claimed) line.}
 \end{figure}
 
 \begin{figure}[t]\centering
-\includegraphics[width=0.92\textwidth]{figG_calibrated_stopping.pdf}
+\includegraphics[width=\textwidth]{figG_calibrated_stopping.pdf}
 \caption{\textbf{Simulated active-learning stopping under calibrated versus counterfactually
 overconfident claimed uncertainty.} (A) Actual top-$k$ correctness and claimed stopping
 confidence, averaged over $60$ seeds, versus the number of oracle calls, for a calibrated
