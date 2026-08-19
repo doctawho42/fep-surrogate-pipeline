@@ -514,9 +514,14 @@ That observation does not bound the realized false-positive rate, and we do not 
 so: Benjamini--Hochberg controls the false discovery rate through the behaviour of the null
 $p$-values near the rejection threshold, not through the median of the statistic, and the
 per-system calibration of Figure~\ref{fig:Arep} is heterogeneous enough that a conservative bulk
-and an anti-conservative tail can coexist. The correction is applied across systems, which are
-fitted separately and share no edges, so the independence Benjamini--Hochberg needs is plausible
-between them even though residuals within a system are dependent by construction; The nominal level is reported as nominal. The case for
+and an anti-conservative tail can coexist. The correction is applied across systems, and rather than
+argue for the independence Benjamini--Hochberg needs we let Benjamini--Yekutieli carry the
+guarantee~\citep{benjamini2001by}, which assumes no dependence structure at all. It costs a factor
+$H_{48}=4.46$ in the threshold and returns the identical six systems on replicate $0$ and the
+identical three on replicate $2$, dropping one, \texttt{brd4}, on replicate $1$ (Supporting
+Information). Positive regression dependence is a plausible remark rather than an assumption
+anything here rests on: the systems are fitted separately and share no edges, while sharing a force
+field and, within a target, a preparation. The nominal level is reported as nominal. The case for
 the flags therefore rests not on the $\chi^2$ tail but on the
 distribution-free cross-replicate reproduction check below,
 which assumes no Gaussian null. A subtler concern is that four of the six flagged systems are themselves locally overconfident

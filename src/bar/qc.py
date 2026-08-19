@@ -116,6 +116,19 @@ def benjamini_hochberg(pvals, alpha: float = 0.05) -> NDArray:
     return p <= cut
 
 
+def benjamini_yekutieli(pvals, alpha: float = 0.05) -> NDArray:
+    """Boolean flags for BY-FDR control at level ``alpha``, valid under ARBITRARY dependence.
+
+    BY is BH run at ``alpha / H_m`` with ``H_m`` the m-th harmonic number, which is where its
+    generality is paid for. Systems here are fitted separately and share no edges, but they do
+    share a force field and, within a target, a preparation, so a guarantee that assumes nothing
+    about the dependence structure is the one worth quoting.
+    """
+    m = np.asarray(pvals, dtype=float).size
+    harmonic = float(np.sum(1.0 / np.arange(1, m + 1))) if m else 1.0
+    return benjamini_hochberg(pvals, alpha / harmonic)
+
+
 def repair_order(
     edges: list[Edge], target_reduced_chi2: float = 1.0, max_remove: int | None = None
 ):

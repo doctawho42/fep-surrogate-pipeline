@@ -406,6 +406,18 @@ $\sigma$ scale on each replicate.}
 \label{fig:Stab}
 \end{figure}
 
+\paragraph{The flag sets under arbitrary dependence (Figure~\ref{fig:Stab}).} The correction
+reported throughout is Benjamini--Hochberg, whose guarantee needs a dependence assumption between
+systems. Benjamini--Yekutieli~\citep{benjamini2001by} needs none, at the price of running the same
+step-up rule at $\alpha/H_m$ with $H_{48}=4.4588$, that is at $0.0112$ rather than $0.05$. It
+returns $\{$\texttt{bace}, \texttt{brd4}, \texttt{cdk8}, \texttt{faah}, \texttt{hif2a},
+\texttt{p38}$\}$ on replicate $0$, identical to the published set; $\{$\texttt{bace},
+\texttt{cdk8}, \texttt{renin}$\}$ on replicate $2$, again identical; and on replicate $1$
+$\{$\texttt{bace}, \texttt{ciordia\_retro}, \texttt{hif2a}, \texttt{p38}, \texttt{renin}$\}$,
+which drops \texttt{brd4} from the Benjamini--Hochberg set of six. The published set therefore does
+not depend on the dependence assumption, and the churn across replicates is unchanged by removing
+it. \texttt{make figStab} emits the three sets.
+
 \paragraph{Per-system test statistics behind the flag sets (Tables~\ref{tab:stab}
 and~\ref{tab:stab2}).} The flag sets summarized in Figure~\ref{fig:Stab} and in
 Section~\ref{sec:stability} are thresholded Benjamini--Hochberg adjusted $p$-values, so the

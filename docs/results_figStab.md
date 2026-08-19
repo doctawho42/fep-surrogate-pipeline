@@ -21,6 +21,14 @@ pooled network. Nothing is tuned: every constant is the one already in `make_fig
 | 2 | 48 | 3: `bace, cdk8, renin` |
 | pooled (≥2 reps) | 48 | 7: `bace, brd4, cdk8, ciordia_retro, hif2a, p38, renin` |
 
+### Under Benjamini--Yekutieli (arbitrary dependence)
+
+| replicate | flagged | vs BH |
+|---|---|---|
+| 0 | 6: `bace, brd4, cdk8, faah, hif2a, p38` | identical to BH |
+| 1 | 5: `bace, ciordia_retro, hif2a, p38, renin` | drops `brd4` |
+| 2 | 3: `bace, cdk8, renin` | identical to BH |
+
 - **Intersection (1 system):** `bace`.
 - **Union (8 systems):** `bace, brd4, cdk8, ciordia_retro, faah, hif2a, p38, renin`.
 - **Pairwise Jaccard:** 0↔1 0.500, 0↔2 0.286, 1↔2 0.286 (mean 0.357).

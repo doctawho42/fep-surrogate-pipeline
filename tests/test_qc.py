@@ -13,7 +13,14 @@ import math
 
 import numpy as np
 
-from bar.qc import benjamini_hochberg, chi2_sf, cycle_closure_test, gls_network, repair_order
+from bar.qc import (
+    benjamini_hochberg,
+    benjamini_yekutieli,
+    chi2_sf,
+    cycle_closure_test,
+    gls_network,
+    repair_order,
+)
 
 
 def _complete_graph_edges(phi, se, rng, extra_bias=None):
@@ -93,6 +100,19 @@ def test_bh_flags_monotone():
     p = [1e-9, 0.2, 0.4, 0.8]
     flags = benjamini_hochberg(p, alpha=0.05)
     assert flags[0] and not flags[-1]
+
+
+def test_by_is_bh_at_the_harmonic_discount():
+    # BY buys validity under arbitrary dependence by running BH at alpha / H_m. Any flag set it
+    # produces must therefore be contained in BH's at the same nominal level, and must equal BH's
+    # at the discounted level exactly.
+    rng = np.random.default_rng(0)
+    p = np.concatenate([rng.uniform(0, 1e-4, 5), rng.uniform(0, 1, 43)])
+    m = p.size
+    harmonic = float(np.sum(1.0 / np.arange(1, m + 1)))
+    by = benjamini_yekutieli(p, alpha=0.05)
+    assert np.array_equal(by, benjamini_hochberg(p, alpha=0.05 / harmonic))
+    assert np.all(benjamini_hochberg(p, alpha=0.05)[by])   # BY subset of BH
 
 
 def test_chi2_sf_is_exact():
