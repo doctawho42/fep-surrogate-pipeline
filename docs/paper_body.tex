@@ -1,16 +1,17 @@
 \begin{abstract}
 A relative-binding-free-energy network's per-edge error bar, checked here against seed and velocity
-repeats on $1145$ real binding edges, can serve as the null of a cycle-closure fit, turning a
-descriptive consistency check into a test with a stated null. What such a test can reach is fixed
+repeats on $1145$ real binding edges, can serve as the null of a cycle-closure fit,
+turning a descriptive check into a test with a stated null. What such a test can reach is fixed
 by the gradient--cycle decomposition of edge flows, which is not ours: the cycle part of a network's
-error is auditable and biases nothing, while the gradient part biases the estimated affinities and
-is invisible to any statistic computed from the network's own values, at any magnitude. On this
-benchmark the auditable subspace spans a third of the error space and, in the variance-weighted
-metric the closure statistic uses, carries under one per cent of the error against experiment,
-still a factor of $1.36$ below chance at the weakest reading tried. The test is correspondingly
+error is auditable and biases nothing, while the gradient part biases the affinities and is
+invisible to any statistic computed from the network's own values, at any magnitude. Here the
+auditable subspace spans a third of the error space and, in the variance-weighted metric the
+closure statistic uses, carries under one per cent of the error against experiment, still a factor
+of $1.36$ below chance at the weakest reading tried. The test is correspondingly
 narrow: on the first replicate its flags sit inside the field's fixed $1.0$ kcal/mol hysteresis
 cutoff and remove $20$ of its $26$, removing the edges it names does not recover accuracy against
-experiment, and widening every reported error by thirty per cent leaves one system flagged.
+experiment, and widening every reported error by half, enough to cover the pose and preparation
+variance those repeats hold fixed, leaves nothing flagged.
 Resolving the invisible part needs measurements from outside the network, priced here in ligands.
 \end{abstract}
 
@@ -376,7 +377,7 @@ benchmark as the reported standard error over the across-replicate standard devi
 by the reported errors gives $\mathbb{E}[X^2]=\operatorname{tr}(\Pi D)$ with
 $D=\mathrm{diag}(c_e^{-2})$,
 so, as Theorem~\ref{thm:cons} below establishes, $\mathbb{E}[\chi^2_\nu]$ is the curl-leverage-weighted \emph{mean} of $c_e^{-2}$. Inverting a median recovers a scalar conservatism only when $c_e$ is constant across
-edges, and Figure~\ref{fig:Arep}B shows it is not. A replicate-validated ratio and a
+edges, and Figure~\ref{fig:Arep}B shows it is not. A ratio measured against seed and velocity repeats and a
 closure-implied one are therefore different functionals of a heavy-tailed per-edge ratio
 distribution, and no single scalar conservatism factor is identified by these data; the apparent
 disagreement between them is an artefact of comparing different functionals rather than a physical
@@ -476,10 +477,12 @@ estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as
 diagnostic~\citep{wang2015fep,cui2020hysteresis}, weighted cycle closure~\citep{li2023wcc}, and the
 constrained variational solution of a whole network under loop closure~\citep{giese2021variational}
 are established; what is new is the \emph{calibrated} null: a
-per-edge, replicate-validated aleatoric variance that gives the test per-edge-adaptive thresholds
-and a false-positive rate controlled \emph{to the extent the per-edge null is calibrated}
-(validated against independent replicates, Figure~\ref{fig:Arep}), complementing the field's fixed
-hysteresis cutoffs, together with the cross-replicate reproduction check of Figure~\ref{fig:Lval}B and the
+per-edge aleatoric variance measured against seed and velocity repeats rather than assumed, which
+gives the test per-edge adaptive thresholds and complements the field's fixed hysteresis cutoffs.
+Those repeats share one pose and one system preparation, so the variance they validate excludes the
+component the alternative hypothesis is built from, and no controlled false-positive rate follows
+from them; nothing on this benchmark flags once the bars are widened to cover that component. The
+calibrated null comes together with the cross-replicate reproduction check of Figure~\ref{fig:Lval}B and the
 estimation--detection conservation law of Theorem~\ref{thm:cons}, which fixes which edges are
 auditable at all; what is shared with the works above is the weighted least-squares treatment of the
 cycle graph itself. On the same $1143$ edges a pre-registered head-to-head scored the calibrated per-edge null against
@@ -495,8 +498,9 @@ cutoff $26$, so the calibrated null catches nothing the field's cutoff misses an
 $20$ of its flags. Whether that removal is an improvement is what the contaminated label cannot
 say, and adjudicating those $20$ needs new sampling or new experiment, which public retrospective
 data cannot supply. What the calibrated null has over a fixed cutoff is accordingly structural and
-not demonstrated here: per-edge adaptive thresholds, a false-positive rate tied to a
-replicate-validated null, and the observability map of Theorem~\ref{thm:cons}. The evidence that the flags are real remains the
+not demonstrated here: per-edge adaptive thresholds, a null measured against seed and velocity
+repeats rather than assumed, and the observability map of Theorem~\ref{thm:cons}. That measurement
+is not a controlled error rate, since the repeats hold pose and preparation fixed. The evidence that the flags are real remains the
 distribution-free cross-replicate reproduction check, which does not depend on the $\chi^2$
 scaling, and it needs only the per-edge $se$ the benchmark ships: the detector's novelty is the
 calibrated null, not the differentiable machinery.
@@ -1107,5 +1111,12 @@ replicate-measured calibration, and the observability map. It does not deliver a
 experiment, and a rule built from the theorem does no better and on one system does harm.
 Closing that gap needs information the network does not contain, and in absolute measurements the
 worst case costs one ligand per dimension. That is a worst case: a bias smooth in chemical space
-is a far smaller object, and a noisy anchor resolves only to its own precision. Reading uncertainty
-off the physics makes the audit free; knowing its blind spot makes it honest.
+is a far smaller object, and a noisy anchor resolves only to its own precision.
+
+A second ceiling sits above all of this and is not a property of the decomposition. The bar the
+test uses as its null is measured against repeats that resample seeds and velocities while holding
+one pose and one system preparation fixed, so it prices sampling noise and not the preparation an
+entire network inherits. Widening it by half, which is what covering that would take, leaves
+nothing on this benchmark flagged at all. What the instrument can reach is bounded twice over: once
+by the geometry of the network, and once by a variance component its own null never sees. Reading
+uncertainty off the physics makes the audit free; knowing both blind spots makes it honest.
