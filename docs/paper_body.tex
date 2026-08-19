@@ -13,7 +13,8 @@ on many real protein-ligand binding edges. As the null of a cycle-closure fit it
 test with a stated level, where an overconfident stand-in flags almost everything. On the public
 benchmark examined here the auditable subspace spans a third of the error space. On systems
 grounded against public affinity data it carries, as an upper bound in the variance-weighted
-metric, under one per cent of the error present, at a weakest margin over chance of two. Per-edge
+metric, under one per cent of the error present. The share sits below chance on every system and
+in every metric tried, by a margin that ranges from wide to slim. Per-edge
 selections and the ranking of systems reproduce on replicates they never saw; the flagged list
 does not. Removing flagged edges does not recover accuracy against experiment, and on one system a
 rule derived from the split does measurable harm.
@@ -519,7 +520,27 @@ test at $0.05$ applied to the first replicate flags six chemically-sensible syst
 \texttt{cdk8}, \texttt{hif2a}, \texttt{p38}; Figure~\ref{fig:L}A; \texttt{brd4}'s data set is a
 buried-water set, \texttt{bace} is protonation-sensitive). That particular set of six is a
 single-replicate draw and should not be read as a census; Section~\ref{sec:stability} measures how
-much of it survives the other two replicates. Supplementary Tables~\ref{tab:stab}
+much of it survives the other two replicates.
+
+One of the six needs its cause named. The benchmark labels a system by target, and eight of its
+names union edges from more than one separately released data set. Where those releases share
+ligands the union carries cycles present in neither release alone, and the cycle spaces sit
+orthogonally inside the union's, so the closure statistic splits exactly. On \texttt{cdk8} the split
+is decisive: the union gives $\chi^2=77.7$ on $29$ degrees of freedom, of which the two releases
+carry $31.1$ on $23$ between them, leaving $46.6$ on the six cycles that span them, a reduced
+$\chi^2$ of $7.8$ at $p=2.3\times10^{-8}$. Neither release is inconsistent on its own
+(\texttt{merck\_cdk8} $p=0.218$, $0.865$, $0.189$ on the three replicates). \texttt{cdk8} is
+flagged because two independently prepared releases of the same target disagree where they meet,
+which is edge-level inconsistency beyond sampling and so is what the test is for, but it is not a
+statement about either release's simulations. No other system carries across-release cycles that
+matter: in six of the eight the releases share no ligand and form disjoint components, and
+\texttt{tyk2}'s single such cycle is unremarkable ($p=0.67$).
+
+The grouping is therefore a choice the analysis makes, and the flag set is not invariant to it.
+Re-running the same replicate-0 test on the release's own blocks gives $56$ testable systems and
+again six flags, but a different six: \texttt{cdk8} leaves and \texttt{jacs\_mcl1} enters. The
+grouping by target name was not pre-registered, and the Benjamini--Hochberg family size depends on
+it. The published list is the by-target one throughout. Supplementary Tables~\ref{tab:stab}
 and~\ref{tab:stab2} report, for all $48$ systems and each replicate separately, the degrees of
 freedom, the reduced $\chi^2$, and the Benjamini--Hochberg adjusted $q$-value behind every flag.
 The detector's value is entirely a
@@ -645,7 +666,9 @@ which the fit absorbs into one offset per component.
 
 On those sub-networks the auditable share of the measured error against experiment is $0.6\%$
 pooled, against those chance levels (Figure~\ref{fig:Hodge}B); per system $0.0065$, $0.0017$,
-$0.0086$ and $0.0460$, each stable to within a factor of three under leaving out any one edge. Both
+$0.0086$ and $0.0460$. Leaving out one edge at a time moves them by $1.9$, $1.7$ and $2.6$ times
+on the first three and by $17$ on \texttt{bace}, whose range spans a factor of $23$; the pooled
+figure is stable, the per-system ones are not equally so. Both
 sides are measured in the variance-weighted metric the closure statistic lives in, and the margin
 over chance depends on that choice, narrowing to a factor of two on \texttt{bace} under isotropy in
 kcal/mol and the pooled fraction rising to $5.45\%$ in the unweighted metric (Supporting
@@ -719,7 +742,12 @@ is convention-dependent, $-0.612$ under greedy removal that refits after each ed
 when the statistic is applied once to the original fit; the sign survives both, and survives the
 strict influence form, which changes the removal set on two of the four systems but not here. The
 two edges removed carry $h_e=0.099$ and $0.388$, so this is not the degenerate branch where a
-near-bridge is divided by its own vanishing leverage. The rule fails for the reason measured above: the influence form divides a residual by a small
+near-bridge is divided by its own vanishing leverage. The other tail belongs beside it at the same
+altitude: on \texttt{bace} the same rule improves the error against experiment by $0.140$ kcal/mol
+at a one-sided $p=0.023$, which under the conjunctive criterion is not a result the summary can
+report, but which is exactly as post hoc and as single-system as the harm. Neither clears the
+pre-registered bar, and both are reported here rather than only the one running against the rule.
+The rule fails overall for the reason measured above: the influence form divides a residual by a small
 curl-leverage to recover the error of a single anomalous edge, and a smooth per-ligand field is not
 concentrated on any edge, so the division returns amplified noise.
 
@@ -948,15 +976,20 @@ is, so the flags are reported as reproducible inconsistency throughout.
 
 The test detects only \emph{edge-level} inconsistency, and neither removal rule improves accuracy
 against experiment: guided removal ties random on the four grounded systems (Stouffer $p=0.48$;
-Figure~\ref{fig:Lcausal}) and the influence rule does no better overall and, on \texttt{p38},
-measurably worse than random removal (Section~\ref{sec:hodge}; Figure~\ref{fig:Hodge}C).
+Figure~\ref{fig:Lcausal}) and the influence rule does no better overall, doing measurable harm on
+\texttt{p38} and reaching a nominal improvement on \texttt{bace}, neither clearing the conjunctive
+criterion (Section~\ref{sec:hodge}; Figure~\ref{fig:Hodge}C).
 Theorem~\ref{thm:hodge} offers a structural reading of both nulls, bounded by the margin
 Section~\ref{sec:hodge} measures rather than established independently of it. The pre-registration
 names what would have counted against that reading: a guided removal beating its random null in a
 majority of grounded systems at a combined $p$ below $0.05$ would have shown the visible part
 actionable after all. Three restrictions attach to the measurement. It
-rests on four systems, all of them flagged, so it characterises the systems the test selects rather
-than the benchmark. It runs on a connectivity-based ChEMBL join, stereo-blind, so enantiomer pairs
+rests on four systems selected by the test, so it characterises those rather than the benchmark,
+and for \texttt{cdk8} not even that: its grounded sub-network is all $31$ edges of
+\texttt{merck\_cdk8}, the block whose own closure statistic is not significant on any replicate, so
+the evidence that flagged it lies outside the sub-network measured. \texttt{p38}'s grounded
+sub-network is the \texttt{jacs\_p38} block, which is individually significant ($\chi^2_\nu=2.63$,
+$p=1.9\times10^{-4}$), and \texttt{hif2a} and \texttt{bace} are single-block systems. It runs on a connectivity-based ChEMBL join, stereo-blind, so enantiomer pairs
 sharing a 2D graph collapse to one experimental value, inflating absolute MUE while cancelling in
 the guided-versus-random contrast since both arms read the identical cached affinity; the
 experimental and annotation errors it carries are per-ligand quantities entering the same

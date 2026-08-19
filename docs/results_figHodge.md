@@ -74,3 +74,25 @@ A repair rule reads the visible part of the error, and the visible part carries 
 cent of what is wrong; dividing the residual by a small curl-leverage, which is what the
 influence form does, amplifies noise wherever the error is not concentrated on a single
 edge. H1 says it is not. The theorem's reach on these data is explanation, not repair.
+
+## Released-data-set composition (descriptive, found while checking a referee report)
+
+The benchmark names a system by target, and eight systems union edges from more than one
+separately released data set. Where the releases share ligands the union carries cycles
+present in neither release alone; the split below is exact, since the releases' cycle
+spaces sit orthogonally inside the union's.
+
+| system | releases | union chi2/dof | within-release | across-release | reduced | p |
+|---|---|---|---|---|---|---|
+| `cdk2` | 2 | 4.8/10 | 4.8/10 | 0.0/0 | nan | nan |
+| `cdk8` | 2 | 77.7/29 | 31.1/23 | 46.6/6 | 7.77 | 2.3e-08 |
+| `jnk1` | 2 | 0.8/7 | 0.8/7 | -0.0/0 | nan | nan |
+| `mcl1` | 2 | 43.8/24 | 43.8/24 | 0.0/0 | nan | nan |
+| `p38` | 2 | 52.7/22 | 52.7/22 | -0.0/0 | nan | nan |
+| `ptp1b` | 2 | 2.5/12 | 2.5/12 | 0.0/0 | nan | nan |
+| `thrombin` | 3 | 24.7/19 | 24.7/19 | 0.0/0 | nan | nan |
+| `tyk2` | 2 | 8.7/11 | 8.5/10 | 0.2/1 | 0.18 | 6.7e-01 |
+
+Only `cdk8` carries across-release cycles that
+matter. In six of the eight the releases share no ligand and form disjoint components, so
+there are no such cycles at all, and in `tyk2` the single one is unremarkable.
