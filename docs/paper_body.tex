@@ -516,12 +516,10 @@ which assumes no Gaussian null. A subtler concern is that four of the six flagge
 against their own across-replicate spread (Figure~\ref{fig:Arep}: \texttt{brd4} $0.76\times$,
 \texttt{faah} $0.90\times$, \texttt{bace} and \texttt{hif2a} $0.96\times$), so a flag could partly
 reflect that system's own too-tight bars. Retesting each against the width its own replicates
-measure keeps all six at the per-system granularity and \emph{two} of them, \texttt{bace} and
-\texttt{cdk8}, at the per-edge granularity this work pre-specified. Supplementary
-Table~\ref{tab:selfgrid} reports both arms with their two-sided counterparts and each arm's
-realized false-flag probability under the pure-null simulation of Section~\ref{sec:methods}; the
-pre-specified per-edge one-sided arm is the only self-calibrated arm that holds its level ($0.003$
-against a nominal $0.05$), so its count of two is the conservative answer.
+measure keeps all six at the per-system granularity and \emph{two}, \texttt{bace} and
+\texttt{cdk8}, at the per-edge granularity this work pre-specified, which is the only
+self-calibrated arm holding its level ($0.003$ against a nominal $0.05$) and so the conservative
+answer (Supplementary Table~\ref{tab:selfgrid}).
 
 \paragraph{Figure~\ref{fig:L}: a deployable detector whose usefulness \emph{is} $\sigma$-calibration.}
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over
@@ -588,17 +586,11 @@ benchmark survives a bar widened to cover pose and preparation variance. Widenin
 being tested rather than moving the same test along it, and it is sensitivity, not validity, that
 is fragile on that side. That
 uniform shrink is a stress test rather than a realistic head, and the comparison is a counterfactual
-in a further sense: we are aware of no deployed or published relative-binding-free-energy pipeline
-that feeds a learned per-edge $\sigma$ into a network consistency check, so what the contrast
-measures is what would happen if one did. Applying instead the learned head's
-\emph{measured}, overlap-dependent miscalibration profile per edge (rank-transferred onto each
-edge's own overlap, Supplementary Figure~\ref{fig:P4}) flags $42$ of $48$ systems against the
-calibrated sandwich's $6$ ($7.00\times$), so the degradation survives a heterogeneous, non-uniform
-profile and is not an artifact of the uniform factor. A shuffled-profile control and a swept
-shrink magnitude (Supplementary Figure~\ref{fig:P4b}) place the same reading on it: it is
-the \emph{magnitude} of the learned head's miscalibration, not the \emph{uniformity} of
-the Figure~\ref{fig:L}B stand-in, that destroys the test, over-wide bars cost power in the other
-direction, and the calibrated scale is a two-sided optimum rather than a plateau. The
+in a further sense: no deployed or published pipeline we are aware of feeds a learned per-edge
+$\sigma$ into a network consistency check. The head's own measured, overlap-dependent profile
+applied per edge flags $42$ of $48$, so the degradation is not an artifact of uniformity, and a
+shuffled control with a swept magnitude shows it is the magnitude that destroys the test while
+over-wide bars cost power the other way (Supporting Information). The
 demonstration is accordingly scoped to heads as overconfident as the measured one (reported
 $\mathrm{se}$ $5$--$11\times$ too small); it establishes that such heads saturate the test, not the
 shrink magnitude at which selectivity is first lost. The
@@ -936,13 +928,12 @@ hypothesis rather than a transferable diagnostic: where $\sigma$ flags novelty r
 an uncalibrated reward is safer.
 
 \paragraph{Synthesis.} A calibrated per-edge $\sigma$ does not sharpen intervals on real data, does
-not re-rank what to compute or what to commit, and does not steer reward re-ranking toward better
-molecules on the one evaluable congeneric set; it pays on commit trust and on stopping in
-simulations that do not consume the physics variance; and an \emph{overconfident} $\sigma$ silently
-corrupts the stop and commit decisions. Calibration is a trust and decision instrument, not a
-performance multiplier. The graph weight earns its place through \emph{structure} rather than
-magnitude: it makes the gauge directions exactly unidentifiable, and by Gauss--Markov its numerical
-value does not improve ranking.
+not re-rank what to compute or what to commit, and does not steer reward re-ranking on the one
+evaluable congeneric set. It pays on commit trust, measured on real out-of-distribution benchmark
+edges, and on a stopping rule in simulation; and an overconfident $\sigma$ silently corrupts both
+decisions. Calibration is a trust instrument rather than a performance multiplier, and the graph
+weight earns its place through structure rather than magnitude, making the gauge directions exactly
+unidentifiable while by Gauss--Markov its value does not improve ranking.
 
 \section{Computational details}\label{sec:methods}
 \paragraph{Data.} Every closure fit consumes the release's combined per-replicate table directly,
@@ -1057,15 +1048,10 @@ The cross-replicate check shows that what is flagged reproduces across independe
 a false-positive-rate guarantee and does not certify the nominal Benjamini--Hochberg rate. Recall
 cannot be measured at all, there being no ground-truth error labels. Replacing each system's
 reported standard error by its own replicate-measured calibration changes the flag set in both
-directions and by an amount depending on the granularity: applied two-sided per edge the count goes
-from six to seven, three systems entering and two leaving, and by each system's aggregate ratio to
-sixteen with none leaving (Supplementary Figure~\ref{fig:Self}); applied one-sided, the direction
-the circularity concern calls for, the per-edge arm retains two and the per-system arm all six
-(Supplementary Table~\ref{tab:selfgrid}). Neither two-sided arm is false-discovery-rate controlled
-at three replicates and no arm is reported as a flag set: under the pure-null simulation of
-Section~\ref{sec:methods} their probability of at least one false flag is $0.59$ and $0.24$ against
-the $0.04$ the uncorrected arm realizes at the same nominal level, and only the one-sided per-edge
-arm holds it ($0.003$). What this establishes is that the flag set is sensitive to calibration
+directions, by an amount depending on the granularity and the direction, from retaining two of the
+six to reaching sixteen. The arms, their realized false-flag probabilities and the single one that
+holds its level are tabulated in the Supporting Information, and none is reported here as a flag
+set. What this establishes is that the flag set is sensitive to calibration
 error of the size actually present, in both directions, which limits how far any single flag list
 should be trusted.
 
