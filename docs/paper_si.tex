@@ -274,6 +274,19 @@ enantiomer pair collapsed by the stereo-blind affinity join, shows the effect as
 three that do. Every reading puts the auditable share below its own chance
 level; what changes is by how much, and the conclusion the main text draws is the weakest of them.
 
+The label source can also be changed. The measurement uses a stereo-blind, target-wide ChEMBL
+search under the coverage rule, and the benchmark of Section~\ref{sec:audit} carries curated
+per-edge experimental $\ddG$ for three of the four systems (\texttt{bace} has none). Matching those
+to the network by canonical SMILES recovers $57\%$, $98\%$ and $91\%$ of the curated edges for
+\texttt{cdk8}, \texttt{hif2a} and \texttt{p38}. The matched sub-networks are much smaller than the
+grounded ones and \texttt{p38}'s retains no cycle, so the check is weak, but where it can be run it
+agrees: the visible fraction on curated labels is $0.0007$ for \texttt{cdk8} against a chance level
+of $0.071$, and $0.0006$ for \texttt{hif2a} against $0.147$, in both cases at or below what the
+ChEMBL labels give on the same edges. Lifting the pooled fraction to its chance level by annotation
+noise alone would require that noise to carry almost all of the total squared standardized error,
+which these agreements make implausible; \texttt{bace}'s margin is the exception and is why that
+number does not appear in the abstract.
+
 The component column is not decorative. Six of the $48$ systems are disconnected
 (\texttt{cdk2}, \texttt{jnk1}, \texttt{mcl1}, \texttt{p38}, \texttt{ptp1b}, \texttt{thrombin}),
 each into two pieces, so the components sum to $54$: the benchmark's edge lists join congeneric
