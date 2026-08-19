@@ -1,23 +1,19 @@
 \begin{abstract}
-The per-edge error bar a relative-binding-free-energy pipeline already reports is checked here
-against seed and velocity repeats on more than a thousand real protein-ligand binding edges, and is
-conservative on aggregate, heterogeneous by system. Used as the null of a cycle-closure
-fit it turns a descriptive consistency check into a test with a stated null. A stand-in bar several
-times too small destroys that test; a same-budget estimator pooling by overlap does not. Against the
-fixed hysteresis cutoff the field uses, the flag sets are strictly nested: the calibrated null
-catches nothing that cutoff misses and only removes a fifth of its flags, which retrospective data
-cannot adjudicate. What the test can reach is fixed by a
-decomposition of edge flows into gradient and cycle parts, which is not ours and is attributed. Its
-halves fall awkwardly: no statistic computed from the network's own edge values can tell the
-gradient part from no error at all, and that is the part biasing the estimated affinities, while
-the auditable cycle part biases nothing. We measure where a real
-network's error falls between them. The auditable subspace spans a third of the error space, and on
-systems grounded against public affinity data it carries under one per cent of the error against
-experiment, below chance on every system and in every metric tried by a margin ranging from wide to
-slim. Removing the edges the test names does not recover accuracy against experiment, nor does
-removing those a rule derived from the decomposition prefers, which on one system does measurable
-harm. Resolving the invisible part needs measurements from outside the network, priced here in
-ligands.
+The per-edge error bar a relative-binding-free-energy pipeline already reports, checked here
+against seed and velocity repeats on $1145$ real protein-ligand binding edges, is conservative on
+aggregate and heterogeneous by system; used as the null of a cycle-closure fit it turns a
+descriptive consistency check into a test with a stated null. What that test can reach is fixed by
+the gradient--cycle decomposition of edge flows, which is not ours and is attributed: the cycle
+part of a network's error is identifiable from its own edge values and biases nothing, while the
+gradient part biases the estimated affinities and is invisible to any statistic computed from those
+values, at any magnitude. Measured on this benchmark the auditable subspace spans a third of the
+error space and carries under one per cent of the error against experiment on the systems grounded
+against public affinity data, below chance on every one of them. The test is accordingly not a
+repair list: on the first replicate its flags lie strictly inside the fixed $1.0$ kcal/mol
+hysteresis cutoff the field uses, catching nothing that cutoff misses while removing $20$ of its
+$26$, a difference retrospective data cannot adjudicate, and removing the edges it names does not
+recover accuracy against experiment. Resolving the invisible part needs measurements from outside
+the network, priced here in ligands.
 \end{abstract}
 
 \begin{figure}[t]\centering
@@ -106,10 +102,12 @@ the low-overlap regime and that regime rests on the controlled sweep.
 per-edge nulls separates the reproducible part of a network's inconsistency from sampling noise;
 the per-edge residuals and the ranking of systems reproduce across independent repeats, the list of
 flagged systems does not, and a bar as overconfident as a learned one destroys the separation.
-\item An applicability map across interval sharpness, edge ranking, synthesis-commit selection and
-reward-guided re-ranking. The calibrated uncertainty is valuable for detection and for trust in a
-commit decision on real out-of-distribution benchmark edges, and for a stopping rule in simulation;
-for nothing sharper or better ranked.
+\item An applicability map across interval sharpness, edge ranking, synthesis-commit selection,
+reward-guided re-ranking and two decision tasks. None of the six puts the calibrated uncertainty
+ahead of a fair baseline: commit trust on real out-of-distribution benchmark edges ties two
+standard recalibrations of an overconfident $\sigma$, and the stopping contrast in simulation
+separates only from a counterfactual stand-in, vanishing at the miscalibration a same-budget
+estimator reaches.
 \item The same closed form as an autograd primitive whose backward pass costs a single division,
 proved and verified against finite differences but not exercised by any experiment here, and as the
 conductance of a measurement graph. The knowledge gradient is exactly zero along every
@@ -123,8 +121,8 @@ acquisition methods. Section~\ref{sec:bar} gives the closed-form sandwich varian
 replicate validation. Section~\ref{sec:qc} presents the calibrated cycle-closure quality-control
 test on real binding data, the decomposition that bounds it, the measurement of where real error
 falls against that bound, and what survives a second replicate.
-Section~\ref{sec:audit} maps where the calibrated uncertainty helps downstream learning and where
-it does not. Section~\ref{sec:methods} gives the data, the estimators, the models and the
+Section~\ref{sec:audit} audits six downstream uses of the calibrated uncertainty and finds no gain
+over a fair baseline in any of them. Section~\ref{sec:methods} gives the data, the estimators, the models and the
 simulations behind every number reported above. Section~\ref{sec:limitations} collects the
 limitations of the approach, and Section~\ref{sec:conclusion} concludes.
 
@@ -873,38 +871,52 @@ $|z|$-rank-matched control drawn from unflagged systems reproduces the leverage-
 residual signal but not the consistency gain. The effect is an aggregate one, significant
 individually in two of the five testable systems.
 
-\section{An applicability map: where this calibration helps, and where it does not}\label{sec:audit}
-The detector of Section~\ref{sec:qc} is a real-data payoff; whether the same free calibration
-improves downstream machine learning is a separate question, and mostly it does not. These
-negatives are the reason to believe the positive result. Six tasks are audited, four for
-performance and two for decision quality, and Supplementary Table~\ref{tab:audit} collects every
-effect against its baseline. Three performance tasks, interval sharpness, commit-to-synthesis
-selection and reward re-ranking over a measured congeneric set, run with the commit-trust decision
-task on the public OpenFF protein--ligand benchmark~\citep{hahn2022plbench} (FEP+ and Merck
-data~\citep{wang2015fep,schindler2020merck}, experimental $\ddG$ labels, both-endpoint
-scaffold-disjoint out-of-distribution splits); edge ranking in active learning and the stopping
-decision run in controlled simulations. The amortized $\sigma$ under test is the trunk's
-predictive uncertainty on unseen $\ddG$,
+\section{An applicability map: what the calibration does not buy downstream}\label{sec:audit}
+The detector of Section~\ref{sec:qc} runs on a network's own residuals. Whether the same free
+calibration also improves downstream machine learning is a separate question, and on the six tasks
+audited here the answer is no: four performance tasks show no gain or outright harm, and the two
+decision tasks either tie a recalibrated baseline or separate only from a stand-in that no
+estimator here produces. Reporting that null is what keeps the instrument of
+Section~\ref{sec:qc} from being read as a general claim about calibrated uncertainty. Supplementary
+Table~\ref{tab:audit} collects every effect against its baseline. Three performance tasks, interval
+sharpness, commit-to-synthesis selection and reward re-ranking over a measured congeneric set, run
+with the commit-trust decision task on the public OpenFF protein--ligand
+benchmark~\citep{hahn2022plbench} (FEP+ and Merck data~\citep{wang2015fep,schindler2020merck},
+experimental $\ddG$ labels, both-endpoint scaffold-disjoint out-of-distribution splits); edge
+ranking in active learning and the stopping decision run in controlled simulations. The amortized
+$\sigma$ under test is the trunk's predictive uncertainty on unseen $\ddG$,
 $\sigma_{\text{total}}=\gamma\sqrt{\sigma^2_{\text{ens}}+\sigma^2_{\text{ale}}}$: deep-ensemble
 epistemic spread and benchmark aleatoric floor, conformally scaled at miscoverage $\alpha=0.1$. It
 is not Figure~\ref{fig:A}'s per-edge BAR sampling-se or its learned foil; a bare ``$\sigma$'' below
 means $\sigma_{\text{total}}$.
 
-\paragraph{Trust, where it pays.} Fixing the ensemble mean and varying only the uncertainty in a
-commit rule (commit iff the lower-confidence bound $\mu-\kappa\sigma\ge\tau$), an overconfident
-epistemic-only $\sigma$ over-claims badly: its realized-versus-claimed correctness shortfall is
-$+0.182$ $[0.132,0.225]$ larger than the decomposed $\sigma$'s, which is calibrated-to-conservative
-(Supplementary Figure~\ref{fig:J}B). The trust is not unique to the physics $\sigma$: temperature
-scaling~\citep{guo2017calibration} or split-conformal recalibration of the same overconfident
-$\sigma$ recovers it (both differences from ours indistinguishable from zero). Trustworthy
-decisions need \emph{some} proper calibration; the physics $\sigma$ supplies it at no
-calibration-set cost for the aleatoric term. The same lesson appears in a controlled
-active-learning simulation, where a calibrated learner's claimed confidence tracks actual top-$k$
-correctness ($|\Delta|=0.022$) and stops at $30$ calls $82\%$ correct, while an overconfident one,
-its assumed posterior se scaled by the $0.15\times$ measured in Figure~\ref{fig:A}, stops twice as
-early at only $60\%$ correct (Supplementary Figure~\ref{fig:G}).
+\paragraph{Trust, and what it is measured against.} Fixing the ensemble mean and varying only the
+uncertainty in a commit rule (commit iff the lower-confidence bound $\mu-\kappa\sigma\ge\tau$), an
+overconfident epistemic-only $\sigma$ over-claims badly: its realized-versus-claimed correctness
+shortfall is $+0.182$ $[0.132,0.225]$ larger than the decomposed $\sigma$'s (Supplementary
+Figure~\ref{fig:J}B). That number prices miscalibration; it does not rank the ways of curing it. On
+the same scale, temperature scaling~\citep{guo2017calibration} of that overconfident $\sigma$
+leaves $+0.034$ $[-0.018,0.081]$ and split-conformal recalibration $-0.029$ $[-0.077,0.007]$, both
+straddling zero in opposite directions. Trustworthy decisions need \emph{some} proper calibration,
+and all three routes supply it. Neither does this task separate them on price, since all three fit
+a scalar on the same held-out split: the closed form's cost advantage is the one
+Section~\ref{sec:bar} measures, a per-edge variance computed rather than learned, and none of these
+six tasks tests it.
 
-\paragraph{Sharpness, ranking and selection, where it does not.} On real held-out trunk residuals
+The stopping simulation has the same shape. A calibrated learner's claimed confidence tracks actual
+top-$k$ correctness ($|\Delta|=0.022$) and stops at $30$ oracle calls $82\%$ correct, while a
+learner whose assumed posterior standard error is scaled by the $0.15\times$ measured in
+Figure~\ref{fig:A} stops twice as early at only $60\%$ correct (Supplementary
+Figure~\ref{fig:G}). That second arm is a counterfactual stand-in built from a learned head's
+measured miscalibration rather than an estimator run here, the same object and the same number
+Section~\ref{sec:qc} uses against the closure test, so what it leaves open is where on the
+assumed-error scale a real estimator would sit. Sweeping that scale answers it: at the
+$0.94\times$ a same-budget estimator pooling single-label edges by overlap reaches, the learner
+stops at $28.4$ calls at the same $0.82$ correctness; correctness at the stop first moves at
+$0.60\times$, and the halved budget needs $0.20\times$ (Supporting Information). The contrast is
+scoped, exactly as in Section~\ref{sec:qc}, to per-edge heads that miss by $5$--$11\times$.
+
+\paragraph{Sharpness, ranking and selection.} On real held-out trunk residuals
 at matched $\sim$$0.90$ marginal coverage the decomposed interval is slightly \emph{wider} than
 flat split-conformal (width ratio $0.92\times$), because epistemic spread is small against the
 large irreducible out-of-distribution error; its conditional calibration is comparable to a fair
@@ -929,12 +941,12 @@ penalty $-\kappa\sigma$ demotes the true winners. Resting on one evaluable targe
 hypothesis rather than a transferable diagnostic: where $\sigma$ flags novelty rather than quality,
 an uncalibrated reward is safer.
 
-\paragraph{Synthesis.} A calibrated per-edge $\sigma$ does not sharpen intervals on real data, does
-not re-rank what to compute or what to commit, and does not steer reward re-ranking on the one
-evaluable congeneric set. It pays on commit trust, measured on real out-of-distribution benchmark
-edges, and on a stopping rule in simulation; and an overconfident $\sigma$ silently corrupts both
-decisions. Calibration is a trust instrument rather than a performance multiplier, and the graph
-weight earns its place through structure rather than magnitude, making the gauge directions exactly
+\paragraph{Synthesis.} None of the six tasks puts the calibrated $\sigma$ ahead of a fair baseline.
+What the audit establishes is a precondition rather than an advantage: decisions of this kind need
+some proper calibration, an overconfident $\sigma$ silently corrupts them, and the place the
+calibration demonstrably pays on real data is inside the network, as the null of
+Section~\ref{sec:qc}'s test, rather than downstream of it. The graph weight earns its place the
+same way, through structure rather than magnitude, making the gauge directions exactly
 unidentifiable while by Gauss--Markov its value does not improve ranking.
 
 \section{Computational details}\label{sec:methods}

@@ -871,14 +871,59 @@ recalibration, with the ideal (actual = claimed) line.}
 
 \begin{figure}[t]\centering
 \includegraphics[width=0.92\textwidth]{figG_calibrated_stopping.pdf}
-\caption{\textbf{Simulated active-learning stopping under calibrated versus overconfident
-claimed uncertainty.} (A) Actual top-$k$ correctness and claimed stopping confidence,
-averaged over $60$ seeds, versus the number of oracle calls, for a calibrated learner and
-for a learner whose assumed posterior standard error is scaled by $0.15\times$
-(overconfident). (B) Oracle calls at the stopping rule (bars) and top-$k$ correctness at
+\caption{\textbf{Simulated active-learning stopping under calibrated versus counterfactually
+overconfident claimed uncertainty.} (A) Actual top-$k$ correctness and claimed stopping
+confidence, averaged over $60$ seeds, versus the number of oracle calls, for a calibrated
+learner and for a learner whose assumed posterior standard error is scaled by $0.15\times$.
+That second arm is a counterfactual stand-in, the miscalibration measured for a trained
+per-edge head in Figure~\ref{fig:A} imposed on the assumed error, and not an estimator run
+here; Table~\ref{tab:gsweep} gives the stopping decision across the whole scale.
+(B) Oracle calls at the stopping rule (bars) and top-$k$ correctness at
 that stop (points), for the two learners.}
 \label{fig:G}
 \end{figure}
+
+\paragraph{The stopping decision as a function of the assumed error
+(Table~\ref{tab:gsweep}).} Figure~\ref{fig:G} reports one point of a curve. What the
+experiment measures is how the stopping decision depends on the error the learner
+\emph{assumes}, everything else held fixed, so the whole dependence is reported here. The
+two arms of the figure keep their own Monte-Carlo stream, so adding the sweep points leaves
+them unchanged.
+
+\begin{table}[t]\centering
+\caption{\textbf{Simulated stopping under a swept assumed error.} Assumed posterior standard
+error as a multiple of the true one, against oracle calls at the stopping rule, top-$k$
+correctness at that stop, and the mean absolute gap between claimed confidence and actual
+correctness over the budget; $60$ seeds. Starred rows are the two arms of
+Figure~\ref{fig:G}.}
+\label{tab:gsweep}
+\small
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+assumed se / true se & calls at stop & correct at stop & mean $|$claimed $-$ actual$|$ \\
+\midrule
+$1.06\times$ (conservative)      & $30.8$ & $0.83$ & $0.027$ \\
+$1.00\times$ (calibrated)$^{*}$  & $29.6$ & $0.82$ & $0.022$ \\
+$0.94\times$                     & $28.4$ & $0.82$ & $0.020$ \\
+$0.80\times$                     & $25.4$ & $0.82$ & $0.029$ \\
+$0.60\times$                     & $21.1$ & $0.77$ & $0.059$ \\
+$0.40\times$                     & $17.9$ & $0.68$ & $0.093$ \\
+$0.20\times$                     & $14.9$ & $0.60$ & $0.127$ \\
+$0.15\times$ (stand-in)$^{*}$    & $14.4$ & $0.60$ & $0.137$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The $0.94\times$ row is the $6\%$ under-estimate a same-budget estimator pooling single-label
+edges by overlap reaches on the identical labels the heads were given (Figure~\ref{fig:A}).
+At that scale the stopping decision is indistinguishable from the calibrated one, $28.4$
+calls against $29.6$ at the same $0.82$ correctness. Correctness at the stop first moves at
+$0.60\times$, and the halved budget of Figure~\ref{fig:G}B needs $0.20\times$. The contrast
+is therefore scoped, exactly as the quality-control collapse of the main text is scoped, to
+per-edge heads missing by $5$--$11\times$, and is not evidence that a same-budget learned
+estimator would stop early. The one effect that survives a fair comparison runs the other
+way: a $6\%$ over-estimate spends $30.8$ calls for the same correctness, the decision cost of
+a conservative bar of Figure~\ref{fig:J}B.
 
 \paragraph{The decision cost of a conservative bar (Figure~\ref{fig:J}B).}
 Even a \emph{conservative} bar carries a decision cost: a systematic
@@ -894,15 +939,20 @@ for four downstream performance tasks (interval sharpness, active-learning edge 
 commit-to-synthesis ranking, and reward re-ranking on the \texttt{eg5} congeneric set) and two
 decision tasks (commit trust and active-learning stopping), the calibrated method's effect
 relative to the relevant baseline. The top block shows no measurable performance gain
-(Figures~\ref{fig:Breal}, \ref{fig:C}, \ref{fig:J}A, \ref{fig:K} above); the
-bottom block shows a clear benefit for the two decision tasks (Figures~\ref{fig:J}B,
-\ref{fig:G} above).
+(Figures~\ref{fig:Breal}, \ref{fig:C}, \ref{fig:J}A, \ref{fig:K} above). The bottom block
+shows what the two decision tasks are measured against: an overconfident $\sigma$ and a
+counterfactual stand-in both lose heavily, which prices miscalibration, while against a fair
+baseline, the same overconfident $\sigma$ after temperature or split-conformal
+recalibration and a same-budget pooled estimator at its measured $0.94\times$, the effect is
+gone (Figures~\ref{fig:J}B, \ref{fig:G} and Table~\ref{tab:gsweep} above).
 
 \begin{table}[t]\centering
 \caption{\textbf{Effect of the decomposed $\sigma$ relative to a baseline, across six
 downstream tasks.} Effects are the calibrated method minus the relevant baseline with a
 $95\%$ bootstrap confidence interval; ``real'' denotes OpenFF benchmark out-of-distribution
-edges, ``sim'' denotes a controlled simulation.}
+edges, ``sim'' denotes a controlled simulation. The two decision tasks are each given against
+an uncalibrated foil and against a fair baseline: the same $\sigma$ recalibrated, and the
+assumed error a same-budget pooled estimator reaches.}
 \label{tab:audit}
 \small
 \begin{tabular}{@{}p{3.1cm}lp{5.4cm}p{2.6cm}@{}}
@@ -914,8 +964,11 @@ Edge weighting (active learning) & sim & calls-to-top-$k$ $0.98\times$ $[0.93,1.
 Commit ranking (matched volume) & real & precision $-0.006$ $[-0.016,+0.007]$ & tie \\
 Reward re-ranking (evaluable set, \texttt{eg5}) & real & true hit-rate $-0.109$ $[-0.150,-0.072]$ & hurts (directional, single target)$^{a}$ \\
 \midrule
-Commit trust (vs overconfident $\sigma$) & real & shortfall $+0.182$ $[0.132,0.225]$ better & \textbf{trust} \\
-Stopping (when to halt) & sim & $82\%$ vs $60\%$ correct at stop & \textbf{trust} \\
+Commit trust vs overconfident $\sigma$ & real & shortfall $+0.182$ $[0.132,0.225]$ better & prices miscalibration \\
+Commit trust vs temperature-scaled $\sigma$ & real & shortfall $+0.034$ $[-0.018,+0.081]$ & tie \\
+Commit trust vs split-conformal $\sigma$ & real & shortfall $-0.029$ $[-0.077,+0.007]$ & tie \\
+Stopping vs $0.15\times$ stand-in & sim & $82\%$ vs $60\%$ correct at stop & prices miscalibration \\
+Stopping vs pooled estimator ($0.94\times$) & sim & $0.82$ vs $0.82$ correct, $29.6$ vs $28.4$ calls & tie \\
 \bottomrule
 \end{tabular}
 
