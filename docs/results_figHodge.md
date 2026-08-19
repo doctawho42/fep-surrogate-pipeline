@@ -44,6 +44,8 @@ Both the fraction and its chance level are recomputed on every single-edge delet
 | `bace` | 26 | 5 | isotropic | 0.0460 | 0.0919 | 2.0x | [0.0027, 0.0628] | 1.36x |
 | `bace` | 26 | 5 | unweighted | 0.0564 | 0.1923 | 3.4x | [0.0033, 0.0707] | 2.26x |
 
+Pooled adjusted R2 (H1's frozen criterion): 0.9802 from pooled f = 0.006038 over E = 167 edges and rank 116, residual dof 51; the criterion is >= 0.50.
+
 Pooled: whitened 0.0060 (0.0060 without cdk8), unweighted 0.0545 (0.0610 without cdk8).
 
 Pooled visible fraction 0.0060; the pre-registered criterion (pooled adjusted R2

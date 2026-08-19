@@ -734,8 +734,14 @@ kcal/mol and the pooled fraction rising to $5.45\%$ in the unweighted metric, wh
 projector without variance weighting. Supplementary Table~\ref{tab:metrics} gives all three
 conventions for all four systems with their own chance levels and their single-edge-deletion
 ranges; the weakest cell in it is \texttt{bace} isotropic under deletion, at $1.36$ below chance. Against the frozen H1 criterion, a pooled degrees-of-freedom-adjusted gradient-model
-$R^2$ of at least $0.50$ and positive on three of the four systems, the measured values are $0.978$,
-$0.995$, $0.976$ and $0.761$ and the criterion is met. What these support is a bound and not a point
+$R^2$ of at least $0.50$ and positive on three of the four systems, the pooled value is $0.980$ and
+the per-system values are $0.978$, $0.995$, $0.976$ and $0.761$, so the criterion is met. Pooling
+is over the four sub-networks jointly, the visible fraction as a ratio of summed squared norms and
+the adjustment carried on the summed $E=167$ edges and rank $116$, that is on $51$ residual degrees
+of freedom, rather than as an average of per-system adjustments. The adjudicator released with the
+first version of the analysis script tested the unadjusted pooled criterion, $1-f_{\text{pooled}}
+\geq 0.50$, which is weaker than the rule the pre-registration froze; it now tests the frozen rule,
+and the verdict is unchanged. What these support is a bound and not a point
 estimate: the auditable share is small,
 at its weakest a factor of two below chance rather than the two orders of magnitude the pooled
 figure alone suggests. Two properties keep the measurement from being an artefact. It is a near-identity rather than a

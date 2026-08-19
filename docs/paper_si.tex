@@ -239,9 +239,19 @@ Figure~\ref{fig:Hodge}, not transcribed from the main text.
 frozen before the computation rather than chosen after it, so the file is reproduced below rather
 than described. It was committed to the article's repository before the commit that computes any of
 the quantities it governs, and it is anchored by the SHA-256 digest
-\texttt{16279af73d90e1e9b39f33046ba6ee432b80ad750a6e5687a0e05b3e54b01585}, which the test suite
-asserts on every run. That digest lives in the same repository as the file, so it detects
-accidental drift and not backdating; we claim the former and not the latter. The file below governs
+\texttt{16279af73d90e1e9\allowbreak{}b39f33046ba6ee43\allowbreak{}2b80ad750a6e5687\allowbreak{}%
+a0e05b3e54b01585}, which the test suite asserts on every run. That digest lives in the same
+repository as the file, so it detects accidental drift and not backdating; we claim the former and
+not the latter. The file's own header says the immutability is anchored by an \emph{external}
+digest and calls itself immutable; neither is right and the prose here governs. There is no
+third-party timestamp, no external registry entry and no notarisation of any kind: the anchor is
+in-repository, its only guarantee is drift detection, and the file's wording is left as frozen
+rather than corrected because correcting it would change the digest. Two labels in the frozen file
+are also wrong and are left standing for the same reason. It calls the influence statistic
+$|z_e|\sqrt{(1-h_e)/h_e}$ the DFFITS form, which it is not (it is the classical influence form
+scaled by $\sqrt{h_e}$), and it attributes the conserved budget to Theorem~\ref{thm:hodge} where
+the conservation law is Theorem~\ref{thm:cons}; it also cites a part ``5(i')'' that does not exist,
+the intended reference being part (i) of Theorem~\ref{thm:hodge}. The file below governs
 H1, H2 and H3 only. The other pre-specified constants this article invokes, the $|z|$-rule
 conjunctive criterion, the curl-leverage falsifier rule, the fixed-cutoff head-to-head criterion,
 the $1.0$ kcal/mol cutoff itself, the swept scale grid with its two frozen readouts, the per-edge
