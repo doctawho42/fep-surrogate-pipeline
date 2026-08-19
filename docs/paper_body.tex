@@ -109,11 +109,12 @@ ahead of a fair baseline: commit trust on real out-of-distribution benchmark edg
 standard recalibrations of an overconfident $\sigma$, and the stopping contrast in simulation
 separates only from a counterfactual stand-in, vanishing at the miscalibration a same-budget
 estimator reaches.
-\item The same closed form as an autograd primitive whose backward pass costs a single division,
-proved and verified against finite differences but not exercised by any experiment here, and as the
-conductance of a measurement graph. The knowledge gradient is exactly zero along every
-gauge-redundant direction of that graph, which follows from the Laplacian's kernel and so holds for
-any positive conductances rather than from the sandwich weighting.
+\item The same closed form as the conductance of a measurement graph. The knowledge gradient is
+exactly zero along every gauge-redundant direction of that graph, which follows from the
+Laplacian's kernel and so holds for any positive conductances rather than from the sandwich
+weighting. Its use as an autograd primitive, whose backward pass costs a single division, is proved
+and verified against finite differences in the Supporting Information and is exercised by no
+experiment here.
 \end{itemize}
 
 The remainder of this article is organised as follows. Section~\ref{sec:related} places this
@@ -165,16 +166,11 @@ BAR estimate $\dFh$ is the
 root of the score $S(d)=\sum_{j\in r}p(x_j)-\sum_{i\in f}(1-p(x_i))$, and
 $\partial_d S=-\sum p(1-p)=:-I(d)$, the curvature/overlap.
 
-\begin{theorem}[$O(1)$ differentiable backward]\label{thm:back}
-Let $\dFh(\theta)$ be defined by $S(\dFh,\theta)=0$ with non-degenerate curvature $I\neq0$
-(positive overlap). The implicit function theorem gives $d\dFh/d\theta=I^{-1}\partial_\theta S$.
-For window means, $d\dFh/d\mu^f=I^f/I$, $d\dFh/d\mu^r=-I^r/I$, with $|I^f/I|+|I^r/I|=1$. The
-backward pass is one division by the curvature; the root-find is not unrolled.
-\end{theorem}
-Theorem~\ref{thm:back} is a statement about cost, and cost is the whole of the role the
-differentiable layer plays here: it prices carrying the bar inside a model at one division per
-backward pass, with the root-find not unrolled. No experiment reported below trains through the
-layer. Everything below consumes the variance as a number or as a fixed graph weight.
+The layer's backward pass costs one division by that curvature, by the implicit function theorem
+and without unrolling the root-find; the statement and its window-mean derivatives are
+Theorem~\ref{thm:back} in the Supporting Information, where they sit because no experiment reported
+below trains through the layer. Everything below consumes the variance as a number or as a fixed
+graph weight.
 
 \begin{theorem}[Sampling variance via the sandwich]\label{thm:sand}
 $\dFh$ is an $M$-estimator; its asymptotic sampling variance is the sandwich
@@ -463,16 +459,27 @@ for the specific statement of part (i), that a bias common to every comparison i
 is absorbed into that node's effect and is invisible to any inconsistency test, and did not locate
 it stated in those terms, but we report the search as inconclusive rather than as a negative: the
 fact is immediate in that framework and may well be folklore in it, as the corresponding fact is in
-this one.
+this one. Extending that search to the bias-adjustment strand of the same literature settles the
+substance against us rather than for us. Bias-adjustment models in mixed treatment
+comparisons~\citep{dias2010bias} treat study-level bias terms as quantities the network cannot
+identify on its own and inform them with external evidence or informative priors, which is part (i)
+for a different index, and it is the same conclusion: a bias living where the design cannot
+separate it is resolved only from outside. We did not find the orthogonality of part (ii) or the
+anchor counting of part (iv) stated in that strand, and we report that as not found rather than as
+absent.
 
 Part (ii) follows from part (i) in two lines. The bias in the fitted potentials is
 $(\tilde A^\top\tilde A)^{+}\tilde A^\top\tilde\mu$ and $\tilde A^\top\Pi=0$, so the gradient part
 alone determines it while $\|\Pi\tilde\mu\|^2$ alone determines the noncentrality; it is the
 defining property of an orthogonal projector, read on the error rather than on the signal. What is
-left to this paper is that reading for alchemical networks, part (iv), which prices the escape in
-measurements rather than leaving it qualitative, and above all the measurement of where a real
-network's error falls between the two halves, which is Section~\ref{sec:hodge} and what the rest of
-this paper rests on.
+left to this paper is that reading for alchemical networks and, above all, the measurement of where
+a real network's error falls between the two halves, which is Section~\ref{sec:hodge} and what the
+rest of this paper rests on. Part (iv) is a dimension count and we withdraw the priority framing it
+carried. Network estimation of $\ddG$ under loop closure is solved
+in~\citet{xu2019diffnet} by Fisher information and in~\citet{giese2021variational} by a constrained
+variational solution of the whole network; neither is the object part (iv) counts, which is the
+price in absolute measurements of removing the unidentifiable directions, but we do not claim that
+counting is absent from either and it is used here for pricing rather than asserted as new.
 
 Network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as a

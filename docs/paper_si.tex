@@ -15,6 +15,21 @@ IndustryBenchmarks2024 replicate set~\citep{baumann2025industrybenchmarks}. Reca
 baselines use temperature scaling~\citep{guo2017calibration} and isotonic
 regression~\citep{zadrozny2002isotonic}.
 
+\paragraph{The differentiable backward pass.} The BAR layer's backward pass is quoted in the main
+text as costing one division. The statement is recorded here rather than there because no
+experiment in this article trains through the layer, so the result prices a capability rather than
+underwriting a measurement.
+
+\begin{theorem}[$O(1)$ differentiable backward]\label{thm:back}
+Let $\dFh(\theta)$ be defined by $S(\dFh,\theta)=0$ with non-degenerate curvature $I\neq0$
+(positive overlap). The implicit function theorem gives $d\dFh/d\theta=I^{-1}\partial_\theta S$.
+For window means, $d\dFh/d\mu^f=I^f/I$, $d\dFh/d\mu^r=-I^r/I$, with $|I^f/I|+|I^r/I|=1$. The
+backward pass is one division by the curvature; the root-find is not unrolled.
+\end{theorem}
+The score $S$, the curvature $I$ and the unified coordinates are those of Section~\ref{sec:bar} of
+the main text. The released layer's gradients are checked against finite differences to machine
+precision in the unit tests.
+
 \paragraph{BACE1 per-window overlap values (Figure~\ref{fig:A}B).} Figure~\ref{fig:A}B reports
 that naive $1/I$ overstates the bootstrap se by $2$--$12\times$ on the $19$ real BACE1
 adjacent-$\lambda$ BAR windows (mean $6.07$, $[2.78,12.01]$), the worst overstatement occurring at
@@ -246,12 +261,14 @@ not the latter. The file's own header says the immutability is anchored by an \e
 digest and calls itself immutable; neither is right and the prose here governs. There is no
 third-party timestamp, no external registry entry and no notarisation of any kind: the anchor is
 in-repository, its only guarantee is drift detection, and the file's wording is left as frozen
-rather than corrected because correcting it would change the digest. Two labels in the frozen file
+rather than corrected because correcting it would change the digest. Three labels in the frozen file
 are also wrong and are left standing for the same reason. It calls the influence statistic
-$|z_e|\sqrt{(1-h_e)/h_e}$ the DFFITS form, which it is not (it is the classical influence form
-scaled by $\sqrt{h_e}$), and it attributes the conserved budget to Theorem~\ref{thm:hodge} where
-the conservation law is Theorem~\ref{thm:cons}; it also cites a part ``5(i')'' that does not exist,
-the intended reference being part (i) of Theorem~\ref{thm:hodge}. The file below governs
+$|z_e|\sqrt{(1-h_e)/h_e}$ the DFFITS form, which it is not: it is the classical influence form
+scaled by $\sqrt{h_e}$. It cites ``Theorem 5'' for the conserved budget, where the conservation law
+is Theorem~\ref{thm:cons} and Theorem~\ref{thm:hodge} is the decomposition; its numbering also
+predates the move of the backward-pass theorem into this supplement, so every theorem number it
+quotes is one higher than the article's. And it cites a part ``5(i')'' that does not exist, the
+intended reference being part (i) of Theorem~\ref{thm:hodge}. The file below governs
 H1, H2 and H3 only. The other pre-specified constants this article invokes, the $|z|$-rule
 conjunctive criterion, the curl-leverage falsifier rule, the fixed-cutoff head-to-head criterion,
 the $1.0$ kcal/mol cutoff itself, the swept scale grid with its two frozen readouts, the per-edge
