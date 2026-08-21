@@ -7,11 +7,14 @@ honest methodology (fold-disjoint split, recovery, calibration) lives in `recove
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import subprocess
 import urllib.request
 
-SMINA = "/Users/nikitapolomosnov/anaconda3/envs/synfp_dock/bin/smina"
+# Resolved from the environment so the module is portable; set SMINA to an absolute
+# path if the binary is not on PATH.
+SMINA = os.environ.get("SMINA", "smina")
 OBABEL = "obabel"
 
 # residue names that are NOT the co-crystal ligand (water / ions / common buffers/cryo)

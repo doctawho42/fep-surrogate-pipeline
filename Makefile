@@ -1,6 +1,7 @@
 # fep-surrogate-pipeline — task runner.
-# Uses the project conda env `fluor_screening` by default; override with `PY=...`.
-PY ?= /Users/nikitapolomosnov/anaconda3/envs/fluor_screening/bin/python
+# Runs on the interpreter named by PY. Point it at the environment built from
+# pyproject.toml, e.g. `make PY=/path/to/env/bin/python figA`, or export PY once.
+PY ?= python
 
 .PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figInf figP4 figP4b figP8 figSelf graphical gabs all
 
