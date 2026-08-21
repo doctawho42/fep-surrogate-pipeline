@@ -5,57 +5,56 @@ PY ?= python
 
 .PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figInf figP4 figP4b figP8 figSelf graphical gabs all
 
-help:
-	@echo "make test    - run the pytest suite (theorem invariants)"
-	@echo "make lint    - ruff lint"
-	@echo "make type    - mypy type check"
-	@echo "make check   - lint + type + test (the CI gate)"
-	@echo "make verify  - run the standalone Phase-0 proof verification"
-	@echo "make figA    - regenerate Fig A (sandwich calibration) end-to-end"
-	@echo "make figE    - regenerate Fig E (chirality completeness) end-to-end"
+help:  # list every target with its description
+	@echo "Targets. Run with PY=/path/to/python if the default interpreter is not the right one."
+	@echo ""
+	@awk 'BEGIN{FS=":"} /^[a-zA-Z0-9_]+:/ { \
+		target=$$1; desc=""; \
+		if (match($$0, /#[ \t]*/)) desc=substr($$0, RSTART+RLENGTH); \
+		printf "  %-12s %s\n", target, desc }' $(MAKEFILE_LIST)
 
-test:
+test:  # the unit tests: the correctness invariants of the estimator and the instrument
 	$(PY) -m pytest
 
-lint:
+lint:  # ruff over src and tests
 	$(PY) -m ruff check src tests
 
-type:
+type:  # mypy over src/bar and src/gen
 	$(PY) -m mypy src/bar src/gen
 
-check: lint type test
+check: lint type test  # lint, type check and tests; the gate
 
-verify:
+verify:  # check the theorem statements numerically, outside the test suite
 	$(PY) tests/verify_proofs.py
 
-figA:
+figA:  # Fig 2: sandwich variance against MBAR, truth and the learned foils
 	$(PY) figs/make_figA.py
 
 figAseeds:  # P6c: multi-seed spread of the learned-variance foils (frozen 5 seeds)
 	$(PY) figs/make_figA.py seeds
 
-figE:
+figE:  # SI: chirality completeness, the parity-odd readout ablation
 	$(PY) figs/make_figE.py
 
-figEreal:  # SI illustration: Theorem 4 (chirality completeness) on a real drug (thalidomide)
+figEreal:  # SI illustration: chirality completeness on a real drug (thalidomide)
 	$(PY) figs/make_figE_real.py
 
 qcstruct:  # SI: structural context of the Fig L QC flags (BACE1 catalytic dyad; BRD4 buried waters)
 	$(PY) figs/analyze_qc_structures.py
 
-figC:
+figC:  # SI: gauge-aware cost-aware active learning
 	$(PY) figs/make_figC.py
 
-figD:
+figD:  # SI: the knowledge gradient vanishes on gauge-redundant directions
 	$(PY) figs/make_figD.py
 
-figB:
+figB:  # SI: decomposed uncertainty against conformal baselines, synthetic
 	$(PY) figs/make_figB.py
 
-figF:
+figF:  # SI: ligand-similarity reverse screening on ChEMBL
 	$(PY) figs/make_figF.py
 
-figG:
+figG:  # SI: calibrated stopping, and the assumed-error sweep behind it
 	$(PY) figs/make_figG.py
 
 figH:  # the target-finding gate (structure vs ligand); docking, cached to data/figH
@@ -142,7 +141,7 @@ jctc:  # JCTC (ACS) submission build (achemso class); same shared body
 	-cd docs && latexmk -pdf -f -interaction=nonstopmode paper_jctc.tex
 	cd docs && test -f paper_jctc.pdf
 
-all: check figA figE figC figD figB figF figG
+all: check figA figE figC figD figB figF figG  # the gate plus the figures it covers
 
 nioch:  # NIOCH cage screen report (operational deliverable, not a paper claim)
 	PYTHONPATH=src $(PY) figs/make_nioch.py
