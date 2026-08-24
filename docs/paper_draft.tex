@@ -9,7 +9,9 @@
 \usepackage{booktabs}
 \usepackage{verbatim}
 \usepackage[numbers,sort&compress]{natbib}
+\usepackage{xr-hyper}
 \usepackage[hidelinks]{hyperref}
+\externaldocument{paper_draft_si}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \graphicspath{{../figs/}}
@@ -40,15 +42,9 @@ The author thanks colleagues at the Faculty of Bioengineering and Bioinformatics
 State University, and at the Institute of Biomedical Chemistry for discussions.
 This research received no external funding.
 
-Generative artificial intelligence was used in this work, throughout and substantially.
-Anthropic's Claude, driven through the Claude Code command-line interface, was used from the
-start of the project to submission: to write the analysis library, its unit tests and the
-figure-generation scripts; to run those analyses and produce the figures, tables and per-figure
-records; to draft and to revise the text of this article and of its Supporting Information; and
-to run the adversarial review passes whose surviving objections are reported in the text.
-Section~\ref{sec:methods} states what that does and does not leave open. The author directed the
-work, verified its results, arguments and references, and takes full responsibility for the
-content.
+This work was prepared with the use of Anthropic's Claude, run through the Claude Code interface,
+for the code, the analyses, the figures and the drafting; the author verified the results and
+takes responsibility for them.
 
 \section*{Author Contributions}
 N.L.P. is the sole author and is responsible for the conception and design of the study, the
@@ -82,15 +78,4 @@ that resolves to the most recently deposited version.
 \bibliographystyle{plainnat}
 \bibliography{refs}
 
-% Supporting Information: restart float, section and theorem numbering with an S prefix,
-% as ACS expects, so SI objects read S1, S2, ... rather than continuing the main sequence.
-\setcounter{figure}{0}
-\setcounter{table}{0}
-\setcounter{section}{0}
-\setcounter{theorem}{0}
-\renewcommand{\thefigure}{S\arabic{figure}}
-\renewcommand{\thetable}{S\arabic{table}}
-\renewcommand{\thesection}{S\arabic{section}}
-\renewcommand{\thetheorem}{S\arabic{theorem}}
-\input{paper_si}
 \end{document}

@@ -1,0 +1,54 @@
+% Generic (arXiv / readable) Supporting Information, built as its own file.
+% Main text: paper_draft.tex. ACS build of the same pair: paper_jctc{,_si}.tex.
+% Cross-document labels travel through xr-hyper, which reads paper_draft.aux, so both must be
+% built after each other before every number settles. Compile: `make paper`.
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{verbatim}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xr-hyper}
+\usepackage[hidelinks]{hyperref}
+\externaldocument{paper_draft}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\graphicspath{{../figs/}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\DeclareMathOperator{\Var}{Var}
+\newcommand{\dF}{\Delta F}
+\newcommand{\dFh}{\widehat{\Delta F}}
+\newcommand{\ddG}{\Delta\Delta G}
+
+\title{\bf Supporting Information for:\\
+What Cycle Closure Can and Cannot See in a Relative Binding Free Energy Network}
+\author{Nikita L. Polomoshnov\\
+\small Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State University, Moscow, Russia\\
+\small Institute of Biomedical Chemistry (IBMC), Moscow, Russia\\
+\small \texttt{nikitapol@fbb.msu.ru}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% S-prefixed pages, floats, sections and theorems, so nothing here collides with the main text.
+\renewcommand{\thepage}{S\arabic{page}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetheorem}{S\arabic{theorem}}
+\setcounter{page}{1}
+
+\input{paper_si}
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\end{document}

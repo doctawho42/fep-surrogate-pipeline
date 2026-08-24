@@ -143,8 +143,16 @@ graphical:  # graphical abstract (Figma-style pastel redraw: BAR bottleneck -> c
 
 gabs: graphical  # alias for `make graphical`
 
-paper:  # generic / arXiv build (article class); shared body in docs/paper_body.tex
+paper:  # generic / arXiv build: manuscript and Supporting Information as separate files
+	# Same two-file shape as `make jctc`, in the article class: docs/paper_draft.pdf and
+	# docs/paper_draft_si.pdf, the second S-numbered. The pair references each other's labels
+	# through xr-hyper, so neither settles until both have been built after the other; -g
+	# forces the last two passes, which latexmk would skip as up to date while their external
+	# numbers are still stale.
 	cd docs && latexmk -pdf -interaction=nonstopmode paper_draft.tex
+	cd docs && latexmk -pdf -interaction=nonstopmode paper_draft_si.tex
+	cd docs && latexmk -pdf -g -interaction=nonstopmode paper_draft.tex
+	cd docs && latexmk -pdf -g -interaction=nonstopmode paper_draft_si.tex
 
 jctc:  # JCTC (ACS) submission build: manuscript and Supporting Information as separate files
 	# ACS requires the Supporting Information as its own file, so this target builds two:
