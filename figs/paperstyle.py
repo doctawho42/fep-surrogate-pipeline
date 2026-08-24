@@ -265,6 +265,7 @@ def use_paper_style() -> None:
 _HEAD_PT = 4.0        # points above the axes top for the heading baseline
 _HEAD_PT_SUB = 13.0   # ... when a subtitle occupies the line below it
 _LETTER_GAP_PT = 11.0  # points from the letter's anchor to the title's anchor
+_LETTER_CHAR_PT = 5.5  # ... widened by this much per EXTRA character in the letter
 
 
 def panel(ax: Axes, letter: str, title: str | None = None, subtitle: str | None = None) -> None:
@@ -297,6 +298,9 @@ def panel(ax: Axes, letter: str, title: str | None = None, subtitle: str | None 
             f"panel(ax, 'A', {letter!r})"
         )
     dy = _HEAD_PT_SUB if subtitle else _HEAD_PT
+    # The gap is measured from the letter's left edge, so a two-character sub-panel letter
+    # needs one character's width more of it; at 11.0 flat, "B1" and its title collided.
+    gap = _LETTER_GAP_PT + (len(letter) - 1) * _LETTER_CHAR_PT
     ax.annotate(
         letter,
         xy=(0.0, 1.0), xycoords="axes fraction",
@@ -308,7 +312,7 @@ def panel(ax: Axes, letter: str, title: str | None = None, subtitle: str | None 
         ax.annotate(
             title,
             xy=(0.0, 1.0), xycoords="axes fraction",
-            xytext=(_LETTER_GAP_PT, dy), textcoords="offset points",
+            xytext=(gap, dy), textcoords="offset points",
             ha="left", va="baseline", fontsize=9.5, fontweight="normal",
             color=INK, annotation_clip=False, clip_on=False,
         )

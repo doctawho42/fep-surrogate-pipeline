@@ -1,0 +1,27 @@
+\begin{table}[tp]\centering
+\caption{\textbf{The visible fraction on curated labels, over the benchmark.} For each target whose curated per-edge experimental $\ddG$ the replicate benchmark can be joined to: curated edges $E_{\mathrm{cur}}$, the share of them whose two ligands both recover into the network ($\rho$), and the matched sub-network's ligands $N$, edges $E$, components $c$ and independent cycles $\mathrm{dof}$. Then the visible fraction $f$ of the error against those labels, its $\mathrm{dof}/E$ chance level, the chance level $\mathrm{tr}(\Pi W)/\mathrm{tr}(W)$ an error isotropic in kcal/mol would produce under the same projector, the range of $f$ over single-edge deletions, the worst margin $\mathrm{chance}/f$ any deletion leaves under each chance level, and the median $|\epsilon|$ against experiment. Both the fraction and its chance level are recomputed on every deletion, since deleting an edge moves the projector as well. $f$ and its deletion range are given in units of $10^{-3}$. A dagger marks the systems the closure test flags. The systems whose matched sub-network carries no cycle, and so no measurement, are named below the rule.}
+\label{tab:ground}
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{@{}lrrrrrrrrrlrrr@{}}
+\toprule
+system & $E_{\mathrm{cur}}$ & $\rho$ & $N$ & $E$ & $c$ & $\mathrm{dof}$ & $f/10^{-3}$ & $\mathrm{dof}/E$ & iso & $f$ range$/10^{-3}$ & \multicolumn{2}{c}{worst margin} & $|\epsilon|$ \\
+ &  &  &  &  &  &  &  &  &  &  & dof/$E$ & iso &  \\
+\midrule
+\texttt{cdk8}$^\dagger$ & $46$ & $0.96$ & $29$ & $29$ & $5$ & $5$ & $2.28$ & $0.172$ & $0.077$ & $[1.59, 2.64]$ & $54\times$ & $6.2\times$ & $1.08$ \\
+\texttt{eg5} & $43$ & $1.00$ & $26$ & $32$ & $3$ & $9$ & $2.07$ & $0.281$ & $0.095$ & $[1.04, 4.75]$ & $54\times$ & $12.0\times$ & $0.92$ \\
+\texttt{hif2a}$^\dagger$ & $51$ & $0.98$ & $33$ & $34$ & $4$ & $5$ & $0.63$ & $0.147$ & $0.005$ & $[0.28, 1.00]$ & $151\times$ & $5.4\times$ & $1.05$ \\
+\texttt{mcl1} & $36$ & $1.00$ & $23$ & $21$ & $3$ & $1$ & $0.26$ & $0.048$ & $0.007$ & $[0.26, 0.40]$ & $124\times$ & $22.9\times$ & $0.60$ \\
+\texttt{ptp1b} & $36$ & $0.94$ & $17$ & $19$ & $2$ & $4$ & $15.86$ & $0.211$ & $0.061$ & $[2.32, 19.25]$ & $9\times$ & $2.0\times$ & $1.15$ \\
+\texttt{shp2} & $37$ & $1.00$ & $16$ & $12$ & $5$ & $1$ & $0.08$ & $0.083$ & $0.009$ & $[0.08, 0.24]$ & $372\times$ & $42.5\times$ & $1.02$ \\
+\texttt{syk} & $66$ & $0.97$ & $39$ & $35$ & $8$ & $4$ & $0.38$ & $0.114$ & $0.007$ & $[0.10, 0.70]$ & $168\times$ & $12.0\times$ & $0.59$ \\
+\texttt{tnks2} & $36$ & $0.86$ & $25$ & $23$ & $4$ & $2$ & $0.03$ & $0.087$ & $0.003$ & $[0.00, 0.05]$ & $1558\times$ & $22.8\times$ & $0.64$ \\
+\midrule
+\multicolumn{4}{@{}l}{pooled, all (8 systems)} & $205$ &  & $31$ & $0.52$ & $0.151$ & $0.014$ &  &  &  &  \\
+\multicolumn{4}{@{}l}{pooled, flagged (2 systems)} & $63$ &  & $10$ & $0.71$ & $0.159$ & $0.012$ &  &  &  &  \\
+\multicolumn{4}{@{}l}{pooled, not flagged (6 systems)} & $142$ &  & $21$ & $0.42$ & $0.148$ & $0.015$ &  &  &  &  \\
+\bottomrule
+\end{tabular}
+\vspace{2pt}
+{\footnotesize No measurement, matched sub-network acyclic: \texttt{cdk2} ($E=9$, $\mathrm{dof}=0$), \texttt{cmet} ($E=2$, $\mathrm{dof}=0$), \texttt{p38} ($E=16$, $\mathrm{dof}=0$), \texttt{tyk2} ($E=10$, $\mathrm{dof}=0$). No measurement, no curated edge joined: \texttt{pfkfb3} ($\rho=0.02$), \texttt{thrombin} ($\rho=0.00$).\par}
+\end{table}

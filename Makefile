@@ -3,7 +3,7 @@
 # pyproject.toml, e.g. `make PY=/path/to/env/bin/python figA`, or export PY once.
 PY ?= python
 
-.PHONY: help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figInf figP4 figP4b figP8 figSelf graphical gabs all
+.PHONY: figDesign figGround figNoise figRelease help test lint type check verify figA figAseeds figE figC figD figB figF figG figH figI figJ figK nioch reversedock figM figN figOOS figInf figCal figP4 figP4b figP8 figSelf graphical gabs all
 
 help:  # list every target with its description
 	@echo "Targets. Run with PY=/path/to/python if the default interpreter is not the right one."
@@ -93,6 +93,18 @@ figLev:  # D1: per-edge observability map (sum_h==dof, bridges) + pre-registered
 figHodge:  # Theorem 5: auditability map + where the error against experiment lives + repair race
 	PYTHONPATH=src $(PY) figs/make_figHodge.py
 
+figDesign:  # the observability map as a design rule: edges to add for no bridge + a delta* target
+	PYTHONPATH=src $(PY) figs/make_figDesign.py
+
+figRelease:  # the cross-release variance split over every multi-release system, all three replicates
+	PYTHONPATH=src $(PY) figs/make_figRelease.py
+
+figNoise:  # the label-noise floor under the visible fraction: exactness, shrinkage, crossings
+	PYTHONPATH=src $(PY) figs/make_figNoise.py
+
+figGround:  # the visible fraction on the benchmark's CURATED per-edge labels, 14 systems
+	PYTHONPATH=src $(PY) figs/make_figGround.py
+
 figCut:  # peer-review P1+P2: fixed-cutoff head-to-head + chi^2 reconciliation
 	PYTHONPATH=src $(PY) figs/make_figCut.py
 
@@ -104,6 +116,9 @@ figOOS:  # out-of-sample QC checks: predicted-vs-observed closure chi2 + held-ou
 
 figInf:  # referee round 2: inference for six claims stated without it (cluster CIs, permutation, nulls)
 	PYTHONPATH=src $(PY) figs/make_figInf.py
+
+figCal:  # the per-edge calibration ratio, with the four published summaries of it marked on it
+	PYTHONPATH=src $(PY) figs/make_figCal.py
 
 figP4:  # peer-review P4: QC sweep under the real heterogeneous learned-sigma profile
 	PYTHONPATH=src $(PY) figs/make_figP4.py
@@ -131,15 +146,23 @@ gabs: graphical  # alias for `make graphical`
 paper:  # generic / arXiv build (article class); shared body in docs/paper_body.tex
 	cd docs && latexmk -pdf -interaction=nonstopmode paper_draft.tex
 
-jctc:  # JCTC (ACS) submission build (achemso class); same shared body
+jctc:  # JCTC (ACS) submission build: manuscript and Supporting Information as separate files
+	# ACS requires the Supporting Information as its own file, so this target builds two:
+	# docs/paper_jctc.pdf (title to references) and docs/paper_jctc_si.pdf (S-numbered).
+	# They reference each other's labels through xr, which reads the other document's .aux,
+	# so neither is settled until both have been built after the other. Four alternating
+	# passes reach that fixed point from a cold tree; -g forces the last two, which latexmk
+	# would otherwise skip as up to date while their external numbers are still stale.
 	# achemso/mciteplus emits a benign head-entry PackageError under nonstopmode, so
 	# pdflatex returns 1 even when the PDF is complete and every citation resolves. -f
-	# forces latexmk through all passes (bibtex + reruns) to build the resolved PDF from a
-	# cold tree in one call; the leading `-` lets make ignore the benign nonzero exit, and
-	# the `test -f` guard still fails the build if no PDF was produced. (`make paper`, the
-	# arXiv/article build, has no mciteplus and stays a single clean pass.)
+	# forces latexmk through all passes (bibtex + reruns); the leading `-` lets make ignore
+	# the benign nonzero exit, and the `test -f` guard still fails the build if no PDF was
+	# produced. (`make paper`, the arXiv/article build, has no mciteplus.)
 	-cd docs && latexmk -pdf -f -interaction=nonstopmode paper_jctc.tex
-	cd docs && test -f paper_jctc.pdf
+	-cd docs && latexmk -pdf -f -interaction=nonstopmode paper_jctc_si.tex
+	-cd docs && latexmk -pdf -f -g -interaction=nonstopmode paper_jctc.tex
+	-cd docs && latexmk -pdf -f -g -interaction=nonstopmode paper_jctc_si.tex
+	cd docs && test -f paper_jctc.pdf && test -f paper_jctc_si.pdf
 
 all: check figA figE figC figD figB figF figG  # the gate plus the figures it covers
 

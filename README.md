@@ -61,12 +61,16 @@ environment variable or on `PATH`.
 ## Building the manuscript
 
 ```bash
-make jctc     # ACS submission build  -> docs/paper_jctc.pdf
+make jctc     # ACS submission build  -> docs/paper_jctc.pdf + docs/paper_jctc_si.pdf
 make paper    # generic build         -> docs/paper_draft.pdf
 ```
 
 Both compile the same body (`docs/paper_body.tex`) and Supporting Information
-(`docs/paper_si.tex`) through different wrappers.
+(`docs/paper_si.tex`) through different wrappers. ACS requires the Supporting Information as a
+separate file, so `make jctc` produces two: the manuscript, and an S-numbered Supporting
+Information with its own title page. The two reference each other's figures and sections through
+`xr`, which reads the other document's `.aux`, so the target builds them in alternating passes
+until both settle; a single pass leaves the cross-document numbers stale rather than undefined.
 
 ## Layout
 

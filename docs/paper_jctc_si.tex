@@ -1,0 +1,42 @@
+% JCTC (ACS) Supporting Information, built as its own file, as ACS requires.
+% Shares paper_si.tex with nothing else; the main text is paper_jctc.tex.
+% Cross-document labels travel through xr: this file reads paper_jctc.aux and vice versa, so
+% both must be compiled twice before every number settles. Compile: `make jctcsi` (or `make jctc`,
+% which runs the pair to convergence).
+\documentclass[journal=jctcce,manuscript=suppinfo]{achemso}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{verbatim}
+\usepackage{xr}
+\externaldocument{paper_jctc}
+\graphicspath{{../figs/}}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\DeclareMathOperator{\Var}{Var}
+\newcommand{\dF}{\Delta F}
+\newcommand{\dFh}{\widehat{\Delta F}}
+\newcommand{\ddG}{\Delta\Delta G}
+
+\author{Nikita L. Polomoshnov}
+\affiliation{Faculty of Bioengineering and Bioinformatics, Lomonosov Moscow State
+University, Moscow, Russia}
+\alsoaffiliation{Institute of Biomedical Chemistry (IBMC), Moscow, Russia}
+\email{nikitapol@fbb.msu.ru}
+\title{Supporting Information for: What Cycle Closure Can and Cannot See in a Relative Binding
+Free Energy Network}
+
+\begin{document}
+
+\maketitle
+
+\input{paper_si}
+
+\bibliography{refs}
+
+\end{document}

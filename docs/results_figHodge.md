@@ -108,9 +108,9 @@ spaces sit orthogonally inside the union's.
 
 | system | releases | union chi2/dof | within-release | across-release | reduced | p |
 |---|---|---|---|---|---|---|
-| `cdk2` | 2 | 4.8/10 | 4.8/10 | -0.0/0 | nan | nan |
+| `cdk2` | 2 | 4.8/10 | 4.8/10 | 0.0/0 | nan | nan |
 | `cdk8` | 2 | 77.7/29 | 31.1/23 | 46.6/6 | 7.77 | 2.3e-08 |
-| `jnk1` | 2 | 0.8/7 | 0.8/7 | 0.0/0 | nan | nan |
+| `jnk1` | 2 | 0.8/7 | 0.8/7 | -0.0/0 | nan | nan |
 | `mcl1` | 2 | 43.8/24 | 43.8/24 | 0.0/0 | nan | nan |
 | `p38` | 2 | 52.7/22 | 52.7/22 | -0.0/0 | nan | nan |
 | `ptp1b` | 2 | 2.5/12 | 2.5/12 | 0.0/0 | nan | nan |

@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
@@ -31,6 +32,7 @@ from paperstyle import (  # noqa: E402
     MUTED,
     OURS,
     REF,
+    check_min_type,
     figsize,
     finish,
     legend,
@@ -406,17 +408,120 @@ def repair_race(n_perm: int, target_rchi2: float) -> dict:
             "head_to_head_p": sum(math.comb(n, i) for i in range(wins, n + 1)) / 2 ** n}
 
 
+def curated_block() -> dict:
+    """The curated-label reading of the same quantity, over the systems the test did not pick.
+
+    Imported from ``figs/make_figGround.py`` rather than reimplemented. The main-text panel and
+    Supplementary Table~\\ref{tab:ground} have to be the same measurement to the last digit, and
+    the only way to guarantee that is to run the same functions on the same committed cache: the
+    structure-keyed join of ``src/bar/curated.py``, its flag set, and its pooling rule.
+    """
+    sys.path.insert(0, str(ROOT / "figs"))
+    import make_figGround as ground  # noqa: PLC0415
+
+    rows = ground.readings(neutralize=False, flagged=ground.ever_flagged(), memo={})
+    return {"rows": [r for r in rows if r.measurable], "pools": ground.pools(rows)}
+
+
+#: The left edge of panel B's shared log axis. A single-edge deletion can drive `f` to zero on
+#: `tnks2`, which a log axis cannot draw; such a range is clamped here and the clamp is visible,
+#: because the bar then runs off the left of the axes rather than stopping inside it.
+_B_XLIM = (1e-5, 1.0)
+
+
+def _reading_rows(ax, entries: list[dict]) -> None:
+    """Draw one block of panel B: one row per system, then that block's pooled figure(s).
+
+    Both blocks are drawn by this one function on one shared log axis, so the four systems the
+    closure test selected and the eight it did not are encoded identically and can be read
+    against each other by eye. An entry carries the visible fraction, its two chance levels, and
+    the range the fraction takes when one edge is deleted at a time; a pooled entry carries the
+    fraction alone, since pooling a chance level is a separate convention the caption states.
+    """
+    for i, entry in enumerate(entries):
+        if entry.get("rule_above"):
+            ax.axhline(i - 0.5, color=tint(REF, 0.62), lw=0.6, zorder=0.5)
+        loo = entry.get("loo")
+        if loo:
+            ax.plot([max(loo[0], _B_XLIM[0] * 0.5), max(loo[1], _B_XLIM[0])], [i, i],
+                    color=tint(OURS, 0.58), lw=3.0, solid_capstyle="butt", zorder=2)
+    live = [(i, e) for i, e in enumerate(entries) if not e["pooled"]]
+    ax.scatter([e["chance"] for _i, e in live], [i for i, _e in live],
+               s=30, facecolor="none", edgecolor=MUTED, linewidth=1.0, zorder=3)
+    ax.scatter([e["chance_iso"] for _i, e in live], [i for i, _e in live],
+               s=30, marker="|", color=MUTED, linewidth=1.1, zorder=3)
+    ax.scatter([e["f"] for _i, e in live], [i for i, _e in live],
+               s=26, color=OURS, zorder=4)
+    pooled = [(i, e) for i, e in enumerate(entries) if e["pooled"]]
+    ax.scatter([e["f"] for _i, e in pooled], [i for i, _e in pooled],
+               s=44, marker="D", color=OURS, zorder=4)
+    ax.set_xscale("log")
+    ax.set_xlim(*_B_XLIM)
+    # one shared decade grid behind both blocks: the comparison the panel exists for is a
+    # comparison of ORDERS OF MAGNITUDE below chance, and a decade rule is how it is read
+    ax.set_xticks([1e-5, 1e-4, 1e-3, 1e-2, 1e-1, 1e0])
+    ax.grid(axis="x", color=tint(REF, 0.82), lw=0.5, zorder=0)
+    ax.set_ylim(len(entries) - 0.4, -0.6)
+    ax.set_yticks(np.arange(len(entries)))
+    ax.set_yticklabels([e["label"] for e in entries])
+    for i, entry in enumerate(entries):
+        if entry["pooled"]:
+            ax.get_yticklabels()[i].set_style("italic")
+    ax.tick_params(axis="y", length=0)
+
+
+def _b_entries(lives: list[dict], readings: list[dict], curated: dict) -> tuple[list, list]:
+    """The two blocks of panel B as row lists: the selected four, then the wider eight."""
+    loo_whitened = {r["system"]: (r["whitened"]["loo_lo"], r["whitened"]["loo_hi"])
+                    for r in readings}
+    top = [{"label": r["system"], "f": r["visible"], "chance": r["chance"],
+            "chance_iso": r["chance_iso"], "loo": loo_whitened.get(r["system"]),
+            "pooled": False, "rule_above": False}
+           for r in lives]
+    top.append({"label": "all four", "pooled": True, "rule_above": True,
+                "f": sum(r["cycle_sq"] for r in lives) / sum(r["total_sq"] for r in lives)})
+
+    rows = {r.system: r for r in curated["rows"]}
+    flagged = sorted((r for r in curated["rows"] if r.flagged), key=lambda r: -r.visible)
+    unflagged = sorted((r for r in curated["rows"] if not r.flagged), key=lambda r: -r.visible)
+
+    def row(r, rule_above=False):
+        return {"label": r.system, "f": r.visible, "chance": r.chance,
+                "chance_iso": r.chance_iso, "loo": r.loo_visible, "pooled": False,
+                "rule_above": rule_above}
+
+    bottom = [row(r) for r in flagged]
+    bottom.append({"label": "flagged", "pooled": True, "rule_above": False,
+                   "f": curated["pools"]["flagged"]["f"]})
+    bottom += [row(r, rule_above=(i == 0)) for i, r in enumerate(unflagged)]
+    bottom.append({"label": "not flagged", "pooled": True, "rule_above": False,
+                   "f": curated["pools"]["unflagged"]["f"]})
+    bottom.append({"label": "all eight", "pooled": True, "rule_above": True,
+                   "f": curated["pools"]["all"]["f"]})
+    assert len(rows) == len(flagged) + len(unflagged)
+    return top, bottom
+
+
 def main() -> None:
     prereg = load_prereg()
     audit = auditability_map()
     releases = release_decomposition()
     lives = where_the_error_lives()
     race = repair_race(prereg.n_perm, prereg.target_reduced_chi2)
+    readings = metric_readings()
+    pooled_all = pooled_readings()
+    curated = curated_block()
+    top_rows, bottom_rows = _b_entries(lives, readings, curated)
 
     use_paper_style()
-    fig, (axA, axB, axC) = plt.subplots(
-        1, 3, figsize=figsize(3, 2.85), gridspec_kw={"width_ratios": [1.18, 1.0, 1.12]})
-    fig.subplots_adjust(left=0.075, right=0.995, bottom=0.155, top=0.83, wspace=0.44)
+    fig = plt.figure(figsize=figsize(4, 4.6))
+    grid = fig.add_gridspec(2, 2, width_ratios=[0.95, 1.16], height_ratios=[0.94, 1.0])
+    axA = fig.add_subplot(grid[0, 0])
+    axC = fig.add_subplot(grid[1, 0])
+    stack = grid[:, 1].subgridspec(
+        2, 1, height_ratios=[len(top_rows), len(bottom_rows)], hspace=0.14)
+    axB1 = fig.add_subplot(stack[0])
+    axB2 = fig.add_subplot(stack[1], sharex=axB1)
 
     # A: how fine an error each edge could detect, over the whole benchmark
     finite = np.sort(audit["delta_star"][np.isfinite(audit["delta_star"])])
@@ -453,30 +558,37 @@ def main() -> None:
     panel(axA, "A", "what the audit can resolve",
           subtitle="unit noncentrality, not a threshold")
 
-    # B: the measured error against experiment, against the chance level
-    xs = np.arange(len(lives))
-    w = 0.26
-    # both chance levels are null baselines (MUTED); they are told apart by fill weight
-    # and a hatch, not by two greys a print reader would have to discriminate
-    axB.bar(xs - 0.28, [r["chance"] for r in lives], w, color=MUTED, lw=0,
-            label=r"chance, $\nu/E$")
-    axB.bar(xs, [r["chance_iso"] for r in lives], w, facecolor=tint(MUTED, 0.72),
-            edgecolor=MUTED, lw=0.6, hatch="///", label="chance, isotropic")
-    axB.bar(xs + 0.28, [r["visible"] for r in lives], w, color=OURS, lw=0,
-            label="error vs experiment")
-    axB.set_yscale("log")
-    axB.set_ylim(4e-4, 6.0)
-    axB.set_yticks([1e-3, 1e-2, 1e-1, 1e0])
-    axB.set_xlim(-0.6, len(lives) - 0.4)
-    axB.set_xticks(xs)
-    axB.set_xticklabels([r["system"] for r in lives])
-    axB.set_ylabel("auditable fraction\nof the error")
+    # B: the measured error against experiment, in two grounded readings on one shared axis.
+    # B1 is the four sub-networks the closure test itself selected, on the ChEMBL join; B2 is
+    # the eight the curated benchmark labels reach, six of which the test does not flag. The
+    # two run on different edge sets and different labels and neither corrects the other, so
+    # they are drawn as two blocks rather than as one series -- but on ONE log axis, because
+    # the only reading that matters is how far each sits below its own chance level.
     pooled = sum(r["cycle_sq"] for r in lives) / sum(r["total_sq"] for r in lives)
-    panel(axB, "B", "where the error lives",
-          subtitle=f"{pooled:.1%} visible, variance-weighted")
-    legend(axB, loc="upper left", ncol=1)
+    _reading_rows(axB1, top_rows)
+    _reading_rows(axB2, bottom_rows)
+    axB1.tick_params(axis="x", labelbottom=False)
+    axB2.set_xlabel("share of the squared standardized error\nthat closure can see")
+    panel(axB1, "B1", "where the error lives, ChEMBL labels",
+          subtitle=f"the four the test selected; pooled $f={pooled:.4f}$")
+    panel(axB2, "B2", "the wider eight, curated labels",
+          subtitle=f"pooled $f={curated['pools']['all']['f']:.5f}$; not flagged "
+                   f"${curated['pools']['unflagged']['f']:.5f}$")
+    handles = [
+        Line2D([], [], ls="none", marker="o", ms=5.0, color=OURS, label="$f$, per system"),
+        Line2D([], [], ls="none", marker="D", ms=5.4, color=OURS, label="pooled $f$"),
+        Line2D([], [], ls="none", marker="o", ms=5.4, mfc="none", mec=MUTED, mew=1.0,
+               label=r"chance, $\nu/E$"),
+        Line2D([], [], ls="none", marker="|", ms=6.0, color=MUTED, mew=1.1,
+               label="chance, isotropic"),
+        Line2D([], [], ls="-", lw=3.0, color=tint(OURS, 0.58), label="one-edge deletion"),
+    ]
+    legend(axB2, handles=handles, loc="upper center", bbox_to_anchor=(0.46, -0.30), ncol=2,
+           columnspacing=1.2, handletextpad=0.6)
 
     # C: the race the theorem motivated, and the rule it was meant to beat
+    xs = np.arange(len(lives))
+    w = 0.26
     # colour by quantity family: |z|-ranked is built from the calibrated residual (OURS),
     # influence-ranked is the theorem-derived alternative (ALT), random is a null (MUTED)
     axC.bar(xs - 0.28, [r["guided"] for r in race["influence"]], w, color=ALT, lw=0,
@@ -494,10 +606,11 @@ def main() -> None:
     panel(axC, "C", "repair by removal", subtitle="neither rule beats random")
     legend(axC, loc="upper left")
 
+    offenders = check_min_type(fig)
+    if offenders:
+        raise AssertionError(f"type below the floor: {offenders}")
     finish(fig, "figHodge_where_the_error_lives")
     write_table(audit)
-    readings = metric_readings()
-    pooled_all = pooled_readings()
     write_metric_table(readings, pooled_all)
     write_doc(audit, lives, race, pooled, releases, readings, pooled_all)
 

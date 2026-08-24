@@ -22,6 +22,20 @@ case: very high overlap / tiny n).
 Panel A: controlled MC-truth sweep. Panel B: real FEP edges — protein-ligand BINDING
 (BACE1 RBFE, alchemtest AMBER) plus benzene solvation, sandwich vs bootstrap truth.
 
+Three files are written, from ONE computation of both panels' numbers:
+
+  * ``figA_target_the_sandwich`` — the two-panel figure, unchanged, still lettered A/B.
+  * ``figA_real_windows``   — the former panel B alone, for the MAIN TEXT, authored at
+    NARROW (4.55 in) because it is a single narrow scatter included at 0.7\\textwidth.
+  * ``figA_learned_foils``  — the former panel A alone, for the SUPPLEMENT, authored at
+    FULL (6.5 in) because its seven-entry key needs the whole text block.
+
+The standalone figures are drawn by the SAME two functions that draw the panels of the
+combined figure (:func:`draw_controlled_panel` and :func:`draw_real_panel`), from the
+same ``ctrl`` / ``real`` rows, so nothing they plot can drift from the two-panel version.
+They differ from it in exactly two ways: the canvas size, and an empty panel letter,
+since a standalone figure is not lettered.
+
 Run:  python figs/make_figA.py   (or `make figA`)
 """
 from __future__ import annotations
@@ -44,6 +58,7 @@ from paperstyle import (  # noqa: E402
     FOIL,
     INK,
     MUTED,
+    NARROW,
     OURS,
     REF,
     THIRD,
@@ -435,21 +450,16 @@ def print_bace_table() -> None:
               f"{d['sand']:.3f}  {d['naive']:.3f}")
 
 
-def main() -> None:
-    use_paper_style()
-    ctrl = controlled_panel(seps=np.linspace(0.8, 3.2, 11))
-    real = real_panel()
+def draw_controlled_panel(ax, ctrl, letter: str = "A") -> None:
+    """Draw the controlled Monte-Carlo sweep (the former panel A) into ``ax``.
 
-    # Panel A carries seven series over a wide ratio range, panel B a narrow scatter, so A
-    # gets the wider column. Both panels plot the same quantity -- a reported/true se ratio
-    # against overlap -- so both use the same log ratio axis, the same reference line at 1,
-    # the same colours, and a key in the same place under the axes.
-    fig = plt.figure(figsize=figsize(2, height=3.4))
-    gs = fig.add_gridspec(1, 2, width_ratios=(1.3, 1.0),
-                          left=0.070, right=0.995, bottom=0.325, top=0.905, wspace=0.30)
-    axA = fig.add_subplot(gs[0, 0])
-    axB = fig.add_subplot(gs[0, 1])
-
+    ``letter`` is the panel letter for :func:`paperstyle.panel`; pass ``""`` when the axes
+    is the whole figure, so the heading carries its title and no letter. Everything else
+    -- series, colours, limits, ticks, annotations and key -- is independent of which
+    figure the axes belongs to, which is what keeps the standalone SI figure and the
+    two-panel figure showing the same thing.
+    """
+    axA = ax
     ox = np.array([d["overlap"] for d in ctrl])
 
     def col(key):
@@ -506,7 +516,7 @@ def main() -> None:
     axA.annotate("1 = calibrated", xy=(0.905, 1.0), xycoords="data",
                  xytext=(0, 9), textcoords="offset points",
                  ha="right", va="baseline", fontsize=7, color=REF)
-    panel(axA, "A", "controlled Monte-Carlo sweep")
+    panel(axA, letter, "controlled Monte-Carlo sweep")
 
     # One key per panel, under its own axes, so nothing sits on the data. Column 1 is the
     # three estimators, column 2 the four learned foils; the blank pads column 1 to length.
@@ -514,6 +524,15 @@ def main() -> None:
     legend(axA, handles=[h_sand, h_mbar, h_naive, blank] + h_foil,
            loc="upper left", bbox_to_anchor=(-0.01, -0.185), ncol=2, columnspacing=1.4,
            handlelength=2.0)
+
+
+def draw_real_panel(ax, real, letter: str = "B") -> None:
+    """Draw the real adjacent-lambda BAR windows (the former panel B) into ``ax``.
+
+    ``letter`` behaves as in :func:`draw_controlled_panel`: ``""`` for the standalone
+    main-text figure, ``"B"`` for the second panel of the two-panel figure.
+    """
+    axB = ax
 
     # --- panel B -------------------------------------------------------------------------
     C_LEG = {"binding": OURS, "solvation": tint(OURS, 0.45)}
@@ -547,10 +566,40 @@ def main() -> None:
     axB.annotate("1 = calibrated", xy=(0.02, 1.0), xycoords=("axes fraction", "data"),
                  xytext=(0, 9), textcoords="offset points",
                  ha="left", va="baseline", fontsize=7, color=REF)
-    panel(axB, "B", "real adjacent-\u03bb BAR windows")
+    panel(axB, letter, "real adjacent-\u03bb BAR windows")
     legend(axB, loc="upper left", bbox_to_anchor=(-0.01, -0.185), handlelength=1.0)
 
+
+def main() -> None:
+    use_paper_style()
+    ctrl = controlled_panel(seps=np.linspace(0.8, 3.2, 11))
+    real = real_panel()
+
+    # --- the two-panel figure, unchanged --------------------------------------------------
+    # Panel A carries seven series over a wide ratio range, panel B a narrow scatter, so A
+    # gets the wider column. Both panels plot the same quantity -- a reported/true se ratio
+    # against overlap -- so both use the same log ratio axis, the same reference line at 1,
+    # the same colours, and a key in the same place under the axes.
+    fig = plt.figure(figsize=figsize(2, height=3.4))
+    gs = fig.add_gridspec(1, 2, width_ratios=(1.3, 1.0),
+                          left=0.070, right=0.995, bottom=0.325, top=0.905, wspace=0.30)
+    draw_controlled_panel(fig.add_subplot(gs[0, 0]), ctrl, "A")
+    draw_real_panel(fig.add_subplot(gs[0, 1]), real, "B")
     finish(fig, "figA_target_the_sandwich")
+
+    # --- the same two panels, standalone --------------------------------------------------
+    # The real windows go to the main text as a single narrow scatter, so they are authored
+    # at NARROW = 4.55 in and included at width=0.7\textwidth, which reproduces them at
+    # scale 1.0 (see the paperstyle docstring). Neither standalone figure is lettered.
+    fig_real = plt.figure(figsize=(NARROW, 3.6))
+    draw_real_panel(fig_real.add_subplot(1, 1, 1), real, "")
+    finish(fig_real, "figA_real_windows")
+
+    # The learned-variance sweep goes to the SI, where its seven-entry two-column key and
+    # its four-decade ratio axis need the whole text block: FULL = 6.5 in at width=\textwidth.
+    fig_foils = plt.figure(figsize=figsize(1, height=3.9))
+    draw_controlled_panel(fig_foils.add_subplot(1, 1, 1), ctrl, "")
+    finish(fig_foils, "figA_learned_foils")
 
     print("\n[Panel A] overlap  sand/true  MBAR/true  fair-foil/true  oracle/true  "
           "beta-NLL/true  ensemble/true  naive/true")

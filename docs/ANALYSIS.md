@@ -122,7 +122,7 @@ The naive error is a **non-constant** factor (2.23 → 1.23): *no constant resca
 `1/I` can calibrate it across overlap regimes* — the per-edge sandwich is required.
 This is the falsifiable content of Fig A.
 
-**pymbar (API ambiguity resolved).** pymbar 4 removed the top-level `BAR`
+**pymbar (CLAUDE.md ambiguity resolved).** pymbar 4 removed the top-level `BAR`
 symbol; the estimator is `pymbar.other_estimators.bar(w_F, w_R,
 uncertainty_method=...)` with two methods:
 - `'MBAR'` (default) — agrees with MBAR for two states exactly; **tracks empirical SD
@@ -194,7 +194,7 @@ variance in both. #5/#6 (chirality) are orthogonal to the BAR machinery. No conf
 Confirmed three ways (controlled MC, population `I/B`, real benzene edges): `1/I`
 over-estimates the BAR variance **most at HIGH overlap** (`I/B` up to ~17× as `p→½`)
 and converges to correct at low overlap. This matches the Theorem-2 remark and
-the project notes ("2.2× at high overlap, shrinking toward low overlap"), but the proofs
+CLAUDE.md ("2.2× at high overlap, shrinking toward low overlap"), but the proofs
 sheet **Corollary** says the opposite ("low-overlap regimes… naive worst") — its
 directional wording is backwards (the math is fine). Implication (a *strengthening*):
 the sandwich correction matters most for the well-overlapped, reliable edges an
@@ -221,7 +221,7 @@ Fig A claim (sandwich calibrated; `1/I` a non-constant factor) holds robustly.
 
 ## 4. Build plan — falsifiable figures, in order (deliverable · acceptance · kill)
 
-Discipline: **ship Fig A end-to-end before scaffolding anything else.**
+Discipline (CLAUDE.md): **ship Fig A end-to-end before scaffolding anything else.**
 No trunk / heads / solver / generator modules until a shipped figure needs them.
 
 ### Phase 1 — BAR layer + **Fig A**  ← current target
@@ -274,7 +274,7 @@ back to the T1+T3 methods+theory paper. Do not rescue by tweaking a module.
 
 ## 5. Task breakdown (Phase 0 → Phase 1)
 
-- [x] Read paper1_plan.md and bar_proofs.tex; reconstruct design + theorems.
+- [x] Read CLAUDE.md, paper1_plan.md, bar_proofs.tex; reconstruct design + theorems.
 - [x] Re-derive & verify all four theorems numerically (26/26).
 - [x] Cross-check sandwich vs pymbar; resolve which uncertainty method = sandwich.
 - [x] Repo skeleton: `src/bar/`, `tests/`, `figs/`, pyproject (pinned), pytest, ruff,
