@@ -131,11 +131,12 @@ The article is under review. Until it appears, cite this repository at the tagge
 
 ```
 N. L. Polomoshnov, What Cycle Closure Can and Cannot See in a Relative Binding
-Free Energy Network, 2026. Zenodo. https://doi.org/10.5281/zenodo.22046693
+Free Energy Network, 2026. Zenodo. https://doi.org/10.5281/zenodo.22046692
 ```
 
-The archived release is https://doi.org/10.5281/zenodo.22046693. Tag `v1.0.0` is the state every
-figure in the article was generated from.
+The archive is https://doi.org/10.5281/zenodo.22046692, a concept identifier that resolves to the
+most recently deposited version. Tag `v1.1.0` is the state every figure in the article was
+generated from; `v1.0.0` is the state of the first submission.
 
 ## Licence
 
