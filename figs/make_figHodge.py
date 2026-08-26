@@ -549,14 +549,14 @@ def main() -> None:
     axA.step(finite, frac, color=OURS, lw=1.6, where="post", zorder=3)
     # upper left, the one quadrant the curve never enters: anchored bottom-right this block
     # reached back to the x = 1 guide and touched it, the collision class this pass removes.
-    axA.annotate("80% power:\n2.8–4.7×",
+    axA.annotate("80% power: 2.8–4.7×\n(median 2.2–3.7 kcal/mol)",
                  xy=(0.03, 0.72), xycoords="axes fraction",
                  ha="left", ma="left", va="top", fontsize=7.5, color=REF,
                  linespacing=1.3)
     axA.set_xlabel(r"$\delta^\ast_e$ (kcal/mol)")
     axA.set_ylabel(f"fraction of the {audit['n_edges']} edges")
     panel(axA, "A", "what the audit can resolve",
-          subtitle="unit noncentrality, not a threshold")
+          subtitle="unit noncentrality, not a detection threshold")
 
     # B: the measured error against experiment, in two grounded readings on one shared axis.
     # B1 is the four sub-networks the closure test itself selected, on the ChEMBL join; B2 is

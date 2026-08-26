@@ -347,7 +347,7 @@ def toc():
     words: list[str] = []
     txt = _writer(ax, words)
 
-    txt(w / 2, h - 0.17, "What can a thermodynamic cycle see?", 10.0, weight="bold")
+    txt(w / 2, h - 0.17, "What can cycle closure see?", 10.0, weight="bold")
 
     sage, coral = _darken(SAGE, 0.72), _darken(CORAL, 0.62)
     x0, x1 = 0.30, w - 0.82

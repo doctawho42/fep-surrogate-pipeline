@@ -16,9 +16,9 @@ systems does not. Fitting closure against the precisions the
 estimator already reports gives that test its stated null; it ties the standard fixed $1.0$
 kcal/mol cutoff, and on every replicate the set of systems it flags lies inside the set that
 cutoff flags. It flags
-nothing once the reported errors are widened by half, enough to cover the pose and preparation
-variance the protocol repeats hold fixed, and it names no removal that recovers accuracy against
-experiment. Resolving the gradient part needs measurements from outside the network, at worst one
+nothing once the reported errors are widened by half, and published estimates of the pose and
+preparation component the protocol repeats hold fixed run above that, so the second ceiling sits
+lower than the first. It names no removal that recovers accuracy against experiment. Resolving the gradient part needs measurements from outside the network, at worst one
 per unresolved dimension.
 \end{abstract}
 
@@ -32,12 +32,20 @@ project touches dozens to hundreds of them. Because the affinities a program act
 the network as a whole and not off any single edge, the network's own internal agreement is what a
 practitioner has to judge the calculations by before any molecule is made.
 
-That judgement has a standard instrument. A perturbation network must close its thermodynamic
-cycles, the signed sum of predictions around any loop being zero in expectation, and how far a
-network fails to close them is routinely reported as a diagnostic and acted on through fixed
-hysteresis cutoffs. What has not been asked of that diagnostic is how much of a network's error it
-can reach at all: whether a network that closes its cycles is thereby a network whose affinities
-are right, and if not, what share of what is wrong with it a closure check could ever respond to.
+That judgement has a standard instrument. A perturbation network must close its cycles: the signed
+sum of $\ddG$ around any loop in the network is zero in expectation, and how far a network fails to
+close is routinely reported as a diagnostic and acted on through fixed hysteresis cutoffs. The
+cycles meant here are loops over several edges of the network, the object of cycle-closure
+analysis; the \emph{thermodynamic} cycle is the alchemical square behind a single edge, and the two
+are kept apart throughout. What has not been asked of the diagnostic is how much of a network's
+error it can reach at all: whether a network that closes its cycles is thereby a network whose
+affinities are right, and if not, what share of what is wrong with it a closure check could ever
+respond to.
+
+Connectivity and redundancy answer different questions, and only the second is asked here. A
+connected network determines every $\ddG$ up to one offset per component, redundant or not, which
+is all estimation needs. Detection is separate: it asks which errors leave a trace in the values
+the network reports, and the answer depends on redundancy rather than on connectivity.
 
 That capacity follows from the algebra of the network rather than from any particular protocol,
 and it is measurable on public data. A network's per-edge error splits,
@@ -231,13 +239,15 @@ Of the $1143$ edge dimensions carried by the $48$ systems with a cycle, $372$ li
 space, so two-thirds of the error space is node-consistent and invisible to every closure-based
 diagnostic, this one included. Forty-eight edges are bridges, carrying no evidence at any
 magnitude. Half the remaining edges cannot resolve a shift below $0.79$ kcal/mol, and only
-$27\%$ of all $1143$ can resolve one of $0.5$ (Figure~\ref{fig:Hodge}A).
+$27\%$ of all $1143$ can resolve one of $0.5$ (Figure~\ref{fig:Hodge}A). Neither figure is a
+detection threshold: requiring $80\%$ power at $\alpha=0.05$ moves that median to $2.2$--$3.7$
+kcal/mol.
 
-Both numbers overstate the test's reach, for two reasons that compose. $\delta^\ast$ is the shift at
-unit noncentrality rather than a detection threshold: power there runs from $0.170$ to $0.070$
-across the degrees of freedom present, and $80\%$ at $\alpha=0.05$ needs $2.8$ to $4.7$ times it,
-moving the median resolution to roughly $2.2$--$3.7$ kcal/mol. $\delta^\ast$ is also carried on the
-raw reported standard errors, where the calibrated scale is $0.92$ of them (Section~\ref{sec:qc}).
+That is the first of two reasons both numbers overstate the test's reach, and the two compose.
+$\delta^\ast$ is the shift at unit noncentrality: power there runs from $0.170$ to $0.070$ across
+the degrees of freedom present, and $80\%$ at $\alpha=0.05$ needs $2.8$ to $4.7$ times it.
+$\delta^\ast$ is also carried on the raw reported standard errors, where the calibrated scale is
+$0.92$ of them (Section~\ref{sec:qc}).
 
 Composing the two gives operational numbers worse than $\delta^\ast$ alone suggests. Only $6.6\%$ of auditable edges reach $80\%$ power against a $1.0$ kcal/mol shift on that
 edge alone, at $\alpha=0.05$ and before any multiplicity correction. At the level the test actually
@@ -765,7 +775,15 @@ across-release block never rises above $0.64$ of the within-release one (Supplem
 Figure~\ref{fig:Release}; \texttt{make figRelease}).
 The public data contain no usable estimate of what a second preparation of the same target adds,
 which bounds what can be said about the pose and preparation component throughout this article
-rather than supplying it.
+rather than supplying it. Controlled work does bound it from outside. Starting one alchemical edge
+from two kinetically distinct conformations of the same protein shifts its free energy by as much
+as $4.74$ kcal/mol under a default protocol, a root-mean-square inconsistency of $4$ that falls to
+$0.57$ only once the runs are extended to $55$~ns, and the effect is put at $2$--$5$ kcal/mol in
+general~\citep{lim2016sensitivity}; independently, careful preparation of protein and ligand
+structures is what brings a leading workflow to the reproducibility of the experiments it is
+scored against~\citep{ross2023maximal}. The mechanism is kinetic trapping rather than thermal
+averaging, so a wrong starting state persists as a fixed offset for the whole run, which is why
+repeats that share it cannot price it.
 
 The grouping is therefore a choice the analysis makes, and the flag set is not invariant to it.
 Re-running the same replicate-0 test on the release's own blocks gives $56$ testable systems and
@@ -1131,8 +1149,11 @@ a far smaller object, and a noisy anchor resolves only to its own precision.
 
 A second ceiling comes from the measurement rather than from the decomposition. The bar the test uses as its null is measured against repeats
 that resample seeds and velocities while holding one pose and one system preparation fixed, so it
-prices sampling noise and not the preparation an entire network inherits, and widening it by half,
-which is what covering that would take, leaves nothing on this benchmark flagged at all. The test
+prices sampling noise and not the preparation an entire network inherits. Widening it by half
+already leaves nothing on this benchmark flagged, and half is on the evidence an under-estimate of
+what that component costs: starting one alchemical edge from two kinetically distinct protein
+conformations moves its free energy by up to $4.74$ kcal/mol, and the same study puts the general
+effect at $2$--$5$~\citep{lim2016sensitivity}. The test
 is therefore bounded twice: by the geometry of the network, and by a variance component its own
 null never sees. The practical use of cycle
 closure is accordingly as a calibrated alarm, with the error that moves a ranking to be sought in
