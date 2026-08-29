@@ -139,7 +139,7 @@ Free Energy Network, 2026. Zenodo. https://doi.org/10.5281/zenodo.22046692
 ```
 
 The archive is https://doi.org/10.5281/zenodo.22046692, a concept identifier that resolves to the
-most recently deposited version. Tag `v1.2.0` is the state every figure in the article was
+most recently deposited version. Tag `v1.3.0` is the state every figure in the article was
 generated from; `v1.0.0` is the state of the first submission.
 
 ## Licence
