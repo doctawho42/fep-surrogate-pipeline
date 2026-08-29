@@ -16,6 +16,7 @@
 \usepackage{enumitem}
 \graphicspath{{../figs/}}
 
+
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
 \theoremstyle{remark}
@@ -77,6 +78,10 @@ MIT licence; the version from which every figure in this article was generated i
 The archive is deposited at \url{https://doi.org/10.5281/zenodo.22046692}, a concept identifier
 that resolves to the most recently deposited version.
 
+% The figure environments are collected at the end of paper_body.tex, so the whole queue is
+% still pending when the back matter begins and LaTeX will otherwise typeset it among the
+% reference entries. Flush it first: figures land on their own pages, references start clean.
+\clearpage
 \bibliographystyle{plainnat}
 \bibliography{refs}
 

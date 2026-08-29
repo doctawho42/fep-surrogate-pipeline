@@ -1161,7 +1161,7 @@ absolute measurements or independent preparations instead.
 
 \clearpage
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{graphical_abstract.pdf}
 \caption{\textbf{Overview.} The pipeline this article runs on the benchmark, left to right. Every
 edge arrives with a per-edge standard error the estimator computes rather than learns, composed in
@@ -1176,7 +1176,7 @@ head run here, flags 42.}
 \label{fig:overview}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=0.7\textwidth]{figA_real_windows.pdf}
 \caption{\textbf{Sandwich variance against a decorrelated bootstrap on real BAR windows.}
 Reported standard error divided by the decorrelated-bootstrap standard error, versus
@@ -1190,7 +1190,7 @@ Figure~\ref{fig:Afoils}.}
 \label{fig:A}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{figA_replicate_validation.pdf}
 \caption{\textbf{Independent-replicate validation on real binding edges.} Reported
 per-edge standard error versus the across-replicate empirical standard deviation, on
@@ -1202,7 +1202,7 @@ least eight edges.}
 \label{fig:Arep}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{figCal_calibration_functionals.pdf}
 \caption{\textbf{One heavy-tailed per-edge ratio, and the summaries this article quotes from it.}
 The calibration ratio $c_e=\mathrm{se}^{\mathrm{rep}}_e/\mathrm{se}^{\mathrm{true}}_e$ over the
@@ -1224,7 +1224,7 @@ identified by these data. Reproduce with \texttt{make figCal}.}
 \label{fig:Cal}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{figL_calibrated_cycle_closure.pdf}
 \caption{\textbf{Calibrated cycle-closure quality control.} (A) Per-system reduced $\chi^2$
 from a generalized-least-squares cycle-closure fit, ranked, with shading below $\chi^2_\nu=1$ and
@@ -1237,7 +1237,7 @@ three replicates pooled, with reference lines at pooled/single $=1$ and $=3$.}
 \label{fig:L}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{figL_validation.pdf}
 \caption{\textbf{Edge-removal repair test and cross-replicate residual reproduction.} (A)
 Number of edges removed, in descending order of $|z|$, before reduced $\chi^2\le1$ is
@@ -1248,7 +1248,7 @@ the Pearson correlation between each pair of replicates.}
 \label{fig:Lval}
 \end{figure}
 
-\begin{figure}[t]\centering
+\begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{figHodge_where_the_error_lives.pdf}
 \caption{\textbf{Auditable capacity and the location of the error.} (A) Cumulative fraction of the
 $1143$ benchmark edges against $\delta^\ast_e$, the shift at unit noncentrality, with the bridge
