@@ -334,29 +334,19 @@ Table~\ref{tab:metrics} gives all three conventions for all four systems with th
 levels and their single-edge-deletion ranges; its weakest cell is \texttt{bace} isotropic under
 deletion, where $f$ is smaller than its own chance level by a factor of $1.36$.
 
-Against the frozen H1 criterion, a pooled degrees-of-freedom-adjusted gradient-model $R^2$ of at
-least $0.50$ and positive on three of the four systems, the pooled value is $0.980$ and the
-per-system values are $0.978$, $0.995$, $0.976$ and $0.761$, so the criterion is met. Pooling is
-over the four sub-networks jointly, $f$ as a ratio of summed squared norms and the adjustment
-carried on the summed $E=167$ edges and rank $116$, that is on $51$ residual degrees of freedom,
-and not as an average of per-system adjustments.
-
-The criterion evaluated is the
-degrees-of-freedom-adjusted rule the pre-registration froze and not the weaker unadjusted form
-$1-f_{\text{pooled}}\geq0.50$. These figures support a bound and not a point estimate: the visible
-fraction is small, and at its weakest it sits a factor of two below its chance level, not the two
-orders of magnitude the pooled figure alone suggests.
+The pre-registered criterion is met. It asked for a pooled degrees-of-freedom-adjusted
+gradient-model $R^2$ of at least $0.50$, positive on three of the four systems; the pooled value is
+$0.980$. These figures support a bound and not a point estimate: at its weakest the visible
+fraction sits a factor of two below its chance level, not the two orders of magnitude the pooled
+figure alone suggests.
 
 The measurement is not an artefact of the fit, because it is a near-identity: per-ligand affinities
 make the experimental $\ddG$ vector a gradient field, so $\Pi\varepsilon$ reduces to the closure
 residual and $f$ is the closure statistic over the total squared standardized error. It survives
-the obvious contaminants, holding on medians rather than sums and holding on \texttt{bace}, whose
-ligands carry no enantiomer pair collapsed by the stereo-blind join (Supporting Information).
-Changing the label source to the curated per-edge affinities the OpenFF protein--ligand benchmark
-of Section~\ref{sec:methods} carries, available for three of the four systems, agrees where it can
-be run (Supporting Information). Per-edge error against experiment runs $1.06$--$1.45$ kcal/mol at
-the median against reported standard errors of $0.14$--$0.40$: these networks are wrong by several
-standard errors while closing their cycles, in the one direction closure cannot look.
+the obvious contaminants, and agrees where a different label source can be run (Supporting
+Information). Per-edge error against experiment runs $1.06$--$1.45$ kcal/mol at the median against
+reported standard errors of $0.14$--$0.40$: these networks are wrong by several standard errors
+while closing their cycles, in the one direction closure cannot look.
 
 The design does not license attribution. Experimental measurement error and the annotation join are
 per-ligand, hence gradient fields too, so what is established is that the dominant part of the
@@ -404,27 +394,23 @@ to the denominator, so a correction for it can only raise $f$, and the measured 
 on the share attributable to the calculation's own error and not an estimate of it.
 
 The room that leaves is not uniform across systems, and the pooled crossing is not the reading to
-quote alone. Pooled, $f$ would first reach its chance level at a denominator shrinkage of
-$50.6\times$ whitened and $14.1\times$ isotropic. What a correction could deliver is the reverse
-accounting: removing the share a literature-scale per-ligand noise implies would shrink the
-denominator by $4.13\times$ pooled, once each system is held to its own arithmetic. \texttt{bace} needs
-only $4.2\times$ whitened and $2.0\times$ isotropic, and under the least favourable single-edge
-deletion \texttt{p38} needs $1.46\times$ and \texttt{bace} $1.36\times$ isotropic, which a
-plausible correction does supply.
+quote alone. What a correction could deliver is the reverse accounting: removing the share a
+literature-scale per-ligand noise implies would shrink the denominator by $4.13\times$ pooled,
+once each system is held to its own arithmetic.
 
 The two metrics accordingly give different verdicts, and both are reported. The whitened reading,
 the metric $f$ is defined in, survives every level tried on every system with one cell excepted.
-That cell is \texttt{bace} under the least favourable single-edge deletion, where the $2.55\times$
-needed and the $2.55\times$ supplied by the level carrying half the mixed-laboratory per-edge
-variance coincide to within one per cent, which is a tie rather than a margin. The isotropic reading does not survive on
-\texttt{p38} and \texttt{bace}, the two weakest cells of the isotropic convention already
-tabulated.
+That cell is \texttt{bace} under its least favourable single-edge deletion, where the shrinkage
+needed and the shrinkage supplied coincide to within one per cent, which is a tie rather than a
+margin. The isotropic reading does not survive on \texttt{p38} and \texttt{bace}, the two weakest
+cells of that convention. The per-system arithmetic behind both verdicts is tabulated in the
+Supporting Information.
 
-How far a correction can be pushed follows from arithmetic. At the full mixed-laboratory
-level the implied label-noise share exceeds one on \texttt{cdk8}, \texttt{p38} and \texttt{bace},
-asserting more label variance than those networks' entire measured error against experiment
-contains, so that level is an upper bound and not an estimate for a join that takes one assay per
-system and never mixes $\mathrm{IC}_{50}$ with $K_i$.
+One level is ruled out by its own arithmetic. At the full mixed-laboratory level the implied
+label-noise share exceeds one on \texttt{cdk8}, \texttt{p38} and \texttt{bace}, asserting more
+label variance than those networks' entire measured error against experiment contains. That level
+is an upper bound and not an estimate for a join that takes one assay per system and never mixes
+$\mathrm{IC}_{50}$ with $K_i$.
 
 \paragraph{Grounding against measured affinity.} On \texttt{eg5}, whose ligands carry ChEMBL identifiers, the network $\ddG$ from the same
 generalized-least-squares fit agrees with real KIF11 experimental
@@ -695,51 +681,17 @@ reported bar that is too wide (conservative) and $c_e<1$ one that is too tight (
 this benchmark $c_e$ is measured as the reported standard error over the across-replicate standard
 deviation.
 
-Four summaries of that one distribution appear in this article. Each is a different functional of
-it, each is named here, and each is called by that name from here on. The \emph{replicate ratio} is
-the pooled reported standard error over replicate spread, $1.41$ (Figure~\ref{fig:Arep}). The
-\emph{closure-weighted mean} is $\mathbb{E}[\chi^2_\nu]$, measured here at $0.85$: whitening by the
-reported errors gives $\mathbb{E}[X^2]=\operatorname{tr}(\Pi D)$ with $D=\mathrm{diag}(c_e^{-2})$,
-so by Theorem~\ref{thm:cons} $\mathbb{E}[\chi^2_\nu]$ is the curl-leverage-weighted \emph{mean} of
-$c_e^{-2}$. The \emph{calibrated scale} is its square root, $0.92$, the factor a reported bar has
-to be multiplied by to be right. The \emph{inverted median} is one over the square root of the
-median reduced $\chi^2$, and it recovers a scalar conservatism only when $c_e$ is constant across
-edges, which Figure~\ref{fig:Arep}B shows it is not.
-
-No single scalar conservatism factor is therefore identified by these data, and the apparent
-disagreement between the replicate ratio and the closure-weighted mean is an artefact of comparing
-different functionals of a heavy-tailed distribution, not a physical discrepancy. That distribution
-is drawn with the published summaries marked on it (Figure~\ref{fig:Cal}; \texttt{make figCal}):
-the per-edge ratio spans a factor of $128$ between its first and ninety-ninth percentiles while the
-summaries occupy a $1.57\times$ window. Part of that spread is guaranteed rather than measured,
-since a spread estimated from three replicates would put the same family of functionals between
-$0.71$ and $2.88$ even if every reported bar were exactly right.
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{figCal_calibration_functionals.pdf}
-\caption{\textbf{One heavy-tailed per-edge ratio, and the summaries this article quotes from it.}
-The calibration ratio $c_e=\mathrm{se}^{\mathrm{rep}}_e/\mathrm{se}^{\mathrm{true}}_e$ over the
-$1143$ edges of the $48$ systems that carry a cycle, on a logarithmic axis because $c_e$ is a
-ratio, so a bar twice too wide and one twice too tight are equally miscalibrated, and because the
-tail is the reason the summaries disagree rather than a nuisance to be clipped. Quartiles $0.91$,
-$1.81$ and $3.60$. Each mark is a different functional of this one distribution: the
-curl-leverage-weighted mean of $c_e^{-2}$ that Theorem~\ref{thm:cons} makes
-$\mathbb{E}[\chi^2_\nu]$, together with its root the calibrated scale, which are one mark and not
-two; the replicate ratio of Figure~\ref{fig:Arep}, the pooled reported standard error over
-replicate spread, $1.41$; and the inverted median, the median reduced $\chi^2$ of $0.34$ inverted,
-which recovers a scalar conservatism only if $c_e$ were constant across edges and carries that
-caveat on the figure. The grey silhouette is the
-distribution perfect bars would give at three replicates, where $s^2/\sigma^2\sim\chi^2_2/2$ makes
-$c_e=1/\sqrt{\mathrm{Exp}(1)}$ a parameter-free null with median $1.20$: part of the measured
-spread is the denominator's own small-sample noise and only the excess is per-edge heterogeneity.
-The panel adds no measurement, and no claim beyond the text's: no single scalar conservatism is
-identified by these data. Reproduce with \texttt{make figCal}.}
-\label{fig:Cal}
-\end{figure}
-
-Residual correlation among edges sharing a ligand endpoint, which the diagonal-$V$ GLS does not
-model, is separately negligible (excess correlation over the projector-induced null $-0.0079$
-$[-0.0314,+0.0164]$), and the Benjamini--Hochberg flag set is unchanged by it.
+Three summaries of that distribution appear in this article, and they are different functionals
+of it rather than competing estimates of one number: the replicate ratio $1.41$
+(Figure~\ref{fig:Arep}), the closure-weighted mean $0.85$ whose root is the calibrated scale
+$0.92$, and the median reduced $\chi^2$. They disagree because the per-edge ratio is heavy-tailed,
+spanning a factor of $128$ between its first and ninety-ninth percentiles while the summaries
+occupy a $1.57\times$ window. No single scalar conservatism factor is identified by these data,
+and the apparent disagreement is an artefact of summarising one heavy-tailed distribution three
+ways. The definitions, the distribution with the summaries marked on it, how much of its spread
+three replicates guarantee even when every bar is right, and a check that residual correlation
+among edges sharing a ligand endpoint leaves the flag set unchanged, are all Supplementary
+Figure~\ref{fig:Cal} (\texttt{make figCal}).
 
 Four things here are established: network maximum-likelihood
 estimation of $\ddG$ networks~\citep{xu2019diffnet}, cycle-closure hysteresis as a
@@ -784,35 +736,19 @@ demonstrated here: per-edge adaptive thresholds, a null measured against seed an
 instead of assumed, and the observability map of Theorem~\ref{thm:cons}. That measurement is not a
 controlled error rate, since the repeats hold pose and preparation fixed.
 
-The null is conservative in the bulk, at the median reduced $\chi^2$ above, so on a typical
-system the test under-flags. The median of the statistic does not bound the realized false-positive
-rate. Benjamini--Hochberg controls the false discovery rate through the behaviour of the null
-$p$-values near the rejection threshold, not through the median of the statistic, and the
-per-system calibration of Figure~\ref{fig:Arep} is heterogeneous enough that a conservative bulk
-and an anti-conservative tail can coexist.
+The quoted level is nominal and not verified. The null is conservative in the bulk, at the median
+reduced $\chi^2$ above, but a conservative bulk and an anti-conservative tail can coexist, and the
+median of the statistic does not bound the realized false-positive rate. The case for the flags
+therefore rests on the distribution-free cross-replicate reproduction check below, which is
+independent of the $\chi^2$ scaling and assumes no Gaussian null.
 
-The correction is applied across systems, and the guarantee is carried by
-Benjamini--Yekutieli~\citep{benjamini2001by}, which assumes no dependence structure at all, so the
-independence Benjamini--Hochberg needs is not required. It costs a factor $H_{48}=4.46$ in the
-threshold and returns the identical six systems on replicate $0$ and the identical three on
-replicate $2$, dropping one, \texttt{brd4}, on replicate $1$ (Supporting Information). Positive
-regression dependence is a plausible remark, and nothing here rests on it as an assumption: the
-systems are fitted separately and share no edges, though they share a force field and, within a
-target, a preparation.
-
-The level quoted is nominal and not verified. The case for the flags therefore rests on the
-distribution-free cross-replicate reproduction check below rather than on the $\chi^2$ tail; that
-check is independent of the $\chi^2$ scaling and assumes no Gaussian null.
-
-A subtler concern is that four of the six flagged systems are themselves locally overconfident
-against their own across-replicate spread (Figure~\ref{fig:Arep}: \texttt{brd4} $0.76\times$,
-\texttt{faah} $0.90\times$, \texttt{bace} and \texttt{hif2a} $0.96\times$), so a flag could partly
-reflect that system's own too-tight bars. Retesting each against the width its own replicates
-measure keeps all six at the per-system granularity, and two, \texttt{bace} and \texttt{cdk8}, at
-the per-edge granularity this work pre-specified. The per-edge arm is the only self-calibrated arm
-holding its level ($1/400$, that is $0.003$ with an exact binomial interval $[0.000,0.014]$,
-against a nominal $0.05$), and so the conservative answer (Supplementary
-Table~\ref{tab:selfgrid}).
+Two robustness questions are settled in the Supporting Information rather than assumed away.
+Replacing Benjamini--Hochberg by Benjamini--Yekutieli~\citep{benjamini2001by}, which needs no
+dependence structure at all, costs a factor $H_{48}=4.46$ in the threshold and returns the same six
+systems on replicate $0$. And four of the six flagged systems are themselves locally overconfident
+against their own across-replicate spread, so a flag could partly reflect that system's own
+too-tight bars; retesting each against the width its own replicates measure keeps all six
+(Supplementary Table~\ref{tab:selfgrid}).
 
 \paragraph{The test on the replicate benchmark.}
 The OpenFE IndustryBenchmarks2024 release~\citep{baumann2025industrybenchmarks} carries $1145$
@@ -916,39 +852,26 @@ in $[0.63,1.08]$, and the calibrated scale accordingly in $[0.79,1.04]$. Correct
 reported bar to a scale in that interval and re-running the test on the real data gives six flags
 at $1.04$ and at $1.00$, seven at $0.92$ and nine at $0.79$ (\texttt{make figSelf}).
 
-Two scales have to be kept apart here, and they are reciprocal. The calibrated scale is
-$\mathrm{se}^{\mathrm{true}}/\mathrm{se}^{\mathrm{rep}}$, the reciprocal of the per-edge ratio
-$c_e$, measured above as $0.92$; a simulation that keeps the test on the reported bars must
-therefore draw its truth at that many times them, which is a null $1/0.92$ times the truth. Quoted
-on the calibrated scale, the realized probability that the test
-flags anything when nothing is wrong is $0/400$ at $0.79$, $1/400$ at $0.92$, $18/400$ at $1.00$
-and $40/400$ at $1.04$. As levels with exact binomial intervals those are $0.000$ $[0,0.009]$,
-$0.003$ $[0.000,0.014]$, $0.045$ $[0.027,0.070]$ and $0.100$ $[0.072,0.134]$. Four hundred draws do not
-separate the two lower points from each other or from zero, so nothing is read from their ordering.
-What the grid supports is the upper end, where the interval clears the nominal level, and the
-direction between the ends.
+A pure-null simulation puts the realized probability that the test flags anything when nothing is
+wrong at essentially zero when the bars are as wide as they are measured to be, and at $0.100$
+when they are slightly tighter than the truth. The exposure that matters is therefore the
+anti-conservative end, where a bar a little too tight doubles the nominal rate. That simulation
+verifies the implementation rather than the real-data operating point, which is again why the
+level above is nominal. The scales involved are reciprocal and easy to confuse, so the grid, its
+exact binomial intervals and what four hundred draws can and cannot separate are set out in the
+Supporting Information.
 
-That simulation verifies the Benjamini--Hochberg implementation and not the real-data operating
-point, which is why the level quoted above is nominal and not verified. What it does establish is a
-direction: the level sits below nominal at the measured calibration and above it at the other end.
-Because the bars are measured wide, the level across the calibration interval runs from essentially
-zero at $0.79$ to $0.100$ at $1.04$, so the exposure that matters is the anti-conservative end,
-where a bar slightly tighter than the truth doubles the nominal rate.
-
-Sensitivity is exposed in the opposite direction. At $1.3\times$ one system of $48$ flags and at
-$1.5\times$ and $2\times$ none do, so nothing on this benchmark survives a bar widened to cover pose
-and preparation variance. Widening changes the null being tested instead of moving the same test
-along it, and what is fragile on that side is sensitivity and not validity.
+Sensitivity is fragile in the other direction. At $1.3\times$ one system of $48$ flags, and at
+$1.5\times$ and $2\times$ none do, so nothing on this benchmark survives a bar widened to cover
+pose and preparation variance. Widening changes the null being tested rather than moving the same
+test along it, so what is fragile there is sensitivity and not validity.
 
 The uniform shrink is a stress test and not a realistic head, and the comparison is a
 counterfactual in a further sense: no deployed or published pipeline is known to feed a learned
 per-edge $\sigma$ into a network consistency check. The head's own measured, overlap-dependent
-profile applied per edge flags $42$ of $48$, so the degradation is not an artifact of uniformity,
-and a shuffled control with a swept magnitude shows it is the magnitude that destroys the test
-while over-wide bars cost power the other way (Supporting Information). The demonstration is
-accordingly scoped to heads as overconfident as the measured one (reported $\mathrm{se}$
-$5$--$11\times$ too small): it establishes that such heads saturate the test, and not the shrink
-magnitude at which selectivity is first lost.
+profile applied per edge flags $42$ of $48$ as well, so the collapse is not an artefact of
+uniformity. The demonstration is accordingly scoped to heads as overconfident as the measured one,
+whose reported errors run $5$--$11\times$ too small (Supporting Information).
 
 The three independent replicates confirm the flagged inconsistency is reproducible and not
 sampling. Pooling the replicates shrinks the bars ($\mathrm{se}\to\mathrm{se}/\sqrt3$) yet increases the flagged

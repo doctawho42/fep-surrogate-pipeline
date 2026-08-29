@@ -323,6 +323,16 @@ the $1.0$ kcal/mol cutoff itself, the swept scale grid with its two frozen reado
 granularity of the self-calibrated null, and the close-the-loop criterion. Three of them live only
 in code, and the paragraph below audits those three against the descriptions printed here.
 
+\paragraph{The H1 criterion, per system and as pooled.} The pooled degrees-of-freedom-adjusted
+gradient-model $R^2$ the main text reports as $0.980$ is $0.978$, $0.995$, $0.976$ and $0.761$ on
+the four systems taken singly. Pooling is over the four sub-networks jointly, $f$ as a ratio of
+summed squared norms, with the adjustment carried on the summed $E=167$ edges and rank $116$, that
+is on $51$ residual degrees of freedom, and not as an average of per-system adjustments. The form
+evaluated is the degrees-of-freedom-adjusted rule the pre-registration froze, and not the weaker
+unadjusted $1-f_{\text{pooled}}\geq0.50$; the two differ and the frozen one is the harder.
+Contaminant checks: the reading holds on medians rather than sums, and holds on \texttt{bace},
+whose ligands carry no enantiomer pair collapsed by the stereo-blind join.
+
 \paragraph{Audit of the frozen criteria that live only in code.} Three criteria are recorded in the
 analysis code and not in the design file, and each is audited here against the description printed
 in this article. The
@@ -908,6 +918,53 @@ flagged \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{The four calibration functionals, and why they disagree (Figure~\ref{fig:Cal}).}
+Four summaries of that one distribution appear in this article. Each is a different functional of
+it, each is named here, and each is called by that name from here on. The \emph{replicate ratio} is
+the pooled reported standard error over replicate spread, $1.41$ (Figure~\ref{fig:Arep}). The
+\emph{closure-weighted mean} is $\mathbb{E}[\chi^2_\nu]$, measured here at $0.85$: whitening by the
+reported errors gives $\mathbb{E}[X^2]=\operatorname{tr}(\Pi D)$ with $D=\mathrm{diag}(c_e^{-2})$,
+so by Theorem~\ref{thm:cons} $\mathbb{E}[\chi^2_\nu]$ is the curl-leverage-weighted \emph{mean} of
+$c_e^{-2}$. The \emph{calibrated scale} is its square root, $0.92$, the factor a reported bar has
+to be multiplied by to be right. The \emph{inverted median} is one over the square root of the
+median reduced $\chi^2$, and it recovers a scalar conservatism only when $c_e$ is constant across
+edges, which Figure~\ref{fig:Arep}B shows it is not.
+
+No single scalar conservatism factor is therefore identified by these data, and the apparent
+disagreement between the replicate ratio and the closure-weighted mean is an artefact of comparing
+different functionals of a heavy-tailed distribution, not a physical discrepancy. That distribution
+is drawn with the published summaries marked on it (Figure~\ref{fig:Cal}; \texttt{make figCal}):
+the per-edge ratio spans a factor of $128$ between its first and ninety-ninth percentiles while the
+summaries occupy a $1.57\times$ window. Part of that spread is guaranteed rather than measured,
+since a spread estimated from three replicates would put the same family of functionals between
+$0.71$ and $2.88$ even if every reported bar were exactly right.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{figCal_calibration_functionals.pdf}
+\caption{\textbf{One heavy-tailed per-edge ratio, and the summaries this article quotes from it.}
+The calibration ratio $c_e=\mathrm{se}^{\mathrm{rep}}_e/\mathrm{se}^{\mathrm{true}}_e$ over the
+$1143$ edges of the $48$ systems that carry a cycle, on a logarithmic axis because $c_e$ is a
+ratio, so a bar twice too wide and one twice too tight are equally miscalibrated, and because the
+tail is the reason the summaries disagree rather than a nuisance to be clipped. Quartiles $0.91$,
+$1.81$ and $3.60$. Each mark is a different functional of this one distribution: the
+curl-leverage-weighted mean of $c_e^{-2}$ that Theorem~\ref{thm:cons} makes
+$\mathbb{E}[\chi^2_\nu]$, together with its root the calibrated scale, which are one mark and not
+two; the replicate ratio of Figure~\ref{fig:Arep}, the pooled reported standard error over
+replicate spread, $1.41$; and the inverted median, the median reduced $\chi^2$ of $0.34$ inverted,
+which recovers a scalar conservatism only if $c_e$ were constant across edges and carries that
+caveat on the figure. The grey silhouette is the
+distribution perfect bars would give at three replicates, where $s^2/\sigma^2\sim\chi^2_2/2$ makes
+$c_e=1/\sqrt{\mathrm{Exp}(1)}$ a parameter-free null with median $1.20$: part of the measured
+spread is the denominator's own small-sample noise and only the excess is per-edge heterogeneity.
+The panel adds no measurement, and no claim beyond the text's: no single scalar conservatism is
+identified by these data. Reproduce with \texttt{make figCal}.}
+\label{fig:Cal}
+\end{figure}
+
+Residual correlation among edges sharing a ligand endpoint, which the diagonal-$V$ GLS does not
+model, is separately negligible (excess correlation over the projector-induced null $-0.0079$
+$[-0.0314,+0.0164]$), and the Benjamini--Hochberg flag set is unchanged by it.
 
 \paragraph{Out-of-sample behaviour of the calibrated null (Figure~\ref{fig:OOS}).} Each candidate
 held-out statistic is calibrated against a no-error null before use, and the realized level of
