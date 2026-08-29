@@ -164,6 +164,53 @@ calibration. Unlike the plain, oracle ($0.1941$--$0.2571\times$, mean $0.2101\ti
 $\beta$-NLL heads, whose overconfidence is robust across independent retrains, the ensemble is
 unreliable in both directions at this budget.
 
+\paragraph{Priority: what the decomposition owes to prior work.} The main text states that the
+decomposition is not new. This is the accounting behind that, kept here because it is a claim
+about the literature rather than about the benchmark.
+
+The decomposition is not new. Splitting an edge field on a graph into a
+gradient part and a divergence-free part, and reading the size of the second as whether the first
+is meaningful at all, is HodgeRank~\citep{jiang2011hodgerank}. There the gradient component is
+the global ranking being estimated and the cyclic component certifies it. A third, harmonic term
+appears under a choice of two-cells and is not needed here. The hat-matrix and
+leverage machinery of part (ii) is likewise standard on networks of relative comparisons, where it
+already locates inconsistency in network meta-analysis~\citep{krahn2013graphical}. That the closure
+check sees only cycles is in this sense a restatement, and it matches the long-standing
+reading of cycle closure as necessary and not sufficient~\citep{mey2020alchem}.
+
+The count in part (iii) is older still and closer to this setting than HodgeRank is. A network of
+relative comparisons under a consistency assumption has, in the language of mixed treatment
+comparisons, inconsistency degrees of freedom equal to the number of independent
+loops~\citep{lu2006inconsistency}, which is $\mathrm{dof}$ here; the modern treatment of that model
+and its multi-arm complications is \citet{higgins2012inconsistency}.
+
+Part (i) states that a bias common to every comparison involving one node is absorbed into that
+node's effect and is invisible to any inconsistency test. That literature does not state it in
+those terms, but it is immediate in that framework and may well be folklore there, as the
+corresponding fact is here, so the absence of an explicit statement does not establish that the
+fact is new.
+
+The bias-adjustment strand of the same literature weakens the substance further.
+Bias-adjustment models in mixed treatment comparisons~\citep{dias2010bias} treat study-level bias
+terms as quantities the network cannot identify on its own and inform them with external evidence
+or informative priors, which is part (i) for a different index and the same conclusion: a bias
+living where the design cannot separate it is resolved only from outside. The orthogonality of part
+(ii) and the anchor counting of part (iv) are likewise not located in that strand, and not finding
+them there does not establish that they are absent.
+
+Part (ii) follows from part (i) in two lines. The bias in the fitted potentials is
+$(\tilde A^\top\tilde A)^{+}\tilde A^\top\tilde\mu$ and $\tilde A^\top\Pi=0$, so the gradient part
+alone determines it while $\|\Pi\tilde\mu\|^2$ alone determines the noncentrality; it is the
+defining property of an orthogonal projector, read on the error rather than on the signal. What is
+left to this article is that reading for alchemical networks and the measurement of where a real
+network's error falls between the two halves, which is Section~\ref{sec:hodge} and what the rest of
+this article rests on. Part (iv) is a dimension count and is not asserted as new.
+Network estimation of $\ddG$ under loop closure is solved
+in~\citet{xu2019diffnet} by Fisher information and in~\citet{giese2021variational} by a constrained
+variational solution of the whole network; neither is the object part (iv) counts, which is the
+number of absolute measurements needed to remove the unidentifiable directions. That counting may
+well be present in either, and it is used here to state that cost.
+
 \paragraph{Synthetic decomposition (illustration).} In a controlled one-dimensional problem whose
 generative structure is known, the decomposed interval is up to $2.2\times$ sharper than a
 split-conformal interval ($2.0\times$ sharper than conformalized quantile

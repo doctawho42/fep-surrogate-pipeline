@@ -113,11 +113,9 @@ so what such a check can see is fixed before any protocol is chosen, by the alge
 alone. Fix the fit those residuals come from. Node potentials are estimated by generalized least
 squares on the signed incidence matrix, whitened by the reported per-edge standard errors, so that
 the conductances are $w_e=1/V_e^{\mathrm{rep}}$ with $V_e^{\mathrm{rep}}$ the per-edge variance the
-free-energy estimator reports (Section~\ref{sec:bar}). Theorem~\ref{thm:fr} in the Supporting
-Information identifies that conductance with the sandwich precision $I_e^2/B_e$ whenever the work
-samples are available. They are not available on the benchmark used here, so $V_e^{\mathrm{rep}}$
-is the reported variance composed from the complex and the solvent leg
-(Section~\ref{sec:methods}).
+free-energy estimator reports (Section~\ref{sec:bar}). What that variance is on this benchmark,
+and when it coincides with the sandwich precision $I_e^2/B_e$, are Section~\ref{sec:methods} and
+Theorem~\ref{thm:fr} in the Supporting Information.
 The weighted sum of squared residuals of that fit is the closure statistic whose null
 Section~\ref{sec:qc} turns into a test; only its geometry is needed here. Two results follow, one
 per edge and one about the whole error space.
@@ -177,48 +175,18 @@ them: the first anchor in a component removes only that component's arbitrary of
 unidentifiable direction, each further anchor removes exactly one dimension, and resolving a
 per-ligand bias in full requires an absolute measurement on every ligand.
 \end{theorem}
-The decomposition is not new. Splitting an edge field on a graph into a
-gradient part and a divergence-free part, and reading the size of the second as whether the first
-is meaningful at all, is HodgeRank~\citep{jiang2011hodgerank}. There the gradient component is
-the global ranking being estimated and the cyclic component certifies it. A third, harmonic term
-appears under a choice of two-cells and is not needed here. The hat-matrix and
-leverage machinery of part (ii) is likewise standard on networks of relative comparisons, where it
-already locates inconsistency in network meta-analysis~\citep{krahn2013graphical}. That the closure
-check sees only cycles is in this sense a restatement, and it matches the long-standing
-reading of cycle closure as necessary and not sufficient~\citep{mey2020alchem}.
-
-The count in part (iii) is older still and closer to this setting than HodgeRank is. A network of
-relative comparisons under a consistency assumption has, in the language of mixed treatment
-comparisons, inconsistency degrees of freedom equal to the number of independent
-loops~\citep{lu2006inconsistency}, which is $\mathrm{dof}$ here; the modern treatment of that model
-and its multi-arm complications is \citet{higgins2012inconsistency}.
-
-Part (i) states that a bias common to every comparison involving one node is absorbed into that
-node's effect and is invisible to any inconsistency test. That literature does not state it in
-those terms, but it is immediate in that framework and may well be folklore there, as the
-corresponding fact is here, so the absence of an explicit statement does not establish that the
-fact is new.
-
-The bias-adjustment strand of the same literature weakens the substance further.
-Bias-adjustment models in mixed treatment comparisons~\citep{dias2010bias} treat study-level bias
-terms as quantities the network cannot identify on its own and inform them with external evidence
-or informative priors, which is part (i) for a different index and the same conclusion: a bias
-living where the design cannot separate it is resolved only from outside. The orthogonality of part
-(ii) and the anchor counting of part (iv) are likewise not located in that strand, and not finding
-them there does not establish that they are absent.
-
-Part (ii) follows from part (i) in two lines. The bias in the fitted potentials is
-$(\tilde A^\top\tilde A)^{+}\tilde A^\top\tilde\mu$ and $\tilde A^\top\Pi=0$, so the gradient part
-alone determines it while $\|\Pi\tilde\mu\|^2$ alone determines the noncentrality; it is the
-defining property of an orthogonal projector, read on the error rather than on the signal. What is
-left to this article is that reading for alchemical networks and the measurement of where a real
-network's error falls between the two halves, which is Section~\ref{sec:hodge} and what the rest of
-this article rests on. Part (iv) is a dimension count and is not asserted as new.
-Network estimation of $\ddG$ under loop closure is solved
-in~\citet{xu2019diffnet} by Fisher information and in~\citet{giese2021variational} by a constrained
-variational solution of the whole network; neither is the object part (iv) counts, which is the
-number of absolute measurements needed to remove the unidentifiable directions. That counting may
-well be present in either, and it is used here to state that cost.
+The decomposition is not new, and none of it is claimed here. Splitting an edge field on a graph
+into a gradient part and a divergence-free part, and reading the size of the second as whether the
+first is meaningful at all, is HodgeRank~\citep{jiang2011hodgerank}. The count in part (iii) is
+the inconsistency degrees of freedom of mixed treatment
+comparisons~\citep{lu2006inconsistency,higgins2012inconsistency}, and the leverage machinery of
+part (ii) already locates inconsistency in network meta-analysis~\citep{krahn2013graphical}. Part
+(i) may well be folklore in that literature, part (ii) follows from it in two lines, and part (iv)
+is a dimension count. What is left to this article is the reading for alchemical networks and the
+measurement of where a real network's error falls between the two halves, which is
+Section~\ref{sec:hodge} and what the rest of this article rests on. What each strand does and does
+not establish, and where this work is not in a position to claim priority, is set out in the
+Supporting Information.
 
 \paragraph{The map as a design rule.} The observability certificate is prospective: alone among the
 quantities measured here it can be acted on before a simulation is run. It prices two distinct
