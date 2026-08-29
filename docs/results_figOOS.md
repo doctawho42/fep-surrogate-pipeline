@@ -108,14 +108,14 @@ within a factor of two of nominal, i.e. |α̂ − 0.05| ≤ 0.05:
 
 | statistic | realized α (per test) | realized α (Stouffer) | verdict |
 |---|---:|---:|---|
-| held-out consistency gain  $\Delta\chi^2_\nu$ | 0.054 | 0.042 | USED |
-| leverage-normalised held-out $z^2/h$ | 0.067 | 0.031 | USED |
+| held-out consistency gain  $\Delta\chi^2_\nu$ | 0.054 | 0.036 | USED |
+| leverage-normalised held-out $z^2/h$ | 0.071 | 0.031 | USED |
 | raw held-out $z^2$ | 0.198 | 0.489 | **DISCARDED** (invalid) |
 | signed cross-replicate product $z_s z_h$ | 0.231 | 0.103 | **DISCARDED** (invalid) |
 
 **2 of the 4 statistics are discarded**, and they are shown
 here rather than silently dropped. Raw held-out `z²` fires at 0.198 because of the leverage confound above; dividing
-by *h* restores the nominal level (0.067). The signed
+by *h* restores the nominal level (0.071). The signed
 cross-replicate product fires at 0.231 for a different
 reason: selecting on |z| makes the multiplier `z_s` large, so the selected set's
 statistic has a much wider null distribution than the equal-size random draws it is
@@ -133,14 +133,14 @@ donors, not in the flagged system.
 
 | statistic | arm | rotation 0 | rotation 1 | rotation 2 |
 |---|---|---|---|---|
-| held-out consistency gain  $\Delta\chi^2_\nu$ | `static` | +1.21 (rand -0.02), p=1.3e-03 | +1.42 (rand -0.02), p=1.3e-03 | +0.89 (rand +0.01), p=4.4e-03 |
-| held-out consistency gain  $\Delta\chi^2_\nu$ | `guided` | +1.62 (rand -0.02), p=5.9e-05 | +1.53 (rand -0.02), p=1.2e-04 | +1.38 (rand +0.01), p=2.4e-04 |
+| held-out consistency gain  $\Delta\chi^2_\nu$ | `static` | +1.21 (rand -0.02), p=1.3e-03 | +1.42 (rand -0.02), p=1.2e-03 | +0.89 (rand +0.01), p=3.8e-03 |
+| held-out consistency gain  $\Delta\chi^2_\nu$ | `guided` | +1.62 (rand -0.02), p=5.9e-05 | +1.53 (rand -0.02), p=1.2e-04 | +1.38 (rand +0.01), p=2.0e-04 |
 | held-out consistency gain  $\Delta\chi^2_\nu$ | `leverage` | -0.60 (rand -0.02), p=9.1e-01 | -0.57 (rand -0.02), p=6.9e-01 | +0.00 (rand +0.01), p=2.3e-01 |
-| held-out consistency gain  $\Delta\chi^2_\nu$ | `matched` | +0.29 (rand +0.22), p=1.0e+00 | +0.19 (rand +0.10), p=9.8e-01 | +0.19 (rand +0.09), p=2.6e-01 |
-| leverage-normalised held-out $z^2/h$ | `static` | +9.97 (rand +2.88), p=1.4e-04 | +9.22 (rand +3.31), p=7.3e-04 | +10.11 (rand +3.26), p=2.5e-04 |
-| leverage-normalised held-out $z^2/h$ | `guided` | +7.39 (rand +2.88), p=8.6e-04 | +6.60 (rand +3.31), p=1.4e-02 | +9.53 (rand +3.26), p=6.0e-04 |
-| leverage-normalised held-out $z^2/h$ | `leverage` | +1.76 (rand +2.88), p=8.3e-01 | +3.18 (rand +3.31), p=6.0e-01 | +3.34 (rand +3.26), p=2.1e-01 |
-| leverage-normalised held-out $z^2/h$ | `matched` | +1.81 (rand +0.99), p=9.7e-02 | +1.36 (rand +0.67), p=1.3e-03 | +1.49 (rand +0.81), p=7.2e-05 |
+| held-out consistency gain  $\Delta\chi^2_\nu$ | `matched` | +0.29 (rand +0.22), p=1.0e+00 | +0.19 (rand +0.10), p=1.0e+00 | +0.19 (rand +0.09), p=6.0e-01 |
+| leverage-normalised held-out $z^2/h$ | `static` | +9.97 (rand +2.88), p=1.4e-04 | +9.22 (rand +3.31), p=7.3e-04 | +10.11 (rand +3.26), p=2.6e-04 |
+| leverage-normalised held-out $z^2/h$ | `guided` | +7.39 (rand +2.88), p=8.8e-04 | +6.60 (rand +3.31), p=1.4e-02 | +9.53 (rand +3.26), p=5.5e-04 |
+| leverage-normalised held-out $z^2/h$ | `leverage` | +1.76 (rand +2.88), p=8.3e-01 | +3.18 (rand +3.31), p=6.0e-01 | +3.34 (rand +3.26), p=2.2e-01 |
+| leverage-normalised held-out $z^2/h$ | `matched` | +1.81 (rand +0.99), p=1.4e-01 | +1.36 (rand +0.67), p=9.1e-04 | +1.49 (rand +0.81), p=2.1e-02 |
 
 Per (system, rotation), the `static` arm's held-out Δχ²ᵥ ranges -0.39 to +5.39 against -0.34 to +0.17 for equal-size random.
 
@@ -149,10 +149,10 @@ Per (system, rotation), the `static` arm's held-out Δχ²ᵥ ranges -0.39 to +5
 | system | dof | K (rot 0/1/2) | held-out Δχ²ᵥ, `static` (rot 0/1/2) | same, `random` | per-system p, Δχ²ᵥ (rot 0/1/2) | signed product on the selected edges | whole-network cross-replicate z corr |
 |---|---:|---|---|---|---|---:|---:|
 | bace | 14 | 4/6/3 | +4.61/+5.39/+2.76 | -0.29/-0.34/-0.15 | 0.024/0.005/0.030 | +10.07 | +0.55 |
-| faah | 8 | 4/1/1 | -0.39/-0.36/+0.34 | +0.17/+0.10/+0.07 | 0.791/0.893/0.339 | +0.19 | -0.09 |
+| faah | 8 | 4/1/1 | -0.39/-0.36/+0.34 | +0.17/+0.10/+0.07 | 0.791/0.893/0.302 | +0.19 | -0.09 |
 | cdk8 | 29 | 7/2/5 | +1.03/+0.31/+0.61 | -0.01/+0.00/+0.02 | 0.002/0.088/0.018 | +5.25 | +0.62 |
-| hif2a | 19 | 3/5/4 | +0.35/+0.72/-0.07 | -0.01/+0.11/+0.13 | 0.076/0.056/0.556 | +1.62 | +0.21 |
-| p38 | 22 | 3/3/2 | +0.46/+1.03/+0.80 | +0.03/+0.03/+0.00 | 0.117/0.007/0.054 | +4.83 | +0.56 |
+| hif2a | 19 | 3/5/4 | +0.35/+0.72/-0.07 | -0.01/+0.11/+0.13 | 0.078/0.056/0.556 | +1.62 | +0.21 |
+| p38 | 22 | 3/3/2 | +0.46/+1.03/+0.80 | +0.03/+0.03/+0.00 | 0.117/0.006/0.054 | +4.83 | +0.56 |
 
 ### Riders — these are not optional
 - **It is an aggregate result.** Only 2 of the 5 testable flagged

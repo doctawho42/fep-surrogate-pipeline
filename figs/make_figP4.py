@@ -168,7 +168,7 @@ def main():
     # instead of prose-only, and marks Fig L panel B's uniform x0.15 stand-in for comparison.
     # The profile and the stand-in are one family: one hue, the histogram at a lighter tint so
     # the stand-in's marker line reads on top of it without any transparency.
-    ax2.hist(all_rat, bins=40, color=tint(FOIL, 0.45), edgecolor="white", linewidth=0.3,
+    ax2.hist(all_rat, bins=40, color=tint(FOIL, 0.45), edgecolor="white", linewidth=0.5,
              zorder=2)
     ax2.axvline(UNIFORM_STRESS, color=FOIL, linestyle="--", linewidth=1.3, zorder=3)
     ax2.set_xlabel(r"transferred se ratio (real learned-$\sigma$ profile)")

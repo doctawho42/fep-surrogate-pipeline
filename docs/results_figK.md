@@ -9,14 +9,14 @@ gate ran at full convergence (steps=1500, ~4 min via the deterministic-state rol
 speedup). `make figK`.
 
 ## PRIMARY gate — calibrated reward re-ranking: KILL
-True-hit-rate (12 seeds): calibrated-LCB 0.140, raw-μ̂ 0.249,
-MVE-σ 0.255. cal−raw -0.109, CI [-0.150, -0.072]; cal−mve
--0.114, CI [-0.150, -0.079] -> **KILL** (calibration wins iff BOTH CI
+True-hit-rate (12 seeds): calibrated-LCB 0.142, raw-μ̂ 0.255,
+MVE-σ 0.251. cal−raw -0.113, CI [-0.155, -0.075]; cal−mve
+-0.109, CI [-0.151, -0.070] -> **KILL** (calibration wins iff BOTH CI
 lower bounds > 0).
 
 ## Honest negative — calibration does not help reward re-ranking, even where σ varies
 `eg5` is the MAXIMAL-σ-spread target on disk (std(σ_total)/std(value) = 0.79); the σ-uniform a-priori-null of the earlier p38 draft does NOT
-apply here, so the LCB genuinely re-ranks candidates. Yet cal is significantly BELOW raw (cal-raw CI [-0.150, -0.072] entirely below 0, magnitude ~0.11) — calibration actively HURTS the sampled hit-rate. The mechanism is
+apply here, so the LCB genuinely re-ranks candidates. Yet cal is significantly BELOW raw (cal-raw CI [-0.155, -0.075] entirely below 0, magnitude ~0.11) — calibration actively HURTS the sampled hit-rate. The mechanism is
 the honest finding: corr(σ_total, true affinity) = +0.42 — the high-σ
 ligands are the truly STRONGER binders (σ tracks prediction error / OOD-ness, which on this
 congeneric series coincides with the chemically novel = strong region), so the LCB penalty

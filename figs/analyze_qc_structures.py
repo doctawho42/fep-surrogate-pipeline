@@ -162,7 +162,7 @@ def main():
     axA = fig.add_subplot(1, 2, 1, projection="3d")
     dyad = [np.array([a["xyz"] for a in v if a["name"] in ("OD1", "OD2", "CG")]) for _, _, v in asp]
     _scatter(axA, LP, c=C_LIG, s=11, lw=0, alpha=0.85, label=f"ligand ({lig[0]['resn']})")
-    _scatter(axA, np.vstack(dyad), c=C_DYAD, s=30, edgecolors=INK, linewidths=0.35,
+    _scatter(axA, np.vstack(dyad), c=C_DYAD, s=30, edgecolors=INK, linewidths=0.5,
              label="catalytic Asp dyad")
     _frame(axA, LP, np.vstack(dyad))
     panel(axA, "A", "BACE1 (PDB 4DJW)",
@@ -180,12 +180,12 @@ def main():
     an = np.array([a["xyz"] for a in asn[2] if a["name"] in ("ND2", "OD1", "CG")])
     axB = fig.add_subplot(1, 2, 2, projection="3d")
     _scatter(axB, LP2, c=C_LIG, s=11, lw=0, alpha=0.85, label=f"ligand ({lig2[0]['resn']})")
-    _scatter(axB, near, c=C_WATER, s=26, edgecolors=INK, linewidths=0.35,
+    _scatter(axB, near, c=C_WATER, s=26, edgecolors=INK, linewidths=0.5,
              label=f"waters ≤ 4.5 Å ({len(near)})")
     # a different object from the waters, so a different hue rather than a tint of theirs
     # the legend entry stays bare -- the "(KAc)" qualifier is already in the panel subtitle, and
     # spelling it out here pushed the third column past the right edge of the canvas.
-    _scatter(axB, an, c=C_ASN, s=34, marker="s", edgecolors=INK, linewidths=0.35,
+    _scatter(axB, an, c=C_ASN, s=34, marker="s", edgecolors=INK, linewidths=0.5,
              label=f"Asn{asn[1][1]}")
     _frame(axB, LP2, near, an)
     panel(axB, "B", f"BRD4 BD1 (PDB 3MXF, {lig2[0]['resn']})",

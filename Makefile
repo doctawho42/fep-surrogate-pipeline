@@ -143,6 +143,9 @@ graphical:  # graphical abstract (Figma-style pastel redraw: BAR bottleneck -> c
 
 gabs: graphical  # alias for `make graphical`
 
+acscheck:  # every included figure against the ACS artwork spec (width, rules, type, font)
+	$(PY) scripts/acs_figure_audit.py
+
 paper:  # generic / arXiv build: manuscript and Supporting Information as separate files
 	# Same two-file shape as `make jctc`, in the article class: docs/paper_draft.pdf and
 	# docs/paper_draft_si.pdf, the second S-numbered. The pair references each other's labels

@@ -230,8 +230,16 @@ def use_paper_style() -> None:
         "xtick.labelsize": 8,
         "ytick.labelsize": 8,
         "legend.fontsize": 7.5,
-        # mathtext must match the sans body text, not fall back to a serif face
-        "mathtext.fontset": "dejavusans",
+        # ACS asks for Helvetica or Arial in artwork, and mathtext is artwork too: with the
+        # dejavusans set every $...$ in a label embedded DejaVu beside Arial body text, which
+        # is both a spec violation and visible as a face change mid-line. The custom set points
+        # every mathtext face at Arial; glyphs Arial lacks still fall back, which is why the
+        # font audit in the record is run on the rendered PDF rather than on this dict.
+        "mathtext.fontset": "custom",
+        "mathtext.rm": "Arial",
+        "mathtext.it": "Arial:italic",
+        "mathtext.bf": "Arial:bold",
+        "mathtext.sf": "Arial",
         "axes.spines.top": False,
         "axes.spines.right": False,
         "axes.edgecolor": INK,

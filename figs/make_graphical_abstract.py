@@ -82,8 +82,15 @@ def _style():
     """rcParams of the contents graphic: its own pastel ground, and no tight bbox."""
     mpl.rcParams.update({
         "font.family": "sans-serif",
-        "font.sans-serif": ["DejaVu Sans", "Arial"],
-        "mathtext.fontset": "dejavusans",
+        # Arial first and mathtext pointed at it: ACS asks for Helvetica or Arial in artwork,
+        # and this block used to put DejaVu Sans ahead of it, which is how the contents
+        # graphic came to be the one figure in the article set in a different face.
+        "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+        "mathtext.fontset": "custom",
+        "mathtext.rm": "Arial",
+        "mathtext.it": "Arial:italic",
+        "mathtext.bf": "Arial:bold",
+        "mathtext.sf": "Arial",
         "font.size": ANNOT,
         "savefig.dpi": 300,
         "savefig.facecolor": BG,
@@ -285,8 +292,8 @@ def overview():
     head(ax_a, "A", "per-edge error bar")
     _edge_glyph(ax_a, wa / 2, 1.18)
     say(wa / 2, 0.68,
-        r"$\mathrm{se}_e=\sqrt{\mathrm{se}_{\mathrm{complex}}^{2}"
-        r"+\mathrm{se}_{\mathrm{solvent}}^{2}}$", BODY_PT, ax=ax_a, count=False)
+        r"$\mathrm{se}_e=(\mathrm{se}_{\mathrm{complex}}^{2}"
+        r"+\mathrm{se}_{\mathrm{solvent}}^{2})^{1/2}$", BODY_PT, ax=ax_a, count=False)
     say(wa / 2, 0.34, "computed, not learned", SMALL_PT, ax=ax_a, color=OURS)
 
     _fig_arrow(fig, (xa + wa + 0.05, (ROW1_TOP + ROW1_BOT) / 2),

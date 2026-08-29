@@ -574,12 +574,12 @@ def make_figure(A, B):
     axA.set_yscale("log")
     axA.set_xlim(*lim)
     axA.set_ylim(*lim)
-    axA.set_xlabel(r"predicted $\mathbb{E}[\chi^2_\nu]$ = leverage-weighted"
+    axA.set_xlabel(r"predicted $\mathrm{E}[\chi^2_\nu]$ = leverage-weighted"
                    "\n" r"mean of $c_e^{-2}$ (replicates 1 and 2 only)")
     axA.set_ylabel("observed $\\chi^2_\\nu$, replicate 0\n(closure test)")
     # upper left, the one corner the point cloud never enters; no patch, so nothing is veiled
     axA.text(0.03, 0.98, f"Spearman $\\rho$ = {pk['rho']:.3f}\n$p$ = {pk['p']:.1e}"
-                         f"  ($n$ = {pk['n']})\naggregate $\\mathbb{{E}}[\\chi^2_\\nu]$ = "
+                         f"  ($n$ = {pk['n']})\naggregate $\\mathrm{{E}}[\\chi^2_\\nu]$ = "
                          f"{A['agg']:.2f}\n[{A['agg_ci'][0]:.2f}, {A['agg_ci'][1]:.2f}]",
              transform=axA.transAxes, va="top", ha="left", fontsize=7.5, color=INK)
     legend(axA, loc="lower right", fontsize=7.5, ncol=2, handletextpad=0.25, columnspacing=0.8,

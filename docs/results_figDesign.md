@@ -61,7 +61,7 @@ a_b: 29 added edges leave no bridge  (2.5% of the 1143 edges already run, on 19 
 a_2: 36 added edges leave every system 2-edge-connected  (3.1%, on 21 systems)
 both constructions == the Eswaran-Tarjan lower bound on 48/48 systems; every
   augmented network verified to have zero bridges, and every a_2 network verified connected
-max |h incremental - curl_leverage| on the designed networks: 6.4e-13
+max |h incremental - curl_leverage| on the designed networks: 1.0e-12
 brute force: on 39 of the 40 (system, target) pairs needing any edge, EVERY subset of one fewer edge was
   enumerated and none achieves the goal; the rest have too large a space to enumerate
 ```

@@ -139,7 +139,7 @@ def main() -> None:
                 label=f"$n_{{\\rm eff}}=n/g$ (used): {r_neff.mean():.2f}$\\times$ truth")
     axA.set_xscale("log"); axA.set_yscale("log")
     axA.set_xlabel("correlation-aware truth se (decorrelated bootstrap)")
-    axA.set_ylabel("sandwich $\\sqrt{B/I^2}$ se")
+    axA.set_ylabel("sandwich $(B/I^2)^{1/2}$ se")
     legend(axA, loc="upper left")
     panel(axA, "A", "raw $n$ overconfident, $n_{\\rm eff}$ calibrated")
 
@@ -163,7 +163,7 @@ def main() -> None:
     # two reference lines, so both are REF grey and are told apart by dash pattern, not by hue.
     reference_line(axB, "hline", 1.0, label="calibrated (=1)")
     axB.axhline(g_line, color=REF, ls=(0, (4.5, 2.0)), lw=1.0, zorder=0.5,
-                label=f"$1/\\sqrt{{\\bar g}}={g_line:.2f}$ ($\\bar g={gbar:.1f}$)")
+                label=f"$\\bar g^{{-1/2}}={g_line:.2f}$ ($\\bar g={gbar:.1f}$)")
     axB.set_xticks(xs); axB.set_xticklabels(labels, fontsize=8)
     axB.set_xlim(-0.6, len(series) - 0.4)
     axB.set_ylabel("reported se / truth se")

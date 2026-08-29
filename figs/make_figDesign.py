@@ -542,7 +542,7 @@ def make_figure(res, sens):
     ax.set_xlim(0, 2.0)
     ax.set_ylim(0.11, 5.2)
     ax.set_xlabel(r"edges added ($\times E$)")
-    ax.set_ylabel(r"median $\delta^\ast$ (kcal/mol)")
+    ax.set_ylabel(r"median $\delta^{*}$ (kcal/mol)")
     _log_ticks(ax.yaxis, [0.2, 0.5, 1.0, 2.0, 4.0])
     ax.annotate("targets", xy=(1.97, 1.06), ha="right", va="bottom", fontsize=7.5, color=REF)
     ax.plot([], [], color=OURS, lw=1.4, label="flagged")
@@ -560,7 +560,7 @@ def make_figure(res, sens):
         vals = [(r["a2"] + r["need"][t]) / r["E"] if isinstance(r["need"][t], int) else None
                 for r in res]
         ax.plot(grid, _cum(vals, grid, n), color=tint(OURS, sh), lw=1.4, dashes=dash,
-                label=rf"median $\delta^\ast\leq{t:g}$")
+                label=rf"median $\delta^{{*}}\leq{t:g}$")
     lo = _cum([(r["a2"] + r["need"][1.0]) / r["E"] if isinstance(r["need"][1.0], int) else None
                for r in sens[0.5]], grid, n)
     hi = _cum([(r["a2"] + r["need"][1.0]) / r["E"] if isinstance(r["need"][1.0], int) else None
@@ -594,8 +594,8 @@ def make_figure(res, sens):
     ticks = [0.2, 0.5, 1.0, 2.0, 4.0]
     _log_ticks(ax.xaxis, ticks)
     _log_ticks(ax.yaxis, ticks)
-    ax.set_xlabel(r"median $\delta^\ast$ as built")
-    ax.set_ylabel(r"median $\delta^\ast$, every pair run")
+    ax.set_xlabel(r"median $\delta^{*}$ as built")
+    ax.set_ylabel(r"median $\delta^{*}$, every pair run")
     legend(ax, loc="upper left")
     panel(ax, "C", "the floor under the rule", "topology buys the gap to $y=x$")
 

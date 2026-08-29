@@ -239,9 +239,9 @@ MARK_STYLE = {"lev": (OURS, (0, (4.5, 1.4, 1.0, 1.4))), "pooled": (OURS, (0, (4,
               "median": (OURS, "-")}
 LABEL = {
     "lev": ("$c = 1.09$   the closure functional",
-            "$\\langle c_e^{-2}\\rangle_h = 0.85$; calibrated scale $0.92$"),
+            "$\\mathrm{mean}_h[c_e^{-2}] = 0.85$; calibrated scale $0.92$"),
     "pooled": ("$c = 1.41$   the pooled bar-to-spread ratio",
-               "$\\sqrt{\\sum \\mathrm{se}^2 / \\sum s^2}$, RMS over RMS"),
+               "$(\\sum \\mathrm{se}^2 / \\sum s^2)^{1/2}$, RMS over RMS"),
     "median": ("$c = 1.71$   the median closure $\\chi^2_\\nu = 0.34$",
                "inverted as $0.34^{-1/2}$; exact only if $c_e$ were constant"),
 }

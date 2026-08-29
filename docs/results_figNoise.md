@@ -57,16 +57,16 @@ and the denominator of `f` are recomputed on the perturbed field.
 
 | system | numerator ||Pi eps~||^2 | worst change, rel. to numerator | rel. to denominator | denominator ||eps~||^2 | median growth | growth range |
 |---|---:|---:|---:|---:|---:|---|
-| `cdk8` | 14.8791 | 1.96e-11 | 1.27e-13 | 2294.34 | 1.91x | [0.38x, 8.66x] |
-| `hif2a` | 68.5251 | 1.76e-11 | 3.03e-14 | 39841.9 | 1.56x | [0.54x, 5.02x] |
-| `p38` | 91.6505 | 1.54e-11 | 1.32e-13 | 10637.9 | 2.24x | [0.35x, 8.48x] |
-| `bace` | 165.324 | 6.77e-14 | 3.12e-15 | 3594.76 | 2.16x | [0.85x, 5.55x] |
+| `cdk8` | 14.8791 | 8.11e-12 | 5.26e-14 | 2294.34 | 1.91x | [0.38x, 8.66x] |
+| `hif2a` | 68.5251 | 1.02e-11 | 1.76e-14 | 39841.9 | 1.56x | [0.54x, 5.02x] |
+| `p38` | 91.6505 | 1.15e-11 | 9.87e-14 | 10637.9 | 2.24x | [0.35x, 8.48x] |
+| `bace` | 165.324 | 8.87e-14 | 4.08e-15 | 3594.76 | 2.16x | [0.85x, 5.55x] |
 
 Worst relative change in the numerator over all systems and all 800 draws:
-1.96e-11, against the pre-registered tolerance of 1e-10. The exactness claim
+1.15e-11, against the pre-registered tolerance of 1e-10. The exactness claim
 holds. That residue is floating-point conditioning in the pseudo-inverse, not a real
 signal: measured against the injected field's own scale, the denominator, it is at most
-1.3e-13. The denominator meanwhile grows by
+9.9e-14. The denominator meanwhile grows by
 1.6x to 2.2x
 at the median (individual draws can shrink it, since an injected field can partly cancel the
 measured one; the median over 200 draws is the summary).

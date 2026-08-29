@@ -543,7 +543,7 @@ def main() -> None:
     for d, ha, dx, dy, va in ((0.5, "right", -4, 3, "bottom"), (1.0, "left", 4, -3, "top")):
         y_at = audit["frac_at"][d]
         axA.plot([d, d], [0.0, y_at], color=REF, lw=0.7, ls=":", zorder=1)
-        axA.annotate(f"{y_at:.0%} reach\n$\\delta^\\ast_e\\leq{d}$",
+        axA.annotate(f"{y_at:.0%} reach\n$\\delta^{{*}}_e\\leq{d}$",
                      (d, y_at), xytext=(dx, dy), textcoords="offset points",
                      ha=ha, ma=ha, va=va, fontsize=7.5, color=REF, linespacing=1.3)
     axA.step(finite, frac, color=OURS, lw=1.6, where="post", zorder=3)
@@ -553,7 +553,7 @@ def main() -> None:
                  xy=(0.03, 0.72), xycoords="axes fraction",
                  ha="left", ma="left", va="top", fontsize=7.5, color=REF,
                  linespacing=1.3)
-    axA.set_xlabel(r"$\delta^\ast_e$ (kcal/mol)")
+    axA.set_xlabel(r"$\delta^{*}_e$ (kcal/mol)")
     axA.set_ylabel(f"fraction of the {audit['n_edges']} edges")
     panel(axA, "A", "what the audit can resolve",
           subtitle="unit noncentrality, not a detection threshold")

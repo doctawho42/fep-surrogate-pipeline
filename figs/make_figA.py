@@ -506,7 +506,7 @@ def draw_controlled_panel(ax, ctrl, letter: str = "A") -> None:
     axA.yaxis.set_minor_locator(LogLocator(subs=tuple(np.arange(2, 10) * 0.1)))
     axA.yaxis.set_minor_formatter(NullFormatter())
     axA.tick_params(axis="y", which="minor", length=1.6)
-    axA.set_xlabel(r"overlap   $4\langle p(1-p)\rangle$")
+    axA.set_xlabel(r"overlap   $4\,\mathrm{mean}[p(1-p)]$")
     axA.set_ylabel("reported se / true se")
     axA.annotate("learned-variance foils", xy=(0.60, 0.235), xycoords="data",
                  ha="center", va="bottom", fontsize=7.5, color=FOIL)
@@ -547,7 +547,7 @@ def draw_real_panel(ax, real, letter: str = "B") -> None:
         # legend says which leg the window comes from rather than calling it an edge.
         leg = {"binding": "BACE1 complex leg", "solvation": "benzene solvation leg"}[kind]
         axB.scatter(ob, [d["sand"] for d in pts], c=C_LEG[kind], s=26, marker=mk, zorder=3,
-                    linewidths=0.4, edgecolors="white", label=f"sandwich \u2014 {leg}")
+                    linewidths=0.5, edgecolors="white", label=f"sandwich \u2014 {leg}")
     axB.scatter([], [], c=THIRD, marker="^", s=20, linewidths=0.0, label="naive $1/I$")
     reference_line(axB, "hline", 1.0)
 
@@ -558,7 +558,7 @@ def draw_real_panel(ax, real, letter: str = "B") -> None:
     axB.yaxis.set_minor_locator(LogLocator(subs=tuple(np.arange(2, 10) * 0.1)))
     axB.yaxis.set_minor_formatter(NullFormatter())
     axB.tick_params(axis="y", which="minor", length=1.6)
-    axB.set_xlabel(r"overlap   $4\langle p(1-p)\rangle$")
+    axB.set_xlabel(r"overlap   $4\,\mathrm{mean}[p(1-p)]$")
     axB.set_ylabel("reported se / bootstrap se")
     # Panel B's marker cluster runs the full width of the y = 1 line, so the label cannot sit
     # at axes-right the way panel A's does: it is anchored at axes-left instead, a fixed 9 pt

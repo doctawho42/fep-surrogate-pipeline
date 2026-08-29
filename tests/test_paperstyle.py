@@ -120,7 +120,13 @@ def test_use_paper_style_sets_named_rcparams():
     assert mpl.rcParams["font.size"] == 9
     assert mpl.rcParams["axes.spines.right"] is False
     assert mpl.rcParams["savefig.dpi"] == 300
-    assert mpl.rcParams["mathtext.fontset"] == "dejavusans"
+    # ACS asks for Helvetica or Arial in artwork, and mathtext is artwork: the custom set is
+    # what keeps everything inside $...$ in the same face as the labels around it. Naming the
+    # set is not enough on its own, so `make acscheck` reads the rendered PDFs as well.
+    assert mpl.rcParams["mathtext.fontset"] == "custom"
+    assert mpl.rcParams["mathtext.rm"] == "Arial"
+    assert mpl.rcParams["mathtext.it"] == "Arial:italic"
+    assert mpl.rcParams["font.sans-serif"][0] == "Arial"
     assert [d["color"] for d in mpl.rcParams["axes.prop_cycle"]] == list(CYCLE)
 
 
