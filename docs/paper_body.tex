@@ -56,7 +56,22 @@ from the network's own edge values responds to it at any magnitude. That fixes t
 error falls inside it is then a measurement. Both are made here, on a public benchmark of real
 binding edges with independent protocol repeats, and both are small: the auditable subspace spans a
 third of the error space, and the share of the error against experiment that falls inside it is
-under one per cent.
+under one per cent. Figure~\ref{fig:overview} runs the whole of that from left to right.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{graphical_abstract.pdf}
+\caption{\textbf{Overview.} The pipeline this article runs on the benchmark, left to right. Every
+edge arrives with a per-edge standard error the estimator computes rather than learns, composed in
+quadrature from the complex-leg and solvent-leg uncertainties; that bar is validated against the
+benchmark's three independent protocol repeats (reported over replicate spread $1.41$); and it is
+then the null of a generalized-least-squares cycle-closure fit, drawn as a small perturbation
+network with one cycle highlighted and one edge marked as flagged. Across the 1143 real binding
+edges that lie in the 48 benchmark systems carrying a cycle (of 1145 edges over 49 systems), that
+calibrated bar flags 6, 6 and 3 systems on the three repeats, one of them on all three, and a
+comparison bar built edge by edge from a learned head's measured miscalibration profile, not that
+head run here, flags 42.}
+\label{fig:overview}
+\end{figure}
 
 The test that runs against this bound is built from an uncertainty the calculation already
 supplies rather than from one learned alongside the prediction: where the prevailing approach fits
@@ -133,12 +148,10 @@ curl-leverage does not additionally predict the \emph{location} of reproducible 
 (studentized Spearman $\rho=-0.073$, permutation $p=0.9571$, not significant; Supplementary
 Figure~\ref{fig:Lev}), so only the structural certificate is claimed.
 
-
 Theorem~\ref{thm:cons} states the diagonal of a result about the whole error space, and that full
 result is what bounds the method. Write the per-edge systematic error as a vector $\mu$ over the
 $E$ edges. Whitening and projecting splits it, orthogonally and uniquely, into a part that lies in
 the cycle space and a part that is a difference of per-ligand offsets.
-
 
 \begin{theorem}[Auditable and unauditable error]\label{thm:hodge}
 In the model $y=A\varphi+\mu+\varepsilon$ with $A$ the signed incidence matrix of a network of $N$
@@ -234,6 +247,30 @@ test could see, not where reproducible error lands, which the same curl-leverage
 Theorem~\ref{thm:hodge} makes two quantities measurable that were previously matters of
 assumption: how much of a network is auditable at all, and how much of its real error the audit
 can reach. Both are answered on this benchmark in Figure~\ref{fig:Hodge}.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{figHodge_where_the_error_lives.pdf}
+\caption{\textbf{Auditable capacity and the location of the error.} (A) Cumulative fraction of the
+$1143$ benchmark edges against $\delta^\ast_e$, the shift at unit noncentrality, with the bridge
+edges marked as the ceiling they impose. (B) Two grounded measurements of the same quantity, drawn
+on one shared axis so that they can be read against each other: the fraction $f$ of a system's
+error against experiment lying in the auditable subspace, the fraction an unaligned error field
+would show under two conventions -- whitened-isotropic ($\mathrm{dof}/E$) and isotropic in
+kcal/mol -- and the range $f$ takes when one edge is deleted at a time. (B1) The four sub-networks
+the closure test itself selected, grounded on a stereo-blind ChEMBL join: $167$ edges, $51$
+residual degrees of freedom. (B2) The eight systems whose curated per-edge labels the benchmark
+carries and whose matched sub-network keeps a cycle: $205$ edges, $30$ residual degrees of freedom,
+grouped by whether the test flags them, and the six it does not flag show the effect at least as
+strongly as the two it does. Neither block corrects the other and the two are not nested:
+\texttt{bace} is absent from the curated benchmark entirely, \texttt{p38}'s matched sub-network is
+acyclic, the edge sets and the labels differ, and B2 carries the fewer residual degrees of freedom.
+On edges held genuinely identical the curated labels give the \emph{higher} $f$, which is the
+direction a per-ligand label error predicts. Italic rows are pooled and carry $f$ alone; the chance
+levels each pooled figure is measured against are given in the text. (C) Change in mean unsigned
+error against experiment after removing the same number of edges chosen by influence, by
+standardized residual, and at random.}
+\label{fig:Hodge}
+\end{figure}
 
 Of the $1143$ edge dimensions carried by the $48$ systems with a cycle, $372$ lie in the cycle
 space, so two-thirds of the error space is node-consistent and invisible to every closure-based
@@ -429,6 +466,17 @@ the $95$th percentile of its own random null in a majority of grounded systems; 
 met. The remaining two flagged systems (\texttt{brd4, faah}) did not clear the coverage gate and
 are not included.
 
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{figL_validation.pdf}
+\caption{\textbf{Edge-removal repair test and cross-replicate residual reproduction.} (A)
+Number of edges removed, in descending order of $|z|$, before reduced $\chi^2\le1$ is
+restored: guided removal of the flagged high-$|z|$ edges versus random removal, per system.
+(B) Standardized residual $z_e$ from a replicate-0 network fit versus $z_e$ from a
+replicate-1 fit, for edges in flagged and in non-flagged systems, with the $y=x$ line and
+the Pearson correlation between each pair of replicates.}
+\label{fig:Lval}
+\end{figure}
+
 That null is what Theorem~\ref{thm:hodge} predicts and what the paragraph above measures. A removal
 rule reads the visible part of the error; the visible part carries under one per cent of what is
 wrong with these networks, and by part (ii) it is the part that biases the fitted potentials least.
@@ -537,6 +585,20 @@ these $19$ windows alone. Both the sandwich inputs and the bootstrap truth are s
 statistical inefficiency $g$~\citep{shirts2008mbar} before $B$ is formed, so Figure~\ref{fig:A}
 uses effective $n$ (Supplementary Figure~\ref{fig:gsweep}).
 
+\begin{figure}[tbp]\centering
+\includegraphics[width=0.7\textwidth]{figA_real_windows.pdf}
+\caption{\textbf{Sandwich variance against a decorrelated bootstrap on real BAR windows.}
+Reported standard error divided by the decorrelated-bootstrap standard error, versus
+work-distribution overlap, for the sandwich $B/I^2$ on the $19$ adjacent-$\lambda$ BAR windows of
+the complex leg of the \texttt{alchemtest} BACE1 relative-binding calculation (filled circles) and
+on the $19$ windows of the benzene solvation legs (filled diamonds), and for the naive
+information-equality plug-in $1/I$ on the same windows (triangles). Each point is one two-state BAR
+estimate between neighbouring $\lambda$ values, and every window sits at overlap $\geq0.84$. The
+controlled low-overlap sweep and the learned-variance baselines are Supplementary
+Figure~\ref{fig:Afoils}.}
+\label{fig:A}
+\end{figure}
+
 The low-overlap behaviour rests instead on a controlled Monte-Carlo overlap sweep, in which the
 closed form tracks MBAR and Monte-Carlo truth across the range at a reported/true se of $\approx1$
 and at no Monte-Carlo cost, bare $1/I$ overstates by $1.08$--$2.65\times$, worst at high overlap,
@@ -556,6 +618,18 @@ $\mathrm{se}=\sqrt{\mathrm{se}_{\text{complex}}^2+\mathrm{se}_{\text{solvent}}^2
 is a multistate MBAR uncertainty over that leg's $\lambda$ windows and not the two-state BAR
 quantity of Theorem~\ref{thm:sand}, so what is validated here is the bar as a practitioner
 receives it and not the two-state identity itself.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{figA_replicate_validation.pdf}
+\caption{\textbf{Independent-replicate validation on real binding edges.} Reported
+per-edge standard error versus the across-replicate empirical standard deviation, on
+$1145$ OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3
+independent replicates each). (A) Reported standard error versus across-replicate
+standard deviation, with the $y{=}x$ line. (B) Per-system pooled ratio of reported
+standard error to across-replicate standard deviation, for the $34$ benchmark systems carrying at
+least eight edges.}
+\label{fig:Arep}
+\end{figure}
 
 Across $1145$ real binding edges from the OpenFE
 IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} (3 independent replicates each), the
@@ -642,6 +716,28 @@ summaries occupy a $1.57\times$ window. Part of that spread is guaranteed rather
 since a spread estimated from three replicates would put the same family of functionals between
 $0.71$ and $2.88$ even if every reported bar were exactly right.
 
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{figCal_calibration_functionals.pdf}
+\caption{\textbf{One heavy-tailed per-edge ratio, and the summaries this article quotes from it.}
+The calibration ratio $c_e=\mathrm{se}^{\mathrm{rep}}_e/\mathrm{se}^{\mathrm{true}}_e$ over the
+$1143$ edges of the $48$ systems that carry a cycle, on a logarithmic axis because $c_e$ is a
+ratio, so a bar twice too wide and one twice too tight are equally miscalibrated, and because the
+tail is the reason the summaries disagree rather than a nuisance to be clipped. Quartiles $0.91$,
+$1.81$ and $3.60$. Each mark is a different functional of this one distribution: the
+curl-leverage-weighted mean of $c_e^{-2}$ that Theorem~\ref{thm:cons} makes
+$\mathbb{E}[\chi^2_\nu]$, together with its root the calibrated scale, which are one mark and not
+two; the replicate ratio of Figure~\ref{fig:Arep}, the pooled reported standard error over
+replicate spread, $1.41$; and the inverted median, the median reduced $\chi^2$ of $0.34$ inverted,
+which recovers a scalar conservatism only if $c_e$ were constant across edges and carries that
+caveat on the figure. The grey silhouette is the
+distribution perfect bars would give at three replicates, where $s^2/\sigma^2\sim\chi^2_2/2$ makes
+$c_e=1/\sqrt{\mathrm{Exp}(1)}$ a parameter-free null with median $1.20$: part of the measured
+spread is the denominator's own small-sample noise and only the excess is per-edge heterogeneity.
+The panel adds no measurement, and no claim beyond the text's: no single scalar conservatism is
+identified by these data. Reproduce with \texttt{make figCal}.}
+\label{fig:Cal}
+\end{figure}
+
 Residual correlation among edges sharing a ligand endpoint, which the diagonal-$V$ GLS does not
 model, is separately negligible (excess correlation over the projector-induced null $-0.0079$
 $[-0.0314,+0.0164]$), and the Benjamini--Hochberg flag set is unchanged by it.
@@ -719,7 +815,6 @@ holding its level ($1/400$, that is $0.003$ with an exact binomial interval $[0.
 against a nominal $0.05$), and so the conservative answer (Supplementary
 Table~\ref{tab:selfgrid}).
 
-
 \paragraph{The test on the replicate benchmark.}
 On the OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} ($1145$ edges over
 $49$ systems, of which the $48$ with $\geq1$ independent cycle, holding $1143$ edges, admit the
@@ -731,6 +826,19 @@ test at $0.05$ applied to the first replicate flags six chemically-sensible syst
 buried-water set, \texttt{bace} is protonation-sensitive). That particular set of six is a
 single-replicate draw and should not be read as a census; Section~\ref{sec:stability} measures how
 much of it survives the other two replicates.
+
+\begin{figure}[tbp]\centering
+\includegraphics[width=\textwidth]{figL_calibrated_cycle_closure.pdf}
+\caption{\textbf{Calibrated cycle-closure quality control.} (A) Per-system reduced $\chi^2$
+from a generalized-least-squares cycle-closure fit, ranked, with shading below $\chi^2_\nu=1$ and
+the flagged systems marked. (B) Percentage of systems flagged under four $\sigma$ models, in
+plotted order: a uniform $\times0.15$ shrink, the reported bar as shipped, a $\times1.3$ inflation
+and a $\times2$ inflation. The shipped bar is the tick marked $\times1$; the scale at which those
+bars are correct is measured as $0.92$ of them, which is a different quantity from the tick.
+(C) Reduced $\chi^2$ from a single replicate against the value from the
+three replicates pooled, with reference lines at pooled/single $=1$ and $=3$.}
+\label{fig:L}
+\end{figure}
 
 One of the six has an identifiable cause. The benchmark labels a system by target, and eight of its
 names union edges from more than one separately released data set. Where those releases share
@@ -854,7 +962,6 @@ reproducible-dominated). The argument fixes the component's variance and not its
 invariant to whether $\sigma^2_{\text{sys}}$ is physical error or a fixed consequence of the one
 starting structure the three repeats share, both being constant across repeats.
 
-
 \paragraph{Cross-replicate reproduction of the flagged inconsistency.} Greedily
 removing the flagged (highest-$|z|$) edges restores consistency (reduced $\chi^2\le1$) in $3$--$7$
 edges, versus $12$--$37$ removed at random (Figure~\ref{fig:Lval}A). That contrast illustrates the
@@ -953,7 +1060,6 @@ the realized level of every one is reported; two fired far above nominal and are
 $|z|$-rank-matched control drawn from unflagged systems reproduces the leverage-normalised
 residual signal but not the consistency gain. The effect is an aggregate one, significant
 individually in two of the five testable systems.
-
 
 \section{Computational details}\label{sec:methods}
 \paragraph{Data.} Every closure fit consumes the release's combined per-replicate table directly,
@@ -1161,113 +1267,3 @@ absolute measurements or independent preparations instead.
 
 \clearpage
 
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{graphical_abstract.pdf}
-\caption{\textbf{Overview.} The pipeline this article runs on the benchmark, left to right. Every
-edge arrives with a per-edge standard error the estimator computes rather than learns, composed in
-quadrature from the complex-leg and solvent-leg uncertainties; that bar is validated against the
-benchmark's three independent protocol repeats (reported over replicate spread $1.41$); and it is
-then the null of a generalized-least-squares cycle-closure fit, drawn as a small perturbation
-network with one cycle highlighted and one edge marked as flagged. Across the 1143 real binding
-edges that lie in the 48 benchmark systems carrying a cycle (of 1145 edges over 49 systems), that
-calibrated bar flags 6, 6 and 3 systems on the three repeats, one of them on all three, and a
-comparison bar built edge by edge from a learned head's measured miscalibration profile, not that
-head run here, flags 42.}
-\label{fig:overview}
-\end{figure}
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=0.7\textwidth]{figA_real_windows.pdf}
-\caption{\textbf{Sandwich variance against a decorrelated bootstrap on real BAR windows.}
-Reported standard error divided by the decorrelated-bootstrap standard error, versus
-work-distribution overlap, for the sandwich $B/I^2$ on the $19$ adjacent-$\lambda$ BAR windows of
-the complex leg of the \texttt{alchemtest} BACE1 relative-binding calculation (filled circles) and
-on the $19$ windows of the benzene solvation legs (filled diamonds), and for the naive
-information-equality plug-in $1/I$ on the same windows (triangles). Each point is one two-state BAR
-estimate between neighbouring $\lambda$ values, and every window sits at overlap $\geq0.84$. The
-controlled low-overlap sweep and the learned-variance baselines are Supplementary
-Figure~\ref{fig:Afoils}.}
-\label{fig:A}
-\end{figure}
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{figA_replicate_validation.pdf}
-\caption{\textbf{Independent-replicate validation on real binding edges.} Reported
-per-edge standard error versus the across-replicate empirical standard deviation, on
-$1145$ OpenFE IndustryBenchmarks2024~\citep{baumann2025industrybenchmarks} edges (3
-independent replicates each). (A) Reported standard error versus across-replicate
-standard deviation, with the $y{=}x$ line. (B) Per-system pooled ratio of reported
-standard error to across-replicate standard deviation, for the $34$ benchmark systems carrying at
-least eight edges.}
-\label{fig:Arep}
-\end{figure}
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{figCal_calibration_functionals.pdf}
-\caption{\textbf{One heavy-tailed per-edge ratio, and the summaries this article quotes from it.}
-The calibration ratio $c_e=\mathrm{se}^{\mathrm{rep}}_e/\mathrm{se}^{\mathrm{true}}_e$ over the
-$1143$ edges of the $48$ systems that carry a cycle, on a logarithmic axis because $c_e$ is a
-ratio, so a bar twice too wide and one twice too tight are equally miscalibrated, and because the
-tail is the reason the summaries disagree rather than a nuisance to be clipped. Quartiles $0.91$,
-$1.81$ and $3.60$. Each mark is a different functional of this one distribution: the
-curl-leverage-weighted mean of $c_e^{-2}$ that Theorem~\ref{thm:cons} makes
-$\mathbb{E}[\chi^2_\nu]$, together with its root the calibrated scale, which are one mark and not
-two; the replicate ratio of Figure~\ref{fig:Arep}, the pooled reported standard error over
-replicate spread, $1.41$; and the inverted median, the median reduced $\chi^2$ of $0.34$ inverted,
-which recovers a scalar conservatism only if $c_e$ were constant across edges and carries that
-caveat on the figure. The grey silhouette is the
-distribution perfect bars would give at three replicates, where $s^2/\sigma^2\sim\chi^2_2/2$ makes
-$c_e=1/\sqrt{\mathrm{Exp}(1)}$ a parameter-free null with median $1.20$: part of the measured
-spread is the denominator's own small-sample noise and only the excess is per-edge heterogeneity.
-The panel adds no measurement, and no claim beyond the text's: no single scalar conservatism is
-identified by these data. Reproduce with \texttt{make figCal}.}
-\label{fig:Cal}
-\end{figure}
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{figL_calibrated_cycle_closure.pdf}
-\caption{\textbf{Calibrated cycle-closure quality control.} (A) Per-system reduced $\chi^2$
-from a generalized-least-squares cycle-closure fit, ranked, with shading below $\chi^2_\nu=1$ and
-the flagged systems marked. (B) Percentage of systems flagged under four $\sigma$ models, in
-plotted order: a uniform $\times0.15$ shrink, the reported bar as shipped, a $\times1.3$ inflation
-and a $\times2$ inflation. The shipped bar is the tick marked $\times1$; the scale at which those
-bars are correct is measured as $0.92$ of them, which is a different quantity from the tick.
-(C) Reduced $\chi^2$ from a single replicate against the value from the
-three replicates pooled, with reference lines at pooled/single $=1$ and $=3$.}
-\label{fig:L}
-\end{figure}
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{figL_validation.pdf}
-\caption{\textbf{Edge-removal repair test and cross-replicate residual reproduction.} (A)
-Number of edges removed, in descending order of $|z|$, before reduced $\chi^2\le1$ is
-restored: guided removal of the flagged high-$|z|$ edges versus random removal, per system.
-(B) Standardized residual $z_e$ from a replicate-0 network fit versus $z_e$ from a
-replicate-1 fit, for edges in flagged and in non-flagged systems, with the $y=x$ line and
-the Pearson correlation between each pair of replicates.}
-\label{fig:Lval}
-\end{figure}
-
-\begin{figure}[tbp]\centering
-\includegraphics[width=\textwidth]{figHodge_where_the_error_lives.pdf}
-\caption{\textbf{Auditable capacity and the location of the error.} (A) Cumulative fraction of the
-$1143$ benchmark edges against $\delta^\ast_e$, the shift at unit noncentrality, with the bridge
-edges marked as the ceiling they impose. (B) Two grounded measurements of the same quantity, drawn
-on one shared axis so that they can be read against each other: the fraction $f$ of a system's
-error against experiment lying in the auditable subspace, the fraction an unaligned error field
-would show under two conventions -- whitened-isotropic ($\mathrm{dof}/E$) and isotropic in
-kcal/mol -- and the range $f$ takes when one edge is deleted at a time. (B1) The four sub-networks
-the closure test itself selected, grounded on a stereo-blind ChEMBL join: $167$ edges, $51$
-residual degrees of freedom. (B2) The eight systems whose curated per-edge labels the benchmark
-carries and whose matched sub-network keeps a cycle: $205$ edges, $30$ residual degrees of freedom,
-grouped by whether the test flags them, and the six it does not flag show the effect at least as
-strongly as the two it does. Neither block corrects the other and the two are not nested:
-\texttt{bace} is absent from the curated benchmark entirely, \texttt{p38}'s matched sub-network is
-acyclic, the edge sets and the labels differ, and B2 carries the fewer residual degrees of freedom.
-On edges held genuinely identical the curated labels give the \emph{higher} $f$, which is the
-direction a per-ligand label error predicts. Italic rows are pooled and carry $f$ alone; the chance
-levels each pooled figure is measured against are given in the text. (C) Change in mean unsigned
-error against experiment after removing the same number of edges chosen by influence, by
-standardized residual, and at random.}
-\label{fig:Hodge}
-\end{figure}

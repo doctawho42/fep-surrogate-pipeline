@@ -44,11 +44,15 @@ that a claim in the article can be traced to the run that produced it.
 | Article figure | Command | Output |
 |---|---|---|
 | 1, overview | `make graphical` | `figs/graphical_abstract.pdf` |
-| 2, sandwich variance against learned foils | `make figA` | `figs/figA_target_the_sandwich.pdf` |
-| 3, replicate validation of the reported error | `make figArep` | `figs/figA_replicate_validation.pdf` |
-| 4, the calibrated cycle-closure detector | `make figL` | `figs/figL_calibrated_cycle_closure.pdf` |
-| 5, edge removal and cross-replicate residuals | `make figLval` | `figs/figL_validation.pdf` |
-| 6, what the audit covers and where the error lives | `make figHodge` | `figs/figHodge_where_the_error_lives.pdf` |
+| 2, what the audit covers and where the error lives | `make figHodge` | `figs/figHodge_where_the_error_lives.pdf` |
+| 3, edge removal and cross-replicate residuals | `make figLval` | `figs/figL_validation.pdf` |
+| 4, sandwich variance on real BAR windows | `make figA` | `figs/figA_real_windows.pdf` |
+| 5, replicate validation of the reported error | `make figArep` | `figs/figA_replicate_validation.pdf` |
+| 6, the per-edge calibration ratio and its summaries | `make figCal` | `figs/figCal_calibration_functionals.pdf` |
+| 7, the calibrated cycle-closure detector | `make figL` | `figs/figL_calibrated_cycle_closure.pdf` |
+
+Figures are numbered in order of first mention, which is the order they are declared in
+`docs/paper_body.tex`.
 
 The sixteen Supporting Information figures are produced by `make gsweep`, `figC`, `figD`,
 `qcstruct`, `figLev`, `figLcausal`, `figCut`, `figStab`, `figOOS`, `figSelf`, `figP4`, `figP4b`,
