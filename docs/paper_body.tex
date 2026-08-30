@@ -6,8 +6,8 @@ and is invisible to any statistic computed from the network's own values, at any
 parts are measured here on $1145$ real binding edges. The auditable subspace spans a third of the
 error space and, in the metric the closure statistic uses, carries under one per cent of the error
 against experiment. Experimental and annotation error is per-ligand, so it falls in the invisible
-part by construction and can only have made that share smaller: the measurement is a floor, and it
-survives correction for that error.
+part by construction and can only have made that share smaller: the measurement is a floor, and in
+that metric it survives correction for that error on every system measured, at one cell as a tie.
 
 Fitting closure against the precisions the estimator already reports turns the check into a test
 with a stated null, and that test behaves as the bound predicts. It ties the standard fixed $1.0$
@@ -337,12 +337,11 @@ wholly in the denominator of $f$ and pushes the noisier source's reading down.
 One degree of freedom in the protocol was undeclared; the naming finding of
 Section~\ref{sec:qc} settles it. A ligand name is not an identifier here, so the figures quoted
 throughout key nodes by resolved structure, which is the less favourable reading: merging two
-names for one molecule knits components together and adds cycles, and cycles can only raise the
-auditable share. \texttt{ptp1b} is the only system of the eight it touches, going from $f=0.0023$
+names that denote one molecule knits two components into one, and the cycles that creates can only
+raise the auditable share. \texttt{ptp1b} is the only system of the eight it touches, going from $f=0.0023$
 to $0.0159$, its worst single-edge-deletion isotropic margin from $10.3\times$ to $2.0\times$,
 and the pooled figure from $0.00046$ to the $0.00052$ above. Neither key is safe in general, and
-the Supporting Information shows where this one fails: a $2$D structure merges poses a release
-names apart. Both readings are reported.
+the Supporting Information shows where this one fails: a $2$D structure merges poses that a release deliberately names apart. Both readings are reported.
 
 \paragraph{Why the label source can only shrink the fraction.} The label source can move $f$ in one direction only, which is what makes it a bound. Those
 per-ligand errors reach an edge as a difference of node offsets, exactly the gradient fields
@@ -709,7 +708,7 @@ dependence structure at all, costs a factor $H_{48}=4.46$ in the threshold and r
 systems on replicate $0$. And four of the six flagged systems are themselves locally overconfident
 against their own across-replicate spread, so a flag could partly reflect that system's own
 too-tight bars; retesting each against the width its own replicates measure keeps all six
-(Supplementary Table~\ref{tab:selfgrid}).
+(Supplementary Table~\ref{tab:P8}).
 
 \paragraph{The test on the replicate benchmark.}
 The OpenFE IndustryBenchmarks2024 release~\citep{baumann2025industrybenchmarks} carries $1145$
@@ -785,8 +784,8 @@ and falls to $0.57$ only once the runs are extended to $55$~ns; the effect is pu
 general~\citep{lim2016sensitivity}. Independently, careful preparation of protein and ligand
 structures is what brings a leading workflow to the reproducibility of the experiments it is
 scored against~\citep{ross2023maximal}. The mechanism is kinetic trapping rather than thermal
-averaging, so a wrong starting state persists as a fixed offset for the whole run, which is why
-repeats that share it cannot price it.
+averaging, so a wrong starting state persists as a fixed offset for the whole run. Repeats that all begin from
+that state cannot price what it costs.
 
 The grouping is therefore a choice the analysis makes, and the flag set is not invariant to it.
 Re-running the same replicate-0 test on the release's own blocks gives $56$ testable systems and
