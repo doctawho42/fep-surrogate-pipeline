@@ -4,25 +4,29 @@ can see is fixed by the gradient--cycle decomposition of edge flows (HodgeRank):
 a network's error is auditable and biases nothing, while the gradient part biases the affinities
 and is invisible to any statistic computed from the network's own values, at any magnitude. Both
 parts are measured here on $1145$ real binding edges. The auditable subspace spans a third of the
-error space and, in the variance-weighted metric the closure statistic uses, carries under one per
-cent of the error against experiment. Experimental and annotation error is per-ligand, so it falls
-in the invisible part by construction and can only have made that share smaller: the measurement is
-a floor, and it survives correction: in the metric the closure statistic uses on every system
-measured, at one cell as a tie, and in an isotropic reading on every system of the wider grounded
-set, failing only on the two weakest of the four the test itself selected. The
-test built on it behaves as the bound predicts, and its flag set is not stable: the per-edge
-residuals and the ranking of systems reproduce across independent repeats, and the list of flagged
-systems does not. Fitting closure against the precisions the
-estimator already reports gives that test its stated null; it ties the standard fixed $1.0$
-kcal/mol cutoff, and on every replicate the set of systems it flags lies inside the set that
-cutoff flags. It flags
-nothing once the reported errors are widened by half, and published estimates of the pose and
-preparation component the protocol repeats hold fixed run above that, so the second ceiling sits
-lower than the first. It names no removal that recovers accuracy against experiment. Resolving the gradient part needs measurements from outside the network, at worst one
-per unresolved dimension.
+error space and, in the metric the closure statistic uses, carries under one per cent of the error
+against experiment. Experimental and annotation error is per-ligand, so it falls in the invisible
+part by construction and can only have made that share smaller: the measurement is a floor, and it
+survives correction for that error.
+
+Fitting closure against the precisions the estimator already reports turns the check into a test
+with a stated null, and that test behaves as the bound predicts. It ties the standard fixed $1.0$
+kcal/mol cutoff, and on every replicate the systems it flags lie inside the set that cutoff flags.
+Its per-edge residuals and its ranking of systems reproduce across independent repeats; the list of
+flagged systems does not. It flags nothing once the reported errors are widened by half, which is
+less than published estimates of the pose and preparation variance the repeats hold fixed, and it
+names no removal that recovers accuracy against experiment. Resolving the gradient part needs
+measurements from outside the network, at worst one per unresolved dimension.
 \end{abstract}
 
 \section{Introduction}
+A structure-based drug discovery program spends most of its budget making molecules, and which
+molecules get made depends on how tightly each one is expected to bind its target. Predicting that
+affinity before the synthesis is therefore one of the load-bearing computational problems in the
+field, and the methods available for it trade accuracy against cost: the fast ones rank large
+libraries cheaply, and the accurate ones are expensive enough that each prediction has to be worth
+paying for.
+
 Relative binding free energy calculations are the most accurate computational tool available for
 ranking how tightly a set of candidate molecules will bind a target, and structure-based drug
 discovery programs increasingly build them into decisions about which molecules to synthesize. The
@@ -60,16 +64,12 @@ under one per cent. Figure~\ref{fig:overview} runs the whole of that from left t
 
 \begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{graphical_abstract.pdf}
-\caption{\textbf{Overview.} The pipeline this article runs on the benchmark, left to right. Every
-edge arrives with a per-edge standard error the estimator computes rather than learns, composed in
-quadrature from the complex-leg and solvent-leg uncertainties; that bar is validated against the
-benchmark's three independent protocol repeats (reported over replicate spread $1.41$); and it is
-then the null of a generalized-least-squares cycle-closure fit, drawn as a small perturbation
-network with one cycle highlighted and one edge marked as flagged. Across the 1143 real binding
-edges that lie in the 48 benchmark systems carrying a cycle (of 1145 edges over 49 systems), that
-calibrated bar flags 6, 6 and 3 systems on the three repeats, one of them on all three, and a
-comparison bar built edge by edge from a learned head's measured miscalibration profile, not that
-head run here, flags 42.}
+\caption{\textbf{Overview.} The pipeline this article runs on the benchmark, left to right: a per-edge
+standard error the free-energy estimator computes rather than learns, composed in quadrature from
+the complex-leg and solvent-leg uncertainties; its validation against the benchmark's three
+independent protocol repeats; and its use as the null of a generalized-least-squares cycle-closure
+fit, drawn as a small perturbation network with one cycle highlighted and one edge marked as
+flagged.}
 \label{fig:overview}
 \end{figure}
 
@@ -219,24 +219,17 @@ can reach. Both are answered on this benchmark in Figure~\ref{fig:Hodge}.
 
 \begin{figure}[tbp]\centering
 \includegraphics[width=\textwidth]{figHodge_where_the_error_lives.pdf}
-\caption{\textbf{Auditable capacity and the location of the error.} (A) Cumulative fraction of the
-$1143$ benchmark edges against $\delta^\ast_e$, the shift at unit noncentrality, with the bridge
-edges marked as the ceiling they impose. (B) Two grounded measurements of the same quantity, drawn
-on one shared axis so that they can be read against each other: the fraction $f$ of a system's
-error against experiment lying in the auditable subspace, the fraction an unaligned error field
-would show under two conventions -- whitened-isotropic ($\mathrm{dof}/E$) and isotropic in
-kcal/mol -- and the range $f$ takes when one edge is deleted at a time. (B1) The four sub-networks
-the closure test itself selected, grounded on a stereo-blind ChEMBL join: $167$ edges, $51$
-residual degrees of freedom. (B2) The eight systems whose curated per-edge labels the benchmark
-carries and whose matched sub-network keeps a cycle: $205$ edges, $30$ residual degrees of freedom,
-grouped by whether the test flags them, and the six it does not flag show the effect at least as
-strongly as the two it does. Neither block corrects the other and the two are not nested:
-\texttt{bace} is absent from the curated benchmark entirely, \texttt{p38}'s matched sub-network is
-acyclic, the edge sets and the labels differ, and B2 carries the fewer residual degrees of freedom.
-On edges held genuinely identical the curated labels give the \emph{higher} $f$, which is the
-direction a per-ligand label error predicts. Italic rows are pooled and carry $f$ alone; the chance
-levels each pooled figure is measured against are given in the text. (C) Change in mean unsigned
-error against experiment after removing the same number of edges chosen by influence, by
+\caption{\textbf{Auditable capacity and the location of the error.} (A) Cumulative fraction of the $1143$
+benchmark edges against $\delta^{*}_e$, the shift at unit noncentrality, with the bridge edges
+marked as the ceiling they impose. (B) The fraction $f$ of a system's error against experiment
+lying in the auditable subspace, on one shared axis, against the fraction an unaligned error field
+would show under two conventions, whitened-isotropic ($\mathrm{dof}/E$) and isotropic in kcal/mol,
+and the range $f$ takes when one edge is deleted at a time. (B1) The four sub-networks the closure
+test selected, grounded on a stereo-blind ChEMBL join: $167$ edges, $51$ residual degrees of
+freedom. (B2) The eight systems whose curated per-edge labels the benchmark carries and whose
+matched sub-network keeps a cycle: $205$ edges, $31$ residual degrees of freedom, grouped by
+whether the test flags them. Italic rows are pooled and carry $f$ alone. (C) Change in mean
+unsigned error against experiment after removing the same number of edges chosen by influence, by
 standardized residual, and at random.}
 \label{fig:Hodge}
 \end{figure}
@@ -736,8 +729,7 @@ much of it survives the other two replicates.
 from a generalized-least-squares cycle-closure fit, ranked, with shading below $\chi^2_\nu=1$ and
 the flagged systems marked. (B) Percentage of systems flagged under four $\sigma$ models, in
 plotted order: a uniform $\times0.15$ shrink, the reported bar as shipped, a $\times1.3$ inflation
-and a $\times2$ inflation. The shipped bar is the tick marked $\times1$; the scale at which those
-bars are correct is measured as $0.92$ of them, which is a different quantity from the tick.
+and a $\times2$ inflation. The tick marked $\times1$ is the shipped bar and not the calibrated scale.
 (C) Reduced $\chi^2$ from a single replicate against the value from the
 three replicates pooled, with reference lines at pooled/single $=1$ and $=3$.}
 \label{fig:L}
@@ -1115,43 +1107,32 @@ The stopping experiment is a controlled simulation, and the reward re-ranking au
 single $\sigma$-varying target, so its conclusion that $\sigma$ tracks novelty rather than quality
 is directional and should be tested across more chemotypes.
 
+The cost of resolving the gradient part, one absolute measurement per unresolved dimension, is a
+worst case rather than an expectation. A bias smooth in chemical space is a far smaller object than
+one offset per ligand, and a noisy anchor resolves its dimension only to its own precision.
+
 \section{Conclusion}\label{sec:conclusion}
-A perturbation network's own edge values determine only the cycle part of its error. Fitting
-cycle closure against the precisions the free-energy estimator already reports turns a descriptive
+A perturbation network's own edge values determine only the cycle part of its error. Fitting cycle
+closure against the precisions the free-energy estimator already reports turns a descriptive
 consistency check into a test with a stated null, orders networks by how far their own calculations
-disagree, and names in advance the edges that lie in no cycle and can carry no evidence. The
-test consumes only quantities the estimator computes anyway, and its selectivity is set by
-how well those quantities are calibrated. On these
+disagree, and names in advance the edges that lie in no cycle and can carry no evidence. On these
 data the test catches nothing the fixed hysteresis cutoff misses: the two flag sets are nested and
 the head-to-head between them is a tie, so the advantage is structural, being per-edge adaptive
 thresholds, a null measured against seed and velocity repeats, and the observability map. The flags
-are also not a repair list: removing the edges they name does not recover accuracy against
-experiment, and a rule built from the theorem does no better and on one system does harm, because
-the component that sets accuracy against experiment lies in the gradient part, which no closure
-statistic reaches.
+are not a repair list either. Removing the edges they name does not recover accuracy against
+experiment, and a rule built from the theorem does no better, because the component that sets
+accuracy against experiment lies in the gradient part, which no closure statistic reaches.
 
-Those limits compound in the flag set this article publishes, and the sum is worth stating once.
-Of the six systems flagged on the first replicate, one carries its flag from a naming collision
-created by the grouping the analysis chose, one is the weakest on every measure applied to it and
-drops when the replicates are pooled, and the membership of the set does not reproduce across the
-three repeats. What survives all three is the ordering of systems and the per-edge residuals behind
-it, which is what a reader should take the test to deliver.
-
-Closing that gap needs information the network does not contain, and in absolute measurements the
-worst case costs one ligand per dimension. That is a worst case: a bias smooth in chemical space is
-a far smaller object, and a noisy anchor resolves only to its own precision.
-
-A second ceiling comes from the measurement rather than from the decomposition. The bar the test uses as its null is measured against repeats
-that resample seeds and velocities while holding one pose and one system preparation fixed, so it
-prices sampling noise and not the preparation an entire network inherits. Widening it by half
-already leaves nothing on this benchmark flagged, and half is on the evidence an under-estimate of
-what that component costs: starting one alchemical edge from two kinetically distinct protein
-conformations moves its free energy by up to $4.74$ kcal/mol, and the same study puts the general
-effect at $2$--$5$~\citep{lim2016sensitivity}. The test
-is therefore bounded twice: by the geometry of the network, and by a variance component its own
-null never sees. The practical use of cycle
-closure is accordingly as a calibrated alarm, with the error that moves a ranking to be sought in
-absolute measurements or independent preparations instead.
+The test is therefore bounded twice: by the geometry of the network, and by a variance component
+its own null never sees, since that null is measured against repeats holding one pose and one
+system preparation fixed. Widening the reported errors by half already leaves nothing on this
+benchmark flagged, and half is less than published estimates of what preparation costs. Of the six
+systems flagged on the first replicate, one carries its flag from a naming collision created by the
+grouping the analysis chose, one is the weakest on every measure applied to it and drops when the
+replicates are pooled, and the membership of the set does not reproduce across the three repeats;
+what survives all three is the ordering of systems and the per-edge residuals behind it. The
+practical use of cycle closure is accordingly as a calibrated alarm, with the error that moves a
+ranking to be sought in absolute measurements or independent preparations instead.
 
 \clearpage
 
