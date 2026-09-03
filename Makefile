@@ -143,6 +143,9 @@ graphical:  # graphical abstract (Figma-style pastel redraw: BAR bottleneck -> c
 
 gabs: graphical  # alias for `make graphical`
 
+submission:  # the ACS set: author PDF, Supporting Information PDF, LaTeX source archive, cover letter
+	./scripts/make_submission.sh
+
 acscheck:  # every included figure against the ACS artwork spec (width, rules, type, font)
 	$(PY) scripts/acs_figure_audit.py
 

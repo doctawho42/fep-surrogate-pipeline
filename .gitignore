@@ -48,3 +48,6 @@ data/reversedock/run.out
 # (keep the derived triples.parquet — it is the small, committed benchmark artifact)
 data/paper2_bench/*.tgz
 data/paper2_bench/litpcba/
+
+# assembled submission set: derived from docs/ and figs/ by scripts/make_submission.sh
+submission/
